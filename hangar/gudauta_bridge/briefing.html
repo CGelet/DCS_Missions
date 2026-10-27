@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operation BROKEN SPAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Operation BROKEN SPAN</div>
+    <h1>Strike on the Bzyb River Bridge</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2026-03-14</b></span>
+      <span>Step <b class="mono">06:40L</b></span>
+      <span>Theater <b>Caucasus</b></span>
+      <span>Flight <b>Enfield 1 · 2× F/A-18C</b></span>
+      <span>Base <b>Senaki-Kolkhi</b></span>
+    </div>
+    <blockquote class="hook">&#34;Gentlemen, there&#39;s one bridge between that brigade and Sukhumi. By breakfast
+I want it in the river.&#34; HATCH Moreno, 0500 brief</blockquote>
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#story">Story</a><a href="#plan">Storyboard &amp; map</a><a href="#brief">Briefing</a><a href="#debrief">Debrief</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+    <button type="button" onclick="window.print()">Print</button>
+  </div>
+</nav>
+
+<main>
+<section id="story">
+  <div class="wrap">
+    <h2>The story so far</h2>
+    <div class="story">
+      <div><p>Three weeks ago a ceasefire along the Inguri line collapsed. Separatist forces,
+re-equipped with modern air defences and backed by Russian advisers, have been
+pushing armour south down the coastal M-27 highway toward Sukhumi. The coalition
+has held them at the Gumista, but intelligence shows a fresh mechanised brigade
+staging near Gagra for a push within 36 hours.</p><p>The coast road crosses the Bzyb River on a single heavy-load bridge, the only
+crossing that can carry tanks and bridging equipment. Drop it, and the brigade
+is stuck on the wrong side of the river for a week.</p></div>
+      <div>
+        <h3>Cast</h3>
+        <ul class="cast">
+          <li><b>Lt Col Dana &#34;HATCH&#34; Moreno</b><span>Mission commander, VFA-131 detachment, Senaki</span></li><li><b>OVERLORD</b><span>E-3 Sentry AWACS, call sign for the coalition air picture</span></li><li><b>Capt. Ilya Brenner</b><span>Ground liaison officer, embedded with the Gumista defence line</span></li><li><b>Enfield 1-1 / 1-2</b><span>You and your wingman, F/A-18C Hornets</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="wrap">
+    <h2>Storyboard &amp; flight plan</h2>
+    <div class="plan">
+      <div class="map-wrap">
+        <div id="map" role="img" aria-label="Mission map with route, threats and target"></div>
+        <div class="legend" id="legend">
+          <label><input type="checkbox" data-layer="route" checked> <i style="background:var(--blue)"></i>Route</label>
+          <label><input type="checkbox" data-layer="threats" checked> <i style="background:var(--red)"></i>Threat rings</label>
+          <label><input type="checkbox" data-layer="support" checked> <i style="background:var(--ok)"></i>Friendly support</label>
+          <label><input type="checkbox" data-layer="target" checked> <i style="background:var(--accent)"></i>Target</label>
+        </div>
+      </div>
+      <ol class="timeline">
+        
+        <li class="phase" data-idx="0">
+          <span class="dot">1</span>
+          <button type="button" class="phase-card" aria-label="Show Step &amp; Start on the map">
+            <div class="phase-head"><h3>Step &amp; Start</h3><span class="time">06:40</span></div>
+            <p class="beat">Grey dawn over Senaki. HATCH watches from the line shack as the two Hornets&#39;
+APUs spool up. Somewhere north, a brigade is fuelling its tanks.</p>
+            
+            <div class="radio"><span class="lbl">RADIO</span>HATCH: Enfield, Senaki ops. Weather&#39;s holding, target&#39;s still standing. Clock&#39;s running. Good hunting.</div>
+            
+            <div class="chips">
+              
+              <span class="chip">Trigger: T+10s after mission start</span>
+                
+              
+            </div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="1">
+          <span class="dot">2</span>
+          <button type="button" class="phase-card" aria-label="Show Coast-Out on the map">
+            <div class="phase-head"><h3>Coast-Out</h3><span class="time">07:12</span></div>
+            <p class="beat">Feet wet over Poti. OVERLORD checks you in and paints a clean picture to the
+north, with Colt flight already on station.</p>
+            
+            <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Enfield 1, OVERLORD, radar contact. Picture clean. Colt is on station, CAP at angels two-five.</div>
+            
+            <div class="chips">
+              <span class="chip">COAST</span><span class="chip">SEA</span>
+              <span class="chip">Trigger: Flight enters COAST zone</span>
+                
+              
+            </div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="2">
+          <span class="dot">3</span>
+          <button type="button" class="phase-card" aria-label="Show Push at the IP on the map">
+            <div class="phase-head"><h3>Push at the IP</h3><span class="time">07:28</span></div>
+            <p class="beat">You turn inbound. Ten seconds later the RWR lights up with a six. The Gainful
+battery was waiting for you.</p>
+            
+            <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Enfield, new emitter, SA-6, four miles east-southeast of target. They&#39;re awake.</div>
+            
+            <div class="chips">
+              <span class="chip">IP</span>
+              <span class="chip">Trigger: Flight enters IP zone</span>
+                <span class="chip act">Activates SA-6 Battery</span>
+              
+            </div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="3">
+          <span class="dot">4</span>
+          <button type="button" class="phase-card" aria-label="Show Target Run on the map">
+            <div class="phase-head"><h3>Target Run</h3><span class="time">07:31</span></div>
+            <p class="beat">Pod on the centre pier. Shilka tracers float up short of your altitude.
+Off to the east, Gudauta scrambles its alert pair.</p>
+            
+            <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Enfield, pop-up group, two contacts, Gudauta, climbing. Colt is committing.</div>
+            
+            <div class="chips">
+              <span class="chip">TGT</span>
+              <span class="chip">Trigger: Flight enters TGT zone</span>
+                <span class="chip act">Activates Red Alert</span>
+              
+            </div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="4">
+          <span class="dot">5</span>
+          <button type="button" class="phase-card" aria-label="Show Egress on the map">
+            <div class="phase-head"><h3>Egress</h3><span class="time">07:35</span></div>
+            <p class="beat">Hard turn west and down over the water. Behind you, either a cloud of dust
+over the Bzyb or a bridge that&#39;s still standing.</p>
+            
+            <div class="radio"><span class="lbl">RADIO</span>BRENNER (via OVERLORD): Enfield, ground eyes report the bridge is in the river. Outstanding work.</div>
+            
+            <div class="chips">
+              <span class="chip">EGRESS</span><span class="chip">HOME</span>
+              <span class="chip">Trigger: Bridge destroyed</span>
+                
+              
+            </div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="5">
+          <span class="dot">6</span>
+          <button type="button" class="phase-card" aria-label="Show Recovery &amp; Debrief on the map">
+            <div class="phase-head"><h3>Recovery &amp; Debrief</h3><span class="time">07:55</span></div>
+            <p class="beat">Wheels down at Senaki. HATCH meets you at the jet with the drone feed on a
+tablet. The debrief depends on what it shows.</p>
+            
+            <div class="radio"><span class="lbl">RADIO</span>HATCH: Mission complete. RTB and debrief at the ops hut.</div>
+            
+            <div class="chips">
+              
+              <span class="chip">Trigger: Flag 10 set</span>
+                
+              
+            </div>
+          </button>
+        </li>
+        
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="brief">
+  <div class="wrap">
+    <h2>Briefing</h2>
+    <div class="cards">
+      <div class="card"><h3>Situation</h3><p>Red mechanised forces are staging north of the Bzyb River for an offensive toward
+Sukhumi. The M-27 road bridge at Bzyb is their only heavy crossing. Blue holds
+air superiority over the coast, but the target is covered by a mobile SA-6
+battery and point-defence AAA. Red keeps a MiG-29 alert pair at Gudauta.</p></div>
+      <div class="card"><h3>Objectives</h3>
+        <ul class="obj-list"><li><span>primary</span><div>Destroy the Bzyb River road bridge.</div></li><li><span>secondary</span><div>Destroy or suppress the SA-6 battery covering the bridge if it engages.</div></li><li><span>tertiary</span><div>Return both aircraft to Senaki-Kolkhi.</div></li></ul>
+      </div>
+      <div class="card"><h3>Rules of engagement</h3><p>Weapons free on positively identified red air and air defence systems.
+Weapons tight on all ground targets other than the bridge and its defences.
+No releases south of the Gumista River. Avoid civilian traffic on the M-27.</p></div>
+
+      <div class="card wide"><h3>Threats</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Type</th><th>System</th><th>Range</th><th>Notes</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag sam">sam</span></td><td>SA-6 Gainful (2K12 Kub)</td>
+            <td class="num">24 km</td><td>Mobile. Emitting only when tripped by the IP zone. Low altitude is your friend.</td>
+          </tr><tr>
+            <td><span class="tag aaa">aaa</span></td><td>ZSU-23-4 Shilka</td>
+            <td class="num">2.5 km</td><td>At the bridge&#39;s west end. Stay above 12,000 ft on release.</td>
+          </tr><tr>
+            <td><span class="tag air">air</span></td><td>MiG-29S alert pair</td>
+            <td class="num">n/a</td><td>Alert 5 at Gudauta. Expect a launch once you&#39;re inbound to the target.</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card"><h3>Target</h3>
+        <dl class="kv">
+          <dt>Name</dt><dd>Bzyb River road bridge</dd>
+          <dt>Coords</dt><dd class="mono">43.2286N 40.3900E</dd>
+          <dt>Description</dt><dd>~750 m concrete road bridge carrying the S1/M-27 coast highway over the Bzyb, oriented 115/295. Located from OpenStreetMap data.</dd>
+          <dt>DMPI</dt><dd>Centre piers first, then the east abutment.</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Flight &amp; loadout</h3>
+        <dl class="kv">
+          <dt>Callsign</dt><dd>Enfield 1-1 / -2</dd>
+          <dt>Start</dt><dd>Cold start, Senaki-Kolkhi</dd>
+          <dt>Loadout</dt><dd>8× GBU-12, 2× AIM-9X, 1× AIM-120C, LITENING, 1× 330 gal tank</dd>
+          <dt>Laser</dt><dd class="mono">1688 / 1688</dd>
+          <dt>Joker / Bingo</dt><dd class="mono">6000 / 4500 lb</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Weather</h3>
+        <dl class="kv">
+          <dt>Wind</dt><dd class="mono">250° / 12 kt</dd>
+          <dt>Temp</dt><dd class="mono">9 °C</dd>
+          <dt>QNH</dt><dd class="mono">29.92 inHg</dd>
+          <dt>Clouds</dt><dd>Scattered 6,500 ft, broken 12,000 ft</dd>
+          <dt>Visibility</dt><dd>10+ km, haze over the water</dd>
+        </dl>
+      </div>
+
+      <div class="card wide"><h3>Navigation</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Alt</th><th>Speed</th><th>ETA</th><th>Action</th></tr></thead>
+          <tbody><tr>
+            <td class="num">1</td><td><b>COAST</b></td>
+            <td class="num">42.2600N 41.5600E</td>
+            <td class="num">20,000 ft</td><td class="num">420 kt</td>
+            <td class="num">07:12</td><td></td>
+          </tr><tr>
+            <td class="num">2</td><td><b>SEA</b></td>
+            <td class="num">42.7500N 40.9000E</td>
+            <td class="num">22,000 ft</td><td class="num">420 kt</td>
+            <td class="num">07:21</td><td></td>
+          </tr><tr>
+            <td class="num">3</td><td><b>IP</b></td>
+            <td class="num">43.0600N 40.4300E</td>
+            <td class="num">20,000 ft</td><td class="num">450 kt</td>
+            <td class="num">07:28</td><td></td>
+          </tr><tr>
+            <td class="num">4</td><td><b>TGT</b></td>
+            <td class="num">43.2286N 40.3900E</td>
+            <td class="num">18,000 ft</td><td class="num">450 kt</td>
+            <td class="num">07:31</td><td>BOMB</td>
+          </tr><tr>
+            <td class="num">5</td><td><b>EGRESS</b></td>
+            <td class="num">43.0800N 40.0500E</td>
+            <td class="num">22,000 ft</td><td class="num">450 kt</td>
+            <td class="num">07:35</td><td></td>
+          </tr><tr>
+            <td class="num">6</td><td><b>HOME</b></td>
+            <td class="num">42.6000N 40.9500E</td>
+            <td class="num">24,000 ft</td><td class="num">380 kt</td>
+            <td class="num">07:47</td><td></td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card wide"><h3>Comms</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Station</th><th>Frequency</th><th>Notes</th></tr></thead>
+          <tbody><tr><td>Enfield (inter-flight)</td><td class="num">251.000 AM</td><td>Radio 1</td></tr><tr><td>Package / strike common</td><td class="num">264.000 AM</td><td>Radio 2</td></tr><tr><td>OVERLORD (AWACS)</td><td class="num">251.000 AM</td><td>Shares Radio 1</td></tr><tr><td>Senaki Tower</td><td class="num">132.000 AM</td><td>TACAN 31X</td></tr><tr><td>Colt (CAP)</td><td class="num">264.000 AM</td><td>Shares Radio 2</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="debrief">
+  <div class="wrap">
+    <h2>Possible outcomes</h2>
+    <div class="outcomes">
+      
+      <div class="card outcome success"><h3>success</h3><p>The bridge is down. Recon from a coalition drone at 0815 shows the brigade&#39;s lead
+elements backed up along the M-27 north of Bzyb, with engineers already
+surveying the riverbank. Brenner&#39;s men on the Gumista get the week they needed.</p></div>
+      
+      <div class="card outcome partial"><h3>partial</h3><p>The bridge is damaged but still standing. Light vehicles are getting across.
+HATCH is already writing a re-attack tasking for this afternoon, and the SA-6
+crews now know you&#39;re coming.</p></div>
+      
+      <div class="card outcome failure"><h3>failure</h3><p>The bridge stands. By nightfall the first T-72s are across the Bzyb, and the
+Gumista line is bracing for contact at dawn.</p></div>
+      
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/gudauta_bridge/mission.yaml</code>. The same file builds the .miz, so the briefing and the mission always match.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const D = {"route": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644, "kind": "base"}, {"name": "COAST", "lat": 42.26, "lon": 41.56, "alt_ft": 20000, "kts": 420, "eta": "07:12", "kind": "wp", "num": 1}, {"name": "SEA", "lat": 42.75, "lon": 40.9, "alt_ft": 22000, "kts": 420, "eta": "07:21", "kind": "wp", "num": 2}, {"name": "IP", "lat": 43.06, "lon": 40.43, "alt_ft": 20000, "kts": 450, "eta": "07:28", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "TGT", "lat": 43.2286, "lon": 40.39, "alt_ft": 18000, "kts": 450, "eta": "07:31", "action": "bomb", "zone_km": 4, "kind": "wp", "num": 4}, {"name": "EGRESS", "lat": 43.08, "lon": 40.05, "alt_ft": 22000, "kts": 450, "eta": "07:35", "kind": "wp", "num": 5}, {"name": "HOME", "lat": 42.6, "lon": 40.95, "alt_ft": 24000, "kts": 380, "eta": "07:47", "kind": "wp", "num": 6}, {"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644, "kind": "base"}], "target": {"name": "Bzyb River road bridge", "lat": 43.2286, "lon": 40.39, "zone_m": 150, "description": "~750 m concrete road bridge carrying the S1/M-27 coast highway over the Bzyb, oriented 115/295. Located from OpenStreetMap data.", "dmpi": "Centre piers first, then the east abutment."}, "threats": [{"name": "SA-6 Gainful (2K12 Kub)", "kind": "sam", "lat": 43.205, "lon": 40.465, "range_km": 24, "notes": "Mobile. Emitting only when tripped by the IP zone. Low altitude is your friend."}, {"name": "ZSU-23-4 Shilka", "kind": "aaa", "lat": 43.23, "lon": 40.3868, "range_km": 2.5, "notes": "At the bridge's west end. Stay above 12,000 ft on release."}, {"name": "MiG-29S alert pair", "kind": "air", "lat": 43.124, "lon": 40.567, "range_km": 0, "notes": "Alert 5 at Gudauta. Expect a launch once you're inbound to the target."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.35, "lon": 41.3, "alt_ft": 30000, "heading": 300, "leg_nm": 30, "freq_mhz": 251.0}, {"kind": "cap", "callsign": "Colt", "aircraft": "F_16C_50", "coalition": "blue", "count": 2, "base": "Kutaisi", "from": {"lat": 42.95, "lon": 40.7}, "to": {"lat": 42.8, "lon": 40.95}, "alt_ft": 25000, "base_ll": {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}}, {"kind": "intercept", "callsign": "Red Alert", "aircraft": "MiG_29S", "coalition": "red", "count": 2, "base": "Gudauta", "late_activation": true, "engage": true, "base_ll": {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}}], "airfields": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}, {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}], "phases": [{"phase": "Step & Start", "waypoints": []}, {"phase": "Coast-Out", "waypoints": ["COAST", "SEA"]}, {"phase": "Push at the IP", "waypoints": ["IP"]}, {"phase": "Target Run", "waypoints": ["TGT"]}, {"phase": "Egress", "waypoints": ["EGRESS", "HOME"]}, {"phase": "Recovery & Debrief", "waypoints": []}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// Theme toggle (remembered per viewer when storage is available)
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    drawMap();
+  });
+})();
+
+let map, layers = {}, routeLine, wpLatLng = {};
+function drawMap() {
+  if (typeof L === "undefined") { document.getElementById("map").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  const center = map ? map.getCenter() : null, zoom = map ? map.getZoom() : null;
+  if (map) map.remove();
+  map = L.map("map", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+
+  const blue = css("--blue"), red = css("--red"), amber = css("--amber"), ok = css("--ok"), accent = css("--accent");
+  layers = { route: L.layerGroup(), threats: L.layerGroup(), support: L.layerGroup(), target: L.layerGroup() };
+
+  const pts = D.route.map(p => [p.lat, p.lon]);
+  routeLine = L.polyline(pts, { color: blue, weight: 3, opacity: .9 }).addTo(layers.route);
+  D.route.forEach(p => {
+    const ll = [p.lat, p.lon];
+    if (p.kind === "wp") wpLatLng[p.name] = ll;
+    const m = L.circleMarker(ll, { radius: p.kind === "base" ? 7 : 5, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+      .addTo(layers.route)
+      .bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });
+    if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
+  });
+
+  D.threats.forEach(t => {
+    const c = t.kind === "aaa" ? amber : red;
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, fillColor: c, fillOpacity: .08, dashArray: t.kind === "sam" ? "6 4" : null }).addTo(layers.threats);
+    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: c, fillOpacity: 1 }).addTo(layers.threats)
+      .bindPopup(`<b>${t.name}</b>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}<br>${t.notes || ""}`);
+  });
+
+  D.support.forEach(s => {
+    const c = s.coalition === "red" ? red : ok;
+    if (s.from && s.to) {
+      L.polyline([[s.from.lat, s.from.lon], [s.to.lat, s.to.lon]], { color: c, weight: 3, dashArray: "2 6" }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} CAP`, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.lat) {
+      L.circleMarker([s.lat, s.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.base_ll) {
+      L.circleMarker([s.base_ll.lat, s.base_ll.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} (${s.base_ll.name})`, { permanent: true, direction: "left", className: "wp-label" });
+    }
+  });
+
+  const tg = D.target;
+  L.marker([tg.lat, tg.lon], { icon: L.divIcon({ className: "", html: `<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="${accent}" stroke-width="2.5"/><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="${accent}" stroke-width="2.5"/></svg>`, iconSize: [26, 26], iconAnchor: [13, 13] }) })
+    .addTo(layers.target).bindPopup(`<b>${tg.name}</b><br>${tg.description || ""}`);
+
+  document.querySelectorAll("#legend input").forEach(cb => { if (cb.checked) layers[cb.dataset.layer].addTo(map); });
+  if (center) map.setView(center, zoom); else map.fitBounds(routeLine.getBounds(), { padding: [24, 24] });
+}
+
+document.querySelectorAll("#legend input").forEach(cb => cb.addEventListener("change", () => {
+  cb.checked ? layers[cb.dataset.layer].addTo(map) : map.removeLayer(layers[cb.dataset.layer]);
+}));
+
+let hl;
+document.querySelectorAll(".phase").forEach(li => li.querySelector(".phase-card").addEventListener("click", () => {
+  document.querySelectorAll(".phase").forEach(x => x.classList.toggle("active", x === li));
+  if (!map) return;
+  if (hl) map.removeLayer(hl);
+  const wps = D.phases[+li.dataset.idx].waypoints.map(n => wpLatLng[n]).filter(Boolean);
+  if (!wps.length) { map.fitBounds(routeLine.getBounds(), { padding: [24, 24] }); return; }
+  // Highlight the leg into the first waypoint through the last one in this phase
+  const all = D.route.map(p => [p.lat, p.lon]);
+  const names = D.route.map(p => p.name);
+  const i0 = Math.max(0, names.indexOf(D.phases[+li.dataset.idx].waypoints[0]) - 1);
+  const i1 = names.indexOf(D.phases[+li.dataset.idx].waypoints.at(-1));
+  hl = L.polyline(all.slice(i0, i1 + 1), { color: css("--accent"), weight: 6, opacity: .85 }).addTo(map);
+  map.fitBounds(L.latLngBounds(all.slice(i0, i1 + 1)).pad(0.35), { maxZoom: 10 });
+  if (matchMedia("(max-width: 900px)").matches) document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+}));
+
+drawMap();
+</script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 """mission.yaml -> pydcs Mission -> .miz"""
 from __future__ import annotations
 
+import random
+import zipfile
 from datetime import date, datetime
 from pathlib import Path
 
@@ -32,9 +34,10 @@ def _vehicle(name: str):
 
 
 def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.Mission:
+    meta = data["meta"]
+    random.seed(meta["id"])  # pydcs randomises tail numbers; keep rebuilds byte-identical
     terrain = Caucasus()
     m = dcs.Mission(terrain)
-    meta = data["meta"]
     blue = m.country(meta.get("blue_country", "USA"))
     red = m.country(meta.get("red_country", "Russia"))
 
@@ -166,13 +169,31 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         "OBJECTIVES\n" + "\n".join(f"{k.upper()}: {v}" for k, v in obj.items())
         + f"\n\nROE\n{data.get('roe', '').strip()}\n\nTHREATS\n{threats}")
 
+    # pydcs picks tail numbers by popping from a set, which varies per process; number them in order instead
+    tail = 100
+    for g in groups.values():
+        for u in g.units:
+            if hasattr(u, "onboard_num") and hasattr(g, "frequency"):
+                tail += 1
+                u.onboard_num = f"{tail:03}"
+
     player_type = _type(dcs.planes, next(f for f in data["flights"] if f.get("player"))["aircraft"])
     for page in kneeboard_pages:
         m.add_aircraft_kneeboard(player_type, Path(page))
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(out_path))
+    _pin_zip_timestamps(out_path)
     return m
+
+
+def _pin_zip_timestamps(path: Path) -> None:
+    """Rewrite the .miz with fixed entry timestamps so unchanged missions don't show up in git diffs."""
+    with zipfile.ZipFile(path) as z:
+        entries = [(i.filename, z.read(i.filename)) for i in z.infolist()]
+    with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as z:
+        for name, blob in entries:
+            z.writestr(zipfile.ZipInfo(name, date_time=(2000, 1, 1, 0, 0, 0)), blob, compress_type=zipfile.ZIP_DEFLATED)
 
 
 def _airport(terrain, name: str):

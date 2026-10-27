@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission Hangar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #f4f2ec; --surface: #fffdf8; --ink: #1d2124; --muted: #5e646a; --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111416; --surface: #181c1f; --ink: #e6e3dc; --muted: #9aa1a6; --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --shadow: 0 1px 2px rgba(0,0,0,.4); } }
+:root[data-theme="dark"] { --bg: #111416; --surface: #181c1f; --ink: #e6e3dc; --muted: #9aa1a6; --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --shadow: 0 1px 2px rgba(0,0,0,.4); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+header { padding: 48px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 46px); margin: 10px 0 8px; letter-spacing: -.02em; }
+header p { color: var(--muted); margin: 0; max-width: 64ch; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 20px; padding-bottom: 48px; }
+.m { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
+.m h2 { margin: 0; font-size: 22px; line-height: 1.2; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.m p { margin: 0; }
+.hook { border-left: 3px solid var(--accent); padding-left: 12px; font-style: italic; }
+.obj { font-size: 14px; color: var(--muted); }
+.obj b { color: var(--ink); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.actions a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
+.actions a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.kb { display: flex; gap: 8px; overflow-x: auto; }
+.kb img { height: 120px; border-radius: 4px; border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">DCS Missions</div>
+  <h1>Mission Hangar</h1>
+  <p>Ready-to-fly missions. Download the .miz into <code>Saved Games/DCS/Missions/</code>, read the briefing, and print the kneeboard pages if you fly without the in-game kneeboard.</p>
+</div></header>
+<main class="wrap grid">
+
+  <article class="m">
+    <div class="eyebrow">Operation BROKEN SPAN</div>
+    <h2>Strike on the Bzyb River Bridge</h2>
+    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-03-14 · 06:40L</span></div>
+    <p class="hook">&#34;Gentlemen, there&#39;s one bridge between that brigade and Sukhumi. By breakfast
+I want it in the river.&#34; HATCH Moreno, 0500 brief</p>
+    <p>Three weeks ago a ceasefire along the Inguri line collapsed. Separatist forces, re-equipped with modern air defences and backed by Russian advisers, have been pushing armour south down the coastal M-27 highway toward Sukhumi. The coalition has held them at the Gumista, but intelligence shows a fresh mechanised brigade staging near Gagra for a push within 36 hours.</p>
+    <p class="obj"><b>Primary:</b> Destroy the Bzyb River road bridge.</p>
+    <div class="kb"><a href="gudauta_bridge/kneeboard/01_mission.png"><img src="gudauta_bridge/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="gudauta_bridge/kneeboard/02_nav.png"><img src="gudauta_bridge/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="gudauta_bridge/kneeboard/03_threats.png"><img src="gudauta_bridge/kneeboard/03_threats.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="gudauta_bridge/briefing.html">Open briefing</a>
+      <a href="gudauta_bridge/gudauta_bridge.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+</main>
+</body>
+</html>
