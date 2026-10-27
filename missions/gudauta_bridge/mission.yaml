@@ -196,6 +196,7 @@ support:
     engage: true
 
 # Storyboard: ordered phases. `waypoints` link to flight waypoint names (map highlight).
+# `beat` is the story text (briefing page + slide); `notes` (optional) are presenter notes on the slide.
 # `trigger` (optional) becomes a DCS trigger rule. Supported kinds:
 #   time_after(seconds) | player_in_zone(waypoint) | group_dead(unit name) | flag(n)
 #   target_destroyed(true): bridge scenery object in target zone dead OR "Bridge target" group dead
@@ -226,6 +227,7 @@ storyboard:
   - phase: "Push at the IP"
     time: "07:28"
     waypoints: ["IP"]
+    notes: "Pause after the radio call. Ask the room what they'd do when the six appears: press, notch, or go low?"
     beat: |
       You turn inbound. Ten seconds later the RWR lights up with a six. The Gainful
       battery was waiting for you.

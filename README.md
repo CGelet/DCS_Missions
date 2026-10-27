@@ -9,7 +9,22 @@ Everything in [`hangar/`](hangar/) is already rendered:
 1. Open [`hangar/README.md`](hangar/README.md) to browse the missions.
 2. Download the mission's `.miz` and put it in `Saved Games/DCS/Missions/`.
 3. Download its `briefing.html` and open it in a browser for the story, the storyboard map, and the briefing cards. GitHub shows HTML files as source code, so download it rather than viewing it on GitHub.
-4. The kneeboard pages are already inside the `.miz`. The PNGs are in the repo too, if you want to print them.
+4. To brief your squadron, download `slides.html` and present it (see below).
+5. The kneeboard pages are already inside the `.miz`. The PNGs are in the repo too, if you want to print them.
+
+## Present the slide deck
+
+`slides.html` tells the mission as a story, one idea per slide: the hook, the backstory, the cast, the battlespace, the target and threats, then one slide per storyboard phase with its radio call and a map of that leg. It ends at "Questions?". The debrief outcomes come after that, for after the flight.
+
+| Key | Action |
+| --- | --- |
+| → / Space / click right side | Next slide |
+| ← / click left side | Previous slide |
+| N | Presenter notes |
+| F | Fullscreen |
+| Home / End | First / last slide |
+
+The maps are drawn offline, so the deck works without internet (fonts fall back if offline). To get a PDF, print from Chrome with "Background graphics" on: each slide becomes one page.
 
 ## How the repo works
 
@@ -17,11 +32,12 @@ Everything in [`hangar/`](hangar/) is already rendered:
 missions/<id>/mission.yaml   source of truth: story, units, route, triggers, briefing
 dcsmb/                       the builder (Python)
 templates/                   briefing, kneeboard and hangar page layouts
-hangar/<id>/                 rendered output: <id>.miz, briefing.html, kneeboard/*.png
+hangar/<id>/                 rendered output: <id>.miz, briefing.html, slides.html, kneeboard/*.png
+scripts/fetch_coastline.py   one-off: coastline data for the slide maps (re-run for a new theater)
 hangar/index.html, README.md hangar listing, regenerated on every build
 ```
 
-The `.miz`, briefing, and kneeboard all come from the same `mission.yaml`, so they can't disagree. **Don't edit files in `hangar/` by hand.** They're overwritten on the next build. That includes saving a `.miz` from the DCS Mission Editor: carry the change back into `mission.yaml` instead.
+The `.miz`, briefing, slide deck, and kneeboard all come from the same `mission.yaml`, so they can't disagree. **Don't edit files in `hangar/` by hand.** They're overwritten on the next build. That includes saving a `.miz` from the DCS Mission Editor: carry the change back into `mission.yaml` instead.
 
 The hangar is always committed fully rendered. Builds are reproducible: rebuilding an unchanged mission produces byte-identical files, so only missions that actually changed show up in a commit.
 
@@ -49,7 +65,7 @@ Change `missions/<id>/mission.yaml`, or copy an existing mission folder to start
 | `flights` | The player flight: aircraft, base, loadout by pylon, waypoints. A waypoint with `zone_km` gets a trigger zone. |
 | `target` | Target position. `zone_m` is the radius of the "map object dead" zone. |
 | `units`, `support` | Ground groups, AWACS, CAP, red interceptors. `late_activation` groups wait for a trigger. |
-| `storyboard` | Ordered story phases. Each has a narrative `beat` and an optional `trigger` that becomes a DCS trigger rule (radio message, group activation, flag). |
+| `storyboard` | Ordered story phases. Each has a narrative `beat`, optional presenter `notes` for its slide, and an optional `trigger` that becomes a DCS trigger rule (radio message, group activation, flag). |
 
 Trigger conditions: `time_after` (seconds), `player_in_zone` (waypoint name), `group_dead` (group name), `flag` (number), and `target_destroyed`. `target_destroyed` fires when the scenery object in the target zone dies, or when the `Bridge target` fallback group does.
 

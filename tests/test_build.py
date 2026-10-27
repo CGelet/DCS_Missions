@@ -64,3 +64,16 @@ def test_html_contains_story_and_map(data, tmp_path):
     for ph in data["storyboard"]:
         assert ph["phase"].replace("&", "&amp;") in html
     assert '"route"' in html and "leaflet" in html
+
+
+def test_slides_cover_story_and_every_phase(data, tmp_path):
+    from dcsmb import build_slides
+
+    deck = build_slides.slides(data)
+    kinds = [s["kind"] for s in deck]
+    assert kinds[0] == "title" and "outcome" in kinds
+    phases = [s for s in deck if s["kind"] == "phase"]
+    assert [s["title"] for s in phases] == [p["phase"] for p in data["storyboard"]]
+    assert all(s["svg"] for s, p in zip(phases, data["storyboard"]) if p.get("waypoints"))
+    html = build_slides.build(data, tmp_path / "s.html").read_text()
+    assert html.count('<section class="slide') == len(deck)

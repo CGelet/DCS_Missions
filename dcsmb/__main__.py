@@ -7,7 +7,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from . import build_hangar, build_html, build_miz, kneeboard, schema
+from . import build_hangar, build_html, build_miz, build_slides, kneeboard, schema
 
 ROOT = Path(__file__).resolve().parent.parent
 MISSIONS = ROOT / "missions"
@@ -17,7 +17,7 @@ HANGAR = ROOT / "hangar"
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="dcsmb")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    b = sub.add_parser("build", help="build .miz, briefing.html and kneeboard pages into hangar/")
+    b = sub.add_parser("build", help="build .miz, briefing, slide deck and kneeboard pages into hangar/")
     b.add_argument("mission_dirs", type=Path, nargs="*", help="default: every folder in missions/")
     b.add_argument("--no-kneeboard", action="store_true", help="skip PNG rendering (no Chromium needed)")
     args = ap.parse_args(argv)
@@ -40,9 +40,10 @@ def main(argv=None) -> int:
         out = HANGAR / data["meta"]["id"]
         pages = [] if args.no_kneeboard else kneeboard.build(data, out / "kneeboard")
         html = build_html.build(data, out / "briefing.html")
+        deck = build_slides.build(data, out / "slides.html")
         miz = out / f"{data['meta']['id']}.miz"
         build_miz.build(data, miz, pages)
-        for p in [miz, html, *pages]:
+        for p in [miz, html, deck, *pages]:
             print(f"wrote {p.relative_to(ROOT)}")
 
     for p in build_hangar.build(list(missions.values()), HANGAR):

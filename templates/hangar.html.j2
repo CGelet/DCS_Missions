@@ -54,6 +54,7 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
     {% if m.kneeboards %}<div class="kb">{% for k in m.kneeboards %}<a href="{{ m.id }}/kneeboard/{{ k }}"><img src="{{ m.id }}/kneeboard/{{ k }}" alt="Kneeboard page {{ loop.index }}"></a>{% endfor %}</div>{% endif %}
     <div class="actions">
       <a class="primary" href="{{ m.id }}/briefing.html">Open briefing</a>
+      <a href="{{ m.id }}/slides.html">Slide deck</a>
       <a href="{{ m.id }}/{{ m.id }}.miz" download>Download .miz</a>
     </div>
   </article>

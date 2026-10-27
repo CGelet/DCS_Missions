@@ -1,7 +1,7 @@
 # Hangar
 
 Ready-to-fly missions. Download a `.miz`, drop it in `Saved Games/DCS/Missions/`, and open it in DCS.
-To read a briefing, download its `briefing.html` and open it in a browser (GitHub shows HTML as source code).
+To read a briefing or present the slide deck, download `briefing.html` or `slides.html` and open it in a browser (GitHub shows HTML as source code).
 `index.html` in this folder lists every mission the same way.
 
 These files are generated from `missions/<id>/mission.yaml`. Don't edit them by hand; see the main README to change a mission.
@@ -20,6 +20,7 @@ Three weeks ago a ceasefire along the Inguri line collapsed. Separatist forces, 
 | --- | --- |
 | Mission | [gudauta_bridge.miz](gudauta_bridge/gudauta_bridge.miz) |
 | Briefing | [briefing.html](gudauta_bridge/briefing.html) |
+| Slide deck | [slides.html](gudauta_bridge/slides.html) |
 | Kneeboard | [01_mission.png](gudauta_bridge/kneeboard/01_mission.png) · [02_nav.png](gudauta_bridge/kneeboard/02_nav.png) · [03_threats.png](gudauta_bridge/kneeboard/03_threats.png) |
 
 <p><a href="gudauta_bridge/kneeboard/01_mission.png"><img src="gudauta_bridge/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="gudauta_bridge/kneeboard/02_nav.png"><img src="gudauta_bridge/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="gudauta_bridge/kneeboard/03_threats.png"><img src="gudauta_bridge/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
