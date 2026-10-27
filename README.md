@@ -87,7 +87,7 @@ The **Seen by** column says which audience gets each section.
 
 | Section | Seen by | What it controls |
 | --- | --- | --- |
-| `meta` | everyone | Title, map, date, start time, weather |
+| `meta` | everyone | Title, map, date, start time, weather, `role` (mission type, e.g. Strike, SEAD, CAS, RESCAP, Anti-ship: the hangar filters on it) |
 | `narrative` | pilots, except `outcomes` (director) | Backstory, cast, opening quote. The backstory also becomes the in-game briefing text. |
 | `situation`, `objectives`, `roe`, `comms` | pilots | Briefing cards, kneeboard pages, in-game task text |
 | `threats` | pilots | **Intel, not truth.** `intel: confirmed / suspected / possible`, optional `area_km` for position uncertainty. Can be wrong on purpose. |

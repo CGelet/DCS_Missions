@@ -12,6 +12,24 @@ AIRCRAFT_NAMES = {"FA_18C_hornet": "F/A-18C Hornet", "F_16C_50": "F-16C Viper", 
                   "UH_60A": "UH-60A Black Hawk"}
 
 
+def features(data: dict) -> list[str]:
+    """Filterable traits, derived from the mission so they can't go stale."""
+    player = next(f for f in data["flights"] if f.get("player"))
+    ships = {sh["name"] for sh in data.get("ships", [])}
+    out = []
+    if player["base"] in ships or player.get("land") in ships:
+        out.append("Carrier")
+    if any(s["kind"] == "tanker" and s.get("coalition", "blue") == "blue" for s in data.get("support", [])):
+        out.append("Air refuelling")
+    if any(wp.get("agl") or wp.get("alt_ft", 99999) <= 1000 for wp in player["waypoints"]):
+        out.append("Low level")
+    if player.get("land", player["base"]) != player["base"]:
+        out.append("Different recovery field")
+    if player.get("start") in ("runway", "warm"):
+        out.append("Hot start")
+    return out
+
+
 def card(data: dict, hangar: Path) -> dict:
     meta, player = data["meta"], next(f for f in data["flights"] if f.get("player"))
     teaser = data["narrative"]["backstory"].strip().split("\n\n")[0].replace("\n", " ")
@@ -21,6 +39,9 @@ def card(data: dict, hangar: Path) -> dict:
         "title": meta.get("subtitle") or meta["title"],
         "theater": meta["theater"].title(),
         "aircraft": f"{player.get('count', 1)}× {AIRCRAFT_NAMES.get(player['aircraft'], player['aircraft'])}",
+        "aircraft_type": AIRCRAFT_NAMES.get(player["aircraft"], player["aircraft"]),
+        "role": meta.get("role", "Mission"),
+        "features": features(data),
         "date": meta["date"],
         "start_time": meta["start_time"],
         "objective": data["objectives"].get("primary", ""),
@@ -32,10 +53,13 @@ def card(data: dict, hangar: Path) -> dict:
 
 def build(missions: list[dict], hangar: Path) -> list[Path]:
     cards = sorted((card(m, hangar) for m in missions), key=lambda c: (str(c["date"]), c["id"]))  # campaign order
+    filters = [("aircraft", "Aircraft", sorted({c["aircraft_type"] for c in cards})),
+               ("role", "Mission type", sorted({c["role"] for c in cards})),
+               ("features", "Features", sorted({f for c in cards for f in c["features"]}))]
     hangar.mkdir(parents=True, exist_ok=True)
     out = []
     for name in ("index.html", "README.md"):
         path = hangar / name
-        path.write_text(env().get_template(f"hangar.{name.split('.')[1]}.j2").render(missions=cards))
+        path.write_text(env().get_template(f"hangar.{name.split('.')[1]}.j2").render(missions=cards, filters=filters))
         out.append(path)
     return out

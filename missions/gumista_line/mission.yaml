@@ -12,6 +12,7 @@ meta:
   title: "Operation HOLD FAST"
   subtitle: "Defend the Gumista Line"
   theater: caucasus
+  role: "CAS"   # mission type: the hangar filters on it
   date: 2026-03-18
   start_time: "05:50"
   weather:

@@ -14,13 +14,28 @@
 :root[data-theme="dark"] { --bg: #111416; --surface: #181c1f; --ink: #e6e3dc; --muted: #9aa1a6; --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --shadow: 0 1px 2px rgba(0,0,0,.4); }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
-.wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
 @media (max-width: 640px) { .wrap { padding: 0 16px; } }
 header { padding: 48px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
 .eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
 h1 { font-size: clamp(30px, 5vw, 46px); margin: 10px 0 8px; letter-spacing: -.02em; }
 header p { color: var(--muted); margin: 0; max-width: 64ch; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 20px; padding-bottom: 48px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding-bottom: 48px; }
+@media (min-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1140px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.m[hidden] { display: none; }
+.filters { display: grid; gap: 12px; margin-bottom: 24px; }
+.filters input { width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; }
+.filters input:focus-visible, .fchip:focus-visible, .fstatus button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.flabel { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); min-width: 120px; }
+@media (max-width: 640px) { .flabel { flex-basis: 100%; } }
+.fchip { font: 13px/1 "IBM Plex Sans", system-ui, sans-serif; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.fchip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.fstatus { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); min-height: 32px; }
+.fstatus button { font: 600 13px/1 "IBM Plex Sans", system-ui, sans-serif; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 6px 0; }
+.empty { color: var(--muted); padding: 32px 0 64px; }
+.chip.role { color: var(--accent); border-color: var(--accent); }
 .m { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
 .m h2 { margin: 0; font-size: 22px; line-height: 1.2; }
 .meta { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -42,12 +57,30 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
   <h1>Mission Hangar</h1>
   <p>Ready-to-fly missions. Download the .miz into <code>Saved Games/DCS/Missions/</code>, read the briefing, and print the kneeboard pages if you fly without the in-game kneeboard.</p>
 </div></header>
+<div class="wrap">
+  <section class="filters" aria-label="Filter missions">
+    <input type="search" id="q" placeholder="Search by operation, place, story…" aria-label="Search missions">
+    
+    <div class="fgroup" data-group="aircraft"><span class="flabel">Aircraft</span>
+      <button type="button" class="fchip" aria-pressed="false" data-value="A-10C II">A-10C II</button><button type="button" class="fchip" aria-pressed="false" data-value="AV-8B Harrier">AV-8B Harrier</button><button type="button" class="fchip" aria-pressed="false" data-value="F-14B Tomcat">F-14B Tomcat</button><button type="button" class="fchip" aria-pressed="false" data-value="F-16C Viper">F-16C Viper</button><button type="button" class="fchip" aria-pressed="false" data-value="F/A-18C Hornet">F/A-18C Hornet</button>
+    </div>
+    <div class="fgroup" data-group="role"><span class="flabel">Mission type</span>
+      <button type="button" class="fchip" aria-pressed="false" data-value="Anti-ship">Anti-ship</button><button type="button" class="fchip" aria-pressed="false" data-value="CAS">CAS</button><button type="button" class="fchip" aria-pressed="false" data-value="Fleet defense">Fleet defense</button><button type="button" class="fchip" aria-pressed="false" data-value="RESCAP">RESCAP</button><button type="button" class="fchip" aria-pressed="false" data-value="SEAD">SEAD</button><button type="button" class="fchip" aria-pressed="false" data-value="Strike">Strike</button>
+    </div>
+    <div class="fgroup" data-group="features"><span class="flabel">Features</span>
+      <button type="button" class="fchip" aria-pressed="false" data-value="Air refuelling">Air refuelling</button><button type="button" class="fchip" aria-pressed="false" data-value="Carrier">Carrier</button><button type="button" class="fchip" aria-pressed="false" data-value="Different recovery field">Different recovery field</button><button type="button" class="fchip" aria-pressed="false" data-value="Hot start">Hot start</button><button type="button" class="fchip" aria-pressed="false" data-value="Low level">Low level</button>
+    </div>
+    <div class="fstatus"><span id="count" aria-live="polite">7 missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
+  </section>
+</div>
 <main class="wrap grid">
 
-  <article class="m">
+  <article class="m" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features=""
+           data-text="broken span strike on the bzyb river bridge caucasus 2× f/a-18c hornet strike &#34;gentlemen, there&#39;s one bridge between that brigade and sukhumi. by breakfast
+i want it in the river.&#34; hatch moreno, 0500 brief three weeks ago a ceasefire along the inguri line collapsed. separatist forces, re-equipped with modern air defences and backed by russian advisers, have been pushing armour south down the coastal m-27 highway toward sukhumi. the coalition has held them at the gumista, but intelligence shows a fresh mechanised brigade staging near gagra for a push within 36 hours. destroy the bzyb river road bridge.">
     <div class="eyebrow">Operation BROKEN SPAN</div>
     <h2>Strike on the Bzyb River Bridge</h2>
-    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-03-14 · 06:40L</span></div>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-03-14 · 06:40L</span></div>
     <p class="hook">&#34;Gentlemen, there&#39;s one bridge between that brigade and Sukhumi. By breakfast
 I want it in the river.&#34; HATCH Moreno, 0500 brief</p>
     <p>Three weeks ago a ceasefire along the Inguri line collapsed. Separatist forces, re-equipped with modern air defences and backed by Russian advisers, have been pushing armour south down the coastal M-27 highway toward Sukhumi. The coalition has held them at the Gumista, but intelligence shows a fresh mechanised brigade staging near Gagra for a push within 36 hours.</p>
@@ -61,10 +94,12 @@ I want it in the river.&#34; HATCH Moreno, 0500 brief</p>
     </div>
   </article>
 
-  <article class="m">
+  <article class="m" data-aircraft="F-16C Viper" data-role="SEAD" data-features=""
+           data-text="silent orchard find the sa-11 caucasus 2× f-16c viper sead &#34;it&#39;s out there, it already has one kill, and it&#39;s patient. make it talk, then
+make it stop.&#34; lt kapanadze, 1300 brief two days after the strike on the bzyb bridge, the separatists answered. yesterday at 1410 a coalition mq-9, magpie 3, went silent over the hills above new athos. its last telemetry frame shows a 9s18 search radar locking it up from somewhere in the orchards below. locate and destroy or disable the sa-11 battery (search radar and launchers).">
     <div class="eyebrow">Operation SILENT ORCHARD</div>
     <h2>Find the SA-11</h2>
-    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× F-16C Viper</span><span class="chip">2026-03-16 · 14:20L</span></div>
+    <div class="meta"><span class="chip role">SEAD</span><span class="chip">Caucasus</span><span class="chip">2× F-16C Viper</span><span class="chip">2026-03-16 · 14:20L</span></div>
     <p class="hook">&#34;It&#39;s out there, it already has one kill, and it&#39;s patient. Make it talk, then
 make it stop.&#34; Lt Kapanadze, 1300 brief</p>
     <p>Two days after the strike on the Bzyb bridge, the separatists answered. Yesterday at 1410 a coalition MQ-9, MAGPIE 3, went silent over the hills above New Athos. Its last telemetry frame shows a 9S18 search radar locking it up from somewhere in the orchards below.</p>
@@ -78,10 +113,11 @@ make it stop.&#34; Lt Kapanadze, 1300 brief</p>
     </div>
   </article>
 
-  <article class="m">
+  <article class="m" data-aircraft="A-10C II" data-role="CAS" data-features="Hot start"
+           data-text="hold fast defend the gumista line caucasus 2× a-10c ii cas &#34;i can hear tracks. i can&#39;t see them yet. get here.&#34; chisel, 0531 the brigade the bzyb strike was meant to stall is moving. at 0520 captain brenner&#39;s company on the gumista reported engine noise west of the river. two bridges cross the gumista into sukhumi, the coast road and the highway, and brenner has one company to hold both. destroy the attacking column before it crosses the gumista.">
     <div class="eyebrow">Operation HOLD FAST</div>
     <h2>Defend the Gumista Line</h2>
-    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× A-10C II</span><span class="chip">2026-03-18 · 05:50L</span></div>
+    <div class="meta"><span class="chip role">CAS</span><span class="chip">Caucasus</span><span class="chip">2× A-10C II</span><span class="chip">2026-03-18 · 05:50L</span><span class="chip">Hot start</span></div>
     <p class="hook">&#34;I can hear tracks. I can&#39;t see them yet. Get here.&#34; CHISEL, 0531</p>
     <p>The brigade the Bzyb strike was meant to stall is moving. At 0520 Captain Brenner&#39;s company on the Gumista reported engine noise west of the river. Two bridges cross the Gumista into Sukhumi, the coast road and the highway, and Brenner has one company to hold both.</p>
     <p class="obj"><b>Primary:</b> Destroy the attacking column before it crosses the Gumista.</p>
@@ -94,10 +130,12 @@ make it stop.&#34; Lt Kapanadze, 1300 brief</p>
     </div>
   </article>
 
-  <article class="m">
+  <article class="m" data-aircraft="F-14B Tomcat" data-role="Fleet defense" data-features="Carrier|Air refuelling"
+           data-text="blue water hold the line at sea caucasus 2× f-14b tomcat fleet defense &#34;they only have to get lucky once. you have to be lucky every time. tonight, be
+lucky early.&#34; bishop, 1600 brief with the gumista holding, the coalition moved the stennis strike group into the eastern black sea to put fighters over sukhumi around the clock. the answer from the north was always going to come by air. overnight, two tu-22m3 backfires moved forward. each carries a kh-22 that can hit a carrier from 300 km away. destroy the bomber raid before it reaches the kh-22 launch line.">
     <div class="eyebrow">Operation BLUE WATER</div>
     <h2>Hold the Line at Sea</h2>
-    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× F-14B Tomcat</span><span class="chip">2026-03-20 · 16:40L</span></div>
+    <div class="meta"><span class="chip role">Fleet defense</span><span class="chip">Caucasus</span><span class="chip">2× F-14B Tomcat</span><span class="chip">2026-03-20 · 16:40L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
     <p class="hook">&#34;They only have to get lucky once. You have to be lucky every time. Tonight, be
 lucky early.&#34; BISHOP, 1600 brief</p>
     <p>With the Gumista holding, the coalition moved the Stennis strike group into the eastern Black Sea to put fighters over Sukhumi around the clock. The answer from the north was always going to come by air. Overnight, two Tu-22M3 Backfires moved forward. Each carries a Kh-22 that can hit a carrier from 300 km away.</p>
@@ -111,10 +149,11 @@ lucky early.&#34; BISHOP, 1600 brief</p>
     </div>
   </article>
 
-  <article class="m">
+  <article class="m" data-aircraft="AV-8B Harrier" data-role="Strike" data-features="Air refuelling|Low level|Different recovery field"
+           data-text="deep cut through the back door caucasus 2× av-8b harrier strike &#34;nobody flies down that valley. that&#39;s the point.&#34; hatch, 0900 brief the two mig-29s at gudauta have shown up on every mission this month. they don&#39;t fly much because they don&#39;t have much fuel. every night a few tanker trucks come down the coast road from gagra to keep them topped up. destroy the fuel tanker trucks supplying gudauta.">
     <div class="eyebrow">Operation DEEP CUT</div>
     <h2>Through the Back Door</h2>
-    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× AV-8B Harrier</span><span class="chip">2026-03-22 · 10:30L</span></div>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">Caucasus</span><span class="chip">2× AV-8B Harrier</span><span class="chip">2026-03-22 · 10:30L</span><span class="chip">Air refuelling</span><span class="chip">Low level</span><span class="chip">Different recovery field</span></div>
     <p class="hook">&#34;Nobody flies down that valley. That&#39;s the point.&#34; HATCH, 0900 brief</p>
     <p>The two MiG-29s at Gudauta have shown up on every mission this month. They don&#39;t fly much because they don&#39;t have much fuel. Every night a few tanker trucks come down the coast road from Gagra to keep them topped up.</p>
     <p class="obj"><b>Primary:</b> Destroy the fuel tanker trucks supplying Gudauta.</p>
@@ -127,10 +166,12 @@ lucky early.&#34; BISHOP, 1600 brief</p>
     </div>
   </article>
 
-  <article class="m">
+  <article class="m" data-aircraft="F/A-18C Hornet" data-role="RESCAP" data-features="Different recovery field|Hot start"
+           data-text="lifeline rescap for uzi 2-2 caucasus 2× f/a-18c hornet rescap &#34;she&#39;s got a radio, a pistol and about twenty minutes. you&#39;ve got two hornets. make
+the twenty minutes last.&#34; rawhide, on the scramble line at 0735, uzi 2-2, an f-16 on a road recce north of the gumista, took a missile nobody saw launch. capt. mara &#34;socks&#34; lindqvist ejected over the hills above eshera, four miles behind the line. her beacon is good and she&#39;s checked in twice on guard. the second time she said she could hear engines. stop the search party before it reaches uzi 2-2.">
     <div class="eyebrow">Operation LIFELINE</div>
     <h2>RESCAP for Uzi 2-2</h2>
-    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-03-24 · 09:10L</span></div>
+    <div class="meta"><span class="chip role">RESCAP</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-03-24 · 09:10L</span><span class="chip">Different recovery field</span><span class="chip">Hot start</span></div>
     <p class="hook">&#34;She&#39;s got a radio, a pistol and about twenty minutes. You&#39;ve got two Hornets. Make
 the twenty minutes last.&#34; RAWHIDE, on the scramble line</p>
     <p>At 0735, Uzi 2-2, an F-16 on a road recce north of the Gumista, took a missile nobody saw launch. Capt. Mara &#34;SOCKS&#34; Lindqvist ejected over the hills above Eshera, four miles behind the line. Her beacon is good and she&#39;s checked in twice on guard. The second time she said she could hear engines.</p>
@@ -144,10 +185,12 @@ the twenty minutes last.&#34; RAWHIDE, on the scramble line</p>
     </div>
   </article>
 
-  <article class="m">
+  <article class="m" data-aircraft="F/A-18C Hornet" data-role="Anti-ship" data-features="Carrier|Air refuelling|Low level"
+           data-text="grey hull harpoon strike off gelendzhik caucasus 2× f/a-18c hornet anti-ship &#34;two contacts, two ships each, and one of them is full of grain. i&#39;d love to tell you which.
+darkstar&#39;s going to tell you instead, and you&#39;re going to check.&#34; prism, 0600 brief after the backfire raid, the black sea fleet stopped sending bombers and started sending ships. last night a surface action group left novorossiysk under cover of the weather: a krivak-class frigate and a grisha corvette, heading southeast to put sa-n-4s and a towed sonar between the stennis and the coast. disable the surface action group (at least half the group&#39;s damage).">
     <div class="eyebrow">Operation GREY HULL</div>
     <h2>Harpoon Strike off Gelendzhik</h2>
-    <div class="meta"><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-03-26 · 06:50L</span></div>
+    <div class="meta"><span class="chip role">Anti-ship</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-03-26 · 06:50L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
     <p class="hook">&#34;Two contacts, two ships each, and one of them is full of grain. I&#39;d love to tell you which.
 Darkstar&#39;s going to tell you instead, and you&#39;re going to check.&#34; PRISM, 0600 brief</p>
     <p>After the Backfire raid, the Black Sea Fleet stopped sending bombers and started sending ships. Last night a surface action group left Novorossiysk under cover of the weather: a Krivak-class frigate and a Grisha corvette, heading southeast to put SA-N-4s and a towed sonar between the Stennis and the coast.</p>
@@ -162,5 +205,44 @@ Darkstar&#39;s going to tell you instead, and you&#39;re going to check.&#34; PR
   </article>
 
 </main>
+<p class="wrap empty" id="empty" hidden>No missions match. Try removing a filter.</p>
+<script>
+// Within Aircraft and Mission type, any selected value matches; selected Features must all be present.
+const cards = [...document.querySelectorAll(".m")];
+const q = document.getElementById("q"), count = document.getElementById("count"),
+      clear = document.getElementById("clear"), empty = document.getElementById("empty");
+const sel = { aircraft: new Set(), role: new Set(), features: new Set() };
+function apply() {
+  const text = q.value.trim().toLowerCase();
+  let n = 0;
+  cards.forEach(c => {
+    const has = k => c.dataset[k] ? c.dataset[k].split("|") : [];
+    const ok = (!sel.aircraft.size || has("aircraft").some(v => sel.aircraft.has(v)))
+      && (!sel.role.size || has("role").some(v => sel.role.has(v)))
+      && [...sel.features].every(v => has("features").includes(v))
+      && (!text || text.split(/\s+/).every(w => c.dataset.text.includes(w)));
+    c.hidden = !ok;
+    if (ok) n++;
+  });
+  count.textContent = n === cards.length ? `${n} missions` : `${n} of ${cards.length} missions`;
+  clear.hidden = !(text || Object.values(sel).some(s => s.size));
+  empty.hidden = n > 0;
+}
+document.querySelectorAll(".fgroup").forEach(g => g.addEventListener("click", e => {
+  const b = e.target.closest(".fchip");
+  if (!b) return;
+  const s = sel[g.dataset.group], on = b.getAttribute("aria-pressed") !== "true";
+  b.setAttribute("aria-pressed", on);
+  on ? s.add(b.dataset.value) : s.delete(b.dataset.value);
+  apply();
+}));
+q.addEventListener("input", apply);
+clear.addEventListener("click", () => {
+  q.value = "";
+  Object.values(sel).forEach(s => s.clear());
+  document.querySelectorAll(".fchip").forEach(b => b.setAttribute("aria-pressed", "false"));
+  apply();
+});
+</script>
 </body>
 </html>

@@ -104,6 +104,8 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 
 ## Template gotchas
 
+- **Hangar filters** (owner request 2026-10-27: "3 wide" on desktop, "a filter to narrow down by what we are looking for"). Aircraft and mission type come from the YAML (`meta.role` must be set on every new mission). Features (Carrier, Air refuelling, Low level, Different recovery field, Hot start) are derived in `build_hangar.features()` so they can't go stale. Within a group, aircraft and type match any selected value; features must all match. The grid is 3 columns at ≥1140 px, 2 at ≥760 px, otherwise 1.
+
 - Jinja: never name a dict key `items`, `keys` or `values`. `s.items` resolves to the dict method (this happened with slides; renamed to `entries`).
 - f-strings in Python 3.10 can't contain backslashes in expressions; build the fragment in a variable first.
 - `select_autoescape(["html","j2"])` escapes `.md.j2` too. Wrap Markdown templates in `{% autoescape false %}`.

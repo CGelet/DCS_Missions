@@ -10,7 +10,7 @@ These files are generated from `missions/<id>/mission.yaml`. Don't edit them by 
 
 ## Operation BROKEN SPAN: Strike on the Bzyb River Bridge
 
-**Caucasus** · **2× F/A-18C Hornet** · 2026-03-14, step 06:40L
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2026-03-14, step 06:40L
 
 > "Gentlemen, there's one bridge between that brigade and Sukhumi. By breakfast I want it in the river." HATCH Moreno, 0500 brief
 
@@ -30,7 +30,7 @@ Three weeks ago a ceasefire along the Inguri line collapsed. Separatist forces, 
 
 ## Operation SILENT ORCHARD: Find the SA-11
 
-**Caucasus** · **2× F-16C Viper** · 2026-03-16, step 14:20L
+**Caucasus** · **2× F-16C Viper** · **SEAD** · 2026-03-16, step 14:20L
 
 > "It's out there, it already has one kill, and it's patient. Make it talk, then make it stop." Lt Kapanadze, 1300 brief
 
@@ -50,7 +50,7 @@ Two days after the strike on the Bzyb bridge, the separatists answered. Yesterda
 
 ## Operation HOLD FAST: Defend the Gumista Line
 
-**Caucasus** · **2× A-10C II** · 2026-03-18, step 05:50L
+**Caucasus** · **2× A-10C II** · **CAS** · 2026-03-18, step 05:50L · Hot start
 
 > "I can hear tracks. I can't see them yet. Get here." CHISEL, 0531
 
@@ -70,7 +70,7 @@ The brigade the Bzyb strike was meant to stall is moving. At 0520 Captain Brenne
 
 ## Operation BLUE WATER: Hold the Line at Sea
 
-**Caucasus** · **2× F-14B Tomcat** · 2026-03-20, step 16:40L
+**Caucasus** · **2× F-14B Tomcat** · **Fleet defense** · 2026-03-20, step 16:40L · Carrier, Air refuelling
 
 > "They only have to get lucky once. You have to be lucky every time. Tonight, be lucky early." BISHOP, 1600 brief
 
@@ -90,7 +90,7 @@ With the Gumista holding, the coalition moved the Stennis strike group into the 
 
 ## Operation DEEP CUT: Through the Back Door
 
-**Caucasus** · **2× AV-8B Harrier** · 2026-03-22, step 10:30L
+**Caucasus** · **2× AV-8B Harrier** · **Strike** · 2026-03-22, step 10:30L · Air refuelling, Low level, Different recovery field
 
 > "Nobody flies down that valley. That's the point." HATCH, 0900 brief
 
@@ -110,7 +110,7 @@ The two MiG-29s at Gudauta have shown up on every mission this month. They don't
 
 ## Operation LIFELINE: RESCAP for Uzi 2-2
 
-**Caucasus** · **2× F/A-18C Hornet** · 2026-03-24, step 09:10L
+**Caucasus** · **2× F/A-18C Hornet** · **RESCAP** · 2026-03-24, step 09:10L · Different recovery field, Hot start
 
 > "She's got a radio, a pistol and about twenty minutes. You've got two Hornets. Make the twenty minutes last." RAWHIDE, on the scramble line
 
@@ -130,7 +130,7 @@ At 0735, Uzi 2-2, an F-16 on a road recce north of the Gumista, took a missile n
 
 ## Operation GREY HULL: Harpoon Strike off Gelendzhik
 
-**Caucasus** · **2× F/A-18C Hornet** · 2026-03-26, step 06:50L
+**Caucasus** · **2× F/A-18C Hornet** · **Anti-ship** · 2026-03-26, step 06:50L · Carrier, Air refuelling, Low level
 
 > "Two contacts, two ships each, and one of them is full of grain. I'd love to tell you which. Darkstar's going to tell you instead, and you're going to check." PRISM, 0600 brief
 

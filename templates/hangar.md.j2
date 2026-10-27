@@ -12,7 +12,7 @@ These files are generated from `missions/<id>/mission.yaml`. Don't edit them by 
 {% for m in missions -%}
 ## Operation {{ m.operation }}: {{ m.title }}
 
-**{{ m.theater }}** · **{{ m.aircraft }}** · {{ m.date }}, step {{ m.start_time }}L
+**{{ m.theater }}** · **{{ m.aircraft }}** · **{{ m.role }}** · {{ m.date }}, step {{ m.start_time }}L{% if m.features %} · {{ m.features | join(", ") }}{% endif %}
 
 {% if m.hook %}> {{ m.hook | replace("\n", " ") }}
 

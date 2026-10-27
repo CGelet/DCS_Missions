@@ -11,6 +11,7 @@ meta:
   title: "Operation SILENT ORCHARD"
   subtitle: "Find the SA-11"
   theater: caucasus
+  role: "SEAD"   # mission type: the hangar filters on it
   date: 2026-03-16
   start_time: "14:20"
   weather:
