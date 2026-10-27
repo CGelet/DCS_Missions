@@ -48,7 +48,18 @@ svg.map .sea { fill: var(--sea); }
 svg.map .grid { stroke: #ffffff10; stroke-width: 1; }
 svg.map .gridlbl { fill: #ffffff40; font: 12px "IBM Plex Mono", monospace; }
 svg.map .coast { fill: none; stroke: var(--coast); stroke-width: 2; stroke-linejoin: round; }
-svg.map .ring { fill-opacity: .1; stroke-width: 2; stroke-dasharray: 8 6; }
+svg.map .ring { fill-opacity: .1; stroke-width: 2; }
+svg.map .ring.suspected { stroke-dasharray: 10 6; }
+svg.map .ring.possible { stroke-dasharray: 3 7; fill-opacity: .04; opacity: .6; }
+svg.map .area { fill: none; stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+svg.map .area.sam { stroke: var(--red); } svg.map .area.aaa { stroke: var(--amber); } svg.map .area.air { stroke: var(--blue); } svg.map .area.armor { stroke: var(--muted); }
+svg.map .threat.armor, svg.map .ring.armor { fill: var(--muted); stroke: var(--muted); }
+svg.map .threat.suspected, svg.map .threat.possible { fill: var(--slide) !important; stroke-width: 3; }
+svg.map .threat.suspected.sam, svg.map .threat.possible.sam { stroke: var(--red); }
+svg.map .threat.suspected.aaa, svg.map .threat.possible.aaa { stroke: var(--amber); }
+svg.map .threat.suspected.air, svg.map .threat.possible.air { stroke: var(--blue); }
+svg.map .threat.suspected.armor, svg.map .threat.possible.armor { stroke: var(--muted); }
+svg.map .search { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 8; }
 svg.map .ring.sam, svg.map .threat.sam { fill: var(--red); stroke: var(--red); }
 svg.map .ring.aaa, svg.map .threat.aaa { fill: var(--amber); stroke: var(--amber); }
 svg.map .threat.air { fill: var(--blue); }
@@ -64,6 +75,7 @@ svg.map .lbl.friendly { fill: var(--ok); }
 svg.map .lbl.sam { fill: var(--red); }
 svg.map .lbl.aaa { fill: var(--amber); }
 svg.map .lbl.air { fill: var(--blue); }
+svg.map .lbl.armor { fill: var(--ink); }
 svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
 
 .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -79,6 +91,9 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
 .tag.sam { background: #ef6b6222; color: var(--red); }
 .tag.aaa { background: #e3a93b22; color: var(--amber); }
 .tag.air { background: #7fb0f022; color: var(--blue); }
+.tag.armor { background: #ffffff14; color: var(--ink); }
+.intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
+.intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
 .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 .chip { font: 20px "IBM Plex Mono", monospace; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ok); }
 
@@ -141,7 +156,7 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
     <div class="eyebrow">{{ s.eyebrow }}</div>
     <h2>{{ s.title }}</h2>
     <div class="rows">{% for t in s.entries %}<div class="row"><span><span class="tag {{ t.kind }}">{{ t.kind }}</span></span>
-      <span><b>{{ t.name }}</b>{% if t.range_km %} <span class="muted mono">· {{ t.range_km }} km</span>{% endif %}<br><span class="muted">{{ t.notes }}</span></span></div>{% endfor %}</div>
+      <span><b>{{ t.name }}</b><span class="intel {{ t.intel or 'confirmed' }}">{{ t.intel or "confirmed" }}</span>{% if t.range_km %} <span class="muted mono">· {{ t.range_km }} km</span>{% endif %}<br><span class="muted">{{ t.notes }}</span></span></div>{% endfor %}</div>
 
   {% elif s.kind == "package" %}
     <div class="eyebrow">{{ s.eyebrow }}</div>

@@ -9,13 +9,18 @@ from pathlib import Path
 import dcs
 from dcs import action, condition, task, triggers, weather
 from dcs.mission import StartType
+from dcs.point import PointAction
 from dcs.terrain import Caucasus
 
 from .geo import FT, KTS, NM, point
+from .schema import phase_triggers
 
-TARGET_FLAG = 99          # set by either target-destroyed helper rule
+TARGET_FLAG = 99          # set by any target-destroyed helper rule
+CHANCE_FLAG_BASE = 200    # one flag per `chance` trigger, rolled at mission start
+VARIANT_FLAG_BASE = 300   # default flag for variants without an explicit one
 DEFAULT_ZONE_KM = 10
 START_TYPES = {"cold": StartType.Cold, "warm": StartType.Warm, "runway": StartType.Runway}
+MAINTASKS = {"bomb": task.GroundAttack, "sead": task.SEAD, "cas": task.CAS}
 
 
 def _type(module, name: str):
@@ -23,6 +28,16 @@ def _type(module, name: str):
         return getattr(module, name)
     except AttributeError:
         raise ValueError(f"unknown unit type '{name}' in {module.__name__}") from None
+
+
+def _weapon(ac, pylon: int, name: str):
+    station = getattr(ac, f"Pylon{pylon}", None)
+    if station is None:
+        raise ValueError(f"{ac.__name__} has no pylon {pylon}")
+    if not hasattr(station, name):
+        close = sorted(a for a in dir(station) if not a.startswith("_") and name.split("_")[0].lower() in a.lower())
+        raise ValueError(f"{ac.__name__} pylon {pylon} has no weapon '{name}'. Similar names: {close[:8] or 'none'}")
+    return getattr(station, name)
 
 
 def _vehicle(name: str):
@@ -60,9 +75,11 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     for f in data["flights"]:
         ac = _type(dcs.planes, f["aircraft"])
         airport = _airport(terrain, f["base"])
+        actions = {wp.get("action") for wp in f["waypoints"]}
+        maintask = next((t for a, t in MAINTASKS.items() if a in actions), task.GroundAttack)
         fg = m.flight_group_from_airport(
             blue, f["callsign"], ac, airport,
-            maintask=task.GroundAttack,
+            maintask=maintask,
             start_type=START_TYPES[f.get("start", "cold")],
             group_size=f.get("count", 1),
         )
@@ -74,14 +91,19 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         for unit in fg.units:
             unit.pylons = {}
             for pylon, weapon in (f.get("loadout") or {}).items():
-                unit.load_pylon(getattr(getattr(ac, f"Pylon{pylon}"), weapon))
+                unit.load_pylon(_weapon(ac, pylon, weapon))
 
         for wp in f["waypoints"]:
             pt = point(terrain, wp)
             mp = fg.add_waypoint(pt, wp.get("alt_ft", 20000) * FT, wp.get("kts", 420) * KTS, wp["name"])
+            # Tasks steer the AI wingman; the player flies their own plan.
             if wp.get("action") == "bomb":
                 tgt = point(terrain, data["target"])
                 mp.tasks.append(task.Bombing(tgt, weapon_type=task.WeaponType.Guided, group_attack=True))
+            elif wp.get("action") == "sead":
+                mp.tasks.append(task.EngageTargets(max_distance=80_000, targets=[task.Targets.All.GroundUnits.AirDefence]))
+            elif wp.get("action") == "cas":
+                mp.tasks.append(task.EngageTargets(max_distance=15_000, targets=[task.Targets.All.GroundUnits]))
             zones[wp["name"]] = m.triggers.add_triggerzone(
                 pt, radius=wp.get("zone_km", DEFAULT_ZONE_KM) * 1000, name=f"ZONE {wp['name']}")
         if "land" in f:
@@ -95,6 +117,9 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         vg = m.vehicle_group_platoon(country, u["name"], [_vehicle(t) for t in u["type"]],
                                      point(terrain, u), heading=u.get("heading", 0))
         vg.late_activation = bool(u.get("late_activation"))
+        for p in u.get("route", []):
+            vg.add_waypoint(point(terrain, p), PointAction.OnRoad if u.get("on_road", True) else PointAction.OffRoad,
+                            u.get("speed_kmh", 25))
         groups[u["name"]] = vg
 
     # --- support flights -------------------------------------------------
@@ -121,50 +146,68 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         g.late_activation = bool(s.get("late_activation"))
         groups[s["callsign"]] = g
 
+    # --- random variants (rolled once at mission start) ---------------
+    variant_of: dict[str, tuple[int, int]] = {}  # group -> (flag, option number) that activates it
+    variant_flags = {v["name"]: v.get("flag", VARIANT_FLAG_BASE + i) for i, v in enumerate(data.get("variants", []))}
+    ctx = (player_group, zones, groups, variant_flags)
+    for v in data.get("variants", []):
+        flag = variant_flags[v["name"]]
+        roll = triggers.TriggerStart(comment=f"variant: {v['name']}")
+        roll.add_action(action.SetFlagRandom(flag, 1, len(v["options"])))
+        m.triggerrules.triggers.append(roll)
+        for n_opt, o in enumerate(v["options"], 1):
+            r = triggers.TriggerOnce(comment=f"variant: {v['name']} = {o.get('label', n_opt)}")
+            r.add_condition(condition.FlagEquals(flag, n_opt))
+            for c in _when(o.get("when", {}), *ctx):
+                r.add_condition(c)
+            _actions(m, r, o, groups)
+            m.triggerrules.triggers.append(r)
+            for g in o.get("activate", []):
+                variant_of[g] = (flag, n_opt)
+
     # --- target-destroyed helpers ---------------------------------------
-    tz = m.triggers.add_triggerzone(point(terrain, data["target"]),
-                                    radius=data["target"].get("zone_m", 80), name="TARGET BRIDGE")
-    helpers = [condition.MapObjectIsDead(tz.id)]
-    if "Bridge target" in groups:
-        helpers.append(condition.GroupDead(groups["Bridge target"].id))
-    for cond in helpers:
+    tgt = data["target"]
+    helpers = []
+    if tgt.get("zone_m"):
+        tz = m.triggers.add_triggerzone(point(terrain, tgt), radius=tgt["zone_m"], name="TARGET ZONE")
+        helpers.append([condition.MapObjectIsDead(tz.id)])
+    kill = tgt.get("kill_pct", 100)
+    for g in tgt.get("groups", []):
+        gid = groups[g].id
+        conds = [condition.GroupDead(gid) if kill == 100 else condition.GroupLifeLess(gid, 100 - kill)]
+        if g in variant_of:  # only the variant that actually spawned counts
+            conds.append(condition.FlagEquals(*variant_of[g]))
+        helpers.append(conds)
+    for conds in helpers:
         r = triggers.TriggerOnce(comment="target destroyed helper")
-        r.add_condition(cond)
+        for c in conds:
+            r.add_condition(c)
         r.add_action(action.SetFlag(TARGET_FLAG))
         m.triggerrules.triggers.append(r)
 
     # --- storyboard triggers ---------------------------------------------
+    chance_flag = CHANCE_FLAG_BASE
     for ph in data["storyboard"]:
-        trig = ph.get("trigger")
-        if not trig:
-            continue
-        (kind, arg), = trig["when"].items()
-        r = triggers.TriggerOnce(comment=ph["phase"])
-        if kind == "time_after":
-            r.add_condition(condition.TimeAfter(arg))
-        elif kind == "player_in_zone":
-            r.add_condition(condition.PartOfGroupInZone(player_group.id, zones[arg].id))
-        elif kind == "group_dead":
-            r.add_condition(condition.GroupDead(groups[arg].id))
-        elif kind == "flag":
-            r.add_condition(condition.FlagIsTrue(arg))
-        elif kind == "target_destroyed":
-            r.add_condition(condition.FlagIsTrue(TARGET_FLAG))
-        for g in trig.get("activate", []):
-            r.add_action(action.ActivateGroup(groups[g].id))
-        if "message" in trig:
-            r.add_action(action.MessageToCoalition(action.Coalition.Blue, m.string(trig["message"]),
-                                                   trig.get("seconds", 10)))
-        if "set_flag" in trig:
-            r.add_action(action.SetFlag(trig["set_flag"]))
-        m.triggerrules.triggers.append(r)
+        for trig in phase_triggers(ph):
+            r = triggers.TriggerOnce(comment=ph["phase"])
+            for c in _when(trig["when"], *ctx):
+                r.add_condition(c)
+            if "chance" in trig:
+                chance_flag += 1
+                roll = triggers.TriggerStart(comment=f"{ph['phase']}: {trig['chance']}% roll")
+                roll.add_condition(condition.Random(trig["chance"]))
+                roll.add_action(action.SetFlag(chance_flag))
+                m.triggerrules.triggers.append(roll)
+                r.add_condition(condition.FlagIsTrue(chance_flag))
+            _actions(m, r, trig, groups)
+            m.triggerrules.triggers.append(r)
 
     # --- briefing text ---------------------------------------------------
     n = data["narrative"]
     m.set_sortie_text(f"{meta['title']}: {meta.get('subtitle', '')}".strip(": "))
     m.set_description_text(f"{n['backstory'].strip()}\n\n{n.get('hook', '').strip()}\n\nSITUATION\n{data['situation'].strip()}")
     obj = data["objectives"]
-    threats = "\n".join(f"- {t['name']}: {t.get('notes', '')}" for t in data.get("threats", []))
+    threats = "\n".join(f"- {t['name']} ({t.get('intel', 'confirmed').upper()}): {t.get('notes', '')}" for t in data.get("threats", []))
     m.set_description_bluetask_text(
         "OBJECTIVES\n" + "\n".join(f"{k.upper()}: {v}" for k, v in obj.items())
         + f"\n\nROE\n{data.get('roe', '').strip()}\n\nTHREATS\n{threats}")
@@ -185,6 +228,36 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     m.save(str(out_path))
     _pin_zip_timestamps(out_path)
     return m
+
+
+def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: dict) -> list:
+    """DCS conditions for a `when` block; every one must hold."""
+    conds = []
+    for kind, arg in when.items():
+        if kind == "time_after":
+            conds.append(condition.TimeAfter(arg))
+        elif kind == "player_in_zone":
+            conds.append(condition.PartOfGroupInZone(player_group.id, zones[arg].id))
+        elif kind == "group_dead":
+            conds.append(condition.GroupDead(groups[arg].id))
+        elif kind == "flag":
+            conds.append(condition.FlagIsTrue(arg))
+        elif kind == "target_destroyed":
+            conds.append(condition.FlagIsTrue(TARGET_FLAG))
+        elif kind == "variant":
+            conds.append(condition.FlagEquals(variant_flags[arg[0]], arg[1]))
+        else:
+            raise ValueError(f"unsupported trigger condition '{kind}'")
+    return conds
+
+
+def _actions(m: dcs.Mission, r, spec: dict, groups: dict) -> None:
+    for g in spec.get("activate", []):
+        r.add_action(action.ActivateGroup(groups[g].id))
+    if "message" in spec:
+        r.add_action(action.MessageToCoalition(action.Coalition.Blue, m.string(spec["message"]), spec.get("seconds", 10)))
+    if "set_flag" in spec:
+        r.add_action(action.SetFlag(spec["set_flag"]))
 
 
 def _pin_zip_timestamps(path: Path) -> None:

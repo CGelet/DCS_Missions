@@ -8,145 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
-:root {
-  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
-  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
-  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
-  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
-    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
-    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
-    --shadow: 0 1px 2px rgba(0,0,0,.4);
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
-  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
-  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
-  --shadow: 0 1px 2px rgba(0,0,0,.4);
-}
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 64px; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
-.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
-a { color: var(--accent); }
-.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
-@media (max-width: 640px) { .wrap { padding: 0 16px; } }
-
-header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
-.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
-.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
-.meta-row b { color: var(--ink); font-weight: 600; }
-blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
-
-nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
-nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
-nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
-nav.sections a:hover { color: var(--ink); border-color: var(--line); }
-nav.sections .spacer { flex: 1; }
-nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
-
-section { padding: 40px 0; border-bottom: 1px solid var(--line); }
-h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
-h3 { margin: 0 0 8px; font-size: 17px; }
-
-.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
-.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
-.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
-.cast b { display: block; }
-.cast span { color: var(--muted); font-size: 14px; }
-
-.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
-.map-wrap { position: sticky; top: 64px; }
-#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
-.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
-.legend label { cursor: pointer; }
-
-ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
-ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
-.phase { position: relative; padding: 0 0 18px 44px; }
-.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
-.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
-.phase-card:hover { border-color: var(--muted); }
-.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
-.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
-.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
-.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
-.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
-
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
-.card.wide { grid-column: 1 / -1; }
-.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
-.card p { margin: 0 0 10px; }
-dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
-dl.kv dt { color: var(--muted); font-size: 14px; }
-dl.kv dd { margin: 0; }
-.table-scroll { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
-td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
-tr:last-child td { border-bottom: 0; }
-td.num { white-space: nowrap; }
-.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
-.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
-.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
-.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
-.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
-.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
-
-.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.outcome { border-top: 4px solid var(--line); }
-.outcome.success { border-top-color: var(--ok); }
-.outcome.partial { border-top-color: var(--amber); }
-.outcome.failure { border-top-color: var(--red); }
-footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
-
-.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
-.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
-.wp-label::before { display: none; }
-.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
-
-@media (max-width: 900px) {
-  .story, .plan { grid-template-columns: minmax(0, 1fr); }
-  .map-wrap { position: static; }
-  #map { height: 60vh; }
-  .outcomes { grid-template-columns: minmax(0, 1fr); }
-}
-@media print {
-  nav.sections, .legend { display: none; }
-  body { background: #fff; color: #000; font-size: 12px; }
-  section { padding: 16px 0; page-break-inside: avoid; }
-  .plan { grid-template-columns: 1fr; }
-  .map-wrap { position: static; }
-  #map { height: 420px; }
-  .card, .phase-card { box-shadow: none; }
-}
+{% include "_base.css" %}
 </style>
 </head>
 <body>
-{%- macro trigger_text(t) -%}
-  {%- set k, v = (t.when.items() | list)[0] -%}
-  {%- if k == "time_after" -%}T+{{ v }}s after mission start
-  {%- elif k == "player_in_zone" -%}Flight enters {{ v }} zone
-  {%- elif k == "group_dead" -%}{{ v }} destroyed
-  {%- elif k == "target_destroyed" -%}Bridge destroyed
-  {%- elif k == "flag" -%}Flag {{ v }} set
-  {%- endif -%}
-{%- endmacro %}
 
 <header class="hero">
   <div class="wrap">
@@ -156,7 +21,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
       <span>Date <b class="mono">{{ meta.date }}</b></span>
       <span>Step <b class="mono">{{ meta.start_time }}L</b></span>
       <span>Theater <b>{{ meta.theater | title }}</b></span>
-      <span>Flight <b>{{ player.callsign }} · {{ player.count }}× {{ player.aircraft | replace("_", " ") | replace("FA 18C hornet", "F/A-18C") }}</b></span>
+      <span>Flight <b>{{ player.callsign }} · {{ player.count }}× {{ aircraft_name }}</b></span>
       <span>Base <b>{{ route[0].name }}</b></span>
     </div>
     {% if narrative.hook %}<blockquote class="hook">{{ narrative.hook | trim }}</blockquote>{% endif %}
@@ -165,7 +30,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
 
 <nav class="sections" aria-label="Sections">
   <div class="wrap">
-    <a href="#story">Story</a><a href="#plan">Storyboard &amp; map</a><a href="#brief">Briefing</a><a href="#debrief">Debrief</a>
+    <a href="#story">Story</a><a href="#plan">Storyboard &amp; map</a><a href="#brief">Briefing</a>
     <span class="spacer"></span>
     <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
     <button type="button" onclick="window.print()">Print</button>
@@ -207,16 +72,8 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
           <span class="dot">{{ loop.index }}</span>
           <button type="button" class="phase-card" aria-label="Show {{ ph.phase }} on the map">
             <div class="phase-head"><h3>{{ ph.phase }}</h3><span class="time">{{ ph.time }}</span></div>
-            <p class="beat">{{ ph.beat | trim }}</p>
-            {% if ph.trigger and ph.trigger.message %}
-            <div class="radio"><span class="lbl">RADIO</span>{{ ph.trigger.message }}</div>
-            {% endif %}
-            <div class="chips">
-              {% for w in ph.waypoints %}<span class="chip">{{ w }}</span>{% endfor %}
-              {% if ph.trigger %}<span class="chip">Trigger: {{ trigger_text(ph.trigger) }}</span>
-                {% for g in ph.trigger.activate or [] %}<span class="chip act">Activates {{ g }}</span>{% endfor %}
-              {% endif %}
-            </div>
+            <p class="beat">{{ ph.brief | trim }}</p>
+            {% if ph.waypoints %}<div class="chips">{% for w in ph.waypoints %}<span class="chip">{{ w }}</span>{% endfor %}</div>{% endif %}
           </button>
         </li>
         {% endfor %}
@@ -237,9 +94,10 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
 
       <div class="card wide"><h3>Threats</h3>
         <div class="table-scroll"><table>
-          <thead><tr><th>Type</th><th>System</th><th>Range</th><th>Notes</th></tr></thead>
+          <thead><tr><th>Type</th><th>System</th><th>Intel</th><th>Range</th><th>Notes</th></tr></thead>
           <tbody>{% for t in threats %}<tr>
             <td><span class="tag {{ t.kind }}">{{ t.kind }}</span></td><td>{{ t.name }}</td>
+            <td><span class="intel {{ t.intel or 'confirmed' }}">{{ t.intel or "confirmed" }}</span></td>
             <td class="num">{% if t.range_km %}{{ t.range_km }} km{% else %}n/a{% endif %}</td><td>{{ t.notes }}</td>
           </tr>{% endfor %}</tbody>
         </table></div>
@@ -248,7 +106,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
       <div class="card"><h3>Target</h3>
         <dl class="kv">
           <dt>Name</dt><dd>{{ target.name }}</dd>
-          <dt>Coords</dt><dd class="mono">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E</dd>
+          <dt>Coords</dt><dd class="mono">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E{% if target.area_km %}<br><span class="intel suspected">estimate ±{{ target.area_km }} km</span>{% endif %}</dd>
           <dt>Description</dt><dd>{{ target.description }}</dd>
           <dt>DMPI</dt><dd>{{ target.dmpi }}</dd>
         </dl>
@@ -294,19 +152,9 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
   </div>
 </section>
 
-<section id="debrief">
-  <div class="wrap">
-    <h2>Possible outcomes</h2>
-    <div class="outcomes">
-      {% for k in ["success", "partial", "failure"] if narrative.outcomes[k] %}
-      <div class="card outcome {{ k }}"><h3>{{ k }}</h3>{% for p in narrative.outcomes[k] | paras %}<p>{{ p }}</p>{% endfor %}</div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
 </main>
 
-<footer><div class="wrap">Generated from <code>missions/{{ meta.id }}/mission.yaml</code>. The same file builds the .miz, so the briefing and the mission always match.</div></footer>
+<footer><div class="wrap">Generated from <code>missions/{{ meta.id }}/mission.yaml</code>. Intel is what the squadron knows at brief time; it may be incomplete.</div></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -351,11 +199,17 @@ function drawMap() {
     if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
   });
 
+  // Rings show intel, not truth: solid = confirmed, dashed = suspected, dotted = possible.
+  const dash = { confirmed: null, suspected: "8 5", possible: "2 6" };
   D.threats.forEach(t => {
-    const c = t.kind === "aaa" ? amber : red;
-    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, fillColor: c, fillOpacity: .08, dashArray: t.kind === "sam" ? "6 4" : null }).addTo(layers.threats);
-    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: c, fillOpacity: 1 }).addTo(layers.threats)
-      .bindPopup(`<b>${t.name}</b>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}<br>${t.notes || ""}`);
+    const intel = t.intel || "confirmed";
+    const c = t.kind === "aaa" ? amber : t.kind === "air" ? blue : t.kind === "armor" ? css("--muted") : red;
+    const faint = intel === "possible" ? .5 : 1;
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: c, weight: 1, opacity: .7 * faint, fill: false, dashArray: "1 5" })
+      .addTo(layers.threats).bindTooltip(`${t.name}: last known area`, { sticky: true });
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, opacity: faint, fillColor: c, fillOpacity: .06 * faint, dashArray: dash[intel] }).addTo(layers.threats);
+    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: intel === "confirmed" ? c : css("--surface"), fillOpacity: 1, opacity: faint }).addTo(layers.threats)
+      .bindPopup(`<b>${t.name}</b><br><i>Intel: ${intel}</i>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}${t.area_km ? "<br>Position ±" + t.area_km + " km" : ""}<br>${t.notes || ""}`);
   });
 
   D.support.forEach(s => {
@@ -373,11 +227,16 @@ function drawMap() {
   });
 
   const tg = D.target;
+  if (tg.area_km) L.circle([tg.lat, tg.lon], { radius: tg.area_km * 1000, color: accent, weight: 2, fill: false, dashArray: "4 6" })
+    .addTo(layers.target).bindTooltip("Target search area", { sticky: true });
   L.marker([tg.lat, tg.lon], { icon: L.divIcon({ className: "", html: `<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="${accent}" stroke-width="2.5"/><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="${accent}" stroke-width="2.5"/></svg>`, iconSize: [26, 26], iconAnchor: [13, 13] }) })
-    .addTo(layers.target).bindPopup(`<b>${tg.name}</b><br>${tg.description || ""}`);
+    .addTo(layers.target).bindPopup(`<b>${tg.name}</b>${tg.area_km ? "<br><i>Estimated position ±" + tg.area_km + " km</i>" : ""}<br>${tg.description || ""}`);
 
   document.querySelectorAll("#legend input").forEach(cb => { if (cb.checked) layers[cb.dataset.layer].addTo(map); });
-  if (center) map.setView(center, zoom); else map.fitBounds(routeLine.getBounds(), { padding: [24, 24] });
+  // Frame the route plus every briefed threat position and uncertainty area (not full ranges, which can be huge)
+  const frame = routeLine.getBounds();
+  D.threats.concat([D.target]).forEach(t => frame.extend(L.latLng(t.lat, t.lon).toBounds(2 * (t.area_km || 1) * 1000)));
+  if (center) map.setView(center, zoom); else map.fitBounds(frame, { padding: [24, 24] });
 }
 
 document.querySelectorAll("#legend input").forEach(cb => cb.addEventListener("change", () => {

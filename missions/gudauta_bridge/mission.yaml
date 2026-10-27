@@ -62,12 +62,13 @@ narrative:
 situation: |
   Red mechanised forces are staging north of the Bzyb River for an offensive toward
   Sukhumi. The M-27 road bridge at Bzyb is their only heavy crossing. Blue holds
-  air superiority over the coast, but the target is covered by a mobile SA-6
-  battery and point-defence AAA. Red keeps a MiG-29 alert pair at Gudauta.
+  air superiority over the coast. Point-defence AAA at the bridge is confirmed from
+  imagery; a mobile SA-6 battery was seen in the area 36 hours ago and hasn't been
+  located since. Red has kept fighters at Gudauta, but nobody has seen them fly this week.
 
 objectives:
   primary: "Destroy the Bzyb River road bridge."
-  secondary: "Destroy or suppress the SA-6 battery covering the bridge if it engages."
+  secondary: "If the SA-6 is still in the area and engages, destroy or suppress it."
   tertiary: "Return both aircraft to Senaki-Kolkhi."
 
 roe: |
@@ -75,25 +76,31 @@ roe: |
   Weapons tight on all ground targets other than the bridge and its defences.
   No releases south of the Gumista River. Avoid civilian traffic on the M-27.
 
+# Intel: what the pilots are told. It can be stale, vague or wrong; the truth is in `units`.
+#   intel: confirmed | suspected | possible     area_km: uncertainty radius around lat/lon
 threats:
   - name: "SA-6 Gainful (2K12 Kub)"
     kind: sam
-    lat: 43.2050
-    lon: 40.4650
+    intel: suspected
+    lat: 43.2150
+    lon: 40.4420
+    area_km: 5
     range_km: 24
-    notes: "Mobile. Emitting only when tripped by the IP zone. Low altitude is your friend."
+    notes: "Last seen 36 h ago east of the target. Mobile; may have moved or left. Plan as if it's there."
   - name: "ZSU-23-4 Shilka"
     kind: aaa
+    intel: confirmed
     lat: 43.2300
     lon: 40.3868
     range_km: 2.5
-    notes: "At the bridge's west end. Stay above 12,000 ft on release."
-  - name: "MiG-29S alert pair"
+    notes: "Two vehicles at the bridge's west end on this morning's imagery. Stay above 12,000 ft on release."
+  - name: "MiG-29S pair"
     kind: air
+    intel: possible
     lat: 43.1240
     lon: 40.5670
     range_km: 0
-    notes: "Alert 5 at Gudauta. Expect a launch once you're inbound to the target."
+    notes: "Two airframes in shelters at Gudauta. Status unknown; they haven't flown this week."
 
 comms:
   - { name: "Enfield (inter-flight)", freq: "251.000 AM", notes: "Radio 1" }
@@ -140,12 +147,15 @@ target:
   lat: 43.2286
   lon: 40.3900
   zone_m: 150                # "map object dead in zone" radius used by target_destroyed
+  groups: ["Bridge target"]  # ...or these groups destroyed (fallback if the zone misses the bridge)
   description: "~750 m concrete road bridge carrying the S1/M-27 coast highway over the Bzyb, oriented 115/295. Located from OpenStreetMap data."
   dmpi: "Centre piers first, then the east abutment."
 
 units:
+  # Ground truth. Pilots never see this section; compare with `threats` (the intel).
   - name: "SA-6 Battery"
     coalition: red
+    # 2.3 km from where intel last saw it, and switched off until the flight commits.
     type: [Kub_1S91_str, Kub_2P25_ln, Kub_2P25_ln, Kub_2P25_ln]
     lat: 43.2050
     lon: 40.4650
@@ -193,21 +203,23 @@ support:
     count: 2
     base: Gudauta
     late_activation: true
-    engage: true
 
 # Storyboard: ordered phases. `waypoints` link to flight waypoint names (map highlight).
-# `beat` is the story text (briefing page + slide); `notes` (optional) are presenter notes on the slide.
-# `trigger` (optional) becomes a DCS trigger rule. Supported kinds:
-#   time_after(seconds) | player_in_zone(waypoint) | group_dead(unit name) | flag(n)
-#   target_destroyed(true): bridge scenery object in target zone dead OR "Bridge target" group dead
-# Actions: message, activate (group name), set_flag, end_mission
+#   brief   - pilot-facing: the plan and what they expect (briefing page, slides)
+#   notes   - presenter notes on the slide (pilots may see them; no spoilers)
+#   script  - director only: what actually happens
+#   trigger / triggers - director only; each becomes a DCS trigger rule:
+#     when: time_after(s) | player_in_zone(waypoint) | group_dead(group) | flag(n) | target_destroyed(true)
+#     chance: 1-99   rolled once at mission start; on a miss the trigger never fires
+#     actions: activate [groups], message (+ seconds), set_flag n
 storyboard:
   - phase: "Step & Start"
     time: "06:40"
     waypoints: []
-    beat: |
-      Grey dawn over Senaki. HATCH watches from the line shack as the two Hornets'
-      APUs spool up. Somewhere north, a brigade is fuelling its tanks.
+    brief: |
+      Grey dawn over Senaki. Cold start, check in with OVERLORD on 251.0 once
+      airborne. Somewhere north, a brigade is fuelling its tanks.
+    script: "HATCH sends the flight off with a short call ten seconds into the mission."
     trigger:
       when: { time_after: 10 }
       message: "HATCH: Enfield, Senaki ops. Weather's holding, target's still standing. Clock's running. Good hunting."
@@ -216,9 +228,10 @@ storyboard:
   - phase: "Coast-Out"
     time: "07:12"
     waypoints: ["COAST", "SEA"]
-    beat: |
-      Feet wet over Poti. OVERLORD checks you in and paints a clean picture to the
-      north, with Colt flight already on station.
+    brief: |
+      Feet wet over Poti and north along the coast at 20,000+. Colt flight's CAP
+      sits between you and Gudauta. OVERLORD will have the picture.
+    script: "Crossing the coast, OVERLORD checks the flight in. The picture really is clean, for now."
     trigger:
       when: { player_in_zone: "COAST" }
       message: "OVERLORD: Enfield 1, OVERLORD, radar contact. Picture clean. Colt is on station, CAP at angels two-five."
@@ -227,10 +240,13 @@ storyboard:
   - phase: "Push at the IP"
     time: "07:28"
     waypoints: ["IP"]
-    notes: "Pause after the radio call. Ask the room what they'd do when the six appears: press, notch, or go low?"
-    beat: |
-      You turn inbound. Ten seconds later the RWR lights up with a six. The Gainful
-      battery was waiting for you.
+    notes: "Ask the room: if the SA-6 is still there and comes up during the run-in, do you press, notch, or go low?"
+    brief: |
+      Turn inbound at the IP. If the SA-6 is still where it was last seen, its
+      envelope covers the whole run-in. Have a plan for a spike before you push.
+    script: |
+      The SA-6 is real. It moved 2 km east-southeast of its last reported position
+      and sits silent until the flight enters the IP zone, then comes up all at once.
     trigger:
       when: { player_in_zone: "IP" }
       activate: ["SA-6 Battery"]
@@ -240,11 +256,15 @@ storyboard:
   - phase: "Target Run"
     time: "07:31"
     waypoints: ["TGT"]
-    beat: |
-      Pod on the centre pier. Shilka tracers float up short of your altitude.
-      Off to the east, Gudauta scrambles its alert pair.
+    brief: |
+      Pod on the centre piers and release above 12,000 ft to stay out of the
+      Shilkas. Two minutes in the target area at most.
+    script: |
+      70% of the time, entering the target area scrambles the MiG-29 pair from
+      Gudauta and Colt commits on them. The other 30%, the fighters never launch.
     trigger:
       when: { player_in_zone: "TGT" }
+      chance: 70
       activate: ["Red Alert"]
       message: "OVERLORD: Enfield, pop-up group, two contacts, Gudauta, climbing. Colt is committing."
       seconds: 15
@@ -252,9 +272,10 @@ storyboard:
   - phase: "Egress"
     time: "07:35"
     waypoints: ["EGRESS", "HOME"]
-    beat: |
-      Hard turn west and down over the water. Behind you, either a cloud of dust
-      over the Bzyb or a bridge that's still standing.
+    brief: |
+      Off target hard west and down over the water. Ask OVERLORD for a bridge
+      status from the ground team on your way out.
+    script: "When the bridge (or the trucks parked on it) dies, Brenner confirms through OVERLORD."
     trigger:
       when: { target_destroyed: true }
       message: "BRENNER (via OVERLORD): Enfield, ground eyes report the bridge is in the river. Outstanding work."
@@ -264,9 +285,9 @@ storyboard:
   - phase: "Recovery & Debrief"
     time: "07:55"
     waypoints: []
-    beat: |
-      Wheels down at Senaki. HATCH meets you at the jet with the drone feed on a
-      tablet. The debrief depends on what it shows.
+    brief: |
+      Wheels down at Senaki. HATCH will meet you at the jet with the drone feed.
+    script: "Only if the bridge fell does HATCH call the mission complete."
     trigger:
       when: { flag: 10 }
       message: "HATCH: Mission complete. RTB and debrief at the ops hut."

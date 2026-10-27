@@ -23,8 +23,12 @@ def _ll(airport) -> dict:
     return {"name": airport.name, "lat": ll.lat, "lon": ll.lng}
 
 
-def view_model(data: dict) -> dict:
-    """Everything the templates need, with airfield names resolved to coordinates."""
+def view_model(data: dict, audience: str = "pilot") -> dict:
+    """Everything the templates need, with airfield names resolved to coordinates.
+
+    audience="pilot" leaves out anything the squadron wouldn't know at brief time
+    (red flights in `support`); the director view keeps everything.
+    """
     terrain = Caucasus()
     player = next(f for f in data["flights"] if f.get("player"))
     base = _ll(_airport(terrain, player["base"]))
@@ -32,6 +36,8 @@ def view_model(data: dict) -> dict:
     airfields = {base["name"]: base, land["name"]: land}
     support = []
     for s in data.get("support", []):
+        if audience == "pilot" and s.get("coalition") == "red":
+            continue
         s = dict(s)
         if "base" in s:
             ap = _ll(_airport(terrain, s["base"]))
@@ -43,15 +49,20 @@ def view_model(data: dict) -> dict:
     route += [dict(wp, kind="wp", num=i + 1) for i, wp in enumerate(player["waypoints"])]
     route.append({"name": land["name"], "lat": land["lat"], "lon": land["lon"], "kind": "base"})
 
+    target = data["target"]
+    if audience == "pilot":  # trigger plumbing names the real (possibly hidden) groups
+        target = {k: v for k, v in target.items() if k not in ("groups", "kill_pct", "zone_m")}
     map_data = {
         "route": route,
-        "target": data["target"],
+        "target": target,
         "threats": data.get("threats", []),
         "support": support,
         "airfields": list(airfields.values()),
         "phases": [{"phase": p["phase"], "waypoints": p.get("waypoints", [])} for p in data["storyboard"]],
     }
-    return {**data, "player": player, "route": route, "support": support,
+    from .build_hangar import AIRCRAFT_NAMES
+    return {**data, "player": player, "route": route, "support": support, "target": target,
+            "aircraft_name": AIRCRAFT_NAMES.get(player["aircraft"], player["aircraft"].replace("_", " ")),
             "map_json": json.dumps(map_data)}
 
 

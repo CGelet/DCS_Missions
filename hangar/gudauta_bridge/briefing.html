@@ -135,6 +135,11 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
   #map { height: 420px; }
   .card, .phase-card { box-shadow: none; }
 }
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
 </style>
 </head>
 <body>
@@ -147,7 +152,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
       <span>Date <b class="mono">2026-03-14</b></span>
       <span>Step <b class="mono">06:40L</b></span>
       <span>Theater <b>Caucasus</b></span>
-      <span>Flight <b>Enfield 1 · 2× F/A-18C</b></span>
+      <span>Flight <b>Enfield 1 · 2× F/A-18C Hornet</b></span>
       <span>Base <b>Senaki-Kolkhi</b></span>
     </div>
     <blockquote class="hook">&#34;Gentlemen, there&#39;s one bridge between that brigade and Sukhumi. By breakfast
@@ -157,7 +162,7 @@ I want it in the river.&#34; HATCH Moreno, 0500 brief</blockquote>
 
 <nav class="sections" aria-label="Sections">
   <div class="wrap">
-    <a href="#story">Story</a><a href="#plan">Storyboard &amp; map</a><a href="#brief">Briefing</a><a href="#debrief">Debrief</a>
+    <a href="#story">Story</a><a href="#plan">Storyboard &amp; map</a><a href="#brief">Briefing</a>
     <span class="spacer"></span>
     <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
     <button type="button" onclick="window.print()">Print</button>
@@ -205,17 +210,9 @@ is stuck on the wrong side of the river for a week.</p></div>
           <span class="dot">1</span>
           <button type="button" class="phase-card" aria-label="Show Step &amp; Start on the map">
             <div class="phase-head"><h3>Step &amp; Start</h3><span class="time">06:40</span></div>
-            <p class="beat">Grey dawn over Senaki. HATCH watches from the line shack as the two Hornets&#39;
-APUs spool up. Somewhere north, a brigade is fuelling its tanks.</p>
+            <p class="beat">Grey dawn over Senaki. Cold start, check in with OVERLORD on 251.0 once
+airborne. Somewhere north, a brigade is fuelling its tanks.</p>
             
-            <div class="radio"><span class="lbl">RADIO</span>HATCH: Enfield, Senaki ops. Weather&#39;s holding, target&#39;s still standing. Clock&#39;s running. Good hunting.</div>
-            
-            <div class="chips">
-              
-              <span class="chip">Trigger: T+10s after mission start</span>
-                
-              
-            </div>
           </button>
         </li>
         
@@ -223,17 +220,9 @@ APUs spool up. Somewhere north, a brigade is fuelling its tanks.</p>
           <span class="dot">2</span>
           <button type="button" class="phase-card" aria-label="Show Coast-Out on the map">
             <div class="phase-head"><h3>Coast-Out</h3><span class="time">07:12</span></div>
-            <p class="beat">Feet wet over Poti. OVERLORD checks you in and paints a clean picture to the
-north, with Colt flight already on station.</p>
-            
-            <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Enfield 1, OVERLORD, radar contact. Picture clean. Colt is on station, CAP at angels two-five.</div>
-            
-            <div class="chips">
-              <span class="chip">COAST</span><span class="chip">SEA</span>
-              <span class="chip">Trigger: Flight enters COAST zone</span>
-                
-              
-            </div>
+            <p class="beat">Feet wet over Poti and north along the coast at 20,000+. Colt flight&#39;s CAP
+sits between you and Gudauta. OVERLORD will have the picture.</p>
+            <div class="chips"><span class="chip">COAST</span><span class="chip">SEA</span></div>
           </button>
         </li>
         
@@ -241,17 +230,9 @@ north, with Colt flight already on station.</p>
           <span class="dot">3</span>
           <button type="button" class="phase-card" aria-label="Show Push at the IP on the map">
             <div class="phase-head"><h3>Push at the IP</h3><span class="time">07:28</span></div>
-            <p class="beat">You turn inbound. Ten seconds later the RWR lights up with a six. The Gainful
-battery was waiting for you.</p>
-            
-            <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Enfield, new emitter, SA-6, four miles east-southeast of target. They&#39;re awake.</div>
-            
-            <div class="chips">
-              <span class="chip">IP</span>
-              <span class="chip">Trigger: Flight enters IP zone</span>
-                <span class="chip act">Activates SA-6 Battery</span>
-              
-            </div>
+            <p class="beat">Turn inbound at the IP. If the SA-6 is still where it was last seen, its
+envelope covers the whole run-in. Have a plan for a spike before you push.</p>
+            <div class="chips"><span class="chip">IP</span></div>
           </button>
         </li>
         
@@ -259,17 +240,9 @@ battery was waiting for you.</p>
           <span class="dot">4</span>
           <button type="button" class="phase-card" aria-label="Show Target Run on the map">
             <div class="phase-head"><h3>Target Run</h3><span class="time">07:31</span></div>
-            <p class="beat">Pod on the centre pier. Shilka tracers float up short of your altitude.
-Off to the east, Gudauta scrambles its alert pair.</p>
-            
-            <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Enfield, pop-up group, two contacts, Gudauta, climbing. Colt is committing.</div>
-            
-            <div class="chips">
-              <span class="chip">TGT</span>
-              <span class="chip">Trigger: Flight enters TGT zone</span>
-                <span class="chip act">Activates Red Alert</span>
-              
-            </div>
+            <p class="beat">Pod on the centre piers and release above 12,000 ft to stay out of the
+Shilkas. Two minutes in the target area at most.</p>
+            <div class="chips"><span class="chip">TGT</span></div>
           </button>
         </li>
         
@@ -277,17 +250,9 @@ Off to the east, Gudauta scrambles its alert pair.</p>
           <span class="dot">5</span>
           <button type="button" class="phase-card" aria-label="Show Egress on the map">
             <div class="phase-head"><h3>Egress</h3><span class="time">07:35</span></div>
-            <p class="beat">Hard turn west and down over the water. Behind you, either a cloud of dust
-over the Bzyb or a bridge that&#39;s still standing.</p>
-            
-            <div class="radio"><span class="lbl">RADIO</span>BRENNER (via OVERLORD): Enfield, ground eyes report the bridge is in the river. Outstanding work.</div>
-            
-            <div class="chips">
-              <span class="chip">EGRESS</span><span class="chip">HOME</span>
-              <span class="chip">Trigger: Bridge destroyed</span>
-                
-              
-            </div>
+            <p class="beat">Off target hard west and down over the water. Ask OVERLORD for a bridge
+status from the ground team on your way out.</p>
+            <div class="chips"><span class="chip">EGRESS</span><span class="chip">HOME</span></div>
           </button>
         </li>
         
@@ -295,17 +260,8 @@ over the Bzyb or a bridge that&#39;s still standing.</p>
           <span class="dot">6</span>
           <button type="button" class="phase-card" aria-label="Show Recovery &amp; Debrief on the map">
             <div class="phase-head"><h3>Recovery &amp; Debrief</h3><span class="time">07:55</span></div>
-            <p class="beat">Wheels down at Senaki. HATCH meets you at the jet with the drone feed on a
-tablet. The debrief depends on what it shows.</p>
+            <p class="beat">Wheels down at Senaki. HATCH will meet you at the jet with the drone feed.</p>
             
-            <div class="radio"><span class="lbl">RADIO</span>HATCH: Mission complete. RTB and debrief at the ops hut.</div>
-            
-            <div class="chips">
-              
-              <span class="chip">Trigger: Flag 10 set</span>
-                
-              
-            </div>
           </button>
         </li>
         
@@ -320,10 +276,11 @@ tablet. The debrief depends on what it shows.</p>
     <div class="cards">
       <div class="card"><h3>Situation</h3><p>Red mechanised forces are staging north of the Bzyb River for an offensive toward
 Sukhumi. The M-27 road bridge at Bzyb is their only heavy crossing. Blue holds
-air superiority over the coast, but the target is covered by a mobile SA-6
-battery and point-defence AAA. Red keeps a MiG-29 alert pair at Gudauta.</p></div>
+air superiority over the coast. Point-defence AAA at the bridge is confirmed from
+imagery; a mobile SA-6 battery was seen in the area 36 hours ago and hasn&#39;t been
+located since. Red has kept fighters at Gudauta, but nobody has seen them fly this week.</p></div>
       <div class="card"><h3>Objectives</h3>
-        <ul class="obj-list"><li><span>primary</span><div>Destroy the Bzyb River road bridge.</div></li><li><span>secondary</span><div>Destroy or suppress the SA-6 battery covering the bridge if it engages.</div></li><li><span>tertiary</span><div>Return both aircraft to Senaki-Kolkhi.</div></li></ul>
+        <ul class="obj-list"><li><span>primary</span><div>Destroy the Bzyb River road bridge.</div></li><li><span>secondary</span><div>If the SA-6 is still in the area and engages, destroy or suppress it.</div></li><li><span>tertiary</span><div>Return both aircraft to Senaki-Kolkhi.</div></li></ul>
       </div>
       <div class="card"><h3>Rules of engagement</h3><p>Weapons free on positively identified red air and air defence systems.
 Weapons tight on all ground targets other than the bridge and its defences.
@@ -331,16 +288,19 @@ No releases south of the Gumista River. Avoid civilian traffic on the M-27.</p><
 
       <div class="card wide"><h3>Threats</h3>
         <div class="table-scroll"><table>
-          <thead><tr><th>Type</th><th>System</th><th>Range</th><th>Notes</th></tr></thead>
+          <thead><tr><th>Type</th><th>System</th><th>Intel</th><th>Range</th><th>Notes</th></tr></thead>
           <tbody><tr>
             <td><span class="tag sam">sam</span></td><td>SA-6 Gainful (2K12 Kub)</td>
-            <td class="num">24 km</td><td>Mobile. Emitting only when tripped by the IP zone. Low altitude is your friend.</td>
+            <td><span class="intel suspected">suspected</span></td>
+            <td class="num">24 km</td><td>Last seen 36 h ago east of the target. Mobile; may have moved or left. Plan as if it&#39;s there.</td>
           </tr><tr>
             <td><span class="tag aaa">aaa</span></td><td>ZSU-23-4 Shilka</td>
-            <td class="num">2.5 km</td><td>At the bridge&#39;s west end. Stay above 12,000 ft on release.</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">2.5 km</td><td>Two vehicles at the bridge&#39;s west end on this morning&#39;s imagery. Stay above 12,000 ft on release.</td>
           </tr><tr>
-            <td><span class="tag air">air</span></td><td>MiG-29S alert pair</td>
-            <td class="num">n/a</td><td>Alert 5 at Gudauta. Expect a launch once you&#39;re inbound to the target.</td>
+            <td><span class="tag air">air</span></td><td>MiG-29S pair</td>
+            <td><span class="intel possible">possible</span></td>
+            <td class="num">n/a</td><td>Two airframes in shelters at Gudauta. Status unknown; they haven&#39;t flown this week.</td>
           </tr></tbody>
         </table></div>
       </div>
@@ -419,32 +379,13 @@ No releases south of the Gumista River. Avoid civilian traffic on the M-27.</p><
   </div>
 </section>
 
-<section id="debrief">
-  <div class="wrap">
-    <h2>Possible outcomes</h2>
-    <div class="outcomes">
-      
-      <div class="card outcome success"><h3>success</h3><p>The bridge is down. Recon from a coalition drone at 0815 shows the brigade&#39;s lead
-elements backed up along the M-27 north of Bzyb, with engineers already
-surveying the riverbank. Brenner&#39;s men on the Gumista get the week they needed.</p></div>
-      
-      <div class="card outcome partial"><h3>partial</h3><p>The bridge is damaged but still standing. Light vehicles are getting across.
-HATCH is already writing a re-attack tasking for this afternoon, and the SA-6
-crews now know you&#39;re coming.</p></div>
-      
-      <div class="card outcome failure"><h3>failure</h3><p>The bridge stands. By nightfall the first T-72s are across the Bzyb, and the
-Gumista line is bracing for contact at dawn.</p></div>
-      
-    </div>
-  </div>
-</section>
 </main>
 
-<footer><div class="wrap">Generated from <code>missions/gudauta_bridge/mission.yaml</code>. The same file builds the .miz, so the briefing and the mission always match.</div></footer>
+<footer><div class="wrap">Generated from <code>missions/gudauta_bridge/mission.yaml</code>. Intel is what the squadron knows at brief time; it may be incomplete.</div></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-const D = {"route": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644, "kind": "base"}, {"name": "COAST", "lat": 42.26, "lon": 41.56, "alt_ft": 20000, "kts": 420, "eta": "07:12", "kind": "wp", "num": 1}, {"name": "SEA", "lat": 42.75, "lon": 40.9, "alt_ft": 22000, "kts": 420, "eta": "07:21", "kind": "wp", "num": 2}, {"name": "IP", "lat": 43.06, "lon": 40.43, "alt_ft": 20000, "kts": 450, "eta": "07:28", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "TGT", "lat": 43.2286, "lon": 40.39, "alt_ft": 18000, "kts": 450, "eta": "07:31", "action": "bomb", "zone_km": 4, "kind": "wp", "num": 4}, {"name": "EGRESS", "lat": 43.08, "lon": 40.05, "alt_ft": 22000, "kts": 450, "eta": "07:35", "kind": "wp", "num": 5}, {"name": "HOME", "lat": 42.6, "lon": 40.95, "alt_ft": 24000, "kts": 380, "eta": "07:47", "kind": "wp", "num": 6}, {"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644, "kind": "base"}], "target": {"name": "Bzyb River road bridge", "lat": 43.2286, "lon": 40.39, "zone_m": 150, "description": "~750 m concrete road bridge carrying the S1/M-27 coast highway over the Bzyb, oriented 115/295. Located from OpenStreetMap data.", "dmpi": "Centre piers first, then the east abutment."}, "threats": [{"name": "SA-6 Gainful (2K12 Kub)", "kind": "sam", "lat": 43.205, "lon": 40.465, "range_km": 24, "notes": "Mobile. Emitting only when tripped by the IP zone. Low altitude is your friend."}, {"name": "ZSU-23-4 Shilka", "kind": "aaa", "lat": 43.23, "lon": 40.3868, "range_km": 2.5, "notes": "At the bridge's west end. Stay above 12,000 ft on release."}, {"name": "MiG-29S alert pair", "kind": "air", "lat": 43.124, "lon": 40.567, "range_km": 0, "notes": "Alert 5 at Gudauta. Expect a launch once you're inbound to the target."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.35, "lon": 41.3, "alt_ft": 30000, "heading": 300, "leg_nm": 30, "freq_mhz": 251.0}, {"kind": "cap", "callsign": "Colt", "aircraft": "F_16C_50", "coalition": "blue", "count": 2, "base": "Kutaisi", "from": {"lat": 42.95, "lon": 40.7}, "to": {"lat": 42.8, "lon": 40.95}, "alt_ft": 25000, "base_ll": {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}}, {"kind": "intercept", "callsign": "Red Alert", "aircraft": "MiG_29S", "coalition": "red", "count": 2, "base": "Gudauta", "late_activation": true, "engage": true, "base_ll": {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}}], "airfields": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}, {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}], "phases": [{"phase": "Step & Start", "waypoints": []}, {"phase": "Coast-Out", "waypoints": ["COAST", "SEA"]}, {"phase": "Push at the IP", "waypoints": ["IP"]}, {"phase": "Target Run", "waypoints": ["TGT"]}, {"phase": "Egress", "waypoints": ["EGRESS", "HOME"]}, {"phase": "Recovery & Debrief", "waypoints": []}]};
+const D = {"route": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644, "kind": "base"}, {"name": "COAST", "lat": 42.26, "lon": 41.56, "alt_ft": 20000, "kts": 420, "eta": "07:12", "kind": "wp", "num": 1}, {"name": "SEA", "lat": 42.75, "lon": 40.9, "alt_ft": 22000, "kts": 420, "eta": "07:21", "kind": "wp", "num": 2}, {"name": "IP", "lat": 43.06, "lon": 40.43, "alt_ft": 20000, "kts": 450, "eta": "07:28", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "TGT", "lat": 43.2286, "lon": 40.39, "alt_ft": 18000, "kts": 450, "eta": "07:31", "action": "bomb", "zone_km": 4, "kind": "wp", "num": 4}, {"name": "EGRESS", "lat": 43.08, "lon": 40.05, "alt_ft": 22000, "kts": 450, "eta": "07:35", "kind": "wp", "num": 5}, {"name": "HOME", "lat": 42.6, "lon": 40.95, "alt_ft": 24000, "kts": 380, "eta": "07:47", "kind": "wp", "num": 6}, {"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644, "kind": "base"}], "target": {"name": "Bzyb River road bridge", "lat": 43.2286, "lon": 40.39, "description": "~750 m concrete road bridge carrying the S1/M-27 coast highway over the Bzyb, oriented 115/295. Located from OpenStreetMap data.", "dmpi": "Centre piers first, then the east abutment."}, "threats": [{"name": "SA-6 Gainful (2K12 Kub)", "kind": "sam", "intel": "suspected", "lat": 43.215, "lon": 40.442, "area_km": 5, "range_km": 24, "notes": "Last seen 36 h ago east of the target. Mobile; may have moved or left. Plan as if it's there."}, {"name": "ZSU-23-4 Shilka", "kind": "aaa", "intel": "confirmed", "lat": 43.23, "lon": 40.3868, "range_km": 2.5, "notes": "Two vehicles at the bridge's west end on this morning's imagery. Stay above 12,000 ft on release."}, {"name": "MiG-29S pair", "kind": "air", "intel": "possible", "lat": 43.124, "lon": 40.567, "range_km": 0, "notes": "Two airframes in shelters at Gudauta. Status unknown; they haven't flown this week."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.35, "lon": 41.3, "alt_ft": 30000, "heading": 300, "leg_nm": 30, "freq_mhz": 251.0}, {"kind": "cap", "callsign": "Colt", "aircraft": "F_16C_50", "coalition": "blue", "count": 2, "base": "Kutaisi", "from": {"lat": 42.95, "lon": 40.7}, "to": {"lat": 42.8, "lon": 40.95}, "alt_ft": 25000, "base_ll": {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}}], "airfields": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}], "phases": [{"phase": "Step & Start", "waypoints": []}, {"phase": "Coast-Out", "waypoints": ["COAST", "SEA"]}, {"phase": "Push at the IP", "waypoints": ["IP"]}, {"phase": "Target Run", "waypoints": ["TGT"]}, {"phase": "Egress", "waypoints": ["EGRESS", "HOME"]}, {"phase": "Recovery & Debrief", "waypoints": []}]};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 // Theme toggle (remembered per viewer when storage is available)
@@ -485,11 +426,17 @@ function drawMap() {
     if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
   });
 
+  // Rings show intel, not truth: solid = confirmed, dashed = suspected, dotted = possible.
+  const dash = { confirmed: null, suspected: "8 5", possible: "2 6" };
   D.threats.forEach(t => {
-    const c = t.kind === "aaa" ? amber : red;
-    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, fillColor: c, fillOpacity: .08, dashArray: t.kind === "sam" ? "6 4" : null }).addTo(layers.threats);
-    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: c, fillOpacity: 1 }).addTo(layers.threats)
-      .bindPopup(`<b>${t.name}</b>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}<br>${t.notes || ""}`);
+    const intel = t.intel || "confirmed";
+    const c = t.kind === "aaa" ? amber : t.kind === "air" ? blue : t.kind === "armor" ? css("--muted") : red;
+    const faint = intel === "possible" ? .5 : 1;
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: c, weight: 1, opacity: .7 * faint, fill: false, dashArray: "1 5" })
+      .addTo(layers.threats).bindTooltip(`${t.name}: last known area`, { sticky: true });
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, opacity: faint, fillColor: c, fillOpacity: .06 * faint, dashArray: dash[intel] }).addTo(layers.threats);
+    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: intel === "confirmed" ? c : css("--surface"), fillOpacity: 1, opacity: faint }).addTo(layers.threats)
+      .bindPopup(`<b>${t.name}</b><br><i>Intel: ${intel}</i>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}${t.area_km ? "<br>Position ±" + t.area_km + " km" : ""}<br>${t.notes || ""}`);
   });
 
   D.support.forEach(s => {
@@ -507,11 +454,16 @@ function drawMap() {
   });
 
   const tg = D.target;
+  if (tg.area_km) L.circle([tg.lat, tg.lon], { radius: tg.area_km * 1000, color: accent, weight: 2, fill: false, dashArray: "4 6" })
+    .addTo(layers.target).bindTooltip("Target search area", { sticky: true });
   L.marker([tg.lat, tg.lon], { icon: L.divIcon({ className: "", html: `<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="${accent}" stroke-width="2.5"/><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="${accent}" stroke-width="2.5"/></svg>`, iconSize: [26, 26], iconAnchor: [13, 13] }) })
-    .addTo(layers.target).bindPopup(`<b>${tg.name}</b><br>${tg.description || ""}`);
+    .addTo(layers.target).bindPopup(`<b>${tg.name}</b>${tg.area_km ? "<br><i>Estimated position ±" + tg.area_km + " km</i>" : ""}<br>${tg.description || ""}`);
 
   document.querySelectorAll("#legend input").forEach(cb => { if (cb.checked) layers[cb.dataset.layer].addTo(map); });
-  if (center) map.setView(center, zoom); else map.fitBounds(routeLine.getBounds(), { padding: [24, 24] });
+  // Frame the route plus every briefed threat position and uncertainty area (not full ranges, which can be huge)
+  const frame = routeLine.getBounds();
+  D.threats.concat([D.target]).forEach(t => frame.extend(L.latLng(t.lat, t.lon).toBounds(2 * (t.area_km || 1) * 1000)));
+  if (center) map.setView(center, zoom); else map.fitBounds(frame, { padding: [24, 24] });
 }
 
 document.querySelectorAll("#legend input").forEach(cb => cb.addEventListener("change", () => {

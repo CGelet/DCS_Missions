@@ -1,0 +1,290 @@
+# Operation SILENT ORCHARD: the hunt. Source of truth; `python -m dcsmb build` renders hangar/silent_orchard/.
+#
+# Story device: fog of war. Pilots get a search area, not a position. At mission start the sim
+# rolls which of two hides the SA-11 is really in, whether an unbriefed SA-8 appears, and whether
+# the Gudauta fighters launch, so even the mission designer doesn't know exactly what will happen.
+#
+# Unit positions were checked against OpenStreetMap (land, red side of the Gumista).
+
+meta:
+  id: silent_orchard
+  title: "Operation SILENT ORCHARD"
+  subtitle: "Find the SA-11"
+  theater: caucasus
+  date: 2026-03-16
+  start_time: "14:20"
+  weather:
+    temperature_c: 11
+    wind_from_deg: 270
+    wind_kts: 15
+    clouds: "Broken 4,500 ft, overcast 9,000 ft"
+    visibility: "8 km in showers over the hills"
+    qnh_inhg: 29.86
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "SILENT ORCHARD"
+  backstory: |
+    Two days after the strike on the Bzyb bridge, the separatists answered. Yesterday
+    at 1410 a coalition MQ-9, MAGPIE 3, went silent over the hills above New Athos.
+    Its last telemetry frame shows a 9S18 search radar locking it up from somewhere
+    in the orchards below.
+
+    An SA-11 changes everything on this coast. Until it's found and killed, nothing
+    slow or low flies near the Gumista: no drones, no tankers, no close air support
+    for Brenner's company on the river. The battery has moved twice since the
+    shoot-down. ELINT has a rough area and a lot of guesses.
+  characters:
+    - name: "Lt Nino Kapanadze"
+      role: "ELINT analyst who was watching MAGPIE 3's feed when it died. She'll feed you plots."
+    - name: "Lt Col Dana \"HATCH\" Moreno"
+      role: "Mission commander, now running the SEAD package from Kutaisi"
+    - name: "OVERLORD"
+      role: "E-3 Sentry AWACS, holding off the coast"
+    - name: "Dodge 1-1 / 1-2"
+      role: "You and your wingman, F-16C Vipers with HARM and the targeting pod (HTS)"
+  hook: |
+    "It's out there, it already has one kill, and it's patient. Make it talk, then
+    make it stop." Lt Kapanadze, 1300 brief
+  outcomes:
+    success: |
+      Kapanadze's plot goes cold at the same second your HARM's timer runs out.
+      Recon the next morning finds a burnt-out 9S18 and two TELARs in an orchard. The
+      drones are back over the Gumista by noon, and so is close air support.
+    partial: |
+      The battery stopped emitting, but the damage assessment is "possible kill". Two
+      days later a new emitter comes up ten kilometres north. Coalition air still
+      treats the Gumista as contested.
+    failure: |
+      The SA-11 survives and moves again. Tomorrow's close air support over the
+      Gumista will be flown under its envelope, or not at all.
+
+situation: |
+  A mobile SA-11 (Buk) battery shot down an MQ-9 near New Athos yesterday and has
+  relocated at least twice since. Its current position is unknown; ELINT puts it
+  somewhere in a 10 km area between New Athos and the Achandara road. The Gumista
+  front has been quiet in the air since. Red still has fighters at Gudauta, and there
+  are unconfirmed reports of short-range air defences moving up behind the river.
+
+objectives:
+  primary: "Locate and destroy or disable the SA-11 battery (search radar and launchers)."
+  secondary: "Engage any other air defence systems that threaten the flight."
+  tertiary: "Return both aircraft to Kutaisi."
+
+roe: |
+  Weapons free on air defence emitters and red aircraft. Weapons tight on all other
+  ground targets. No HARM shots with a friendly aircraft inside the seeker's footprint.
+  No releases east of the Gumista River.
+
+# Intel: what the pilots are told. The truth is in `units` and `variants`.
+threats:
+  - name: "SA-11 Gadfly (9K37 Buk)"
+    kind: sam
+    intel: suspected
+    lat: 43.1400
+    lon: 40.7750
+    area_km: 10
+    range_km: 32
+    notes: "Shot down MAGPIE 3. Two favourite hides: the orchards above New Athos, or off the Achandara road. Expect it to be emitting."
+  - name: "SHORAD (SA-8 / SA-15)"
+    kind: sam
+    intel: possible
+    lat: 43.0600
+    lon: 40.9100
+    area_km: 6
+    range_km: 10
+    notes: "Single human-intelligence report of a wheeled SAM near Eshera. Unconfirmed."
+  - name: "MiG-29S pair"
+    kind: air
+    intel: possible
+    lat: 43.1240
+    lon: 40.5670
+    range_km: 0
+    notes: "Still in shelters at Gudauta. Status unknown."
+
+comms:
+  - { name: "Dodge (inter-flight)", freq: "255.000 AM", notes: "Radio 1" }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", notes: "Radio 2" }
+  - { name: "Kapanadze (ELINT, via OVERLORD)", freq: "251.000 AM", notes: "Radio 2" }
+  - { name: "Kutaisi Tower", freq: "134.000 AM", notes: "TACAN 44X" }
+
+flights:
+  - callsign: "Dodge 1"
+    aircraft: F_16C_50
+    count: 2
+    player: true
+    base: Kutaisi
+    start: cold
+    radio1_mhz: 255.0
+    loadout:
+      1: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      2: AIM_9X_Sidewinder_IR_AAM
+      3: AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_
+      4: Fuel_tank_370_gal
+      5: ALQ_184
+      6: Fuel_tank_370_gal
+      7: AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_
+      8: AIM_9X_Sidewinder_IR_AAM
+      9: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      10: AN_ASQ_213_HTS___HARM_Targeting_System
+    loadout_summary: "2× AGM-88C HARM, 2× AIM-120C, 2× AIM-9X, ALQ-184, HTS pod, 2× 370 gal tanks"
+    bingo_lbs: 3000
+    joker_lbs: 4500
+    waypoints:
+      - { name: "FENCE", lat: 42.5500, lon: 41.4000, alt_ft: 22000, kts: 450, eta: "14:42", zone_km: 10 }
+      - { name: "HOLD",  lat: 42.8000, lon: 40.9500, alt_ft: 24000, kts: 400, eta: "14:47", zone_km: 10 }
+      - { name: "PUSH",  lat: 42.9800, lon: 40.8200, alt_ft: 22000, kts: 480, eta: "14:51", action: sead, zone_km: 8 }
+      - { name: "EGRESS", lat: 42.7000, lon: 41.1500, alt_ft: 25000, kts: 450, eta: "14:58" }
+    land: Kutaisi
+
+target:
+  name: "SA-11 Buk battery"
+  lat: 43.1400
+  lon: 40.7750
+  area_km: 10
+  groups: ["SA-11 Site A", "SA-11 Site B"]   # only the variant that spawned counts
+  kill_pct: 50                                # battery is out of action at half strength
+  description: "Mobile SA-11 battery: 9S18 search radar, 9S470 command post, two 9A310 TELARs. Position unconfirmed."
+  dmpi: "Search radar first. The TELARs carry their own radars and can still engage on their own."
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "SA-11 Site A"
+    coalition: red
+    # The orchards above New Athos
+    type: [SA_11_Buk_SR_9S18M1, SA_11_Buk_CC_9S470M1, SA_11_Buk_LN_9A310M1, SA_11_Buk_LN_9A310M1]
+    lat: 43.1150
+    lon: 40.8450
+    heading: 150
+    late_activation: true
+  - name: "SA-11 Site B"
+    coalition: red
+    # Off the Achandara road, inland of Gudauta
+    type: [SA_11_Buk_SR_9S18M1, SA_11_Buk_CC_9S470M1, SA_11_Buk_LN_9A310M1, SA_11_Buk_LN_9A310M1]
+    lat: 43.1700
+    lon: 40.7050
+    heading: 160
+    late_activation: true
+  - name: "Osa Picket"
+    coalition: red
+    # Unbriefed: the "possible SHORAD" is real half the time
+    type: [Osa_9A33_ln, Osa_9A33_ln]
+    lat: 43.0500
+    lon: 40.9150
+    heading: 180
+    late_activation: true
+
+support:
+  - kind: awacs
+    callsign: "OVERLORD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.3500
+    lon: 41.3000
+    alt_ft: 30000
+    heading: 300
+    leg_nm: 30
+    freq_mhz: 251.0
+  - kind: intercept
+    callsign: "Gudauta Alert"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    base: Gudauta
+    late_activation: true
+
+# Rolled once at mission start. Each option is one possible truth.
+variants:
+  - name: "SA-11 hide"
+    options:
+      - { label: "Site A: orchards above New Athos", activate: ["SA-11 Site A"] }
+      - { label: "Site B: off the Achandara road", activate: ["SA-11 Site B"] }
+
+storyboard:
+  - phase: "Launch"
+    time: "14:20"
+    waypoints: []
+    brief: |
+      Cold start at Kutaisi. The SA-11's last known position is already twenty
+      minutes old by the time you taxi. Take that as a given.
+    script: "The hide is rolled at mission start; the battery is active and emitting from the first second."
+    trigger:
+      when: { time_after: 10 }
+      message: "KAPANADZE: Dodge, last emission plot is twenty minutes old. It's moved before, it'll move again. Go find it."
+      seconds: 15
+
+  - phase: "Fence In"
+    time: "14:42"
+    waypoints: ["FENCE"]
+    brief: |
+      Feet wet off Ochamchire. Fence in: HTS on, jammer on, master arm hot.
+      OVERLORD will have the air picture.
+    script: "OVERLORD checks the flight in. The air picture is clean."
+    trigger:
+      when: { player_in_zone: "FENCE" }
+      message: "OVERLORD: Dodge, OVERLORD, radar contact, picture clean. Kapanadze is on frequency."
+      seconds: 15
+
+  - phase: "The Search"
+    time: "14:47"
+    waypoints: ["HOLD"]
+    notes: "Ask the room: how long do you hold before you commit without a fix? What tells you it's time?"
+    brief: |
+      Hold outside the estimated SA-11 envelope and let the HTS build a picture.
+      The battery's position is a guess. Don't push until you have a fix, or a
+      plan for not having one.
+    script: |
+      Arriving at the hold, Kapanadze gives a fresh plot that names the real hide.
+      A patient flight gets an HTS fix that matches.
+    triggers:
+      - when: { player_in_zone: "HOLD", variant: ["SA-11 hide", 1] }
+        message: "KAPANADZE: Dodge, fresh plot. Strong 9S18 emissions, orchards above New Athos. That's my best guess."
+        seconds: 20
+      - when: { player_in_zone: "HOLD", variant: ["SA-11 hide", 2] }
+        message: "KAPANADZE: Dodge, fresh plot. 9S18 emitting inland of Gudauta, off the Achandara road. It moved again."
+        seconds: 20
+
+  - phase: "Push"
+    time: "14:51"
+    waypoints: ["PUSH"]
+    brief: |
+      Commit inside the envelope with HARMs in range and the jammer working. Watch
+      for anything new and low near Eshera; that report is unconfirmed.
+    script: |
+      50%: an SA-8 picket near Eshera comes up as the flight pushes. It was never on
+      the plot. 30%: the Gudauta MiGs launch. Both, one, or neither can happen.
+    triggers:
+      - when: { player_in_zone: "PUSH" }
+        chance: 50
+        activate: ["Osa Picket"]
+        message: "OVERLORD: Dodge, new emitter, low, SA-8, vicinity Eshera. That one wasn't on the plot."
+        seconds: 15
+      - when: { player_in_zone: "PUSH" }
+        chance: 30
+        activate: ["Gudauta Alert"]
+        message: "OVERLORD: Dodge, pop-up group, two contacts, Gudauta, climbing. You're the closest fighters."
+        seconds: 15
+
+  - phase: "Kill Assessment"
+    time: "14:55"
+    waypoints: ["EGRESS"]
+    brief: |
+      Off west-southwest and out of the envelope. Kapanadze will tell you if the
+      emitter has gone cold.
+    script: "When the rolled battery drops below half strength, Kapanadze confirms the kill."
+    trigger:
+      when: { target_destroyed: true }
+      message: "KAPANADZE: Emitter's gone. Plot is cold. That's your kill, Dodge."
+      set_flag: 10
+      seconds: 20
+
+  - phase: "Recovery"
+    time: "15:10"
+    waypoints: []
+    brief: "RTB Kutaisi. Debrief with Kapanadze's plots and your HTS recordings."
+    script: "HATCH calls mission complete only if the battery was killed."
+    trigger:
+      when: { flag: 10 }
+      message: "HATCH: Dodge, good kill. Drones go back up at noon tomorrow. RTB."
+      seconds: 20

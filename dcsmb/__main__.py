@@ -7,7 +7,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from . import build_hangar, build_html, build_miz, build_slides, kneeboard, schema
+from . import build_director, build_hangar, build_html, build_miz, build_slides, kneeboard, schema
 
 ROOT = Path(__file__).resolve().parent.parent
 MISSIONS = ROOT / "missions"
@@ -41,9 +41,10 @@ def main(argv=None) -> int:
         pages = [] if args.no_kneeboard else kneeboard.build(data, out / "kneeboard")
         html = build_html.build(data, out / "briefing.html")
         deck = build_slides.build(data, out / "slides.html")
+        director = build_director.build(data, out / "director.html")
         miz = out / f"{data['meta']['id']}.miz"
         build_miz.build(data, miz, pages)
-        for p in [miz, html, deck, *pages]:
+        for p in [miz, html, deck, director, *pages]:
             print(f"wrote {p.relative_to(ROOT)}")
 
     for p in build_hangar.build(list(missions.values()), HANGAR):

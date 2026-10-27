@@ -124,12 +124,15 @@ def svg_map(vm: dict, focus: list[str] | None = None, show_rings: bool = True) -
         pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in (pr(a, b) for a, b in line))
         out.append(f'<polyline class="coast" points="{pts}"/>')
 
-    if show_rings:
+    if show_rings:  # intel as briefed: ring dash shows confidence, dotted circle shows position uncertainty
         for t in vm.get("threats", []):
             x, y = pr(t["lat"], t["lon"])
+            intel = t.get("intel", "confirmed")
+            if t.get("area_km"):
+                out.append(f'<circle class="area {t["kind"]} {intel}" cx="{x:.1f}" cy="{y:.1f}" r="{pr.km(t["area_km"]):.1f}"/>')
             if t.get("range_km"):
-                out.append(f'<circle class="ring {t["kind"]}" cx="{x:.1f}" cy="{y:.1f}" r="{pr.km(t["range_km"]):.1f}"/>')
-            out.append(f'<circle class="threat {t["kind"]}" cx="{x:.1f}" cy="{y:.1f}" r="6"/>'
+                out.append(f'<circle class="ring {t["kind"]} {intel}" cx="{x:.1f}" cy="{y:.1f}" r="{pr.km(t["range_km"]):.1f}"/>')
+            out.append(f'<circle class="threat {t["kind"]} {intel}" cx="{x:.1f}" cy="{y:.1f}" r="6"/>'
                        + labels.add(x, y, t["name"].split(" (")[0], f"lbl {t['kind']}"))
 
     for s in vm.get("support", []):
@@ -149,6 +152,8 @@ def svg_map(vm: dict, focus: list[str] | None = None, show_rings: bool = True) -
         out.append(f'<polyline class="route hl" points="{pts}"/>')
 
     tx, ty = pr(vm["target"]["lat"], vm["target"]["lon"])
+    if vm["target"].get("area_km"):
+        out.append(f'<circle class="search" cx="{tx:.1f}" cy="{ty:.1f}" r="{pr.km(vm["target"]["area_km"]):.1f}"/>')
     out.append(f'<g class="target" transform="translate({tx:.1f},{ty:.1f})"><circle r="13"/>'
                '<path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g>')
 
@@ -172,17 +177,6 @@ def svg_map(vm: dict, focus: list[str] | None = None, show_rings: bool = True) -
 
 
 # --- Deck -----------------------------------------------------------------
-
-def _trigger_note(t: dict) -> str:
-    (k, v), = t["when"].items()
-    when = {"time_after": f"{v}s after mission start", "player_in_zone": f"when the flight enters the {v} zone",
-            "group_dead": f"when {v} is destroyed", "flag": f"when flag {v} is set",
-            "target_destroyed": "when the target is destroyed"}[k]
-    parts = [f"In the sim this fires {when}."]
-    if t.get("activate"):
-        parts.append(f"It activates {', '.join(t['activate'])}.")
-    return " ".join(parts)
-
 
 def slides(data: dict) -> list[dict]:
     vm = view_model(data)
@@ -211,31 +205,31 @@ def slides(data: dict) -> list[dict]:
         notes="Primary is what wins the mission. Everything else is a bonus or a way home.")
 
     tgt = data["target"]
-    tgt_wp = next((w["name"] for w in player["waypoints"] if w.get("action") == "bomb"), None)
+    where = (f"Estimated position ±{tgt['area_km']} km" if tgt.get("area_km") else f"{tgt['lat']:.4f}N {tgt['lon']:.4f}E")
+    tgt_wp = next((w["name"] for w in player["waypoints"] if w.get("action") in ("bomb", "sead", "cas")), None)
     add("map", eyebrow="Target", title=tgt["name"],
-        text=f"{tgt.get('description', '')}\n\nDMPI: {tgt.get('dmpi', '')}",
+        text=f"{tgt.get('description', '')}\n\n{where}\n\nDMPI: {tgt.get('dmpi', '')}",
         svg=svg_map(vm, focus=[tgt_wp] if tgt_wp else None),
-        notes=f"Target coordinates {tgt['lat']:.4f}N {tgt['lon']:.4f}E. Laser code "
+        notes=f"{where}. Laser code "
               f"{'/'.join(map(str, player.get('laser_codes', []))) or 'n/a'}.")
 
     add("threats", eyebrow="Threats", title="What's waiting for you", entries=data.get("threats", []),
-        notes="Emphasise how each threat is triggered. This is where the story turns.")
+        notes="Be clear about how sure the intel is. Suspected and possible threats might be somewhere else, or not there at all.")
 
-    support = [f"{s['callsign']}: {s.get('count', 1)}× {AIRCRAFT_NAMES.get(s['aircraft'], s['aircraft'])}"
-               f" ({s['kind'].upper()}{', red' if s.get('coalition') == 'red' else ''})" for s in data.get("support", [])]
+    support = [f"{s['callsign']}: {s.get('count', 1)}× {AIRCRAFT_NAMES.get(s['aircraft'], s['aircraft'])} ({s['kind'].upper()})"
+               for s in vm["support"]]  # friendly only; red flights are director-only
     add("package", eyebrow="Package", title=f"{player['callsign']} flight",
         rows=[("Aircraft", f"{player.get('count', 1)}× {ac}"), ("Start", f"{player.get('start', 'cold').title()} start, {vm['route'][0]['name']}"),
               ("Loadout", player.get("loadout_summary", "")), ("Joker / Bingo", f"{player.get('joker_lbs', '?')} / {player.get('bingo_lbs', '?')} lb")],
-        support=[s for s in support if "red" not in s],
+        support=support,
         notes="Confirm everyone has the loadout before step.")
 
     add("divider", eyebrow="The plan", title="How it plays out",
-        notes="Each phase slide pairs the story beat with the radio call players will hear.")
+        notes="This is the plan as briefed. What actually happens is up to the mission.")
     for i, ph in enumerate(data["storyboard"], 1):
-        t = ph.get("trigger") or {}
-        add("phase", eyebrow=f"Phase {i} · {ph.get('time', '')}", title=ph["phase"], text=ph["beat"].strip(),
-            radio=t.get("message"), svg=svg_map(vm, focus=ph["waypoints"]) if ph.get("waypoints") else None,
-            notes=" ".join(x for x in [ph.get("notes", ""), _trigger_note(t) if t else ""] if x))
+        add("phase", eyebrow=f"Phase {i} · {ph.get('time', '')}", title=ph["phase"], text=ph["brief"].strip(),
+            svg=svg_map(vm, focus=ph["waypoints"]) if ph.get("waypoints") else None,
+            notes=ph.get("notes", ""))
 
     add("comms", eyebrow="Comms", title="Frequencies", entries=data.get("comms", []),
         notes="Kneeboard page 2 carries this card in the cockpit.")
@@ -245,13 +239,8 @@ def slides(data: dict) -> list[dict]:
               ("Visibility", w.get("visibility", "")), ("Temp / QNH", f"{w.get('temperature_c', '')} °C / {w.get('qnh_inhg', '')} inHg"),
               ("ROE", data.get("roe", "").strip())], support=[], notes="")
     add("title", eyebrow=f"Operation {n['operation']}", title="Questions?",
-        sub=f"Step {meta['start_time']}L", quote="", notes="Stop here before the flight. The slides after this are for the debrief.")
-
-    add("divider", eyebrow="After the mission", title="Debrief", notes="Show the outcome that matches what happened.")
-    labels = {"success": "Mission success", "partial": "Partial success", "failure": "Mission failed"}
-    for k in ("success", "partial", "failure"):
-        if n.get("outcomes", {}).get(k):
-            add("outcome", eyebrow="Debrief", title=labels[k], tone=k, text=n["outcomes"][k].strip(), notes="")
+        sub=f"Step {meta['start_time']}L", quote="",
+        notes="End of the pilot brief. Debrief outcomes live in director.html, so they don't spoil the mission.")
     return deck
 
 

@@ -5,7 +5,8 @@ from pathlib import Path
 
 from .build_html import env
 
-AIRCRAFT_NAMES = {"FA_18C_hornet": "F/A-18C Hornet", "F_16C_50": "F-16C Viper", "MiG_29S": "MiG-29S", "E_3A": "E-3A"}
+AIRCRAFT_NAMES = {"FA_18C_hornet": "F/A-18C Hornet", "F_16C_50": "F-16C Viper", "A_10C_2": "A-10C II",
+                  "MiG_29S": "MiG-29S", "E_3A": "E-3A"}
 
 
 def card(data: dict, hangar: Path) -> dict:
@@ -27,7 +28,7 @@ def card(data: dict, hangar: Path) -> dict:
 
 
 def build(missions: list[dict], hangar: Path) -> list[Path]:
-    cards = sorted((card(m, hangar) for m in missions), key=lambda c: c["id"])
+    cards = sorted((card(m, hangar) for m in missions), key=lambda c: (str(c["date"]), c["id"]))  # campaign order
     hangar.mkdir(parents=True, exist_ok=True)
     out = []
     for name in ("index.html", "README.md"):

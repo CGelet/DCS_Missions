@@ -1,0 +1,278 @@
+# Operation HOLD FAST: the ticking clock. Source of truth; `python -m dcsmb build` renders hangar/gumista_line/.
+#
+# Story device: time pressure with an unknown direction. The column's route (coast road or
+# highway) is rolled at mission start, but it only starts rolling when the flight checks in, so
+# there is always a race. The outcome branches on whether CHISEL's position survives.
+#
+# Crossings and unit positions were checked against OpenStreetMap: the coast road bridge
+# (43.0163N 40.9498E) and the highway bridge (43.0553N 40.9969E) over the Gumista.
+
+meta:
+  id: gumista_line
+  title: "Operation HOLD FAST"
+  subtitle: "Defend the Gumista Line"
+  theater: caucasus
+  date: 2026-03-18
+  start_time: "05:50"
+  weather:
+    temperature_c: 4
+    wind_from_deg: 60
+    wind_kts: 6
+    clouds: "Scattered 3,000 ft, broken 7,000 ft"
+    visibility: "6 km in morning haze, improving"
+    qnh_inhg: 30.02
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "HOLD FAST"
+  backstory: |
+    The brigade the Bzyb strike was meant to stall is moving. At 0520 Captain
+    Brenner's company on the Gumista reported engine noise west of the river. Two
+    bridges cross the Gumista into Sukhumi, the coast road and the highway, and
+    Brenner has one company to hold both.
+
+    Hawg flight has been sitting alert at Babushara since midnight. It's ten
+    minutes to the river. Nobody knows which bridge the tanks are heading for,
+    and Brenner can hear them but can't see them yet.
+  characters:
+    - name: "Capt. Ilya Brenner, call sign CHISEL"
+      role: "JTAC with the company holding the Gumista bridges. Your eyes on the ground."
+    - name: "Lt Col Dana \"HATCH\" Moreno"
+      role: "Mission commander, launching you from the Babushara ops tent"
+    - name: "OVERLORD"
+      role: "E-3 Sentry AWACS"
+    - name: "Hawg 1-1 / 1-2"
+      role: "You and your wingman, A-10C IIs on alert"
+  hook: |
+    "I can hear tracks. I can't see them yet. Get here." CHISEL, 0531
+  outcomes:
+    success: |
+      The lead tanks burn on the approach to the bridge and the rest of the column
+      pulls back into the trees. Brenner's company holds both crossings. By 0900 the
+      brigade has gone to ground, and Sukhumi gets another week.
+    partial: |
+      You blunt the attack, but some vehicles get across. Brenner pulls back to the
+      city edge with his wounded. The line holds, just, a kilometre further east.
+    failure: |
+      CHISEL's position goes silent at 0623. Red armour is across the Gumista, and
+      the fight for Sukhumi starts in the streets.
+
+situation: |
+  A red mechanised battalion is advancing on the Gumista River, the last line in
+  front of Sukhumi. Two road bridges cross it: the coast road via Eshera and the main
+  highway via New Athos. Brenner's company (call sign CHISEL) holds the east bank
+  with Strykers and dismounts. The axis of attack is unknown. Expect the column at
+  either bridge within 30 minutes of your check-in.
+
+objectives:
+  primary: "Destroy the attacking column before it crosses the Gumista."
+  secondary: "Keep CHISEL's position intact."
+  tertiary: "Return both aircraft to Sukhumi-Babushara."
+
+roe: |
+  Type 2 control: CHISEL must clear every attack. Weapons tight east of the Gumista
+  except on CHISEL's call. Positive ID on all targets: friendly Strykers are on the
+  east bank.
+
+threats:
+  - name: "Red mechanised column"
+    kind: armor
+    intel: suspected
+    lat: 43.0600
+    lon: 40.8900
+    area_km: 6
+    range_km: 0
+    notes: "Lead battalion, around six vehicles (T-72B, BMP-2). Route unknown: coast road via Eshera or highway via New Athos."
+  - name: "ZSU-23-4 Shilka"
+    kind: aaa
+    intel: possible
+    lat: 43.0600
+    lon: 40.8900
+    range_km: 2.5
+    notes: "Columns usually move with a Shilka. Treat any column as defended."
+  - name: "MANPADS (SA-18 Igla)"
+    kind: sam
+    intel: suspected
+    lat: 43.0600
+    lon: 40.8900
+    range_km: 5
+    notes: "Assume an Igla team with any column. Stay above 6,000 ft west of the river."
+  - name: "SA-11 Gadfly"
+    kind: sam
+    intel: possible
+    lat: 43.1400
+    lon: 40.7750
+    area_km: 10
+    range_km: 32
+    notes: "If Operation SILENT ORCHARD didn't kill it, it could still cover the river. No emissions seen since."
+
+comms:
+  - { name: "Hawg (inter-flight)", freq: "252.000 AM", notes: "Radio 1" }
+  - { name: "CHISEL (JTAC)", freq: "254.000 AM", notes: "Radio 2" }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", notes: "Radio 3" }
+  - { name: "Sukhumi Tower", freq: "129.000 AM", notes: "Runway 30" }
+
+flights:
+  - callsign: "Hawg 1"
+    aircraft: A_10C_2
+    count: 2
+    player: true
+    base: Sukhumi_Babushara
+    start: warm
+    radio1_mhz: 252.0
+    laser_codes: [1688, 1688]
+    loadout:
+      1: ALQ_184
+      3: LAU_88_with_2_x_AGM_65D___Maverick_D__IIR_ASM_
+      4: BRU_42_with_3_x_LAU_131_pods___7_x_2_75_Hydra__Laser_Guided_Rkts_M151__HE_APKWS
+      5: CBU_97___10_x_SFW_Cluster_Bomb
+      7: CBU_97___10_x_SFW_Cluster_Bomb
+      8: BRU_42_3_GBU_12
+      9: LAU_88_with_2_x_AGM_65D___Maverick_D__IIR_ASM__   # pydcs spells pylon 9's rack with a trailing double underscore
+      10: AN_AAQ_28_LITENING___Targeting_Pod
+      11: LAU_105_2_AIM_9L
+    loadout_summary: "4× AGM-65D, 21× APKWS, 2× CBU-97, 3× GBU-12, LITENING, ALQ-184, 2× AIM-9L"
+    bingo_lbs: 2500
+    joker_lbs: 3500
+    waypoints:
+      - { name: "HOLD", lat: 43.0000, lon: 41.0500, alt_ft: 9000, kts: 250, eta: "06:02", zone_km: 6 }
+      - { name: "CAS",  lat: 43.0400, lon: 40.9500, alt_ft: 8000, kts: 250, eta: "06:05", action: cas, zone_km: 8 }
+      - { name: "RTB",  lat: 42.9300, lon: 41.1000, alt_ft: 6000, kts: 250, eta: "06:40" }
+    land: Sukhumi_Babushara
+
+target:
+  name: "Attacking armoured column"
+  lat: 43.0600
+  lon: 40.8900
+  area_km: 6
+  groups: ["Column Coast", "Column Highway"]   # only the axis that was rolled counts
+  kill_pct: 70
+  description: "Lead battalion of the red brigade, moving on one of the two Gumista bridges."
+  dmpi: "Lead vehicle on the bridge approach first to block the road, then the Shilka."
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "CHISEL Position"
+    coalition: blue
+    type: [M1126_Stryker_ICV, M1126_Stryker_ICV, M_113, Soldier_M4, Soldier_M4]
+    lat: 43.0300
+    lon: 40.9850
+    heading: 300
+  - name: "Column Coast"
+    coalition: red
+    type: [T_72B, T_72B, BMP_2, BMP_2, ZSU_23_4_Shilka, SA_18_Igla_manpad]
+    lat: 43.0400
+    lon: 40.9000
+    heading: 120
+    late_activation: true
+    speed_kmh: 22
+    route:
+      - { lat: 43.0250, lon: 40.9350 }
+      - { lat: 43.0163, lon: 40.9498 }   # coast road bridge
+      - { lat: 43.0220, lon: 40.9750 }
+      - { lat: 43.0300, lon: 40.9850 }   # CHISEL's position
+  - name: "Column Highway"
+    coalition: red
+    type: [T_72B, T_72B, BMP_2, BMP_2, ZSU_23_4_Shilka, SA_18_Igla_manpad]
+    lat: 43.0850
+    lon: 40.8400
+    heading: 100
+    late_activation: true
+    speed_kmh: 22
+    route:
+      - { lat: 43.0700, lon: 40.9300 }
+      - { lat: 43.0553, lon: 40.9969 }   # highway bridge
+      - { lat: 43.0400, lon: 40.9920 }
+      - { lat: 43.0300, lon: 40.9850 }   # CHISEL's position
+
+support:
+  - kind: awacs
+    callsign: "OVERLORD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.5000
+    lon: 41.2000
+    alt_ft: 28000
+    heading: 300
+    leg_nm: 25
+    freq_mhz: 251.0
+
+variants:
+  - name: "Axis of attack"
+    options:
+      - label: "Coast road via Eshera"
+        activate: ["Column Coast"]
+        when: { player_in_zone: "HOLD" }
+        message: "CHISEL: Hawg, CHISEL. Eyes on tracks, coast road, west of the Eshera bridge. Six vehicles, coming fast."
+        seconds: 20
+      - label: "Highway via New Athos"
+        activate: ["Column Highway"]
+        when: { player_in_zone: "HOLD" }
+        message: "CHISEL: Hawg, CHISEL. Eyes on tracks, main highway out of New Athos, heading for the upper bridge. Six vehicles."
+        seconds: 20
+
+storyboard:
+  - phase: "Scramble"
+    time: "05:50"
+    waypoints: []
+    brief: |
+      Alert launch from Babushara, engines already running. You're ten minutes
+      from the river. Don't stop to admire the sunrise.
+    script: "The axis of attack is rolled at start, but the column waits for the flight's check-in."
+    trigger:
+      when: { time_after: 15 }
+      message: "HATCH: Hawg, HATCH. CHISEL's hearing tracks west of the river. Wheels up, now."
+      seconds: 15
+
+  - phase: "Check In"
+    time: "06:02"
+    waypoints: ["HOLD"]
+    notes: "Ask the room: if CHISEL can only hear them, where do you hold so you can reach either bridge fastest?"
+    brief: |
+      Hold over Sukhumi, east of the river, at 9,000 ft and check in with CHISEL on
+      254.0. He'll tell you which crossing they're heading for as soon as he knows.
+    script: |
+      Checking in starts the clock: the rolled column spawns and drives for its bridge
+      at 22 km/h. It's about 25 minutes from CHISEL's position.
+
+  - phase: "Cleared Hot"
+    time: "06:05"
+    waypoints: ["CAS"]
+    brief: |
+      Work the column from the east side of the river. Stay above 6,000 ft west of
+      the Gumista, and kill the lead vehicle first to block the road.
+    script: |
+      Each column carries a Shilka and an Igla team; the intel was right this time.
+      The SA-11 the briefing warns about isn't here.
+    trigger:
+      when: { player_in_zone: "CAS" }
+      message: "CHISEL: Hawg, CHISEL. Type 2. Lead vehicle is your target. Cleared hot when ready, call in with direction."
+      seconds: 20
+
+  - phase: "Hold or Fall"
+    time: "06:20"
+    waypoints: []
+    brief: "Keep working targets on CHISEL's calls until the column stops or turns back."
+    script: |
+      The story branches. If the column drops below 30% strength it breaks off. If it
+      reaches CHISEL and destroys the position, Brenner falls back.
+    triggers:
+      - when: { target_destroyed: true }
+        message: "CHISEL: Column's burning. They're turning back. Hawg, you just saved my company."
+        set_flag: 10
+        seconds: 20
+      - when: { group_dead: "CHISEL Position" }
+        message: "CHISEL: Hawg, we're overrun. Falling back to Sukhumi. Anything you've got, west bank, now."
+        set_flag: 20
+        seconds: 20
+
+  - phase: "Recovery"
+    time: "06:40"
+    waypoints: ["RTB"]
+    brief: "RTB Babushara, ten minutes. Rearm, refuel, stay on alert."
+    script: "HATCH calls mission complete only if the column broke."
+    trigger:
+      when: { flag: 10 }
+      message: "HATCH: Hawg, the line held. RTB, rearm, you're back on alert at 0730."
+      seconds: 20

@@ -27,7 +27,7 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
     {% for k, v in objectives.items() %}<p><b>{{ k | upper }}:</b> {{ v }}</p>{% endfor %}</div>
   <div class="box"><h2>TARGET</h2>
     <p><b>{{ target.name }}</b></p>
-    <p style="font-family:'DejaVu Sans Mono',monospace">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E</p>
+    <p style="font-family:'DejaVu Sans Mono',monospace">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E{% if target.area_km %} &plusmn;{{ target.area_km }} km (estimate){% endif %}</p>
     <p>{{ target.description }}</p><p><b>DMPI:</b> {{ target.dmpi }}</p></div>
   {% if narrative.hook %}<div class="radio">{{ narrative.hook | trim }}</div>{% endif %}
 
@@ -46,7 +46,7 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
 {% elif page == "threats" %}
   <h1>Threats, ROE &amp; Loadout</h1>
   <table><thead><tr><th>SYSTEM</th><th>RNG</th></tr></thead><tbody>
-    {% for t in threats %}<tr><td class="{{ t.kind }}">{{ t.name }}<br><span style="font-size:15px;font-weight:normal;color:#333">{{ t.notes }}</span></td><td>{% if t.range_km %}{{ t.range_km }}km{% else %}-{% endif %}</td></tr>{% endfor %}
+    {% for t in threats %}<tr><td class="{{ t.kind }}">{{ t.name }} <span style="font-size:14px;font-weight:bold;border:1.5px {{ 'dashed' if t.intel == 'possible' else 'solid' }} #555;padding:1px 5px;color:#333">{{ (t.intel or "confirmed") | upper }}</span><br><span style="font-size:15px;font-weight:normal;color:#333">{{ t.notes }}</span></td><td>{% if t.range_km %}{{ t.range_km }}km{% else %}-{% endif %}</td></tr>{% endfor %}
   </tbody></table>
   <div class="box"><h2>ROE</h2><p>{{ roe | trim }}</p></div>
   <div class="box"><h2>LOADOUT</h2><p>{{ player.loadout_summary }}</p></div>
