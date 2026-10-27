@@ -108,10 +108,12 @@ threats:
     notes: "If Operation SILENT ORCHARD didn't kill it, it could still cover the river. No emissions seen since."
 
 comms:
-  - { name: "Hawg (inter-flight)", freq: "252.000 AM", notes: "Radio 1" }
-  - { name: "CHISEL (JTAC)", freq: "254.000 AM", notes: "Radio 2" }
-  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", notes: "Radio 3" }
-  - { name: "Sukhumi Tower", freq: "129.000 AM", notes: "Runway 30" }
+  # radio/channel = cockpit preset. A-10C II: radio 1 is the ARC-210 (VHF/UHF), radio 2 the ARC-164 (UHF).
+  - { name: "Hawg (inter-flight)", freq: "252.000 AM", radio: 1, channel: 1 }
+  - { name: "CHISEL (JTAC)", freq: "254.000 AM", radio: 1, channel: 2, notes: "Scripted calls (on-screen text); not a DCS JTAC, so he doesn't answer the menu" }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", radio: 1, channel: 3, notes: "Answers the F5 AWACS menu" }
+  - { name: "Sukhumi Tower", freq: "129.000 AM", radio: 1, channel: 4, notes: "Runway 30" }
+  - { name: "Strike common", freq: "264.000 AM", radio: 2, channel: 1 }
 
 flights:
   - callsign: "Hawg 1"

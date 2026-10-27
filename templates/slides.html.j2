@@ -167,7 +167,7 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
   {% elif s.kind == "comms" %}
     <div class="eyebrow">{{ s.eyebrow }}</div>
     <h2>{{ s.title }}</h2>
-    <div class="rows">{% for c in s.entries %}<div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">{{ c.freq }}</span><span>{{ c.name }} <span class="muted">· {{ c.notes }}</span></span></div>{% endfor %}</div>
+    <div class="rows">{% for c in s.entries %}<div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">{{ c.freq }}</span><span>{{ c.name }} <span class="muted mono">· {{ c.preset }}</span>{% if c.notes %}<br><span class="muted" style="font-size:22px">{{ c.notes }}</span>{% endif %}</span></div>{% endfor %}</div>
 
   {% elif s.kind == "outcome" %}
     <div class="band"></div>

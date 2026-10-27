@@ -231,7 +231,7 @@ def slides(data: dict) -> list[dict]:
             svg=svg_map(vm, focus=ph["waypoints"]) if ph.get("waypoints") else None,
             notes=ph.get("notes", ""))
 
-    add("comms", eyebrow="Comms", title="Frequencies", entries=data.get("comms", []),
+    add("comms", eyebrow="Comms", title="Frequencies", entries=vm["comms"],
         notes="Kneeboard page 2 carries this card in the cockpit.")
     w = meta.get("weather", {})
     add("package", eyebrow="Conditions", title="Weather & ROE",

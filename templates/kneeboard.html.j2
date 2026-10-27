@@ -37,8 +37,8 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
     <tr><td>0</td><td>{{ route[0].name }}</td><td>-</td><td>-</td><td>{{ meta.start_time }}</td><td>STEP</td></tr>
     {% for wp in player.waypoints %}<tr><td>{{ loop.index }}</td><td>{{ wp.name }}</td><td>{{ (wp.alt_ft / 1000) | round(1) }}k</td><td>{{ wp.kts }}</td><td>{{ wp.eta }}</td><td>{{ wp.action | default("") | upper }}</td></tr>{% endfor %}
   </tbody></table>
-  <table><thead><tr><th>STATION</th><th>FREQ</th><th>NOTE</th></tr></thead><tbody>
-    {% for c in comms %}<tr><td>{{ c.name }}</td><td>{{ c.freq }}</td><td>{{ c.notes }}</td></tr>{% endfor %}
+  <table><thead><tr><th>STATION</th><th>FREQ</th><th>PRESET</th></tr></thead><tbody>
+    {% for c in comms %}<tr><td>{{ c.name }}</td><td>{{ c.freq }}</td><td>{{ c.preset if "radio" in c else "-" }}</td></tr>{% endfor %}
   </tbody></table>
   <div class="box"><h2>FUEL</h2><p>JOKER {{ player.joker_lbs }} lb · BINGO {{ player.bingo_lbs }} lb</p>
     {% if player.laser_codes %}<h2>LASER</h2><p>{{ player.laser_codes | join(" / ") }}</p>{% endif %}</div>

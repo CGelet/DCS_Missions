@@ -104,10 +104,11 @@ threats:
     notes: "Still in shelters at Gudauta. Status unknown."
 
 comms:
-  - { name: "Dodge (inter-flight)", freq: "255.000 AM", notes: "Radio 1" }
-  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", notes: "Radio 2" }
-  - { name: "Kapanadze (ELINT, via OVERLORD)", freq: "251.000 AM", notes: "Radio 2" }
-  - { name: "Kutaisi Tower", freq: "134.000 AM", notes: "TACAN 44X" }
+  # radio/channel = cockpit preset. F-16C: radio 1 is UHF, radio 2 is VHF.
+  - { name: "Dodge (inter-flight)", freq: "255.000 AM", radio: 1, channel: 1 }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Kutaisi Tower", freq: "134.000 AM", radio: 2, channel: 1, notes: "TACAN 44X" }
+  - { name: "Kapanadze (ELINT), HATCH", freq: "251.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
 
 flights:
   - callsign: "Dodge 1"

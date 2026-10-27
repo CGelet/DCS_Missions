@@ -103,11 +103,12 @@ threats:
     notes: "Two airframes in shelters at Gudauta. Status unknown; they haven't flown this week."
 
 comms:
-  - { name: "Enfield (inter-flight)", freq: "251.000 AM", notes: "Radio 1" }
-  - { name: "Package / strike common", freq: "264.000 AM", notes: "Radio 2" }
-  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", notes: "Shares Radio 1" }
-  - { name: "Senaki Tower", freq: "132.000 AM", notes: "TACAN 31X" }
-  - { name: "Colt (CAP)", freq: "264.000 AM", notes: "Shares Radio 2" }
+  # radio/channel = cockpit preset. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Enfield (inter-flight)", freq: "251.000 AM", radio: 1, channel: 1 }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", radio: 1, channel: 1, notes: "Shares inter-flight. Answers the F5 AWACS menu." }
+  - { name: "Package / strike common", freq: "264.000 AM", radio: 2, channel: 1, notes: "Colt CAP" }
+  - { name: "Senaki Tower", freq: "132.000 AM", radio: 2, channel: 2, notes: "TACAN 31X" }
+  - { name: "HATCH, BRENNER", freq: "251.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
 
 flights:
   - callsign: "Enfield 1"
@@ -196,6 +197,7 @@ support:
     from: { lat: 42.9500, lon: 40.7000 }
     to: { lat: 42.8000, lon: 40.9500 }
     alt_ft: 25000
+    freq_mhz: 264.0
   - kind: intercept
     callsign: "Red Alert"
     aircraft: MiG_29S

@@ -101,6 +101,8 @@ A trigger's `when` holds one or more conditions, all of which must be true:
 - `target_destroyed`
 - `variant: [name, option]`
 
+`comms` entries take `radio` and `channel` to land on a cockpit preset. Radio 1 channel 1 is always the flight frequency. Leave them off for scripted-only voices, which appear as on-screen text and don't answer the radio menu.
+
 Add `chance: 1-99` to roll the trigger once at mission start; if the roll misses, the trigger never fires. Actions are `activate`, `message` (+ `seconds`) and `set_flag`.
 
 Unit and weapon names are pydcs names. Weapons are the attribute names on `dcs.planes.<Aircraft>.Pylon<N>`, e.g. `dcs.planes.FA_18C_hornet.Pylon2`. The build stops with a clear message if a name, waypoint, or group reference is wrong.

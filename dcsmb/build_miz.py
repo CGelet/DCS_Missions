@@ -84,8 +84,10 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
             group_size=f.get("count", 1),
         )
         groups[f["callsign"]] = fg
+        _set_callsign(fg, f["callsign"], blue, ac)
         if f.get("player"):
             fg.units[0].set_player()
+            _set_presets(fg, data.get("comms", []))
         if "radio1_mhz" in f:
             fg.set_frequency(f["radio1_mhz"])
         for unit in fg.units:
@@ -135,6 +137,8 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
                                 point(terrain, s["from"]), point(terrain, s["to"]),
                                 start_type=StartType.Runway, altitude=s.get("alt_ft", 25000) * FT,
                                 group_size=s.get("count", 2))
+            if "freq_mhz" in s:
+                g.set_frequency(s["freq_mhz"])
         elif s["kind"] == "intercept":
             g = m.flight_group_from_airport(country, s["callsign"], ac, _airport(terrain, s["base"]),
                                             maintask=task.Intercept, start_type=StartType.Runway,
@@ -144,6 +148,7 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         else:
             raise ValueError(f"support kind '{s['kind']}' not supported")
         g.late_activation = bool(s.get("late_activation"))
+        _set_callsign(g, s["callsign"], country, ac, awacs=s["kind"] == "awacs")
         groups[s["callsign"]] = g
 
     # --- random variants (rolled once at mission start) ---------------
@@ -230,6 +235,35 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     return m
 
 
+def _set_callsign(group, callsign: str, country, ac, awacs: bool = False) -> None:
+    """Give the group the DCS callsign the story uses ("Colt 1" -> Colt 1-1, Colt 1-2), when the country has it.
+
+    Western callsigns index the country's list, followed by the aircraft type's own names (A-10: Hawg, Boar...).
+    """
+    word, _, num = callsign.partition(" ")
+    names = country.callsign.get("AWACS" if awacs else "Air", []) + ([] if awacs else getattr(ac, "callnames", {}).get(country.name, []))
+    lower = [n.lower() for n in names]
+    if word.lower() not in lower:
+        return  # e.g. red flights: Russian callsigns are numeric
+    idx, num = lower.index(word.lower()), int(num) if num.isdigit() else 1
+    for j, u in enumerate(group.units, 1):
+        u.callsign_dict = {1: idx + 1, 2: num, 3: j, "name": f"{names[idx]}{num}{j}"}
+
+
+def _set_presets(group, comms: list[dict]) -> None:
+    """Put every comms-card frequency with a radio/channel onto the player aircraft's presets."""
+    for u in group.units:
+        if u.radio is None:
+            u.set_radio_preset()
+        for c in comms:
+            if "radio" not in c or (c["radio"], c["channel"]) == (1, 1):
+                continue  # DCS sets radio 1 channel 1 to the flight frequency itself
+            mhz = float(str(c["freq"]).split()[0])
+            if u.radio is None or c["radio"] not in u.radio:
+                raise ValueError(f"{u.type} has no radio {c['radio']} for '{c['name']}'")
+            u.set_radio_channel_preset(c["radio"], c["channel"], mhz)
+
+
 def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: dict) -> list:
     """DCS conditions for a `when` block; every one must hold."""
     conds = []
@@ -237,7 +271,8 @@ def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: di
         if kind == "time_after":
             conds.append(condition.TimeAfter(arg))
         elif kind == "player_in_zone":
-            conds.append(condition.PartOfGroupInZone(player_group.id, zones[arg].id))
+            # The human lead, not "any of the group": an AI wingman launching early mustn't advance the story
+            conds.append(condition.UnitInZone(player_group.units[0].id, zones[arg].id))
         elif kind == "group_dead":
             conds.append(condition.GroupDead(groups[arg].id))
         elif kind == "flag":

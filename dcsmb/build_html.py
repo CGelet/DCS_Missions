@@ -10,6 +10,9 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from .build_miz import _airport
 
 TEMPLATES = Path(__file__).resolve().parent.parent / "templates"
+# What each cockpit calls its radios, for the comms card ("COMM2 · CH 2")
+RADIO_NAMES = {"FA_18C_hornet": {1: "COMM1", 2: "COMM2"}, "F_16C_50": {1: "UHF", 2: "VHF"},
+               "A_10C_2": {1: "ARC-210", 2: "UHF", 3: "FM"}}
 
 
 def env() -> Environment:
@@ -61,7 +64,10 @@ def view_model(data: dict, audience: str = "pilot") -> dict:
         "phases": [{"phase": p["phase"], "waypoints": p.get("waypoints", [])} for p in data["storyboard"]],
     }
     from .build_hangar import AIRCRAFT_NAMES
-    return {**data, "player": player, "route": route, "support": support, "target": target,
+    radios = RADIO_NAMES.get(player["aircraft"], {})
+    comms = [{**c, "preset": f"{radios.get(c['radio'], 'Radio ' + str(c['radio']))} · CH {c['channel']}" if "radio" in c else "Manual / listen"}
+             for c in data.get("comms", [])]
+    return {**data, "comms": comms, "player": player, "route": route, "support": support, "target": target,
             "aircraft_name": AIRCRAFT_NAMES.get(player["aircraft"], player["aircraft"].replace("_", " ")),
             "map_json": json.dumps(map_data)}
 

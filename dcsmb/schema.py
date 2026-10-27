@@ -120,6 +120,20 @@ def validate(data) -> None:
     late |= {s["callsign"] for s in data.get("support", []) if s.get("late_activation")}
 
     tgt = data["target"]
+    player = players[0] if len(players) == 1 else {}
+    for i, c in enumerate(data.get("comms", [])):
+        where = f"comms[{i}] ({c.get('name', '?')})"
+        try:
+            mhz = float(str(c.get("freq", "")).split()[0])
+        except (ValueError, IndexError):
+            errs.append(f"{where}: 'freq' must start with the frequency in MHz, e.g. \"251.000 AM\"")
+            continue
+        if ("radio" in c) != ("channel" in c):
+            errs.append(f"{where}: give both 'radio' and 'channel' to put it on a cockpit preset")
+        # DCS forces radio 1 channel 1 to the flight's own frequency
+        if c.get("radio") == 1 and c.get("channel") == 1 and mhz != player.get("radio1_mhz"):
+            errs.append(f"{where}: radio 1 channel 1 is always the flight frequency ({player.get('radio1_mhz')}); use another channel")
+
     _latlon(tgt, "target", errs)
     for g in tgt.get("groups", []):
         if g not in group_names:
