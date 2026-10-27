@@ -144,6 +144,8 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 
 ## Open ideas (not started)
 
+Owner-facing feature proposals live in `FUTURE_FEATURES.md` (e.g. building missions from GitHub issues). Keep both in sync.
+
 - `scripts/check_pages.py`: the Playwright checks I run by hand (screenshots, console errors, 390 px width, PDF page count), so others can repeat them.
 - Merge labels of co-located threats on slide maps (HOLD FAST's column, Shilka and MANPADS share one estimate).
 
