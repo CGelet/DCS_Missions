@@ -1,0 +1,347 @@
+# Operation BLUE WATER: fleet defense from the carrier. Source of truth; `python -m dcsmb build` renders hangar/blue_water/.
+#
+# Story device: the threat you can't see yet, and gas you can't count on. You launch off a moving
+# carrier, tank, and hold a CAP until the raid shows up. The sim rolls the raid's axis (over the
+# water from Anapa, or over the mountains from Maykop), whether Flankers sweep ahead of it, and
+# whether the big-wing tanker is still there when you arrive. You recover aboard at last light.
+#
+# Sea positions checked against OpenStreetMap (no land at any carrier, CAP or tanker point).
+
+meta:
+  id: blue_water
+  title: "Operation BLUE WATER"
+  subtitle: "Hold the Line at Sea"
+  theater: caucasus
+  date: 2026-03-20
+  start_time: "16:40"
+  weather:
+    temperature_c: 10
+    wind_from_deg: 240
+    wind_kts: 14
+    clouds: "Few 5,000 ft, scattered 18,000 ft"
+    visibility: "20+ km, sun low in the west"
+    qnh_inhg: 29.95
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "BLUE WATER"
+  backstory: |
+    With the Gumista holding, the coalition moved the Stennis strike group into the
+    eastern Black Sea to put fighters over Sukhumi around the clock. The answer from
+    the north was always going to come by air. Overnight, two Tu-22M3 Backfires moved
+    forward. Each carries a Kh-22 that can hit a carrier from 300 km away.
+
+    Nobody knows when they'll launch or which way they'll come. The fleet's best
+    guess is dusk, with the sun in the defenders' eyes. Ford flight has the evening
+    CAP north of the boat, and whatever happens up there, everyone has to be back
+    aboard before the light goes.
+  characters:
+    - name: "Cmdr. Ray \"BISHOP\" Ortega"
+      role: "CAG, Carrier Air Wing aboard USS John C. Stennis"
+    - name: "DARKSTAR"
+      role: "E-2C Hawkeye: the fleet's eyes, holding over the strike group"
+    - name: "SHELL 1"
+      role: "KC-135 (drogue) tanker on the track south of the boat"
+    - name: "TEXACO 1"
+      role: "S-3B recovery tanker overhead the carrier: little gas, always close"
+    - name: "Ford 1-1 / 1-2"
+      role: "You and your wingman, F-14B Tomcats with Phoenix"
+  hook: |
+    "They only have to get lucky once. You have to be lucky every time. Tonight, be
+    lucky early." BISHOP, 1600 brief
+  outcomes:
+    success: |
+      Both Backfires go into the sea north of the CAP before they reach launch range.
+      The strike group never goes to general quarters. You trap on the last of the
+      light, and BISHOP is waiting on the flight deck.
+    partial: |
+      One Backfire gets its missile off before you reach it. The escorts knock the
+      Kh-22 down twelve miles from the boat. Nobody aboard sleeps tonight, and the
+      admiral wants a second CAP station by morning.
+    failure: |
+      The raid reaches launch range untouched. Two Kh-22s come in at Mach 3, and one
+      gets through the escorts' defences. The Stennis is still afloat but out of the
+      fight, and so is the coalition's air cover over Sukhumi.
+
+situation: |
+  The Stennis strike group is operating 70 nm west of Sukhumi, steaming southwest into
+  the wind. Long-range aviation has staged Tu-22M3 bombers within reach of the eastern
+  Black Sea. Intelligence expects a raid this evening, most likely from the northwest
+  over the water, but the mountains to the north can't be ruled out. Red fighters have
+  escorted bombers before. Shell 1 provides big-wing gas south of the boat. Texaco 1,
+  overhead Mother, carries a small amount for emergencies.
+
+objectives:
+  primary: "Destroy the bomber raid before it reaches the Kh-22 launch line."
+  secondary: "Engage any fighters that threaten the CAP or the strike group."
+  tertiary: "Recover both aircraft aboard the Stennis before last light."
+
+roe: |
+  Weapons free on any aircraft DARKSTAR declares hostile north of 43°10'N. Weapons
+  tight on everything else. Civil traffic out of Sochi is possible: VID if in doubt.
+
+threats:
+  - name: "Tu-22M3 Backfire raid"
+    kind: air
+    intel: suspected
+    lat: 44.1000
+    lon: 38.6000
+    area_km: 60
+    range_km: 0
+    notes: "Two bombers, Kh-22 (300 km). Expected from the northwest over the water. Must die before the launch line."
+  - name: "Su-27 Flanker escort"
+    kind: air
+    intel: possible
+    lat: 44.3000
+    lon: 39.6000
+    area_km: 40
+    range_km: 0
+    notes: "Escorts flew with the last raid in February. None seen staging this time."
+
+comms:
+  # F-14B: radio 1 is the pilot's ARC-159 (UHF), radio 2 the RIO's ARC-182 (V/UHF).
+  - { name: "Ford (inter-flight)", freq: "250.000 AM", radio: 1, channel: 1 }
+  - { name: "DARKSTAR (E-2C)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "SHELL 1 (KC-135 drogue)", freq: "252.000 AM", radio: 1, channel: 3, notes: "TACAN 51Y" }
+  - { name: "TEXACO 1 (S-3B)", freq: "253.000 AM", radio: 1, channel: 4, notes: "TACAN 60Y. Recovery tanker" }
+  - { name: "Mother (Stennis)", freq: "127.500 AM", radio: 2, channel: 1, notes: "TACAN 74X, ICLS 1. Answers the ATC menu" }
+  - { name: "BISHOP, PADDLES", freq: "250.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+ships:
+  - name: "Stennis Group"
+    coalition: blue
+    type: [Stennis, TICONDEROG, USS_Arleigh_Burke_IIa]
+    lat: 42.9500
+    lon: 39.7000
+    heading: 240
+    speed_kts: 25
+    route:
+      - { lat: 42.8000, lon: 39.3500 }
+      - { lat: 42.6500, lon: 39.0000 }
+    tacan: { channel: "74X", callsign: "STN" }
+    icls: 1
+    freq_mhz: 127.5
+
+flights:
+  - callsign: "Ford 1"
+    aircraft: F_14B
+    count: 2
+    player: true
+    base: "Stennis Group"
+    start: cold
+    radio1_mhz: 250.0
+    loadout:
+      1: LAU_138_AIM_9M
+      2: AIM_7M
+      3: Fuel_tank_300_gal_
+      4: AIM_54C_Mk60
+      5: AIM_54C_Mk60
+      6: AIM_54C_Mk60
+      7: AIM_54C_Mk60
+      8: Fuel_tank_300_gal_
+      9: AIM_7M
+      10: LAU_138_AIM_9M
+    loadout_summary: "4× AIM-54C Phoenix, 2× AIM-7M, 2× AIM-9M, 2× 300 gal tanks"
+    bingo_lbs: 4000
+    joker_lbs: 6000
+    waypoints:
+      - { name: "TANKER",  lat: 42.7200, lon: 39.9000, alt_ft: 22000, kts: 300, eta: "16:58", zone_km: 15 }
+      - { name: "CAP N",   lat: 43.4500, lon: 39.1000, alt_ft: 26000, kts: 350, eta: "17:12", action: cap, zone_km: 25 }
+      - { name: "CAP S",   lat: 43.2500, lon: 39.4500, alt_ft: 26000, kts: 350, eta: "17:18", zone_km: 25 }
+      - { name: "MARSHAL", lat: 42.7500, lon: 39.1500, alt_ft: 6000, kts: 300, eta: "18:05", zone_km: 15 }
+    land: "Stennis Group"
+
+target:
+  name: "Tu-22M3 bomber raid"
+  lat: 43.7200
+  lon: 39.1500
+  area_km: 40
+  groups: ["Raid West", "Raid North"]   # only the axis that was rolled counts
+  description: "Two Tu-22M3 carrying Kh-22 anti-ship missiles. Kill them before the launch line, about 30 nm north of the CAP."
+  dmpi: "Bombers first. Don't get drawn off by escorts unless they commit on you."
+
+# Named trigger zones (beyond the player's waypoints)
+zones:
+  - { name: "LAUNCH LINE", lat: 43.7200, lon: 39.1500, radius_km: 30 }
+
+support:
+  - kind: awacs
+    callsign: "DARKSTAR"
+    aircraft: E_2C
+    coalition: blue
+    lat: 42.9000
+    lon: 39.6000
+    alt_ft: 25000
+    heading: 330
+    leg_nm: 25
+    freq_mhz: 251.0
+  - kind: tanker
+    callsign: "Shell 1"
+    aircraft: KC135MPRS
+    coalition: blue
+    lat: 42.7000
+    lon: 39.9500
+    alt_ft: 22000
+    kts: 290
+    heading: 300
+    leg_nm: 25
+    freq_mhz: 252.0
+    tacan: { channel: "51Y", callsign: "SHL" }
+  - kind: tanker
+    callsign: "Texaco 1"
+    aircraft: S_3B_Tanker
+    coalition: blue
+    lat: 42.8800
+    lon: 39.4500
+    alt_ft: 8000
+    kts: 250
+    heading: 240
+    leg_nm: 15
+    freq_mhz: 253.0
+    tacan: { channel: "60Y", callsign: "TEX" }
+  # Red: director only
+  - kind: flight
+    callsign: "Raid West"
+    aircraft: Tu_22M3
+    coalition: red
+    count: 2
+    task: antiship
+    attack: "Stennis Group"
+    late_activation: true
+    spawn: { lat: 44.6000, lon: 37.2000, alt_ft: 30000, kts: 480 }
+    route:
+      - { lat: 44.1000, lon: 38.2000 }
+      - { lat: 43.7000, lon: 39.0000 }
+      - { lat: 43.2000, lon: 39.4000 }
+  - kind: flight
+    callsign: "Raid North"
+    aircraft: Tu_22M3
+    coalition: red
+    count: 2
+    task: antiship
+    attack: "Stennis Group"
+    late_activation: true
+    spawn: { lat: 44.6500, lon: 40.1000, alt_ft: 30000, kts: 480 }
+    route:
+      - { lat: 44.1000, lon: 39.7000 }
+      - { lat: 43.7000, lon: 39.3000 }
+      - { lat: 43.2500, lon: 39.5000 }
+  - kind: flight
+    callsign: "Flanker Sweep"
+    aircraft: Su_27
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 44.4000, lon: 39.5000, alt_ft: 32000, kts: 520 }
+    route:
+      - { lat: 43.6000, lon: 39.2000 }
+      - { lat: 43.3000, lon: 39.3000 }
+
+variants:
+  - name: "Raid axis"
+    options:
+      - label: "Over the water from Anapa"
+        activate: ["Raid West"]
+        when: { player_in_zone: "CAP N" }
+        message: "DARKSTAR: Ford, Darkstar, new group, two contacts, high and fast, northwest over the water. Hostile. Commit."
+        seconds: 20
+      - label: "Over the mountains from Maykop"
+        activate: ["Raid North"]
+        when: { player_in_zone: "CAP N" }
+        message: "DARKSTAR: Ford, Darkstar, new group, two contacts, high and fast, north, coming off the mountains. Hostile. Commit."
+        seconds: 20
+
+storyboard:
+  - phase: "Cat Shot"
+    time: "16:40"
+    waypoints: []
+    brief: |
+      Cold start on the Stennis deck and launch into the wind. Mother is steaming 240
+      at 25 knots. She won't be where you left her when you get back.
+    script: "BISHOP sends you off; nothing hostile is airborne yet."
+    trigger:
+      when: { time_after: 15 }
+      message: "BISHOP: Ford, CAG. Darkstar has nothing yet. That won't last. Go get your gas."
+      seconds: 15
+
+  - phase: "Find the Gas"
+    time: "16:58"
+    waypoints: ["TANKER"]
+    notes: "Ask the room: if the big tanker isn't there, how much CAP time does Texaco's gas actually buy you?"
+    brief: |
+      Join Shell 1 on the track south of the boat (TACAN 51Y) and top off. Texaco 1
+      overhead Mother (TACAN 60Y) is a backup with very little to give.
+    script: |
+      30%: Shell 1 goes RTB with a hydraulic failure six minutes into the mission, before
+      you can reach it. Then Texaco is the only gas airborne.
+    triggers:
+      - when: { time_after: 360 }
+        chance: 30
+        deactivate: ["Shell 1"]
+        set_flag: 30
+        message: "DARKSTAR: Ford, Shell 1-1 is RTB with a hydraulic problem. Texaco overhead Mother is your only gas."
+        seconds: 20
+      - when: { player_in_zone: "TANKER", flag_false: 30 }
+        message: "SHELL 1: Ford, Shell one-one, you're cleared pre-contact. Basket's out."
+        seconds: 15
+
+  - phase: "CAP Station"
+    time: "17:12"
+    waypoints: ["CAP N", "CAP S"]
+    brief: |
+      Hold the CAP between the two points at 26,000 ft, north of the boat. DARKSTAR
+      will call the raid when it shows. Intel's best guess is northwest over the water.
+    script: |
+      Reaching CAP N starts the raid on the axis that was rolled; it's about 14 minutes
+      from the launch line. 40%: two Su-27s sweep ahead of it.
+    trigger:
+      when: { player_in_zone: "CAP N" }
+      chance: 40
+      activate: ["Flanker Sweep"]
+      message: "DARKSTAR: Ford, second group, two fast movers, Flankers, sweeping ahead of the raid. Hostile."
+      seconds: 20
+
+  - phase: "The Intercept"
+    time: "17:20"
+    waypoints: []
+    brief: |
+      Commit on DARKSTAR's call. Phoenix range is your friend: the bombers have to die
+      before the launch line, about 30 nm north of the CAP.
+    script: "The story branches: the bombers die first, or one of them reaches the launch line."
+    triggers:
+      - when: { target_destroyed: true }
+        message: "DARKSTAR: Splash the Backfires. Picture clean. Ford, Darkstar, RTB Mother."
+        set_flag: 10
+        seconds: 20
+      - when: { group_in_zone: ["Raid West", "LAUNCH LINE"] }
+        message: "DARKSTAR: Vampire, vampire! Backfires launching, northwest, Kh-22s inbound to Mother!"
+        set_flag: 20
+        seconds: 20
+      - when: { group_in_zone: ["Raid North", "LAUNCH LINE"] }
+        message: "DARKSTAR: Vampire, vampire! Backfires launching, north, Kh-22s inbound to Mother!"
+        set_flag: 20
+        seconds: 20
+
+  - phase: "Case I at Last Light"
+    time: "18:05"
+    waypoints: ["MARSHAL"]
+    brief: |
+      Back to Mother: TACAN 74X, ICLS 1, Case I. The sun sets at about 18:20. Watch
+      your fuel; Texaco can give a little if you need it.
+    script: "PADDLES talks the recovery when the flight reaches marshal."
+    trigger:
+      when: { player_in_zone: "MARSHAL" }
+      message: "PADDLES: Ford, Paddles. Deck's clear, wind's down the angle, signal Charlie. Bring it home."
+      seconds: 15
+
+  - phase: "Debrief"
+    time: "18:30"
+    waypoints: []
+    brief: "Debrief in Ready Room 2 with DARKSTAR's tapes."
+    script: "BISHOP congratulates the flight only if the raid died before launch."
+    trigger:
+      when: { flag: 10, flag_false: 20 }
+      message: "BISHOP: Ford, CAG. Not one missile in the air. Good hunting. Get aboard."
+      seconds: 20

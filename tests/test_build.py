@@ -35,7 +35,7 @@ def test_validation_reports_every_problem(bridge):
         schema.validate(bad)
     msg = str(e.value)
     assert "target: 'lat'" in msg
-    assert "unknown waypoint 'NOWHERE'" in msg
+    assert "unknown waypoint or zone 'NOWHERE'" in msg
     assert "unknown group 'Ghost Flight'" in msg
     assert "'chance' is a percentage" in msg
     assert "'intel' must be one of" in msg

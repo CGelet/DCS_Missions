@@ -68,3 +68,43 @@ The brigade the Bzyb strike was meant to stall is moving. At 0520 Captain Brenne
 
 <p><a href="gumista_line/kneeboard/01_mission.png"><img src="gumista_line/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="gumista_line/kneeboard/02_nav.png"><img src="gumista_line/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="gumista_line/kneeboard/03_threats.png"><img src="gumista_line/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
 
+## Operation BLUE WATER: Hold the Line at Sea
+
+**Caucasus** · **2× F-14B Tomcat** · 2026-03-20, step 16:40L
+
+> "They only have to get lucky once. You have to be lucky every time. Tonight, be lucky early." BISHOP, 1600 brief
+
+With the Gumista holding, the coalition moved the Stennis strike group into the eastern Black Sea to put fighters over Sukhumi around the clock. The answer from the north was always going to come by air. Overnight, two Tu-22M3 Backfires moved forward. Each carries a Kh-22 that can hit a carrier from 300 km away.
+
+**Primary objective:** Destroy the bomber raid before it reaches the Kh-22 launch line.
+
+| Download | |
+| --- | --- |
+| Mission | [blue_water.miz](blue_water/blue_water.miz) |
+| Briefing | [briefing.html](blue_water/briefing.html) |
+| Slide deck | [slides.html](blue_water/slides.html) |
+| Director's cut | [director.html](blue_water/director.html): **spoilers**, for whoever runs or debriefs the mission |
+| Kneeboard | [01_mission.png](blue_water/kneeboard/01_mission.png) · [02_nav.png](blue_water/kneeboard/02_nav.png) · [03_threats.png](blue_water/kneeboard/03_threats.png) |
+
+<p><a href="blue_water/kneeboard/01_mission.png"><img src="blue_water/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="blue_water/kneeboard/02_nav.png"><img src="blue_water/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="blue_water/kneeboard/03_threats.png"><img src="blue_water/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## Operation DEEP CUT: Through the Back Door
+
+**Caucasus** · **2× AV-8B Harrier** · 2026-03-22, step 10:30L
+
+> "Nobody flies down that valley. That's the point." HATCH, 0900 brief
+
+The two MiG-29s at Gudauta have shown up on every mission this month. They don't fly much because they don't have much fuel. Every night a few tanker trucks come down the coast road from Gagra to keep them topped up.
+
+**Primary objective:** Destroy the fuel tanker trucks supplying Gudauta.
+
+| Download | |
+| --- | --- |
+| Mission | [deep_cut.miz](deep_cut/deep_cut.miz) |
+| Briefing | [briefing.html](deep_cut/briefing.html) |
+| Slide deck | [slides.html](deep_cut/slides.html) |
+| Director's cut | [director.html](deep_cut/director.html): **spoilers**, for whoever runs or debriefs the mission |
+| Kneeboard | [01_mission.png](deep_cut/kneeboard/01_mission.png) · [02_nav.png](deep_cut/kneeboard/02_nav.png) · [03_threats.png](deep_cut/kneeboard/03_threats.png) |
+
+<p><a href="deep_cut/kneeboard/01_mission.png"><img src="deep_cut/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="deep_cut/kneeboard/02_nav.png"><img src="deep_cut/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="deep_cut/kneeboard/03_threats.png"><img src="deep_cut/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+

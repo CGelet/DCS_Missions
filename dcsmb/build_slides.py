@@ -135,7 +135,16 @@ def svg_map(vm: dict, focus: list[str] | None = None, show_rings: bool = True) -
             out.append(f'<circle class="threat {t["kind"]} {intel}" cx="{x:.1f}" cy="{y:.1f}" r="6"/>'
                        + labels.add(x, y, t["name"].split(" (")[0], f"lbl {t['kind']}"))
 
+    for sh in vm.get("ships", []):
+        pts = [(sh["lat"], sh["lon"])] + [(p["lat"], p["lon"]) for p in sh.get("route", [])]
+        xy = " ".join(f"{x:.1f},{y:.1f}" for x, y in (pr(a, b) for a, b in pts))
+        x, y = pr(sh["lat"], sh["lon"])
+        out.append(f'<polyline class="shiptrack" points="{xy}"/><circle class="ship" cx="{x:.1f}" cy="{y:.1f}" r="9"/>'
+                   + labels.add(x, y, sh["name"], "lbl friendly"))
     for s in vm.get("support", []):
+        if s.get("track_to"):
+            (x1, y1), (x2, y2) = pr(s["lat"], s["lon"]), pr(s["track_to"]["lat"], s["track_to"]["lon"])
+            out.append(f'<line class="orbit" x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}"/>')
         if s.get("from") and s.get("to"):
             (x1, y1), (x2, y2) = pr(s["from"]["lat"], s["from"]["lon"]), pr(s["to"]["lat"], s["to"]["lon"])
             out.append(f'<line class="cap" x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}"/>'
@@ -160,7 +169,7 @@ def svg_map(vm: dict, focus: list[str] | None = None, show_rings: bool = True) -
     drawn = set()
     for p in route:
         x, y = pr(p["lat"], p["lon"])
-        if not (-50 < x < W + 50 and -50 < y < H + 50) or p["name"] in drawn:
+        if not (-50 < x < W + 50 and -50 < y < H + 50) or p["name"] in drawn or (p.get("ship") and p["kind"] == "base" and p is route[0]):
             continue
         drawn.add(p["name"])  # the home base is both the first and last route point
         label = f'{p["num"]} {p["name"]}' if p["kind"] == "wp" else p["name"]
@@ -200,6 +209,9 @@ def slides(data: dict) -> list[dict]:
 
     add("map", eyebrow="Situation", title="The battlespace", text=data["situation"].strip(),
         svg=svg_map(vm), notes="Walk the route from base to target and back. Point out the threat rings.")
+
+    add("profile", eyebrow="Flight profile", title="How high, where",
+        svg=vm["profile"], notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes.")
 
     add("objectives", eyebrow="Tasking", title="Objectives", entries=list(data["objectives"].items()),
         notes="Primary is what wins the mission. Everything else is a bonus or a way home.")

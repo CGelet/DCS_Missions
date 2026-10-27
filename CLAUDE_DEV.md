@@ -48,6 +48,10 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 | BROKEN SPAN (F/A-18C) | Stale intel | SA-6 "suspected" 2 km from its real spot; MiGs "possible", 70% chance to launch |
 | SILENT ORCHARD (F-16C) | The hunt | SA-11 at one of two hides (`variants`); hint radio call gated on the variant; unbriefed-ish SA-8 at 50%; MiGs 30% |
 | HOLD FAST (A-10C II) | Ticking clock and branching ending | Attack axis is a variant that spawns on check-in; moving columns (`route`); success vs friendly position destroyed |
+| BLUE WATER (F-14B, carrier) | The threat you can't see, and gas you can't count on | Raid axis variant spawns on reaching CAP; 40% Flanker sweep; 30% the tanker is `deactivate`d before you reach it; `group_in_zone` launch-line failure; recover aboard a moving carrier |
+| DEEP CUT (AV-8B) | The long way round | Tanker, then AGL valley route; target is apron or moving convoy (variant, hint at Pskhu); 50% Tor; 40% MiG scramble; lands at a different field |
+
+**Make routes look and fly differently** (owner feedback 2026-10-27: "all of these flight paths seem to be the same"). Vary the base (carrier or other field), the recovery field, refuelling, orbits (CAP or holding), AGL legs, pop-ups and egress direction. The altitude profile (`profile_svg`) makes the difference visible.
 
 Ideas not yet used: deception (a decoy SAM that's briefed as confirmed), weather turning, CSAR or rescue, escort of a slow friendly, a mission whose intel depends on the previous mission's outcome.
 
@@ -84,6 +88,10 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 - **`player_in_zone` uses the lead unit** (`UnitInZone(units[0])`), not `PartOfGroupInZone`. Owner report: a waypoint-1 call came "before we even took off". Most likely the AI wingman launched alone and tripped the group-based zone. Story beats must follow the human.
 - `task.SEAD`, `task.CAS` and `task.GroundAttack` are the main tasks; waypoint `action` picks the main task and AI wingman tasks.
 - Ground-unit routes use `VehicleGroup.add_waypoint(point, PointAction.OnRoad, speed_kmh)`.
+- **Carriers:** `flight_group_from_unit(..., ship_group)` for deck starts. Landing aboard is a hand-built `MovingPoint` (`type="Land"`, `action=Landing`, `link_unit` and `helipad_id` = carrier unit id); see `_land_on_ship`. Ship TACAN uses `ActivateBeaconCommand(..., aa=False, unit_id=carrier)`, plus `ActivateICLSCommand`. The ship's ATC frequency is `ShipGroup.set_frequency(hz)`, in hertz. The carrier moves, so maps draw the recovery at the end of the ship's route.
+- **Tankers:** `refuel_flight` creates a TACAN beacon with no unit id or callsign; `build_miz` replaces it. Tanker callsigns come from `country.callsign["Tankers"]`.
+- **No flyable F-15E in pydcs 0.15.0** (only the AI `F_15E`). Flyable player types used so far: FA_18C_hornet, F_16C_50, A_10C_2, F_14B, AV8BNA. Check `.flyable` before planning a mission.
+- AGL legs are `MovingPoint.alt_type = "RADIO"`.
 
 ## Template gotchas
 

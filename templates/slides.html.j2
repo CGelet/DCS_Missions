@@ -59,6 +59,14 @@ svg.map .threat.suspected.sam, svg.map .threat.possible.sam { stroke: var(--red)
 svg.map .threat.suspected.aaa, svg.map .threat.possible.aaa { stroke: var(--amber); }
 svg.map .threat.suspected.air, svg.map .threat.possible.air { stroke: var(--blue); }
 svg.map .threat.suspected.armor, svg.map .threat.possible.armor { stroke: var(--muted); }
+svg.map .ship { fill: var(--slide); stroke: var(--ok); stroke-width: 4; }
+svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
+svg.profile { width: 100%; height: auto; }
+svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
+svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 14px "IBM Plex Mono", monospace; }
 svg.map .search { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 8; }
 svg.map .ring.sam, svg.map .threat.sam { fill: var(--red); stroke: var(--red); }
 svg.map .ring.aaa, svg.map .threat.aaa { fill: var(--amber); stroke: var(--amber); }
@@ -146,6 +154,12 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
       </div>
       {% if s.svg %}<div class="mapcell">{{ s.svg }}</div>{% endif %}
     </div>
+
+  {% elif s.kind == "profile" %}
+    <div class="eyebrow">{{ s.eyebrow }}</div>
+    <h2>{{ s.title }}</h2>
+    <div style="flex:1;display:flex;align-items:center">{{ s.svg }}</div>
+    <p class="muted" style="font-size:22px;margin:0">Dashed legs are flown above ground level, following the terrain.</p>
 
   {% elif s.kind == "objectives" %}
     <div class="eyebrow">{{ s.eyebrow }}</div>

@@ -7,6 +7,10 @@ A hangar of ready-to-fly DCS World missions, each with a full story, an interact
 | Operation BROKEN SPAN | F/A-18C | Classic strike, but the SA-6 intel is 36 hours old |
 | Operation SILENT ORCHARD | F-16C | The hunt: the SA-11 is at one of two hides, chosen at random |
 | Operation HOLD FAST | A-10C II | The ticking clock: the attack comes down one of two roads, and the ending branches |
+| Operation BLUE WATER | F-14B, from the carrier | Fleet defense at dusk: the raid's axis is random, the big tanker may go home early, and you recover aboard at last light |
+| Operation DEEP CUT | AV-8B | The back door: tanker, then terrain-following through mountain valleys, a pop-up attack, and recovery at a different field |
+
+Every briefing and deck now includes an **altitude profile** alongside the map. Dashed legs are flown above ground level, so you can see how differently each mission flies.
 
 ## Two audiences: pilots and the director
 
@@ -85,25 +89,28 @@ The **Seen by** column says which audience gets each section.
 | `narrative` | pilots, except `outcomes` (director) | Backstory, cast, opening quote. The backstory also becomes the in-game briefing text. |
 | `situation`, `objectives`, `roe`, `comms` | pilots | Briefing cards, kneeboard pages, in-game task text |
 | `threats` | pilots | **Intel, not truth.** `intel: confirmed / suspected / possible`, optional `area_km` for position uncertainty. Can be wrong on purpose. |
-| `flights` | pilots | The player flight: aircraft, base, loadout by pylon, waypoints (`action: bomb / sead / cas` tasks the AI wingman). A waypoint with `zone_km` gets a trigger zone. |
+| `flights` | pilots | The player flight: aircraft, `base`/`land` (an airfield or a ship group name), loadout by pylon, waypoints (`action: bomb / sead / cas / cap`; `agl: true` for terrain-following legs). A waypoint with `zone_km` gets a trigger zone. |
+| `ships` | friendly: pilots; red: director | Ship groups (first type is the lead, e.g. `Stennis`), `route` and `speed_kts`, `tacan`, `icls`, ATC `freq_mhz` |
+| `zones` | director | Extra named trigger zones (e.g. a missile launch line). Usable anywhere a waypoint name is. |
 | `target` | pilots (position, description) | `area_km` for an estimated position. What counts as destroyed: `zone_m` (scenery in the zone dies) and/or `groups`, with `kill_pct` (default 100). |
 | `units` | director | **Ground truth.** Ground groups, optional `route` and `speed_kmh` for moving units. `late_activation` groups wait for a trigger or variant. |
-| `support` | friendly: pilots; red: director | AWACS, CAP, red interceptors |
+| `support` | friendly: pilots; red: director | `awacs`, `tanker` (with `tacan`), `cap`, `intercept` (scrambles from an airfield), `flight` (spawns in the air and flies a `route`: raids, sweeps) |
 | `variants` | director | Random choices rolled at mission start. Each option can `activate` groups, send a `message`, and wait for a `when`. |
 | `storyboard` | `brief` and `notes`: pilots; `script` and `trigger`: director | Ordered phases. `brief` is what pilots are told; `script` is what really happens; `trigger` / `triggers` become DCS trigger rules. |
 
 A trigger's `when` holds one or more conditions, all of which must be true:
 
 - `time_after` (seconds)
-- `player_in_zone` (waypoint name)
+- `player_in_zone` (waypoint or zone name; watches your aircraft, not the wingman)
 - `group_dead` (group name)
-- `flag` (number)
+- `group_in_zone: [group, zone]`
+- `flag` / `flag_false` (number)
 - `target_destroyed`
 - `variant: [name, option]`
 
 `comms` entries take `radio` and `channel` to land on a cockpit preset. Radio 1 channel 1 is always the flight frequency. Leave them off for scripted-only voices, which appear as on-screen text and don't answer the radio menu.
 
-Add `chance: 1-99` to roll the trigger once at mission start; if the roll misses, the trigger never fires. Actions are `activate`, `message` (+ `seconds`) and `set_flag`.
+Add `chance: 1-99` to roll the trigger once at mission start; if the roll misses, the trigger never fires. Actions are `activate`, `deactivate`, `message` (+ `seconds`) and `set_flag`.
 
 Unit and weapon names are pydcs names. Weapons are the attribute names on `dcs.planes.<Aircraft>.Pylon<N>`, e.g. `dcs.planes.FA_18C_hornet.Pylon2`. The build stops with a clear message if a name, waypoint, or group reference is wrong.
 

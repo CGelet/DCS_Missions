@@ -1,0 +1,320 @@
+# Operation DEEP CUT: the back door. Source of truth; `python -m dcsmb build` renders hangar/deep_cut/.
+#
+# Story device: the long way round. The coast is too well defended, so the route goes up the
+# mountains and comes back down a valley to the target: tanker first, then terrain-following
+# through the upper Kodori, Chkhalta and Bzyb valleys, a pop-up attack on Gudauta from the north,
+# and a low exit over the sea to a different airfield. The sim rolls whether the fuel is still on
+# the apron or already rolling west in a convoy, whether a Tor wakes up, and whether the MiGs scramble.
+#
+# Valley waypoints follow real places (OpenStreetMap): Azhara, the Chkhalta river, Pskhu, the upper Bzyb.
+
+meta:
+  id: deep_cut
+  title: "Operation DEEP CUT"
+  subtitle: "Through the Back Door"
+  theater: caucasus
+  date: 2026-03-22
+  start_time: "10:30"
+  weather:
+    temperature_c: 8
+    wind_from_deg: 200
+    wind_kts: 10
+    clouds: "Broken 9,000 ft over the mountains; valleys clear"
+    visibility: "15 km, haze along the coast"
+    qnh_inhg: 29.90
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "DEEP CUT"
+  backstory: |
+    The two MiG-29s at Gudauta have shown up on every mission this month. They
+    don't fly much because they don't have much fuel. Every night a few tanker
+    trucks come down the coast road from Gagra to keep them topped up.
+
+    Burn the fuel and the MiGs stay in their shelters. But since the Bzyb strike,
+    the coast has been wall-to-wall air defence. So this time the Harriers go in the
+    back door: over the mountains, down the Bzyb valley, and onto Gudauta from the
+    north, where nobody is looking.
+  characters:
+    - name: "Lt Col Dana \"HATCH\" Moreno"
+      role: "Mission commander, now running the Harrier detachment at Senaki"
+    - name: "SPARROW"
+      role: "Special-forces observation team dug in on a ridge above Gudauta. Their eyes, your timing."
+    - name: "ARCO 1"
+      role: "KC-130 tanker: low, slow, and the last gas you'll see"
+    - name: "Chevy 1-1 / 1-2"
+      role: "You and your wingman, AV-8B Harriers"
+  hook: |
+    "Nobody flies down that valley. That's the point." HATCH, 0900 brief
+  outcomes:
+    success: |
+      The fuel goes up in a column of black smoke you can see from Sukhumi. For
+      the next ten days, the Gudauta MiGs stay in their shelters, and SPARROW
+      walks out over the ridge without being seen.
+    partial: |
+      Some of the fuel burns, some gets away. The MiGs fly again in three days,
+      fewer and shorter. HATCH starts planning the next back-door run.
+    failure: |
+      The trucks are untouched and the MiGs keep flying. Worse, red now knows the
+      back door exists, and SPARROW has to come out the hard way.
+
+situation: |
+  Red keeps two MiG-29s at Gudauta, fuelled by tanker trucks that arrive from Gagra
+  overnight. The coast between Pitsunda and New Athos is covered by layered air
+  defences, but the mountains to the north are not. SPARROW, a special-forces team on
+  the ridge north of the airfield, will report where the fuel is when you're inbound.
+  Arco 1, a KC-130, is the only tanker available and sits east of the mountains.
+
+objectives:
+  primary: "Destroy the fuel tanker trucks supplying Gudauta."
+  secondary: "Avoid detection until the pop-up. The route is the plan."
+  tertiary: "Recover both aircraft at Sukhumi-Babushara."
+
+roe: |
+  Weapons free on the fuel trucks and on air defences that engage you. Weapons tight
+  on the airfield buildings and on all traffic on the coast road other than fuel
+  tankers. Do not overfly Pitsunda.
+
+threats:
+  - name: "ZSU-23-4 Shilka"
+    kind: aaa
+    intel: confirmed
+    lat: 43.1100
+    lon: 40.5600
+    range_km: 2.5
+    notes: "Two vehicles on the airfield's southern edge. Pop to 6,000 ft and stay there."
+  - name: "MiG-29S pair"
+    kind: air
+    intel: confirmed
+    lat: 43.1140
+    lon: 40.5700
+    range_km: 0
+    notes: "On alert at Gudauta. If they're fuelled, they can be airborne in five minutes."
+  - name: "SA-15 Gauntlet (Tor)"
+    kind: sam
+    intel: possible
+    lat: 43.1250
+    lon: 40.5650
+    area_km: 3
+    range_km: 12
+    notes: "SPARROW heard a generator and saw a tracked vehicle under nets. Could be a Tor."
+  - name: "SA-6 Gainful"
+    kind: sam
+    intel: possible
+    lat: 43.2050
+    lon: 40.4650
+    area_km: 8
+    range_km: 24
+    notes: "Last seen near the Bzyb during BROKEN SPAN. Not seen since. Stay low in the valley."
+
+comms:
+  # AV-8B: radios 1 and 2 are both V/UHF.
+  - { name: "Chevy (inter-flight)", freq: "260.000 AM", radio: 1, channel: 1 }
+  - { name: "ARCO 1 (KC-130)", freq: "276.000 AM", radio: 1, channel: 2, notes: "TACAN 35Y" }
+  - { name: "Senaki Tower", freq: "132.000 AM", radio: 2, channel: 1, notes: "Departure" }
+  - { name: "Sukhumi Tower", freq: "129.000 AM", radio: 2, channel: 2, notes: "Recovery, runway 30" }
+  - { name: "SPARROW, HATCH", freq: "260.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Chevy 1"
+    aircraft: AV8BNA
+    count: 2
+    player: true
+    base: Senaki_Kolkhi
+    start: cold
+    radio1_mhz: 260.0
+    laser_codes: [1688, 1688]
+    loadout:
+      1: AIM_9M_Sidewinder_IR_AAM
+      2: GBU_12___500lb_Laser_Guided_Bomb
+      3: GBU_12___500lb_Laser_Guided_Bomb
+      5: AN_AAQ_28_LITENING___Targeting_Pod
+      6: GBU_12___500lb_Laser_Guided_Bomb
+      7: GBU_12___500lb_Laser_Guided_Bomb
+      8: AIM_9M_Sidewinder_IR_AAM
+    loadout_summary: "4× GBU-12, LITENING, 2× AIM-9M"
+    bingo_lbs: 2000
+    joker_lbs: 3000
+    waypoints:
+      - { name: "ARCO",     lat: 42.6000, lon: 42.2500, alt_ft: 14000, kts: 240, eta: "10:44", zone_km: 15 }
+      - { name: "RIDGE",    lat: 42.9200, lon: 41.8800, alt_ft: 11500, kts: 380, eta: "10:58" }
+      - { name: "AZHARA",   lat: 43.1046, lon: 41.7145, alt_ft: 1000, agl: true, kts: 420, eta: "11:01" }
+      - { name: "CHKHALTA", lat: 43.2013, lon: 41.5501, alt_ft: 1000, agl: true, kts: 420, eta: "11:03" }
+      - { name: "PSKHU",    lat: 43.3833, lon: 40.8144, alt_ft: 1500, agl: true, kts: 420, eta: "11:08", zone_km: 8 }
+      - { name: "VALLEY",   lat: 43.3000, lon: 40.6200, alt_ft: 800, agl: true, kts: 450, eta: "11:10" }
+      - { name: "IP",       lat: 43.2000, lon: 40.6000, alt_ft: 800, agl: true, kts: 450, eta: "11:11", zone_km: 6 }
+      - { name: "TGT",      lat: 43.1200, lon: 40.5800, alt_ft: 6000, kts: 420, eta: "11:12", action: bomb, zone_km: 5 }
+      - { name: "FEET WET", lat: 43.0300, lon: 40.7000, alt_ft: 500, agl: true, kts: 480, eta: "11:14" }
+      - { name: "COAST",    lat: 42.9300, lon: 41.0200, alt_ft: 1500, kts: 350, eta: "11:17" }
+    land: Sukhumi_Babushara
+
+target:
+  name: "Gudauta fuel trucks"
+  lat: 43.1200
+  lon: 40.5800
+  area_km: 8
+  groups: ["Fuel Apron", "Fuel Convoy"]   # only the variant that spawned counts
+  kill_pct: 60
+  description: "Four to six ATZ-10 fuel trucks: on the apron if they're late, or on the coast road west if they've already unloaded."
+  dmpi: "Lead truck first if they're moving: it blocks the road."
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "Fuel Apron"
+    coalition: red
+    type: [ATZ_10, ATZ_10, ATZ_10, ATZ_10]
+    lat: 43.1200
+    lon: 40.5800
+    heading: 120
+    late_activation: true
+  - name: "Fuel Convoy"
+    coalition: red
+    type: [ATZ_10, ATZ_10, ATZ_10, ZSU_23_4_Shilka]
+    lat: 43.1150
+    lon: 40.6000
+    heading: 300
+    late_activation: true
+    speed_kmh: 35
+    route:
+      - { lat: 43.1350, lon: 40.5300 }
+      - { lat: 43.1800, lon: 40.4600 }
+      - { lat: 43.2286, lon: 40.3900 }   # the rebuilt Bzyb bridge
+  - name: "Airfield AAA"
+    coalition: red
+    type: [ZSU_23_4_Shilka, ZSU_23_4_Shilka]
+    lat: 43.1100
+    lon: 40.5600
+    heading: 0
+  - name: "Gudauta Tor"
+    coalition: red
+    # The "possible" SA-15 is real half the time and wakes up when you reach the IP
+    type: [Tor_9A331]
+    lat: 43.1250
+    lon: 40.5650
+    heading: 0
+    late_activation: true
+
+support:
+  - kind: tanker
+    callsign: "Arco 1"
+    aircraft: KC130
+    coalition: blue
+    lat: 42.6000
+    lon: 42.2500
+    alt_ft: 14000
+    kts: 230
+    heading: 300
+    leg_nm: 20
+    freq_mhz: 276.0
+    tacan: { channel: "35Y", callsign: "ARC" }
+  - kind: intercept
+    callsign: "Gudauta Alert"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    base: Gudauta
+    late_activation: true
+
+variants:
+  - name: "Where's the fuel"
+    options:
+      - label: "Still on the apron"
+        activate: ["Fuel Apron"]
+      - label: "Convoy heading west on the coast road"
+        activate: ["Fuel Convoy"]
+
+storyboard:
+  - phase: "Launch"
+    time: "10:30"
+    waypoints: []
+    brief: |
+      Cold start at Senaki. You're heavy and the tanker is the only gas you'll see,
+      so leave on time.
+    script: "Where the fuel is gets rolled at mission start. The convoy, if rolled, starts driving immediately."
+    trigger:
+      when: { time_after: 15 }
+      message: "HATCH: Chevy, HATCH. Back door's open. Don't knock."
+      seconds: 15
+
+  - phase: "Last Gas"
+    time: "10:44"
+    waypoints: ["ARCO"]
+    brief: |
+      Arco 1, a KC-130, holds at 14,000 ft and 230 knots east of the mountains (TACAN
+      35Y). Fill to full. There's no more gas after this.
+    script: "Arco 1 is there and has gas; this phase is about fuel and timing, not surprises."
+    trigger:
+      when: { player_in_zone: "ARCO" }
+      message: "ARCO 1: Chevy, Arco one-one. Cleared to the right hose, pre-contact."
+      seconds: 15
+
+  - phase: "Into the Mountains"
+    time: "10:58"
+    waypoints: ["RIDGE", "AZHARA", "CHKHALTA"]
+    notes: "Show the profile slide. Ask the room: where along this valley would you pick to abort?"
+    brief: |
+      Cross the Kodori range at 11,500 ft, then drop into the upper Kodori at Azhara.
+      From there it's 1,000 ft above the ground or lower, up the Chkhalta valley.
+    script: "Nothing hostile here: the terrain is the threat. Radar coverage doesn't reach into these valleys."
+
+  - phase: "The Saddle"
+    time: "11:08"
+    waypoints: ["PSKHU"]
+    brief: |
+      Over the saddle into the Bzyb valley at Pskhu. SPARROW will call where the fuel
+      is: still on the apron, or already moving.
+    script: "Reaching Pskhu, SPARROW names the truth: apron or convoy."
+    triggers:
+      - when: { player_in_zone: "PSKHU", variant: ["Where's the fuel", 1] }
+        message: "SPARROW: Chevy, Sparrow. Trucks are still on the apron, east end, four of them. You're on time."
+        seconds: 20
+      - when: { player_in_zone: "PSKHU", variant: ["Where's the fuel", 2] }
+        message: "SPARROW: Chevy, Sparrow. Trucks left ten minutes ago, heading west on the coast road toward the Bzyb. One Shilka with them."
+        seconds: 20
+
+  - phase: "Pop-Up"
+    time: "11:11"
+    waypoints: ["VALLEY", "IP"]
+    brief: |
+      Down the Bzyb valley to the IP, then pop to 6,000 ft, find the trucks, and get
+      the pod on them. Two passes at most.
+    script: "50%: the Tor is real and comes up as you reach the IP. SPARROW sees its radar start turning."
+    trigger:
+      when: { player_in_zone: "IP" }
+      chance: 50
+      activate: ["Gudauta Tor"]
+      message: "SPARROW: Chevy, new radar turning, north side of the airfield! It's a Tor!"
+      seconds: 15
+
+  - phase: "On Target"
+    time: "11:12"
+    waypoints: ["TGT"]
+    brief: |
+      Bombs on the fuel, then off south and feet wet within 90 seconds. Don't
+      overfly the airfield.
+    script: |
+      40%: the MiGs scramble while you're over the target, so you're fighting off the
+      runway. When enough trucks burn, SPARROW confirms.
+    triggers:
+      - when: { player_in_zone: "TGT" }
+        chance: 40
+        activate: ["Gudauta Alert"]
+        message: "SPARROW: Two MiGs rolling on the runway! They're coming up under you!"
+        seconds: 15
+      - when: { target_destroyed: true }
+        message: "SPARROW: Big secondaries. That's the fuel. Get out, Chevy."
+        set_flag: 10
+        seconds: 20
+
+  - phase: "Out the Front Door"
+    time: "11:14"
+    waypoints: ["FEET WET", "COAST"]
+    brief: |
+      Low and fast over the water, east along the coast to Sukhumi-Babushara (tower
+      129.0). It's ten minutes, and the airfield is friendly.
+    script: "HATCH calls the result once you're feet wet, but only if the fuel burned."
+    trigger:
+      when: { flag: 10, player_in_zone: "FEET WET" }
+      message: "HATCH: Chevy, HATCH. Gudauta is burning. Nice work. Bring them home."
+      seconds: 20

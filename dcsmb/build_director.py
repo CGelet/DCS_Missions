@@ -20,6 +20,8 @@ def describe_when(when: dict) -> str:
             "player_in_zone": lambda: f"player flight enters the {v} zone",
             "group_dead": lambda: f"{v} is destroyed",
             "flag": lambda: f"flag {v} is set",
+            "flag_false": lambda: f"flag {v} is not set",
+            "group_in_zone": lambda: f"{v[0]} enters {v[1]}",
             "target_destroyed": lambda: "the target is destroyed",
             "variant": lambda: f"“{v[0]}” rolled option {v[1]}",
         }[k]())
@@ -65,6 +67,9 @@ def view(data: dict) -> dict:
                                                              else ["Never activated (check the YAML)"])
 
     map_data = json.loads(vm["map_json"])
+    map_data["zones"] = [{"name": z["name"], "lat": z["lat"], "lon": z["lon"], "radius_km": z["radius_km"]} for z in data.get("zones", [])]
+    map_data["flights"] = [{"name": s["callsign"], "spawn": s["spawn"], "route": s.get("route", []), "coalition": s.get("coalition", "red")}
+                           for s in data.get("support", []) if s["kind"] == "flight"]
     map_data["units"] = [{"name": u["name"], "lat": u["lat"], "lon": u["lon"], "coalition": u.get("coalition", "red"),
                           "route": u.get("route", []), "late": bool(u.get("late_activation"))} for u in data.get("units", [])]
     return {**vm, "units_truth": units, "rolls": rolls, "script": script, "briefed": briefed,

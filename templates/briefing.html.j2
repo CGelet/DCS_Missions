@@ -79,6 +79,7 @@
         {% endfor %}
       </ol>
     </div>
+    <div class="profile-wrap"><h3>Altitude profile</h3>{{ profile }}<p>Planned altitudes along the route. Dashed legs are terrain-following, flown above ground level (AGL), not sea level.</p></div>
   </div>
 </section>
 
@@ -136,12 +137,13 @@
           <tbody>{% for wp in player.waypoints %}<tr>
             <td class="num">{{ loop.index }}</td><td><b>{{ wp.name }}</b></td>
             <td class="num">{{ "%.4f"|format(wp.lat) }}N {{ "%.4f"|format(wp.lon) }}E</td>
-            <td class="num">{{ "{:,}".format(wp.alt_ft) }} ft</td><td class="num">{{ wp.kts }} kt</td>
+            <td class="num">{{ "{:,}".format(wp.alt_ft) }} ft{% if wp.agl %} AGL{% endif %}</td><td class="num">{{ wp.kts }} kt</td>
             <td class="num">{{ wp.eta }}</td><td>{{ wp.action | default("") | upper }}</td>
           </tr>{% endfor %}</tbody>
         </table></div>
       </div>
 
+      {% if navaids %}<div class="card wide"><h3>Navaids</h3>{% for n in navaids %}<p class="mono" style="font-size:14px">{{ n }}</p>{% endfor %}</div>{% endif %}
       <div class="card wide"><h3>Comms</h3>
         <div class="table-scroll"><table>
           <thead><tr><th>Station</th><th>Frequency</th><th>Preset</th><th>Notes</th></tr></thead>
@@ -194,8 +196,8 @@ function drawMap() {
     const ll = [p.lat, p.lon];
     if (p.kind === "wp") wpLatLng[p.name] = ll;
     const m = L.circleMarker(ll, { radius: p.kind === "base" ? 7 : 5, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
-      .addTo(layers.route)
-      .bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });
+      .addTo(layers.route);
+    if (!(p.ship && p === D.route[0])) m.bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });  // the ship marker labels the start
     if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
   });
 
@@ -224,6 +226,17 @@ function drawMap() {
       L.circleMarker([s.base_ll.lat, s.base_ll.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
         .bindTooltip(`${s.callsign} (${s.base_ll.name})`, { permanent: true, direction: "left", className: "wp-label" });
     }
+  });
+
+  // Friendly ships with their planned track; AWACS / tanker orbits
+  D.ships.forEach(sh => {
+    const pts = [[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])];
+    L.polyline(pts, { color: ok, weight: 3, dashArray: "1 7", lineCap: "round" }).addTo(layers.support);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: ok, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(layers.support)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.support.filter(s => s.track_to).forEach(s => {
+    L.polyline([[s.lat, s.lon], [s.track_to.lat, s.track_to.lon]], { color: ok, weight: 5, opacity: .5, lineCap: "round" }).addTo(layers.support);
   });
 
   const tg = D.target;

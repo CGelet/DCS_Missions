@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Cut Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Presenter deck. Dark only: it's built for a projector or a shared screen in a dim room. */
+:root {
+  --bg: #0d1012; --slide: #13171a; --ink: #ece8df; --muted: #9aa1a6; --line: #2a3136; --accent: #e07a3c;
+  --blue: #7fb0f0; --red: #ef6b62; --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #08100b; --radio-ink: #a6efbc;
+  --sea: #10202b; --coast: #8aa3b3;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; overflow: hidden; }
+.mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+#stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; background: var(--slide); padding: 80px 96px; display: none; flex-direction: column; overflow: hidden; }
+.slide.on { display: flex; }
+.slide::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--accent); }
+.eyebrow { font: 600 22px/1 "IBM Plex Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+h1 { font-size: 92px; line-height: 1.02; margin: 0; letter-spacing: -.025em; max-width: 1300px; }
+h2 { font-size: 60px; line-height: 1.06; margin: 0 0 32px; letter-spacing: -.02em; }
+p { margin: 0 0 22px; }
+.big { font-size: 42px; line-height: 1.38; max-width: 1280px; }
+.body { font-size: 28px; line-height: 1.45; color: var(--ink); }
+.muted { color: var(--muted); }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 36px; display: flex; justify-content: space-between; font: 18px "IBM Plex Mono", monospace; color: var(--muted); }
+
+.title { justify-content: center; }
+.title .sub { margin-top: 30px; font: 26px "IBM Plex Mono", monospace; color: var(--muted); }
+.title blockquote { margin: 56px 0 0; padding: 0 0 0 28px; border-left: 4px solid var(--accent); font-size: 34px; line-height: 1.4; max-width: 1150px; font-style: italic; }
+.story { justify-content: center; }
+.divider { justify-content: center; }
+.divider h1 { font-size: 120px; }
+
+.split { display: grid; grid-template-columns: 560px 1fr; gap: 56px; flex: 1; min-height: 0; align-items: center; }
+.split.nomap { grid-template-columns: 1fr; max-width: 1200px; }
+.split .text { align-self: center; }
+.radio { margin-top: 26px; background: var(--radio-bg); color: var(--radio-ink); font: 23px/1.5 "IBM Plex Mono", monospace; padding: 20px 24px; border-radius: 10px; border: 1px solid #1d3326; }
+.radio .lbl { display: block; font-size: 15px; letter-spacing: .16em; opacity: .7; margin-bottom: 6px; }
+
+svg.map { width: 100%; height: 100%; max-height: 680px; border-radius: 14px; border: 1px solid var(--line); }
+svg.map .sea { fill: var(--sea); }
+svg.map .grid { stroke: #ffffff10; stroke-width: 1; }
+svg.map .gridlbl { fill: #ffffff40; font: 12px "IBM Plex Mono", monospace; }
+svg.map .coast { fill: none; stroke: var(--coast); stroke-width: 2; stroke-linejoin: round; }
+svg.map .ring { fill-opacity: .1; stroke-width: 2; }
+svg.map .ring.suspected { stroke-dasharray: 10 6; }
+svg.map .ring.possible { stroke-dasharray: 3 7; fill-opacity: .04; opacity: .6; }
+svg.map .area { fill: none; stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+svg.map .area.sam { stroke: var(--red); } svg.map .area.aaa { stroke: var(--amber); } svg.map .area.air { stroke: var(--blue); } svg.map .area.armor { stroke: var(--muted); }
+svg.map .threat.armor, svg.map .ring.armor { fill: var(--muted); stroke: var(--muted); }
+svg.map .threat.suspected, svg.map .threat.possible { fill: var(--slide) !important; stroke-width: 3; }
+svg.map .threat.suspected.sam, svg.map .threat.possible.sam { stroke: var(--red); }
+svg.map .threat.suspected.aaa, svg.map .threat.possible.aaa { stroke: var(--amber); }
+svg.map .threat.suspected.air, svg.map .threat.possible.air { stroke: var(--blue); }
+svg.map .threat.suspected.armor, svg.map .threat.possible.armor { stroke: var(--muted); }
+svg.map .ship { fill: var(--slide); stroke: var(--ok); stroke-width: 4; }
+svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
+svg.profile { width: 100%; height: auto; }
+svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
+svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 14px "IBM Plex Mono", monospace; }
+svg.map .search { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 8; }
+svg.map .ring.sam, svg.map .threat.sam { fill: var(--red); stroke: var(--red); }
+svg.map .ring.aaa, svg.map .threat.aaa { fill: var(--amber); stroke: var(--amber); }
+svg.map .threat.air { fill: var(--blue); }
+svg.map .route { fill: none; stroke: var(--blue); stroke-width: 4; stroke-linejoin: round; }
+svg.map .route.dim { opacity: .35; }
+svg.map .route.hl { stroke: var(--accent); stroke-width: 7; }
+svg.map .cap { stroke: var(--ok); stroke-width: 4; stroke-dasharray: 3 9; stroke-linecap: round; }
+svg.map .friendly-dot { fill: var(--ok); }
+svg.map .wp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; }
+svg.map .wp.on { stroke: var(--accent); fill: var(--accent); }
+svg.map .lbl { fill: var(--ink); font: 600 17px "IBM Plex Mono", monospace; paint-order: stroke; stroke: var(--sea); stroke-width: 5px; }
+svg.map .lbl.friendly { fill: var(--ok); }
+svg.map .lbl.sam { fill: var(--red); }
+svg.map .lbl.aaa { fill: var(--amber); }
+svg.map .lbl.air { fill: var(--blue); }
+svg.map .lbl.armor { fill: var(--ink); }
+svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
+
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.card { background: #ffffff08; border: 1px solid var(--line); border-radius: 14px; padding: 26px 30px; }
+.card b { display: block; font-size: 30px; margin-bottom: 6px; }
+.card span { font-size: 23px; color: var(--muted); }
+
+.rows { display: grid; gap: 0; max-width: 1350px; }
+.row { display: grid; grid-template-columns: 260px 1fr; gap: 28px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 28px; line-height: 1.4; }
+.row:last-child { border-bottom: 0; }
+.row .k { font: 600 18px/1.9 "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.tag { display: inline-block; font: 600 16px/1 "IBM Plex Mono", monospace; padding: 7px 10px; border-radius: 6px; text-transform: uppercase; }
+.tag.sam { background: #ef6b6222; color: var(--red); }
+.tag.aaa { background: #e3a93b22; color: var(--amber); }
+.tag.air { background: #7fb0f022; color: var(--blue); }
+.tag.armor { background: #ffffff14; color: var(--ink); }
+.intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
+.intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.chip { font: 20px "IBM Plex Mono", monospace; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ok); }
+
+.outcome .band { height: 10px; width: 220px; border-radius: 5px; margin-bottom: 36px; }
+.outcome.success .band { background: var(--ok); }
+.outcome.partial .band { background: var(--amber); }
+.outcome.failure .band { background: var(--red); }
+
+#progress { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); transition: width .2s; z-index: 5; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; background: #000000e6; color: #ddd; font: 18px/1.5 "IBM Plex Sans", sans-serif; padding: 16px 24px 20px; display: none; z-index: 4; border-top: 1px solid var(--line); }
+#notes.on { display: block; }
+#notes .k { font: 600 13px "IBM Plex Mono", monospace; letter-spacing: .14em; color: var(--accent); margin-right: 12px; }
+#help { position: fixed; right: 16px; top: 12px; font: 13px "IBM Plex Mono", monospace; color: #ffffff55; z-index: 5; }
+
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; background: var(--slide); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #stage { position: static; transform: none !important; width: 1600px; height: auto; }
+  .slide { position: relative; display: flex !important; width: 1600px; height: 900px; page-break-after: always; break-after: page; }
+  #progress, #notes, #help { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<section class="slide title" data-notes="Set the tone. Read the quote out loud, then go straight into the story." aria-label="Slide 1">
+  
+    <div class="eyebrow">Operation DEEP CUT</div>
+    <h1>Through the Back Door</h1>
+    <div class="sub">2026-03-22 · Step 10:30L · Chevy 1 · 2× AV-8B Harrier</div>
+    <blockquote>&#34;Nobody flies down that valley. That&#39;s the point.&#34; HATCH, 0900 brief</blockquote>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>1 / 21</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 2">
+  
+    <div class="eyebrow">The story so far</div>
+    <p class="big">The two MiG-29s at Gudauta have shown up on every mission this month. They
+don&#39;t fly much because they don&#39;t have much fuel. Every night a few tanker
+trucks come down the coast road from Gagra to keep them topped up.</p>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>2 / 21</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 3">
+  
+    <div class="eyebrow">Why it matters</div>
+    <p class="big">Burn the fuel and the MiGs stay in their shelters. But since the Bzyb strike,
+the coast has been wall-to-wall air defence. So this time the Harriers go in the
+back door: over the mountains, down the Bzyb valley, and onto Gudauta from the
+north, where nobody is looking.</p>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>3 / 21</span></div>
+</section>
+
+<section class="slide cast" data-notes="These are the voices pilots will hear on the radio during the mission." aria-label="Slide 4">
+  
+    <div class="eyebrow">Who&#39;s who</div>
+    <h2>The voices you'll hear</h2>
+    <div class="cards"><div class="card"><b>Lt Col Dana &#34;HATCH&#34; Moreno</b><span>Mission commander, now running the Harrier detachment at Senaki</span></div><div class="card"><b>SPARROW</b><span>Special-forces observation team dug in on a ridge above Gudauta. Their eyes, your timing.</span></div><div class="card"><b>ARCO 1</b><span>KC-130 tanker: low, slow, and the last gas you&#39;ll see</span></div><div class="card"><b>Chevy 1-1 / 1-2</b><span>You and your wingman, AV-8B Harriers</span></div></div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>4 / 21</span></div>
+</section>
+
+<section class="slide map" data-notes="Walk the route from base to target and back. Point out the threat rings." aria-label="Slide 5">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Situation</div>
+        <h2>The battlespace</h2>
+        <div class="body"><p>Red keeps two MiG-29s at Gudauta, fuelled by tanker trucks that arrive from Gagra
+overnight. The coast between Pitsunda and New Athos is covered by layered air
+defences, but the mountains to the north are not. SPARROW, a special-forces team on
+the ridge north of the airfield, will report where the fuel is when you&#39;re inbound.
+Arco 1, a KC-130, is the only tanker available and sits east of the mountains.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="695.5" y2="695.5"/><text class="gridlbl" x="6" y="691.5">42.0N</text><line class="grid" x1="0" x2="900" y1="469.6" y2="469.6"/><text class="gridlbl" x="6" y="465.6">42.5N</text><line class="grid" x1="0" x2="900" y1="243.7" y2="243.7"/><text class="gridlbl" x="6" y="239.7">43.0N</text><line class="grid" x1="0" x2="900" y1="17.7" y2="17.7"/><text class="gridlbl" x="6" y="13.7">43.5N</text><line class="grid" y1="0" y2="640" x1="-114.1" x2="-114.1"/><text class="gridlbl" x="-110.1" y="632">39.5E</text><line class="grid" y1="0" y2="640" x1="50.9" x2="50.9"/><text class="gridlbl" x="54.9" y="632">40.0E</text><line class="grid" y1="0" y2="640" x1="215.9" x2="215.9"/><text class="gridlbl" x="219.9" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="381.0" x2="381.0"/><text class="gridlbl" x="385.0" y="632">41.0E</text><line class="grid" y1="0" y2="640" x1="546.0" x2="546.0"/><text class="gridlbl" x="550.0" y="632">41.5E</text><line class="grid" y1="0" y2="640" x1="711.0" x2="711.0"/><text class="gridlbl" x="715.0" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="876.0" x2="876.0"/><text class="gridlbl" x="880.0" y="632">42.5E</text><polyline class="coast" points="-58.7,-47.4 -51.8,-42.1 -48.0,-36.1 -43.8,-20.6 -43.7,-19.5 -45.2,-18.5 -44.3,-15.2 -43.3,-14.8 -45.0,-16.7 -45.0,-18.1 -43.9,-18.1 -42.5,-20.1 -42.5,-17.9 -37.8,-13.4 -30.1,-10.0 -22.9,-3.9 -6.8,4.1 -1.4,8.2 1.1,12.2 5.4,12.2 11.2,18.5 12.8,20.6 18.4,41.5 22.6,51.7 25.2,55.6 26.2,55.5 26.1,56.5 30.3,59.0 33.8,63.2 40.5,64.4 48.6,69.8 56.4,69.5 68.4,72.8 76.9,73.0 89.5,81.3 94.1,82.4 103.7,89.5 120.5,94.8 123.7,97.2 129.3,98.9 131.6,100.8 134.8,106.7 138.8,122.7 141.5,150.8 143.2,159.0 149.6,165.3 153.5,166.5 163.6,177.4 165.0,177.5 166.3,173.7 172.8,167.3 176.9,165.4 181.9,165.4 185.2,166.5 189.3,170.9 191.8,171.4 194.8,174.0 202.3,176.0 206.2,180.5 209.7,178.7 213.1,179.7 218.4,178.4 222.3,179.6 229.1,185.1 236.5,196.4 240.7,201.5 243.0,202.6 252.0,202.1 263.5,198.1 267.7,199.2 278.2,204.5 289.0,205.0 301.0,204.1 312.6,206.7 316.3,205.6 322.0,206.1 336.5,209.7 342.1,215.0 348.1,224.5 355.4,231.0 359.9,239.9 362.9,241.6 366.9,245.9 370.3,251.7 371.9,252.4 373.5,251.8 379.0,247.2 377.6,246.7 378.9,245.9 386.4,246.0 389.4,244.1 393.2,244.7 398.1,248.7 407.1,266.7 415.8,313.7 424.9,327.4 427.3,328.6 430.4,335.3 440.1,338.0 448.9,333.0 456.7,333.7 465.8,337.3 475.4,339.6 481.9,344.5 485.3,345.9 493.4,346.8 498.6,349.2 509.7,351.1 515.2,354.9 520.4,362.0 520.4,360.7 524.7,360.7 528.7,365.4 537.7,385.5 550.8,429.5 556.1,460.2 559.4,491.1 564.3,516.3 566.5,520.6 572.5,523.2 577.4,529.8 586.4,556.1 588.7,567.2 590.2,569.7 591.8,586.7 590.6,593.6 588.1,599.7 588.7,601.1 587.9,601.5 590.0,610.9 591.5,613.6 592.7,614.0 595.5,622.4 595.1,623.4 598.0,623.5 596.6,625.1 596.0,624.1 595.6,625.3 600.3,625.3 600.3,626.1 596.0,626.4 597.0,627.5 595.1,628.1 593.9,623.0 595.0,625.9 594.5,627.8 597.1,628.2 598.8,635.8 599.8,635.9 614.2,659.0 612.4,655.3 613.2,655.0 615.3,659.1 614.0,657.2 614.5,659.8 624.9,680.5 629.5,686.7 631.4,697.8 634.2,735.3 637.5,757.3 636.8,770.9 634.9,783.9 630.0,799.0 627.9,803.0 625.9,804.6 617.9,828.6 615.6,832.6 614.2,833.1 609.4,843.0 605.2,847.7 604.7,846.6 605.0,848.1 603.8,847.3 603.3,851.1 600.6,851.4 599.7,852.6 600.3,853.5 598.8,853.5 598.4,852.5 595.0,853.8 597.2,853.6 597.9,854.9 594.4,855.1 593.6,851.2 592.4,850.2 590.2,850.6 583.3,856.8 570.7,873.3 568.3,881.8 566.2,901.0 563.4,903.2 561.2,913.1 560.0,916.0 558.2,917.1 552.6,929.7 553.0,928.6"/><polyline class="coast" points="561.9,909.3 561.9,909.3"/><polyline class="coast" points="613.9,657.0 613.9,657.0"/><polyline class="coast" points="613.4,656.3 613.4,656.3"/><polyline class="coast" points="-43.3,-16.6 -42.7,-17.1 -43.3,-16.6"/><circle class="ring aaa confirmed" cx="235.7" cy="194.0" r="10.2"/><circle class="threat aaa confirmed" cx="235.7" cy="194.0" r="6"/><circle class="threat air confirmed" cx="239.0" cy="192.1" r="6"/><circle class="area sam possible" cx="237.4" cy="187.2" r="12.2"/><circle class="ring sam possible" cx="237.4" cy="187.2" r="48.8"/><circle class="threat sam possible" cx="237.4" cy="187.2" r="6"/><circle class="area sam possible" cx="204.4" cy="151.0" r="32.6"/><circle class="ring sam possible" cx="204.4" cy="151.0" r="97.7"/><circle class="threat sam possible" cx="204.4" cy="151.0" r="6"/><line class="orbit" x1="793.5" y1="424.4" x2="663.9" y2="349.0"/><circle class="friendly-dot" cx="793.5" cy="424.4" r="6"/><polyline class="route" points="726.9,586.7 793.5,424.4 671.4,279.8 616.8,196.4 562.5,152.7 319.7,70.5 255.5,108.1 248.9,153.3 242.3,189.4 281.9,230.1 387.6,275.3 422.2,306.4"/><circle class="search" cx="242.3" cy="189.4" r="32.6"/><g class="target" transform="translate(242.3,189.4)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="726.9" cy="586.7" r="8"/><circle class="wp" cx="793.5" cy="424.4" r="6"/><circle class="wp" cx="671.4" cy="279.8" r="6"/><circle class="wp" cx="616.8" cy="196.4" r="6"/><circle class="wp" cx="562.5" cy="152.7" r="6"/><circle class="wp" cx="319.7" cy="70.5" r="6"/><circle class="wp" cx="255.5" cy="108.1" r="6"/><circle class="wp" cx="248.9" cy="153.3" r="6"/><circle class="wp" cx="242.3" cy="189.4" r="6"/><circle class="wp" cx="281.9" cy="230.1" r="6"/><circle class="wp" cx="387.6" cy="275.3" r="6"/><circle class="wp" cx="422.2" cy="306.4" r="8"/><text class="lbl" x="738.9" y="591.7">Senaki-Kolkhi</text><text class="lbl" x="805.5" y="429.4">1 ARCO</text><text class="lbl" x="683.4" y="284.8">2 RIDGE</text><text class="lbl" x="628.8" y="201.4">3 AZHARA</text><text class="lbl" x="574.5" y="157.7">4 CHKHALTA</text><text class="lbl" x="331.7" y="75.5">5 PSKHU</text><text class="lbl" x="267.5" y="113.1">6 VALLEY</text><text class="lbl" x="260.9" y="158.3">7 IP</text><text class="lbl" x="254.3" y="194.4">8 TGT</text><text class="lbl" x="293.9" y="235.1">9 FEET WET</text><text class="lbl" x="399.6" y="280.3">10 COAST</text><text class="lbl" x="434.2" y="311.4">Sukhumi-Babushara</text><text class="lbl aaa" x="223.7" y="199.0" text-anchor="end">ZSU-23-4 Shilka</text><text class="lbl air" x="251.0" y="216.1">MiG-29S pair</text><text class="lbl sam" x="225.4" y="173.2" text-anchor="end">SA-15 Gauntlet</text><text class="lbl sam" x="142.0" y="137.0">SA-6 Gainful</text><text class="lbl friendly" x="781.5" y="429.4" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>5 / 21</span></div>
+</section>
+
+<section class="slide profile" data-notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes." aria-label="Slide 6">
+  
+    <div class="eyebrow">Flight profile</div>
+    <h2>How high, where</h2>
+    <div style="flex:1;display:flex;align-items:center"><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 287 km</text><line class="pleg" x1="56.0" y1="196.0" x2="180.9" y2="123.2"/><line class="pleg" x1="180.9" y1="123.2" x2="315.6" y2="136.2"/><line class="pleg" x1="315.6" y1="136.2" x2="386.5" y2="190.8"/><line class="pleg agl" x1="386.5" y1="190.8" x2="436.0" y2="190.8"/><line class="pleg agl" x1="436.0" y1="190.8" x2="617.5" y2="188.2"/><line class="pleg agl" x1="617.5" y1="188.2" x2="670.2" y2="191.8"/><line class="pleg agl" x1="670.2" y1="191.8" x2="702.7" y2="191.8"/><line class="pleg" x1="702.7" y1="191.8" x2="728.8" y2="164.8"/><line class="pleg" x1="728.8" y1="164.8" x2="769.1" y2="193.4"/><line class="pleg" x1="769.1" y1="193.4" x2="850.8" y2="188.2"/><line class="pleg" x1="850.8" y1="188.2" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="102.8" y="186.0" text-anchor="middle">Senaki-Kolkhi</text><circle class="pwp" cx="180.9" cy="123.2" r="4"/><text class="plbl" x="180.9" y="113.2" text-anchor="middle">1 ARCO</text><text class="psub" x="180.9" y="220" text-anchor="middle">14k</text><circle class="pwp" cx="315.6" cy="136.2" r="4"/><text class="plbl" x="315.6" y="126.2" text-anchor="middle">2 RIDGE</text><text class="psub" x="315.6" y="220" text-anchor="middle">11.5k</text><circle class="pwp agl" cx="386.5" cy="190.8" r="4"/><text class="plbl" x="386.5" y="180.8" text-anchor="middle">3 AZHARA</text><text class="psub" x="386.5" y="220" text-anchor="middle">1k AGL</text><circle class="pwp agl" cx="436.0" cy="190.8" r="4"/><text class="plbl" x="436.0" y="166.8" text-anchor="middle">4 CHKHALTA</text><text class="psub" x="436.0" y="220" text-anchor="middle">1k AGL</text><circle class="pwp agl" cx="617.5" cy="188.2" r="4"/><text class="plbl" x="617.5" y="178.2" text-anchor="middle">5 PSKHU</text><text class="psub" x="617.5" y="220" text-anchor="middle">1.5k AGL</text><circle class="pwp agl" cx="670.2" cy="191.8" r="4"/><text class="plbl" x="670.2" y="167.8" text-anchor="middle">6 VALLEY</text><text class="psub" x="670.2" y="232" text-anchor="middle">0.8k AGL</text><circle class="pwp agl" cx="702.7" cy="191.8" r="4"/><text class="plbl" x="702.7" y="181.8" text-anchor="middle">7 IP</text><text class="psub" x="702.7" y="220" text-anchor="middle">0.8k AGL</text><circle class="pwp" cx="728.8" cy="164.8" r="4"/><text class="plbl" x="728.8" y="140.8" text-anchor="middle">8 TGT</text><text class="psub" x="728.8" y="232" text-anchor="middle">6k</text><circle class="pwp agl" cx="769.1" cy="193.4" r="4"/><text class="plbl" x="769.1" y="183.4" text-anchor="middle">9 FEET WET</text><text class="psub" x="769.1" y="220" text-anchor="middle">0.5k AGL</text><circle class="pwp" cx="850.8" cy="188.2" r="4"/><text class="plbl" x="850.8" y="178.2" text-anchor="middle">10 COAST</text><text class="psub" x="850.8" y="220" text-anchor="middle">1.5k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="822.8" y="172.0" text-anchor="middle">Sukhumi-Babushara</text></svg></div>
+    <p class="muted" style="font-size:22px;margin:0">Dashed legs are flown above ground level, following the terrain.</p>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>6 / 21</span></div>
+</section>
+
+<section class="slide objectives" data-notes="Primary is what wins the mission. Everything else is a bonus or a way home." aria-label="Slide 7">
+  
+    <div class="eyebrow">Tasking</div>
+    <h2>Objectives</h2>
+    <div class="rows"><div class="row"><span class="k">primary</span><span>Destroy the fuel tanker trucks supplying Gudauta.</span></div><div class="row"><span class="k">secondary</span><span>Avoid detection until the pop-up. The route is the plan.</span></div><div class="row"><span class="k">tertiary</span><span>Recover both aircraft at Sukhumi-Babushara.</span></div></div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>7 / 21</span></div>
+</section>
+
+<section class="slide map" data-notes="Estimated position ±8 km. Laser code 1688/1688." aria-label="Slide 8">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Target</div>
+        <h2>Gudauta fuel trucks</h2>
+        <div class="body"><p>Four to six ATZ-10 fuel trucks: on the apron if they&#39;re late, or on the coast road west if they&#39;ve already unloaded.</p><p>Estimated position ±8 km</p><p>DMPI: Lead truck first if they&#39;re moving: it blocks the road.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1423.2" y2="1423.2"/><text class="gridlbl" x="6" y="1419.2">42.5N</text><line class="grid" x1="0" x2="900" y1="587.4" y2="587.4"/><text class="gridlbl" x="6" y="583.4">43.0N</text><line class="grid" y1="0" y2="640" x1="-269.4" x2="-269.4"/><text class="gridlbl" x="-265.4" y="632">40.0E</text><line class="grid" y1="0" y2="640" x1="340.3" x2="340.3"/><text class="gridlbl" x="344.3" y="632">40.5E</text><polyline class="coast" points="-674.3,-489.4 -648.7,-469.6 -634.8,-447.6 -619.2,-390.2 -618.8,-386.2 -624.3,-382.2 -621.3,-370.2 -617.4,-368.5 -623.7,-375.7 -623.7,-381.0 -619.6,-380.9 -614.4,-388.4 -614.4,-380.2 -597.2,-363.3 -568.7,-351.0 -542.0,-328.4 -482.8,-298.8 -462.6,-283.4 -453.3,-268.9 -437.5,-268.9 -416.1,-245.5 -410.3,-237.6 -389.6,-160.6 -373.9,-122.6 -364.5,-108.4 -360.8,-108.7 -361.0,-104.7 -345.5,-95.7 -332.7,-80.2 -307.7,-75.7 -277.8,-55.8 -249.1,-56.8 -204.6,-44.6 -173.5,-43.9 -126.7,-13.1 -109.7,-9.1 -74.3,17.3 -12.5,36.8 -0.4,45.7 20.2,51.9 28.6,59.1 40.7,80.6 55.4,139.8 65.2,244.1 71.5,274.2 95.3,297.6 109.5,301.9 146.8,342.4 152.2,342.6 156.8,328.7 180.9,305.0 196.1,297.9 214.7,297.8 226.7,302.1 241.9,318.2 251.1,320.0 262.4,329.9 290.0,337.0 304.3,353.8 317.1,347.1 329.8,350.9 349.5,346.1 363.7,350.4 388.8,371.0 416.1,412.8 431.7,431.5 440.4,435.5 473.4,433.7 516.0,418.8 531.6,423.0 570.2,442.5 610.2,444.5 654.6,441.0 697.5,450.9 710.9,446.5 732.1,448.5 785.8,461.9 806.5,481.5 828.6,516.4 855.5,540.5 872.1,573.4 883.1,579.9 897.8,595.8 910.4,617.2 916.6,619.7 922.4,617.5 942.6,600.5 937.6,598.6 942.2,595.8 970.1,596.0 981.2,588.9 995.0,591.5 1013.3,606.0 1046.6,672.7 1078.8,846.7 1112.2,897.3 1121.1,901.7 1132.4,926.6 1168.5,936.5 1201.0,918.1 1229.7,920.4 1263.3,934.0 1298.6,942.3 1322.6,960.4 1335.2,965.5 1365.3,968.9 1384.5,977.7 1425.7,984.9 1445.8,998.8 1464.9,1025.4 1465.1,1020.4 1480.9,1020.4 1495.8,1037.9 1528.8,1112.1 1577.5,1274.9 1597.0,1388.6 1609.3,1502.8 1627.1,1596.0 1635.5,1612.1 1657.6,1621.6 1675.5,1646.2 1708.8,1743.3 1717.3,1784.3 1723.1,1793.6 1728.7,1856.6 1724.4,1882.0 1715.3,1904.8 1717.2,1910.0 1714.3,1911.3 1722.3,1945.9 1727.8,1956.1 1732.0,1957.4 1742.3,1988.7 1741.0,1992.4 1751.7,1992.5 1746.7,1998.7 1744.2,1994.9 1742.9,1999.2 1760.1,1999.2 1760.1,2002.4 1744.4,2003.4 1747.9,2007.6 1741.1,2009.7 1736.6,1990.7 1740.5,2001.4 1738.9,2008.6 1748.3,2009.9 1754.6,2038.2 1758.5,2038.7 1811.5,2124.1 1805.0,2110.4 1807.9,2109.2 1815.7,2124.4 1810.9,2117.4 1812.6,2126.8 1851.0,2203.5 1868.2,2226.5 1875.0,2267.7 1885.3,2406.4 1897.8,2487.5 1895.2,2538.0 1887.9,2586.1 1870.0,2641.9 1862.1,2656.8 1854.6,2662.6 1825.4,2751.4 1816.7,2766.3 1811.7,2768.1 1793.7,2804.7 1778.4,2821.9 1776.6,2818.1 1777.6,2823.6 1773.2,2820.4 1771.5,2834.5 1761.3,2835.7 1758.1,2840.2 1760.3,2843.7 1754.5,2843.5 1753.1,2840.0 1740.7,2844.7 1748.9,2843.8 1751.3,2848.9 1738.3,2849.4 1735.4,2835.2 1731.0,2831.1 1723.1,2832.6 1697.5,2855.5 1650.8,2916.9 1641.9,2948.3 1634.4,3019.4 1623.8,3027.5 1615.9,3063.8 1611.3,3074.8 1604.5,3078.7 1583.9,3125.3 1585.4,3121.3"/><polyline class="coast" points="1618.4,3049.8 1618.4,3049.8"/><polyline class="coast" points="1810.4,2116.6 1810.4,2116.6"/><polyline class="coast" points="1808.5,2113.9 1808.5,2113.9"/><polyline class="coast" points="-617.5,-375.4 -615.2,-377.4 -617.5,-375.4"/><circle class="ring aaa confirmed" cx="413.4" cy="403.6" r="37.6"/><circle class="threat aaa confirmed" cx="413.4" cy="403.6" r="6"/><circle class="threat air confirmed" cx="425.6" cy="396.9" r="6"/><circle class="area sam possible" cx="419.5" cy="378.5" r="45.2"/><circle class="ring sam possible" cx="419.5" cy="378.5" r="180.7"/><circle class="threat sam possible" cx="419.5" cy="378.5" r="6"/><circle class="area sam possible" cx="297.6" cy="244.8" r="120.5"/><circle class="ring sam possible" cx="297.6" cy="244.8" r="361.4"/><circle class="threat sam possible" cx="297.6" cy="244.8" r="6"/><line class="orbit" x1="2474.0" y1="1256.1" x2="1995.3" y2="977.2"/><circle class="friendly-dot" cx="2474.0" cy="1256.1" r="6"/><polyline class="route dim" points="2227.7,1856.4 2474.0,1256.1 2022.9,721.2 1821.1,412.6 1620.6,251.0 723.6,-53.3 486.6,86.0 462.2,253.1 437.8,386.9 584.1,537.3 974.3,704.5 1102.3,819.6"/><polyline class="route hl" points="462.2,253.1 437.8,386.9"/><circle class="search" cx="437.8" cy="386.9" r="120.5"/><g class="target" transform="translate(437.8,386.9)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="486.6" cy="86.0" r="6"/><circle class="wp" cx="462.2" cy="253.1" r="6"/><circle class="wp on" cx="437.8" cy="386.9" r="6"/><circle class="wp" cx="584.1" cy="537.3" r="6"/><text class="lbl" x="498.6" y="91.0">6 VALLEY</text><text class="lbl" x="474.2" y="258.1">7 IP</text><text class="lbl" x="449.8" y="391.9">8 TGT</text><text class="lbl" x="596.1" y="542.3">9 FEET WET</text><text class="lbl aaa" x="401.4" y="408.6" text-anchor="end">ZSU-23-4 Shilka</text><text class="lbl air" x="437.6" y="420.9">MiG-29S pair</text><text class="lbl sam" x="407.5" y="383.5" text-anchor="end">SA-15 Gauntlet</text><text class="lbl sam" x="309.6" y="249.8">SA-6 Gainful</text><text class="lbl friendly" x="2462.0" y="1261.1" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>8 / 21</span></div>
+</section>
+
+<section class="slide threats" data-notes="Be clear about how sure the intel is. Suspected and possible threats might be somewhere else, or not there at all." aria-label="Slide 9">
+  
+    <div class="eyebrow">Threats</div>
+    <h2>What&#39;s waiting for you</h2>
+    <div class="rows"><div class="row"><span><span class="tag aaa">aaa</span></span>
+      <span><b>ZSU-23-4 Shilka</b><span class="intel confirmed">confirmed</span> <span class="muted mono">· 2.5 km</span><br><span class="muted">Two vehicles on the airfield&#39;s southern edge. Pop to 6,000 ft and stay there.</span></span></div><div class="row"><span><span class="tag air">air</span></span>
+      <span><b>MiG-29S pair</b><span class="intel confirmed">confirmed</span><br><span class="muted">On alert at Gudauta. If they&#39;re fuelled, they can be airborne in five minutes.</span></span></div><div class="row"><span><span class="tag sam">sam</span></span>
+      <span><b>SA-15 Gauntlet (Tor)</b><span class="intel possible">possible</span> <span class="muted mono">· 12 km</span><br><span class="muted">SPARROW heard a generator and saw a tracked vehicle under nets. Could be a Tor.</span></span></div><div class="row"><span><span class="tag sam">sam</span></span>
+      <span><b>SA-6 Gainful</b><span class="intel possible">possible</span> <span class="muted mono">· 24 km</span><br><span class="muted">Last seen near the Bzyb during BROKEN SPAN. Not seen since. Stay low in the valley.</span></span></div></div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>9 / 21</span></div>
+</section>
+
+<section class="slide package" data-notes="Confirm everyone has the loadout before step." aria-label="Slide 10">
+  
+    <div class="eyebrow">Package</div>
+    <h2>Chevy 1 flight</h2>
+    <div class="rows"><div class="row"><span class="k">Aircraft</span><span>2× AV-8B Harrier</span></div><div class="row"><span class="k">Start</span><span>Cold start, Senaki-Kolkhi</span></div><div class="row"><span class="k">Loadout</span><span>4× GBU-12, LITENING, 2× AIM-9M</span></div><div class="row"><span class="k">Joker / Bingo</span><span>3000 / 2000 lb</span></div></div>
+    <div class="chips"><span class="chip">Arco 1: 1× KC-130 (TANKER)</span></div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>10 / 21</span></div>
+</section>
+
+<section class="slide divider" data-notes="This is the plan as briefed. What actually happens is up to the mission." aria-label="Slide 11">
+  
+    <div class="eyebrow">The plan</div>
+    <h1>How it plays out</h1>
+    
+    
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>11 / 21</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 12">
+  
+    <div class="split nomap">
+      <div class="text">
+        <div class="eyebrow">Phase 1 · 10:30</div>
+        <h2>Launch</h2>
+        <div class="body"><p>Cold start at Senaki. You&#39;re heavy and the tanker is the only gas you&#39;ll see,
+so leave on time.</p></div>
+        
+      </div>
+      
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>12 / 21</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 13">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 2 · 10:44</div>
+        <h2>Last Gas</h2>
+        <div class="body"><p>Arco 1, a KC-130, holds at 14,000 ft and 230 knots east of the mountains (TACAN
+35Y). Fill to full. There&#39;s no more gas after this.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="760.7" y2="760.7"/><text class="gridlbl" x="6" y="756.7">42.0N</text><line class="grid" x1="0" x2="900" y1="236.6" y2="236.6"/><text class="gridlbl" x="6" y="232.6">42.5N</text><line class="grid" y1="0" y2="640" x1="-52.2" x2="-52.2"/><text class="gridlbl" x="-48.2" y="632">41.5E</text><line class="grid" y1="0" y2="640" x1="334.7" x2="334.7"/><text class="gridlbl" x="338.7" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="721.6" x2="721.6"/><text class="gridlbl" x="725.6" y="632">42.5E</text><polyline class="coast" points="-1469.9,-962.8 -1453.7,-950.4 -1444.8,-936.6 -1434.9,-900.6 -1434.7,-898.1 -1438.2,-895.6 -1436.3,-888.1 -1433.8,-887.0 -1437.8,-891.5 -1437.8,-894.9 -1435.2,-894.8 -1431.9,-899.5 -1431.9,-894.3 -1421.0,-883.8 -1402.9,-876.0 -1386.0,-861.8 -1348.3,-843.3 -1335.6,-833.6 -1329.6,-824.5 -1319.6,-824.5 -1306.0,-809.9 -1302.4,-804.9 -1289.2,-756.6 -1279.2,-732.8 -1273.3,-723.9 -1271.0,-724.1 -1271.0,-721.6 -1261.2,-715.9 -1253.1,-706.2 -1237.2,-703.4 -1218.3,-690.9 -1200.1,-691.5 -1171.8,-683.9 -1152.1,-683.4 -1122.4,-664.2 -1111.6,-661.6 -1089.1,-645.1 -1049.9,-632.8 -1042.2,-627.3 -1029.2,-623.4 -1023.8,-618.9 -1016.2,-605.3 -1006.8,-568.2 -1000.6,-502.8 -996.6,-484.0 -981.5,-469.3 -972.5,-466.6 -948.8,-441.2 -945.3,-441.1 -942.5,-449.8 -927.2,-464.7 -917.5,-469.1 -905.7,-469.2 -898.1,-466.5 -888.5,-456.4 -882.6,-455.2 -875.5,-449.1 -857.9,-444.5 -848.9,-434.1 -840.7,-438.3 -832.7,-435.8 -820.1,-438.9 -811.2,-436.2 -795.2,-423.3 -777.9,-397.1 -768.0,-385.3 -762.5,-382.8 -741.5,-384.0 -714.5,-393.3 -704.6,-390.7 -680.1,-378.4 -654.7,-377.1 -626.5,-379.3 -599.3,-373.2 -590.8,-375.9 -577.3,-374.6 -543.3,-366.2 -530.1,-354.0 -516.1,-332.1 -499.0,-317.0 -488.5,-296.3 -481.5,-292.2 -472.2,-282.3 -464.2,-268.9 -460.2,-267.3 -456.6,-268.7 -443.8,-279.3 -446.9,-280.5 -444.0,-282.3 -426.3,-282.2 -419.2,-286.6 -410.5,-285.0 -398.9,-275.9 -377.8,-234.1 -357.3,-124.9 -336.1,-93.2 -330.5,-90.5 -323.3,-74.8 -300.4,-68.7 -279.8,-80.2 -261.5,-78.7 -240.2,-70.2 -217.8,-65.0 -202.6,-53.7 -194.6,-50.4 -175.5,-48.3 -163.3,-42.8 -137.2,-38.3 -124.4,-29.6 -112.3,-12.9 -112.2,-16.0 -102.1,-16.0 -92.7,-5.0 -71.7,41.5 -40.8,143.6 -28.5,214.9 -20.6,286.5 -9.3,345.0 -4.0,355.0 10.0,361.0 21.4,376.4 42.5,437.3 47.9,463.0 51.6,468.9 55.1,508.4 52.4,524.3 46.6,538.6 47.8,541.8 46.0,542.7 51.1,564.4 54.6,570.8 57.2,571.6 63.8,591.2 62.9,593.5 69.7,593.6 66.6,597.5 64.9,595.1 64.2,597.8 75.1,597.8 75.1,599.8 65.1,600.4 67.3,603.0 63.0,604.4 60.1,592.5 62.6,599.2 61.6,603.7 67.6,604.5 71.6,622.2 74.1,622.5 107.7,676.1 103.6,667.5 105.4,666.8 110.4,676.3 107.3,671.9 108.4,677.8 132.7,725.9 143.6,740.4 148.0,766.1 154.6,853.2 162.4,904.0 160.8,935.6 156.2,965.8 144.8,1000.8 139.8,1010.2 135.1,1013.8 116.5,1069.5 111.0,1078.8 107.8,1080.0 96.4,1102.9 86.7,1113.7 85.5,1111.3 86.1,1114.8 83.4,1112.8 82.3,1121.6 75.9,1122.3 73.8,1125.2 75.2,1127.4 71.5,1127.3 70.6,1125.1 62.8,1128.0 68.0,1127.5 69.5,1130.6 61.2,1130.9 59.4,1122.0 56.6,1119.5 51.6,1120.4 35.3,1134.8 5.7,1173.3 0.0,1193.0 -4.7,1237.5 -11.4,1242.7 -16.5,1265.4 -19.4,1272.3 -23.7,1274.7 -36.7,1304.0 -35.8,1301.5"/><polyline class="coast" points="-14.8,1256.6 -14.8,1256.6"/><polyline class="coast" points="107.0,671.4 107.0,671.4"/><polyline class="coast" points="105.8,669.7 105.8,669.7"/><polyline class="coast" points="-1433.9,-891.3 -1432.4,-892.6 -1433.9,-891.3"/><circle class="ring aaa confirmed" cx="-779.6" cy="-402.8" r="23.6"/><circle class="threat aaa confirmed" cx="-779.6" cy="-402.8" r="6"/><circle class="threat air confirmed" cx="-771.9" cy="-407.0" r="6"/><circle class="area sam possible" cx="-775.7" cy="-418.6" r="28.3"/><circle class="ring sam possible" cx="-775.7" cy="-418.6" r="113.3"/><circle class="threat sam possible" cx="-775.7" cy="-418.6" r="6"/><circle class="area sam possible" cx="-853.1" cy="-502.4" r="75.5"/><circle class="ring sam possible" cx="-853.1" cy="-502.4" r="226.6"/><circle class="threat sam possible" cx="-853.1" cy="-502.4" r="6"/><line class="orbit" x1="528.1" y1="131.8" x2="224.4" y2="-43.1"/><circle class="friendly-dot" cx="528.1" cy="131.8" r="6"/><polyline class="route dim" points="371.9,508.2 528.1,131.8 241.8,-203.7 113.8,-397.2 -13.4,-498.5 -582.7,-689.3 -733.2,-602.0 -748.6,-497.2 -764.1,-413.3 -671.3,-319.0 -423.6,-214.1 -342.4,-141.9"/><polyline class="route hl" points="371.9,508.2 528.1,131.8"/><circle class="search" cx="-764.1" cy="-413.3" r="75.5"/><g class="target" transform="translate(-764.1,-413.3)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="371.9" cy="508.2" r="8"/><circle class="wp on" cx="528.1" cy="131.8" r="6"/><text class="lbl" x="383.9" y="513.2">Senaki-Kolkhi</text><text class="lbl" x="540.1" y="136.8">1 ARCO</text><text class="lbl aaa" x="-767.6" y="-397.8">ZSU-23-4 Shilka</text><text class="lbl air" x="-759.9" y="-402.0">MiG-29S pair</text><text class="lbl sam" x="-763.7" y="-413.6">SA-15 Gauntlet</text><text class="lbl sam" x="-841.1" y="-497.4">SA-6 Gainful</text><text class="lbl friendly" x="516.1" y="136.8" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>13 / 21</span></div>
+</section>
+
+<section class="slide phase" data-notes="Show the profile slide. Ask the room: where along this valley would you pick to abort?" aria-label="Slide 14">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 3 · 10:58</div>
+        <h2>Into the Mountains</h2>
+        <div class="body"><p>Cross the Kodori range at 11,500 ft, then drop into the upper Kodori at Azhara.
+From there it&#39;s 1,000 ft above the ground or lower, up the Chkhalta valley.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="883.9" y2="883.9"/><text class="gridlbl" x="6" y="879.9">42.0N</text><line class="grid" x1="0" x2="900" y1="570.8" y2="570.8"/><text class="gridlbl" x="6" y="566.8">42.5N</text><line class="grid" x1="0" x2="900" y1="257.8" y2="257.8"/><text class="gridlbl" x="6" y="253.8">43.0N</text><line class="grid" y1="0" y2="640" x1="-191.5" x2="-191.5"/><text class="gridlbl" x="-187.5" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="37.6" x2="37.6"/><text class="gridlbl" x="41.6" y="632">41.0E</text><line class="grid" y1="0" y2="640" x1="266.7" x2="266.7"/><text class="gridlbl" x="270.7" y="632">41.5E</text><line class="grid" y1="0" y2="640" x1="495.8" x2="495.8"/><text class="gridlbl" x="499.8" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="724.9" x2="724.9"/><text class="gridlbl" x="728.9" y="632">42.5E</text><polyline class="coast" points="-572.8,-145.5 -563.2,-138.1 -558.0,-129.9 -552.1,-108.4 -552.0,-106.9 -554.0,-105.4 -552.9,-100.9 -551.4,-100.3 -553.8,-103.0 -553.8,-105.0 -552.2,-104.9 -550.3,-107.7 -550.3,-104.6 -543.9,-98.3 -533.1,-93.7 -523.1,-85.2 -500.8,-74.2 -493.3,-68.4 -489.7,-63.0 -483.8,-63.0 -475.8,-54.2 -473.6,-51.2 -465.8,-22.4 -459.9,-8.2 -456.4,-2.8 -455.0,-3.0 -455.1,-1.5 -449.2,1.9 -444.4,7.7 -435.0,9.4 -423.8,16.9 -413.0,16.5 -396.3,21.1 -384.6,21.3 -367.0,32.8 -360.6,34.3 -347.3,44.2 -324.1,51.6 -319.6,54.9 -311.8,57.2 -308.7,59.9 -304.1,68.0 -298.6,90.1 -294.9,129.2 -292.5,140.5 -283.6,149.2 -278.3,150.9 -264.3,166.0 -262.2,166.1 -260.5,160.9 -251.4,152.0 -245.7,149.4 -238.7,149.3 -234.2,150.9 -228.5,156.9 -225.0,157.6 -220.8,161.3 -210.4,164.0 -205.0,170.3 -200.2,167.8 -195.5,169.2 -188.0,167.4 -182.7,169.0 -173.3,176.7 -163.0,192.4 -157.2,199.4 -153.9,200.9 -141.5,200.2 -125.5,194.6 -119.6,196.2 -105.1,203.5 -90.1,204.3 -73.4,203.0 -57.3,206.6 -52.2,205.0 -44.3,205.8 -24.1,210.8 -16.3,218.1 -8.0,231.2 2.1,240.2 8.3,252.5 12.5,255.0 18.0,260.9 22.7,268.9 25.1,269.9 27.2,269.1 34.8,262.7 33.0,262.0 34.7,260.9 45.2,261.0 49.4,258.4 54.5,259.3 61.4,264.7 73.9,289.7 86.0,354.9 98.6,373.9 101.9,375.5 106.2,384.8 119.7,388.5 131.9,381.6 142.7,382.5 155.3,387.6 168.6,390.7 177.7,397.5 182.4,399.4 193.7,400.7 200.9,404.0 216.4,406.7 223.9,411.9 231.1,421.8 231.2,420.0 237.1,420.0 242.7,426.5 255.1,454.3 273.4,515.3 280.8,557.9 285.4,600.6 292.1,635.6 295.2,641.6 303.5,645.2 310.3,654.4 322.8,690.7 326.0,706.1 328.1,709.6 330.2,733.2 328.6,742.7 325.2,751.2 325.9,753.2 324.8,753.7 327.9,766.6 329.9,770.4 331.5,770.9 335.4,782.7 334.9,784.0 338.9,784.1 337.0,786.4 336.1,785.0 335.6,786.6 342.1,786.6 342.1,787.8 336.2,788.2 337.5,789.7 334.9,790.5 333.2,783.4 334.7,787.4 334.1,790.1 337.6,790.6 340.0,801.2 341.5,801.4 361.4,833.4 358.9,828.2 360.0,827.8 363.0,833.5 361.1,830.9 361.8,834.4 376.2,863.1 382.7,871.7 385.2,887.1 389.1,939.1 393.8,969.5 392.8,988.4 390.1,1006.4 383.4,1027.3 380.4,1032.9 377.6,1035.1 366.6,1068.3 363.3,1073.9 361.4,1074.6 354.7,1088.3 348.9,1094.8 348.3,1093.3 348.6,1095.4 347.0,1094.2 346.3,1099.5 342.5,1099.9 341.3,1101.6 342.1,1102.9 340.0,1102.8 339.4,1101.5 334.8,1103.3 337.9,1103.0 338.8,1104.8 333.9,1105.0 332.8,1099.7 331.1,1098.2 328.1,1098.8 318.5,1107.3 301.0,1130.3 297.6,1142.1 294.8,1168.7 290.8,1171.8 287.9,1185.4 286.1,1189.5 283.6,1190.9 275.9,1208.4 276.4,1206.9"/><polyline class="coast" points="288.8,1180.1 288.8,1180.1"/><polyline class="coast" points="360.9,830.5 360.9,830.5"/><polyline class="coast" points="360.3,829.5 360.3,829.5"/><polyline class="coast" points="-551.5,-102.8 -550.6,-103.6 -551.5,-102.8"/><circle class="ring aaa confirmed" cx="-164.0" cy="188.9" r="14.1"/><circle class="threat aaa confirmed" cx="-164.0" cy="188.9" r="6"/><circle class="threat air confirmed" cx="-159.5" cy="186.4" r="6"/><circle class="area sam possible" cx="-161.7" cy="179.5" r="16.9"/><circle class="ring sam possible" cx="-161.7" cy="179.5" r="67.7"/><circle class="threat sam possible" cx="-161.7" cy="179.5" r="6"/><circle class="area sam possible" cx="-207.6" cy="129.4" r="45.1"/><circle class="ring sam possible" cx="-207.6" cy="129.4" r="135.4"/><circle class="threat sam possible" cx="-207.6" cy="129.4" r="6"/><line class="orbit" x1="610.4" y1="508.2" x2="430.5" y2="403.8"/><circle class="friendly-dot" cx="610.4" cy="508.2" r="6"/><polyline class="route dim" points="517.8,733.1 610.4,508.2 440.8,307.9 365.0,192.3 289.6,131.8 -47.5,17.8 -136.5,70.0 -145.7,132.6 -154.9,182.7 -99.9,239.0 46.7,301.6 94.9,344.8"/><polyline class="route hl" points="610.4,508.2 440.8,307.9 365.0,192.3 289.6,131.8"/><circle class="search" cx="-154.9" cy="182.7" r="45.1"/><g class="target" transform="translate(-154.9,182.7)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="610.4" cy="508.2" r="6"/><circle class="wp on" cx="440.8" cy="307.9" r="6"/><circle class="wp on" cx="365.0" cy="192.3" r="6"/><circle class="wp on" cx="289.6" cy="131.8" r="6"/><circle class="wp" cx="-47.5" cy="17.8" r="6"/><circle class="wp" cx="46.7" cy="301.6" r="6"/><circle class="wp" cx="94.9" cy="344.8" r="8"/><text class="lbl" x="622.4" y="513.2">1 ARCO</text><text class="lbl" x="452.8" y="312.9">2 RIDGE</text><text class="lbl" x="377.0" y="197.3">3 AZHARA</text><text class="lbl" x="301.6" y="136.8">4 CHKHALTA</text><text class="lbl" x="-35.5" y="22.8">5 PSKHU</text><text class="lbl" x="58.7" y="306.6">10 COAST</text><text class="lbl" x="106.9" y="349.8">Sukhumi-Babushara</text><text class="lbl aaa" x="-152.0" y="193.9">ZSU-23-4 Shilka</text><text class="lbl air" x="-147.5" y="191.4">MiG-29S pair</text><text class="lbl sam" x="-149.7" y="184.5">SA-15 Gauntlet</text><text class="lbl sam" x="-195.6" y="134.4">SA-6 Gainful</text><text class="lbl friendly" x="598.4" y="513.2" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>14 / 21</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 15">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 4 · 11:08</div>
+        <h2>The Saddle</h2>
+        <div class="body"><p>Over the saddle into the Bzyb valley at Pskhu. SPARROW will call where the fuel
+is: still on the apron, or already moving.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1103.3" y2="1103.3"/><text class="gridlbl" x="6" y="1099.3">42.5N</text><line class="grid" x1="0" x2="900" y1="609.0" y2="609.0"/><text class="gridlbl" x="6" y="605.0">43.0N</text><line class="grid" x1="0" x2="900" y1="114.7" y2="114.7"/><text class="gridlbl" x="6" y="110.7">43.5N</text><line class="grid" y1="0" y2="640" x1="-40.9" x2="-40.9"/><text class="gridlbl" x="-36.9" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="318.9" x2="318.9"/><text class="gridlbl" x="322.9" y="632">41.0E</text><line class="grid" y1="0" y2="640" x1="678.7" x2="678.7"/><text class="gridlbl" x="682.7" y="632">41.5E</text><polyline class="coast" points="-639.7,-27.9 -624.6,-16.2 -616.4,-3.2 -607.2,30.7 -607.0,33.1 -610.2,35.5 -608.4,42.6 -606.1,43.6 -609.9,39.3 -609.9,36.2 -607.4,36.3 -604.4,31.8 -604.4,36.7 -594.3,46.6 -577.4,54.0 -561.7,67.3 -526.7,84.8 -514.8,93.9 -509.3,102.5 -500.0,102.5 -487.3,116.3 -483.9,121.0 -471.7,166.6 -462.4,189.0 -456.9,197.4 -454.7,197.2 -454.8,199.6 -445.7,204.9 -438.1,214.1 -423.3,216.8 -405.7,228.5 -388.8,228.0 -362.5,235.2 -344.2,235.6 -316.6,253.8 -306.5,256.1 -285.6,271.8 -249.1,283.3 -242.0,288.6 -229.8,292.2 -224.9,296.5 -217.8,309.2 -209.0,344.2 -203.3,405.9 -199.5,423.7 -185.5,437.6 -177.2,440.1 -155.1,464.0 -151.9,464.1 -149.2,455.9 -135.0,441.9 -126.0,437.7 -115.1,437.6 -107.9,440.2 -99.0,449.7 -93.6,450.8 -86.9,456.6 -70.6,460.9 -62.2,470.8 -54.6,466.8 -47.1,469.1 -35.5,466.2 -27.1,468.8 -12.3,481.0 3.8,505.7 13.0,516.7 18.1,519.1 37.6,518.0 62.7,509.2 72.0,511.7 94.8,523.3 118.4,524.5 144.6,522.4 169.9,528.2 177.8,525.6 190.3,526.8 222.0,534.7 234.2,546.3 247.3,567.0 263.2,581.2 272.9,600.7 279.4,604.5 288.1,613.9 295.5,626.6 299.2,628.1 302.6,626.8 314.5,616.7 311.6,615.6 314.3,613.9 330.8,614.0 337.3,609.9 345.5,611.4 356.3,620.0 375.9,659.4 394.9,762.3 414.6,792.3 419.9,794.8 426.6,809.6 447.9,815.4 467.0,804.5 484.0,805.9 503.8,813.9 524.7,818.9 538.8,829.5 546.2,832.6 564.0,834.6 575.3,839.8 599.6,844.1 611.5,852.3 622.8,868.0 622.9,865.0 632.2,865.0 641.0,875.4 660.5,919.3 689.2,1015.6 700.7,1082.8 708.0,1150.4 718.5,1205.5 723.5,1215.0 736.5,1220.7 747.1,1235.2 766.7,1292.6 771.8,1316.9 775.2,1322.4 778.5,1359.7 775.9,1374.7 770.5,1388.1 771.7,1391.2 770.0,1392.0 774.7,1412.5 778.0,1418.5 780.4,1419.3 786.5,1437.8 785.7,1439.9 792.1,1440.0 789.1,1443.7 787.6,1441.4 786.9,1444.0 797.0,1444.0 797.0,1445.9 787.7,1446.5 789.8,1448.9 785.8,1450.2 783.1,1439.0 785.4,1445.3 784.5,1449.5 790.0,1450.3 793.8,1467.0 796.1,1467.3 827.3,1517.8 823.5,1509.7 825.2,1509.0 829.8,1518.0 827.0,1513.9 828.0,1519.4 850.6,1564.8 860.8,1578.5 864.8,1602.8 870.9,1684.8 878.3,1732.8 876.8,1762.6 872.4,1791.1 861.9,1824.1 857.2,1832.9 852.8,1836.4 835.5,1888.9 830.4,1897.7 827.5,1898.8 816.8,1920.4 807.8,1930.6 806.7,1928.3 807.3,1931.6 804.7,1929.7 803.7,1938.0 797.7,1938.7 795.8,1941.4 797.1,1943.5 793.7,1943.4 792.9,1941.3 785.6,1944.1 790.4,1943.6 791.8,1946.5 784.1,1946.8 782.4,1938.4 779.8,1936.0 775.2,1936.9 760.0,1950.5 732.5,1986.8 727.2,2005.3 722.8,2047.4 716.6,2052.2 711.9,2073.7 709.2,2080.2 705.2,2082.5 693.0,2110.0 693.9,2107.7"/><polyline class="coast" points="713.4,2065.4 713.4,2065.4"/><polyline class="coast" points="826.7,1513.4 826.7,1513.4"/><polyline class="coast" points="825.6,1511.8 825.6,1511.8"/><polyline class="coast" points="-606.2,39.5 -604.8,38.3 -606.2,39.5"/><circle class="ring aaa confirmed" cx="2.2" cy="500.2" r="22.3"/><circle class="threat aaa confirmed" cx="2.2" cy="500.2" r="6"/><circle class="threat air confirmed" cx="9.4" cy="496.3" r="6"/><circle class="area sam possible" cx="5.8" cy="485.4" r="26.7"/><circle class="ring sam possible" cx="5.8" cy="485.4" r="106.9"/><circle class="threat sam possible" cx="5.8" cy="485.4" r="6"/><circle class="area sam possible" cx="-66.1" cy="406.3" r="71.3"/><circle class="ring sam possible" cx="-66.1" cy="406.3" r="213.8"/><circle class="threat sam possible" cx="-66.1" cy="406.3" r="6"/><line class="orbit" x1="1218.4" y1="1004.4" x2="935.8" y2="839.5"/><circle class="friendly-dot" cx="1218.4" cy="1004.4" r="6"/><polyline class="route dim" points="1073.0,1359.5 1218.4,1004.4 952.1,688.1 833.0,505.6 714.7,410.0 185.3,230.0 45.4,312.4 31.0,411.3 16.6,490.3 103.0,579.3 333.2,678.2 408.8,746.3"/><polyline class="route hl" points="714.7,410.0 185.3,230.0"/><circle class="search" cx="16.6" cy="490.3" r="71.3"/><g class="target" transform="translate(16.6,490.3)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="833.0" cy="505.6" r="6"/><circle class="wp" cx="714.7" cy="410.0" r="6"/><circle class="wp on" cx="185.3" cy="230.0" r="6"/><circle class="wp" cx="45.4" cy="312.4" r="6"/><circle class="wp" cx="31.0" cy="411.3" r="6"/><circle class="wp" cx="16.6" cy="490.3" r="6"/><circle class="wp" cx="103.0" cy="579.3" r="6"/><circle class="wp" cx="333.2" cy="678.2" r="6"/><text class="lbl" x="821.0" y="510.6" text-anchor="end">3 AZHARA</text><text class="lbl" x="726.7" y="415.0">4 CHKHALTA</text><text class="lbl" x="197.3" y="235.0">5 PSKHU</text><text class="lbl" x="57.4" y="317.4">6 VALLEY</text><text class="lbl" x="43.0" y="416.3">7 IP</text><text class="lbl" x="28.6" y="495.3">8 TGT</text><text class="lbl" x="115.0" y="584.3">9 FEET WET</text><text class="lbl" x="345.2" y="683.2">10 COAST</text><text class="lbl aaa" x="14.2" y="524.2">ZSU-23-4 Shilka</text><text class="lbl air" x="21.4" y="501.3">MiG-29S pair</text><text class="lbl sam" x="17.8" y="471.4">SA-15 Gauntlet</text><text class="lbl sam" x="-54.1" y="411.3">SA-6 Gainful</text><text class="lbl friendly" x="1206.4" y="1009.4" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>15 / 21</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 16">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 5 · 11:11</div>
+        <h2>Pop-Up</h2>
+        <div class="body"><p>Down the Bzyb valley to the IP, then pop to 6,000 ft, find the trucks, and get
+the pod on them. Two passes at most.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="807.5" y2="807.5"/><text class="gridlbl" x="6" y="803.5">43.0N</text><line class="grid" y1="0" y2="640" x1="-410.4" x2="-410.4"/><text class="gridlbl" x="-406.4" y="632">40.0E</text><line class="grid" y1="0" y2="640" x1="197.9" x2="197.9"/><text class="gridlbl" x="201.9" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="806.2" x2="806.2"/><text class="gridlbl" x="810.2" y="632">41.0E</text><polyline class="coast" points="-814.4,-269.3 -788.9,-249.6 -775.0,-227.5 -759.4,-170.2 -759.1,-166.2 -764.5,-162.2 -761.5,-150.1 -757.6,-148.4 -763.9,-155.6 -763.9,-161.0 -759.8,-160.8 -754.7,-168.3 -754.7,-160.1 -737.5,-143.3 -709.1,-130.9 -682.4,-108.3 -623.3,-78.7 -603.2,-63.4 -593.8,-48.8 -578.2,-48.8 -556.7,-25.4 -551.0,-17.6 -530.3,59.5 -514.6,97.4 -505.3,111.6 -501.6,111.3 -501.8,115.3 -486.3,124.3 -473.5,139.9 -448.6,144.4 -418.8,164.3 -390.2,163.3 -345.8,175.5 -314.8,176.2 -268.0,206.9 -251.0,210.9 -215.7,237.3 -154.0,256.9 -142.0,265.8 -121.4,271.9 -113.0,279.1 -101.0,300.7 -86.3,359.9 -76.5,464.2 -70.2,494.3 -46.5,517.7 -32.4,522.0 4.8,562.5 10.3,562.6 14.8,548.7 38.9,525.0 54.1,518.0 72.6,517.8 84.7,522.2 99.7,538.2 109.0,540.1 120.2,549.9 147.8,557.1 162.0,573.8 174.8,567.1 187.5,571.0 207.2,566.1 221.3,570.5 246.3,591.0 273.6,632.8 289.2,651.5 297.8,655.6 330.8,653.7 373.2,638.8 388.8,643.0 427.4,662.6 467.3,664.6 511.6,661.1 554.4,670.9 567.8,666.6 588.9,668.6 642.5,682.0 663.1,701.5 685.2,736.5 712.1,760.5 728.6,793.5 739.6,800.0 754.3,815.9 766.8,837.3 773.0,839.8 778.7,837.6 798.9,820.5 793.9,818.7 798.6,815.9 826.4,816.0 837.5,809.0 851.2,811.5 869.5,826.1 902.7,892.7 934.8,1066.8 968.2,1117.4 977.0,1121.7 988.3,1146.7 1024.4,1156.5 1056.7,1138.1 1085.4,1140.5 1118.9,1154.0 1154.2,1162.4 1178.1,1180.4 1190.7,1185.6 1220.7,1188.9 1239.8,1197.8 1280.9,1205.0 1301.0,1218.9 1320.1,1245.4 1320.2,1240.4 1336.1,1240.4 1350.9,1258.0 1383.9,1332.2 1432.4,1495.0 1451.9,1608.7 1464.2,1722.8 1481.9,1816.1 1490.3,1832.1 1512.3,1841.7 1530.2,1866.2 1563.4,1963.4 1572.0,2004.3 1577.7,2013.7 1583.3,2076.7 1579.0,2102.1 1569.9,2124.8 1571.8,2130.0 1568.9,2131.4 1576.9,2166.0 1582.4,2176.1 1586.6,2177.5 1596.9,2208.7 1595.6,2212.4 1606.3,2212.6 1601.3,2218.8 1598.7,2214.9 1597.5,2219.3 1614.7,2219.3 1614.7,2222.5 1599.0,2223.5 1602.5,2227.6 1595.7,2229.8 1591.2,2210.8 1595.1,2221.4 1593.5,2228.6 1602.9,2230.0 1609.2,2258.2 1613.1,2258.7 1665.9,2344.1 1659.4,2330.4 1662.3,2329.3 1670.1,2344.5 1665.3,2337.5 1667.0,2346.8 1705.3,2423.5 1722.4,2446.6 1729.3,2487.7 1739.6,2626.5 1752.0,2707.5 1749.5,2758.0 1742.2,2806.1 1724.3,2862.0 1716.4,2876.9 1708.9,2882.7 1679.7,2971.5 1671.1,2986.3 1666.1,2988.2 1648.1,3024.8 1632.9,3042.0 1631.1,3038.2 1632.1,3043.7 1627.7,3040.5 1626.0,3054.5 1615.9,3055.7 1612.6,3060.2 1614.8,3063.7 1609.1,3063.6 1607.6,3060.1 1595.3,3064.7 1603.5,3063.9 1605.9,3068.9 1592.9,3069.4 1590.0,3055.2 1585.6,3051.2 1577.7,3052.7 1552.1,3075.6 1505.5,3136.9 1496.6,3168.4 1489.2,3239.4 1478.6,3247.6 1470.7,3283.9 1466.1,3294.9 1459.4,3298.7 1438.9,3345.4 1440.3,3341.4"/><polyline class="coast" points="1473.3,3269.8 1473.3,3269.8"/><polyline class="coast" points="1664.8,2336.6 1664.8,2336.6"/><polyline class="coast" points="1663.0,2333.9 1663.0,2333.9"/><polyline class="coast" points="-757.7,-155.3 -755.4,-157.3 -757.7,-155.3"/><circle class="ring aaa confirmed" cx="270.9" cy="623.6" r="37.6"/><circle class="threat aaa confirmed" cx="270.9" cy="623.6" r="6"/><circle class="threat air confirmed" cx="283.1" cy="616.9" r="6"/><circle class="area sam possible" cx="277.0" cy="598.6" r="45.2"/><circle class="ring sam possible" cx="277.0" cy="598.6" r="180.7"/><circle class="threat sam possible" cx="277.0" cy="598.6" r="6"/><circle class="area sam possible" cx="155.3" cy="464.8" r="120.5"/><circle class="ring sam possible" cx="155.3" cy="464.8" r="361.4"/><circle class="threat sam possible" cx="155.3" cy="464.8" r="6"/><line class="orbit" x1="2327.0" y1="1476.1" x2="1849.3" y2="1197.2"/><circle class="friendly-dot" cx="2327.0" cy="1476.1" r="6"/><polyline class="route dim" points="2081.2,2076.4 2327.0,1476.1 1876.8,941.2 1675.5,632.7 1475.5,471.0 580.4,166.8 343.9,306.0 319.6,473.2 295.2,606.9 441.2,757.4 830.6,924.5 958.3,1039.7"/><polyline class="route hl" points="580.4,166.8 343.9,306.0 319.6,473.2"/><circle class="search" cx="295.2" cy="606.9" r="120.5"/><g class="target" transform="translate(295.2,606.9)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="580.4" cy="166.8" r="6"/><circle class="wp on" cx="343.9" cy="306.0" r="6"/><circle class="wp on" cx="319.6" cy="473.2" r="6"/><circle class="wp" cx="295.2" cy="606.9" r="6"/><text class="lbl" x="592.4" y="171.8">5 PSKHU</text><text class="lbl" x="355.9" y="311.0">6 VALLEY</text><text class="lbl" x="331.6" y="478.2">7 IP</text><text class="lbl" x="307.2" y="611.9">8 TGT</text><text class="lbl aaa" x="258.9" y="628.6" text-anchor="end">ZSU-23-4 Shilka</text><text class="lbl air" x="271.1" y="602.9" text-anchor="end">MiG-29S pair</text><text class="lbl sam" x="204.2" y="584.6">SA-15 Gauntlet</text><text class="lbl sam" x="167.3" y="469.8">SA-6 Gainful</text><text class="lbl friendly" x="2315.0" y="1481.1" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>16 / 21</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 17">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 6 · 11:12</div>
+        <h2>On Target</h2>
+        <div class="body"><p>Bombs on the fuel, then off south and feet wet within 90 seconds. Don&#39;t
+overfly the airfield.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1423.2" y2="1423.2"/><text class="gridlbl" x="6" y="1419.2">42.5N</text><line class="grid" x1="0" x2="900" y1="587.4" y2="587.4"/><text class="gridlbl" x="6" y="583.4">43.0N</text><line class="grid" y1="0" y2="640" x1="-269.4" x2="-269.4"/><text class="gridlbl" x="-265.4" y="632">40.0E</text><line class="grid" y1="0" y2="640" x1="340.3" x2="340.3"/><text class="gridlbl" x="344.3" y="632">40.5E</text><polyline class="coast" points="-674.3,-489.4 -648.7,-469.6 -634.8,-447.6 -619.2,-390.2 -618.8,-386.2 -624.3,-382.2 -621.3,-370.2 -617.4,-368.5 -623.7,-375.7 -623.7,-381.0 -619.6,-380.9 -614.4,-388.4 -614.4,-380.2 -597.2,-363.3 -568.7,-351.0 -542.0,-328.4 -482.8,-298.8 -462.6,-283.4 -453.3,-268.9 -437.5,-268.9 -416.1,-245.5 -410.3,-237.6 -389.6,-160.6 -373.9,-122.6 -364.5,-108.4 -360.8,-108.7 -361.0,-104.7 -345.5,-95.7 -332.7,-80.2 -307.7,-75.7 -277.8,-55.8 -249.1,-56.8 -204.6,-44.6 -173.5,-43.9 -126.7,-13.1 -109.7,-9.1 -74.3,17.3 -12.5,36.8 -0.4,45.7 20.2,51.9 28.6,59.1 40.7,80.6 55.4,139.8 65.2,244.1 71.5,274.2 95.3,297.6 109.5,301.9 146.8,342.4 152.2,342.6 156.8,328.7 180.9,305.0 196.1,297.9 214.7,297.8 226.7,302.1 241.9,318.2 251.1,320.0 262.4,329.9 290.0,337.0 304.3,353.8 317.1,347.1 329.8,350.9 349.5,346.1 363.7,350.4 388.8,371.0 416.1,412.8 431.7,431.5 440.4,435.5 473.4,433.7 516.0,418.8 531.6,423.0 570.2,442.5 610.2,444.5 654.6,441.0 697.5,450.9 710.9,446.5 732.1,448.5 785.8,461.9 806.5,481.5 828.6,516.4 855.5,540.5 872.1,573.4 883.1,579.9 897.8,595.8 910.4,617.2 916.6,619.7 922.4,617.5 942.6,600.5 937.6,598.6 942.2,595.8 970.1,596.0 981.2,588.9 995.0,591.5 1013.3,606.0 1046.6,672.7 1078.8,846.7 1112.2,897.3 1121.1,901.7 1132.4,926.6 1168.5,936.5 1201.0,918.1 1229.7,920.4 1263.3,934.0 1298.6,942.3 1322.6,960.4 1335.2,965.5 1365.3,968.9 1384.5,977.7 1425.7,984.9 1445.8,998.8 1464.9,1025.4 1465.1,1020.4 1480.9,1020.4 1495.8,1037.9 1528.8,1112.1 1577.5,1274.9 1597.0,1388.6 1609.3,1502.8 1627.1,1596.0 1635.5,1612.1 1657.6,1621.6 1675.5,1646.2 1708.8,1743.3 1717.3,1784.3 1723.1,1793.6 1728.7,1856.6 1724.4,1882.0 1715.3,1904.8 1717.2,1910.0 1714.3,1911.3 1722.3,1945.9 1727.8,1956.1 1732.0,1957.4 1742.3,1988.7 1741.0,1992.4 1751.7,1992.5 1746.7,1998.7 1744.2,1994.9 1742.9,1999.2 1760.1,1999.2 1760.1,2002.4 1744.4,2003.4 1747.9,2007.6 1741.1,2009.7 1736.6,1990.7 1740.5,2001.4 1738.9,2008.6 1748.3,2009.9 1754.6,2038.2 1758.5,2038.7 1811.5,2124.1 1805.0,2110.4 1807.9,2109.2 1815.7,2124.4 1810.9,2117.4 1812.6,2126.8 1851.0,2203.5 1868.2,2226.5 1875.0,2267.7 1885.3,2406.4 1897.8,2487.5 1895.2,2538.0 1887.9,2586.1 1870.0,2641.9 1862.1,2656.8 1854.6,2662.6 1825.4,2751.4 1816.7,2766.3 1811.7,2768.1 1793.7,2804.7 1778.4,2821.9 1776.6,2818.1 1777.6,2823.6 1773.2,2820.4 1771.5,2834.5 1761.3,2835.7 1758.1,2840.2 1760.3,2843.7 1754.5,2843.5 1753.1,2840.0 1740.7,2844.7 1748.9,2843.8 1751.3,2848.9 1738.3,2849.4 1735.4,2835.2 1731.0,2831.1 1723.1,2832.6 1697.5,2855.5 1650.8,2916.9 1641.9,2948.3 1634.4,3019.4 1623.8,3027.5 1615.9,3063.8 1611.3,3074.8 1604.5,3078.7 1583.9,3125.3 1585.4,3121.3"/><polyline class="coast" points="1618.4,3049.8 1618.4,3049.8"/><polyline class="coast" points="1810.4,2116.6 1810.4,2116.6"/><polyline class="coast" points="1808.5,2113.9 1808.5,2113.9"/><polyline class="coast" points="-617.5,-375.4 -615.2,-377.4 -617.5,-375.4"/><circle class="ring aaa confirmed" cx="413.4" cy="403.6" r="37.6"/><circle class="threat aaa confirmed" cx="413.4" cy="403.6" r="6"/><circle class="threat air confirmed" cx="425.6" cy="396.9" r="6"/><circle class="area sam possible" cx="419.5" cy="378.5" r="45.2"/><circle class="ring sam possible" cx="419.5" cy="378.5" r="180.7"/><circle class="threat sam possible" cx="419.5" cy="378.5" r="6"/><circle class="area sam possible" cx="297.6" cy="244.8" r="120.5"/><circle class="ring sam possible" cx="297.6" cy="244.8" r="361.4"/><circle class="threat sam possible" cx="297.6" cy="244.8" r="6"/><line class="orbit" x1="2474.0" y1="1256.1" x2="1995.3" y2="977.2"/><circle class="friendly-dot" cx="2474.0" cy="1256.1" r="6"/><polyline class="route dim" points="2227.7,1856.4 2474.0,1256.1 2022.9,721.2 1821.1,412.6 1620.6,251.0 723.6,-53.3 486.6,86.0 462.2,253.1 437.8,386.9 584.1,537.3 974.3,704.5 1102.3,819.6"/><polyline class="route hl" points="462.2,253.1 437.8,386.9"/><circle class="search" cx="437.8" cy="386.9" r="120.5"/><g class="target" transform="translate(437.8,386.9)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="486.6" cy="86.0" r="6"/><circle class="wp" cx="462.2" cy="253.1" r="6"/><circle class="wp on" cx="437.8" cy="386.9" r="6"/><circle class="wp" cx="584.1" cy="537.3" r="6"/><text class="lbl" x="498.6" y="91.0">6 VALLEY</text><text class="lbl" x="474.2" y="258.1">7 IP</text><text class="lbl" x="449.8" y="391.9">8 TGT</text><text class="lbl" x="596.1" y="542.3">9 FEET WET</text><text class="lbl aaa" x="401.4" y="408.6" text-anchor="end">ZSU-23-4 Shilka</text><text class="lbl air" x="437.6" y="420.9">MiG-29S pair</text><text class="lbl sam" x="407.5" y="383.5" text-anchor="end">SA-15 Gauntlet</text><text class="lbl sam" x="309.6" y="249.8">SA-6 Gainful</text><text class="lbl friendly" x="2462.0" y="1261.1" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>17 / 21</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 18">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 7 · 11:14</div>
+        <h2>Out the Front Door</h2>
+        <div class="body"><p>Low and fast over the water, east along the coast to Sukhumi-Babushara (tower
+129.0). It&#39;s ten minutes, and the airfield is friendly.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1184.1" y2="1184.1"/><text class="gridlbl" x="6" y="1180.1">42.5N</text><line class="grid" x1="0" x2="900" y1="361.1" y2="361.1"/><text class="gridlbl" x="6" y="357.1">43.0N</text><line class="grid" y1="0" y2="640" x1="-512.6" x2="-512.6"/><text class="gridlbl" x="-508.6" y="632">40.0E</text><line class="grid" y1="0" y2="640" x1="89.0" x2="89.0"/><text class="gridlbl" x="93.0" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="690.6" x2="690.6"/><text class="gridlbl" x="694.6" y="632">41.0E</text><polyline class="coast" points="-912.2,-699.1 -886.9,-679.7 -873.2,-658.0 -857.8,-601.5 -857.4,-597.6 -862.8,-593.6 -859.8,-581.8 -856.0,-580.1 -862.2,-587.2 -862.2,-592.5 -858.1,-592.3 -853.1,-599.7 -853.1,-591.7 -836.1,-575.0 -808.0,-562.9 -781.6,-540.6 -723.1,-511.5 -703.3,-496.4 -694.0,-482.0 -678.5,-482.0 -657.3,-459.0 -651.7,-451.3 -631.2,-375.4 -615.7,-338.0 -606.4,-324.0 -602.8,-324.4 -602.9,-320.4 -587.6,-311.5 -575.0,-296.2 -550.3,-291.8 -520.9,-272.2 -492.6,-273.2 -448.7,-261.2 -418.0,-260.5 -371.8,-230.2 -354.9,-226.3 -320.1,-200.3 -259.1,-181.0 -247.1,-172.3 -226.8,-166.2 -218.5,-159.1 -206.6,-137.9 -192.0,-79.6 -182.4,23.1 -176.1,52.7 -152.7,75.7 -138.7,80.0 -101.9,119.9 -96.5,120.0 -92.0,106.4 -68.2,83.0 -53.2,76.1 -34.9,75.9 -23.0,80.2 -8.1,96.0 1.1,97.8 12.2,107.5 39.5,114.6 53.5,131.1 66.2,124.5 78.7,128.3 98.2,123.5 112.1,127.8 136.9,148.0 163.9,189.2 179.3,207.6 187.8,211.5 220.4,209.7 262.4,195.1 277.8,199.2 316.0,218.4 355.4,220.4 399.2,217.0 441.6,226.7 454.8,222.4 475.7,224.4 528.7,237.5 549.1,256.8 570.9,291.2 597.5,314.9 613.9,347.3 624.7,353.7 639.3,369.4 651.7,390.4 657.8,392.9 663.4,390.8 683.4,374.0 678.5,372.2 683.1,369.4 710.6,369.5 721.6,362.6 735.2,365.1 753.2,379.4 786.1,445.1 817.8,616.4 850.8,666.3 859.6,670.6 870.8,695.1 906.4,704.8 938.4,686.7 966.8,689.0 999.9,702.3 1034.8,710.6 1058.5,728.3 1070.9,733.4 1100.6,736.7 1119.5,745.5 1160.1,752.5 1180.0,766.2 1198.9,792.4 1199.0,787.4 1214.6,787.4 1229.3,804.7 1261.9,877.8 1309.9,1038.1 1329.2,1150.0 1341.3,1262.4 1358.9,1354.3 1367.2,1370.1 1389.0,1379.5 1406.7,1403.7 1439.5,1499.3 1447.9,1539.6 1453.6,1548.8 1459.1,1610.9 1454.9,1635.9 1445.9,1658.3 1447.8,1663.4 1444.9,1664.7 1452.9,1698.8 1458.3,1708.8 1462.4,1710.1 1472.6,1740.9 1471.3,1744.5 1481.9,1744.7 1476.9,1750.8 1474.4,1747.0 1473.2,1751.3 1490.2,1751.3 1490.2,1754.4 1474.7,1755.4 1478.1,1759.5 1471.4,1761.6 1467.0,1742.9 1470.8,1753.4 1469.2,1760.5 1478.5,1761.8 1484.8,1789.6 1488.6,1790.1 1540.8,1874.2 1534.5,1860.7 1537.3,1859.6 1545.0,1874.5 1540.2,1867.6 1541.9,1876.9 1579.8,1952.4 1596.8,1975.1 1603.5,2015.6 1613.7,2152.2 1626.0,2232.0 1623.5,2281.7 1616.3,2329.1 1598.6,2384.1 1590.8,2398.8 1583.4,2404.5 1554.5,2491.9 1546.0,2506.6 1541.1,2508.4 1523.3,2544.4 1508.2,2561.4 1506.4,2557.6 1507.4,2563.0 1503.0,2559.9 1501.4,2573.7 1491.4,2574.9 1488.1,2579.3 1490.3,2582.8 1484.6,2582.6 1483.2,2579.2 1471.0,2583.8 1479.1,2582.9 1481.5,2587.9 1468.6,2588.4 1465.7,2574.4 1461.4,2570.4 1453.6,2571.9 1428.3,2594.5 1382.2,2654.9 1373.5,2685.8 1366.1,2755.8 1355.7,2763.8 1347.8,2799.5 1343.3,2810.4 1336.6,2814.2 1316.3,2860.1 1317.8,2856.2"/><polyline class="coast" points="1350.4,2785.7 1350.4,2785.7"/><polyline class="coast" points="1539.7,1866.8 1539.7,1866.8"/><polyline class="coast" points="1537.9,1864.2 1537.9,1864.2"/><polyline class="coast" points="-856.1,-586.9 -853.8,-588.9 -856.1,-586.9"/><circle class="ring aaa confirmed" cx="161.2" cy="180.1" r="37.1"/><circle class="threat aaa confirmed" cx="161.2" cy="180.1" r="6"/><circle class="threat air confirmed" cx="173.3" cy="173.5" r="6"/><circle class="area sam possible" cx="167.2" cy="155.4" r="44.5"/><circle class="ring sam possible" cx="167.2" cy="155.4" r="177.9"/><circle class="threat sam possible" cx="167.2" cy="155.4" r="6"/><circle class="area sam possible" cx="46.9" cy="23.7" r="118.6"/><circle class="ring sam possible" cx="46.9" cy="23.7" r="355.9"/><circle class="threat sam possible" cx="46.9" cy="23.7" r="6"/><line class="orbit" x1="2194.7" y1="1019.5" x2="1722.3" y2="744.9"/><circle class="friendly-dot" cx="2194.7" cy="1019.5" r="6"/><polyline class="route dim" points="1951.6,1610.6 2194.7,1019.5 1749.5,492.8 1550.3,189.0 1352.5,29.8 467.3,-269.7 233.4,-132.6 209.4,32.0 185.3,163.6 329.7,311.8 714.7,476.4 841.0,589.8"/><polyline class="route hl" points="185.3,163.6 329.7,311.8 714.7,476.4"/><circle class="search" cx="185.3" cy="163.6" r="118.6"/><g class="target" transform="translate(185.3,163.6)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="209.4" cy="32.0" r="6"/><circle class="wp" cx="185.3" cy="163.6" r="6"/><circle class="wp on" cx="329.7" cy="311.8" r="6"/><circle class="wp on" cx="714.7" cy="476.4" r="6"/><circle class="wp" cx="841.0" cy="589.8" r="8"/><text class="lbl" x="221.4" y="37.0">7 IP</text><text class="lbl" x="197.3" y="168.6">8 TGT</text><text class="lbl" x="341.7" y="316.8">9 FEET WET</text><text class="lbl" x="726.7" y="481.4">10 COAST</text><text class="lbl" x="829.0" y="594.8" text-anchor="end">Sukhumi-Babushara</text><text class="lbl aaa" x="83.2" y="206.1">ZSU-23-4 Shilka</text><text class="lbl air" x="161.3" y="178.5" text-anchor="end">MiG-29S pair</text><text class="lbl sam" x="155.2" y="160.4" text-anchor="end">SA-15 Gauntlet</text><text class="lbl sam" x="58.9" y="28.7">SA-6 Gainful</text><text class="lbl friendly" x="2182.7" y="1024.5" text-anchor="end">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>18 / 21</span></div>
+</section>
+
+<section class="slide comms" data-notes="Kneeboard page 2 carries this card in the cockpit." aria-label="Slide 19">
+  
+    <div class="eyebrow">Comms</div>
+    <h2>Frequencies</h2>
+    <div class="rows"><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">260.000 AM</span><span>Chevy (inter-flight) <span class="muted mono">· COMM1 · CH 1</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">276.000 AM</span><span>ARCO 1 (KC-130) <span class="muted mono">· COMM1 · CH 2</span><br><span class="muted" style="font-size:22px">TACAN 35Y</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">132.000 AM</span><span>Senaki Tower <span class="muted mono">· COMM2 · CH 1</span><br><span class="muted" style="font-size:22px">Departure</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">129.000 AM</span><span>Sukhumi Tower <span class="muted mono">· COMM2 · CH 2</span><br><span class="muted" style="font-size:22px">Recovery, runway 30</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">260.000 AM</span><span>SPARROW, HATCH <span class="muted mono">· Manual / listen</span><br><span class="muted" style="font-size:22px">Scripted calls (on-screen text); they don&#39;t answer the radio menu</span></span></div></div>
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>19 / 21</span></div>
+</section>
+
+<section class="slide package" data-notes="" aria-label="Slide 20">
+  
+    <div class="eyebrow">Conditions</div>
+    <h2>Weather &amp; ROE</h2>
+    <div class="rows"><div class="row"><span class="k">Wind</span><span>200° / 10 kt</span></div><div class="row"><span class="k">Clouds</span><span>Broken 9,000 ft over the mountains; valleys clear</span></div><div class="row"><span class="k">Visibility</span><span>15 km, haze along the coast</span></div><div class="row"><span class="k">Temp / QNH</span><span>8 °C / 29.9 inHg</span></div><div class="row"><span class="k">ROE</span><span>Weapons free on the fuel trucks and on air defences that engage you. Weapons tight
+on the airfield buildings and on all traffic on the coast road other than fuel
+tankers. Do not overfly Pitsunda.</span></div></div>
+    
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>20 / 21</span></div>
+</section>
+
+<section class="slide title" data-notes="End of the pilot brief. Debrief outcomes live in director.html, so they don&#39;t spoil the mission." aria-label="Slide 21">
+  
+    <div class="eyebrow">Operation DEEP CUT</div>
+    <h1>Questions?</h1>
+    <div class="sub">Step 10:30L</div>
+    
+
+  
+  <div class="foot"><span>OP DEEP CUT</span><span>21 / 21</span></div>
+</section>
+
+</div>
+<div id="progress"></div>
+<div id="notes"><span class="k">NOTES</span><span id="notes-text"></span></div>
+<div id="help">← → navigate · N notes · F fullscreen</div>
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+const stage = document.getElementById("stage");
+let cur = 0;
+
+function fit() {
+  const s = Math.min(innerWidth / 1600, innerHeight / 900);
+  stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+}
+function show(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((el, j) => el.classList.toggle("on", j === cur));
+  document.getElementById("progress").style.width = `${(cur + 1) / slides.length * 100}%`;
+  document.getElementById("notes-text").textContent = slides[cur].dataset.notes || "(no notes)";
+  history.replaceState(null, "", `#${cur + 1}`);
+}
+addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(slides.length - 1);
+  else if (e.key.toLowerCase() === "n") document.getElementById("notes").classList.toggle("on");
+  else if (e.key.toLowerCase() === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+});
+addEventListener("click", e => { if (!e.target.closest("a")) show(cur + (e.clientX > innerWidth / 3 ? 1 : -1)); });
+let tx = null;
+addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+addEventListener("touchend", e => { if (tx !== null) { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); tx = null; } });
+addEventListener("resize", fit);
+fit();
+show((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

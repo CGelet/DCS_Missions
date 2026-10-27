@@ -130,3 +130,14 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
 .intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }

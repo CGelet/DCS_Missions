@@ -140,6 +140,17 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
 .intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
 </style>
 </head>
 <body>
@@ -268,6 +279,7 @@ emitter has gone cold.</p>
         
       </ol>
     </div>
+    <div class="profile-wrap"><h3>Altitude profile</h3><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 332 km</text><line class="pleg" x1="56.0" y1="196.0" x2="300.7" y2="81.6"/><line class="pleg" x1="300.7" y1="81.6" x2="415.8" y2="71.2"/><line class="pleg" x1="415.8" y1="71.2" x2="472.4" y2="81.6"/><line class="pleg" x1="472.4" y1="81.6" x2="575.1" y2="66.0"/><line class="pleg" x1="575.1" y1="66.0" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="81.2" y="186.0" text-anchor="middle">Kutaisi</text><circle class="pwp" cx="300.7" cy="81.6" r="4"/><text class="plbl" x="300.7" y="71.6" text-anchor="middle">1 FENCE</text><text class="psub" x="300.7" y="220" text-anchor="middle">22k</text><circle class="pwp" cx="415.8" cy="71.2" r="4"/><text class="plbl" x="415.8" y="61.2" text-anchor="middle">2 HOLD</text><text class="psub" x="415.8" y="220" text-anchor="middle">24k</text><circle class="pwp" cx="472.4" cy="81.6" r="4"/><text class="plbl" x="472.4" y="71.6" text-anchor="middle">3 PUSH</text><text class="psub" x="472.4" y="220" text-anchor="middle">22k</text><circle class="pwp" cx="575.1" cy="66.0" r="4"/><text class="plbl" x="575.1" y="56.0" text-anchor="middle">4 EGRESS</text><text class="psub" x="575.1" y="220" text-anchor="middle">25k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="858.8" y="186.0" text-anchor="middle">Kutaisi</text></svg><p>Planned altitudes along the route. Dashed legs are terrain-following, flown above ground level (AGL), not sea level.</p></div>
   </div>
 </section>
 
@@ -360,6 +372,7 @@ No releases east of the Gumista River.</p></div>
         </table></div>
       </div>
 
+      
       <div class="card wide"><h3>Comms</h3>
         <div class="table-scroll"><table>
           <thead><tr><th>Station</th><th>Frequency</th><th>Preset</th><th>Notes</th></tr></thead>
@@ -376,7 +389,7 @@ No releases east of the Gumista River.</p></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-const D = {"route": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base"}, {"name": "FENCE", "lat": 42.55, "lon": 41.4, "alt_ft": 22000, "kts": 450, "eta": "14:42", "zone_km": 10, "kind": "wp", "num": 1}, {"name": "HOLD", "lat": 42.8, "lon": 40.95, "alt_ft": 24000, "kts": 400, "eta": "14:47", "zone_km": 10, "kind": "wp", "num": 2}, {"name": "PUSH", "lat": 42.98, "lon": 40.82, "alt_ft": 22000, "kts": 480, "eta": "14:51", "action": "sead", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "EGRESS", "lat": 42.7, "lon": 41.15, "alt_ft": 25000, "kts": 450, "eta": "14:58", "kind": "wp", "num": 4}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base"}], "target": {"name": "SA-11 Buk battery", "lat": 43.14, "lon": 40.775, "area_km": 10, "description": "Mobile SA-11 battery: 9S18 search radar, 9S470 command post, two 9A310 TELARs. Position unconfirmed.", "dmpi": "Search radar first. The TELARs carry their own radars and can still engage on their own."}, "threats": [{"name": "SA-11 Gadfly (9K37 Buk)", "kind": "sam", "intel": "suspected", "lat": 43.14, "lon": 40.775, "area_km": 10, "range_km": 32, "notes": "Shot down MAGPIE 3. Two favourite hides: the orchards above New Athos, or off the Achandara road. Expect it to be emitting."}, {"name": "SHORAD (SA-8 / SA-15)", "kind": "sam", "intel": "possible", "lat": 43.06, "lon": 40.91, "area_km": 6, "range_km": 10, "notes": "Single human-intelligence report of a wheeled SAM near Eshera. Unconfirmed."}, {"name": "MiG-29S pair", "kind": "air", "intel": "possible", "lat": 43.124, "lon": 40.567, "range_km": 0, "notes": "Still in shelters at Gudauta. Status unknown."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.35, "lon": 41.3, "alt_ft": 30000, "heading": 300, "leg_nm": 30, "freq_mhz": 251.0}], "airfields": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}], "phases": [{"phase": "Launch", "waypoints": []}, {"phase": "Fence In", "waypoints": ["FENCE"]}, {"phase": "The Search", "waypoints": ["HOLD"]}, {"phase": "Push", "waypoints": ["PUSH"]}, {"phase": "Kill Assessment", "waypoints": ["EGRESS"]}, {"phase": "Recovery", "waypoints": []}]};
+const D = {"route": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "FENCE", "lat": 42.55, "lon": 41.4, "alt_ft": 22000, "kts": 450, "eta": "14:42", "zone_km": 10, "kind": "wp", "num": 1}, {"name": "HOLD", "lat": 42.8, "lon": 40.95, "alt_ft": 24000, "kts": 400, "eta": "14:47", "zone_km": 10, "kind": "wp", "num": 2}, {"name": "PUSH", "lat": 42.98, "lon": 40.82, "alt_ft": 22000, "kts": 480, "eta": "14:51", "action": "sead", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "EGRESS", "lat": 42.7, "lon": 41.15, "alt_ft": 25000, "kts": 450, "eta": "14:58", "kind": "wp", "num": 4}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base", "alt_ft": 0}], "target": {"name": "SA-11 Buk battery", "lat": 43.14, "lon": 40.775, "area_km": 10, "description": "Mobile SA-11 battery: 9S18 search radar, 9S470 command post, two 9A310 TELARs. Position unconfirmed.", "dmpi": "Search radar first. The TELARs carry their own radars and can still engage on their own."}, "threats": [{"name": "SA-11 Gadfly (9K37 Buk)", "kind": "sam", "intel": "suspected", "lat": 43.14, "lon": 40.775, "area_km": 10, "range_km": 32, "notes": "Shot down MAGPIE 3. Two favourite hides: the orchards above New Athos, or off the Achandara road. Expect it to be emitting."}, {"name": "SHORAD (SA-8 / SA-15)", "kind": "sam", "intel": "possible", "lat": 43.06, "lon": 40.91, "area_km": 6, "range_km": 10, "notes": "Single human-intelligence report of a wheeled SAM near Eshera. Unconfirmed."}, {"name": "MiG-29S pair", "kind": "air", "intel": "possible", "lat": 43.124, "lon": 40.567, "range_km": 0, "notes": "Still in shelters at Gudauta. Status unknown."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.35, "lon": 41.3, "alt_ft": 30000, "heading": 300, "leg_nm": 30, "freq_mhz": 251.0, "track_to": {"lat": 42.60027027027027, "lon": 40.713456955922105}}], "ships": [], "airfields": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}], "phases": [{"phase": "Launch", "waypoints": []}, {"phase": "Fence In", "waypoints": ["FENCE"]}, {"phase": "The Search", "waypoints": ["HOLD"]}, {"phase": "Push", "waypoints": ["PUSH"]}, {"phase": "Kill Assessment", "waypoints": ["EGRESS"]}, {"phase": "Recovery", "waypoints": []}]};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 // Theme toggle (remembered per viewer when storage is available)
@@ -412,8 +425,8 @@ function drawMap() {
     const ll = [p.lat, p.lon];
     if (p.kind === "wp") wpLatLng[p.name] = ll;
     const m = L.circleMarker(ll, { radius: p.kind === "base" ? 7 : 5, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
-      .addTo(layers.route)
-      .bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });
+      .addTo(layers.route);
+    if (!(p.ship && p === D.route[0])) m.bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });  // the ship marker labels the start
     if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
   });
 
@@ -442,6 +455,17 @@ function drawMap() {
       L.circleMarker([s.base_ll.lat, s.base_ll.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
         .bindTooltip(`${s.callsign} (${s.base_ll.name})`, { permanent: true, direction: "left", className: "wp-label" });
     }
+  });
+
+  // Friendly ships with their planned track; AWACS / tanker orbits
+  D.ships.forEach(sh => {
+    const pts = [[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])];
+    L.polyline(pts, { color: ok, weight: 3, dashArray: "1 7", lineCap: "round" }).addTo(layers.support);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: ok, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(layers.support)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.support.filter(s => s.track_to).forEach(s => {
+    L.polyline([[s.lat, s.lon], [s.track_to.lat, s.track_to.lon]], { color: ok, weight: 5, opacity: .5, lineCap: "round" }).addTo(layers.support);
   });
 
   const tg = D.target;

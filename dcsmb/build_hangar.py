@@ -6,7 +6,9 @@ from pathlib import Path
 from .build_html import env
 
 AIRCRAFT_NAMES = {"FA_18C_hornet": "F/A-18C Hornet", "F_16C_50": "F-16C Viper", "A_10C_2": "A-10C II",
-                  "MiG_29S": "MiG-29S", "E_3A": "E-3A"}
+                  "F_14B": "F-14B Tomcat", "AV8BNA": "AV-8B Harrier",
+                  "MiG_29S": "MiG-29S", "Su_27": "Su-27", "Tu_22M3": "Tu-22M3", "E_3A": "E-3A", "E_2C": "E-2C",
+                  "KC135MPRS": "KC-135 (drogue)", "KC130": "KC-130", "S_3B_Tanker": "S-3B tanker"}
 
 
 def card(data: dict, hangar: Path) -> dict:

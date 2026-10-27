@@ -9,7 +9,7 @@ from pathlib import Path
 import dcs
 from dcs import action, condition, task, triggers, weather
 from dcs.mission import StartType
-from dcs.point import PointAction
+from dcs.point import MovingPoint, PointAction, PointProperties
 from dcs.terrain import Caucasus
 
 from .geo import FT, KTS, NM, point
@@ -20,7 +20,8 @@ CHANCE_FLAG_BASE = 200    # one flag per `chance` trigger, rolled at mission sta
 VARIANT_FLAG_BASE = 300   # default flag for variants without an explicit one
 DEFAULT_ZONE_KM = 10
 START_TYPES = {"cold": StartType.Cold, "warm": StartType.Warm, "runway": StartType.Runway}
-MAINTASKS = {"bomb": task.GroundAttack, "sead": task.SEAD, "cas": task.CAS}
+MAINTASKS = {"bomb": task.GroundAttack, "sead": task.SEAD, "cas": task.CAS, "cap": task.CAP, "intercept": task.Intercept}
+AI_FLIGHT_TASKS = {"antiship": task.AntishipStrike, "sweep": task.FighterSweep, "cap": task.CAP, "strike": task.GroundAttack}
 
 
 def _type(module, name: str):
@@ -71,18 +72,47 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     groups: dict[str, object] = {}
     zones: dict[str, object] = {}
 
+    # --- named zones (for triggers on things other than the player's waypoints) --
+    for z in data.get("zones", []):
+        zones[z["name"]] = m.triggers.add_triggerzone(point(terrain, z), radius=z["radius_km"] * 1000, name=z["name"])
+
+    # --- ships (built first: flights can launch from them) --------------
+    ships: dict[str, object] = {}
+    for sh in data.get("ships", []):
+        country = red if sh.get("coalition") == "red" else blue
+        types = [_type(dcs.ships, t) for t in sh["type"]]
+        pos = point(terrain, sh)
+        sg = m.ship_group(country, sh["name"], types[0], pos, heading=sh.get("heading", 0))
+        for i, t in enumerate(types[1:], 1):  # escorts in a loose line astern
+            u = m.ship(f"{sh['name']} {i + 1}", t)
+            u.position = pos.point_from_heading((sh.get("heading", 0) + 180) % 360, 1500 * i)
+            u.heading = sh.get("heading", 0)
+            sg.add_unit(u)
+        for p in sh.get("route", []):
+            sg.add_waypoint(point(terrain, p), sh.get("speed_kts", 20) * KTS)
+        lead = sg.units[0]
+        if "tacan" in sh:
+            ch, mode = int(sh["tacan"]["channel"][:-1]), sh["tacan"]["channel"][-1]
+            sg.points[0].tasks.append(task.ActivateBeaconCommand(ch, mode, sh["tacan"].get("callsign", "SHP"),
+                                                                 unit_id=lead.id, aa=False))
+        if "icls" in sh:
+            sg.points[0].tasks.append(task.ActivateICLSCommand(sh["icls"], unit_id=lead.id))
+        if "freq_mhz" in sh:
+            sg.set_frequency(int(sh["freq_mhz"] * 1_000_000))
+        ships[sh["name"]] = groups[sh["name"]] = sg
+
     # --- flights ---------------------------------------------------------
     for f in data["flights"]:
         ac = _type(dcs.planes, f["aircraft"])
-        airport = _airport(terrain, f["base"])
         actions = {wp.get("action") for wp in f["waypoints"]}
         maintask = next((t for a, t in MAINTASKS.items() if a in actions), task.GroundAttack)
-        fg = m.flight_group_from_airport(
-            blue, f["callsign"], ac, airport,
-            maintask=maintask,
-            start_type=START_TYPES[f.get("start", "cold")],
-            group_size=f.get("count", 1),
-        )
+        start_type = START_TYPES[f.get("start", "cold")]
+        if f["base"] in ships:
+            fg = m.flight_group_from_unit(blue, f["callsign"], ac, ships[f["base"]], maintask=maintask,
+                                          start_type=start_type, group_size=f.get("count", 1))
+        else:
+            fg = m.flight_group_from_airport(blue, f["callsign"], ac, _airport(terrain, f["base"]), maintask=maintask,
+                                             start_type=start_type, group_size=f.get("count", 1))
         groups[f["callsign"]] = fg
         _set_callsign(fg, f["callsign"], blue, ac)
         if f.get("player"):
@@ -98,6 +128,8 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         for wp in f["waypoints"]:
             pt = point(terrain, wp)
             mp = fg.add_waypoint(pt, wp.get("alt_ft", 20000) * FT, wp.get("kts", 420) * KTS, wp["name"])
+            if wp.get("agl"):
+                mp.alt_type = "RADIO"  # height above ground: terrain-following legs
             # Tasks steer the AI wingman; the player flies their own plan.
             if wp.get("action") == "bomb":
                 tgt = point(terrain, data["target"])
@@ -108,7 +140,9 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
                 mp.tasks.append(task.EngageTargets(max_distance=15_000, targets=[task.Targets.All.GroundUnits]))
             zones[wp["name"]] = m.triggers.add_triggerzone(
                 pt, radius=wp.get("zone_km", DEFAULT_ZONE_KM) * 1000, name=f"ZONE {wp['name']}")
-        if "land" in f:
+        if f.get("land") in ships:
+            _land_on_ship(fg, ships[f["land"]])
+        elif "land" in f:
             fg.land_at(_airport(terrain, f["land"]))
 
     player_group = next(groups[f["callsign"]] for f in data["flights"] if f.get("player"))
@@ -139,6 +173,30 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
                                 group_size=s.get("count", 2))
             if "freq_mhz" in s:
                 g.set_frequency(s["freq_mhz"])
+        elif s["kind"] == "tanker":
+            g = m.refuel_flight(country, s["callsign"], ac, None, point(terrain, s),
+                                race_distance=s.get("leg_nm", 30) * NM, heading=s.get("heading", 0),
+                                altitude=s.get("alt_ft", 20000) * FT, speed=s.get("kts", 280) * KTS,
+                                frequency=s.get("freq_mhz", 251))
+            # pydcs's beacon has no unit id or callsign; replace it with one DCS can tie to the tanker
+            g.points[0].tasks = [t for t in g.points[0].tasks if not isinstance(t, task.ActivateBeaconCommand)]
+            if "tacan" in s:
+                ch, mode = int(s["tacan"]["channel"][:-1]), s["tacan"]["channel"][-1]
+                g.points[0].tasks.append(task.ActivateBeaconCommand(ch, mode, s["tacan"].get("callsign", "TKR"),
+                                                                    unit_id=g.units[0].id, aa=True))
+        elif s["kind"] == "flight":
+            # A generic AI flight that spawns in the air and flies a route (raids, sweeps)
+            sp = s["spawn"]
+            g = m.flight_group_inflight(country, s["callsign"], ac, point(terrain, sp), sp.get("alt_ft", 20000) * FT,
+                                        sp.get("kts", 450) * KTS, maintask=AI_FLIGHT_TASKS[s["task"]],
+                                        group_size=s.get("count", 2))
+            for i, p in enumerate(s.get("route", [])):
+                mp = g.add_waypoint(point(terrain, p), p.get("alt_ft", sp.get("alt_ft", 20000)) * FT,
+                                    p.get("kts", sp.get("kts", 450)) * KTS)
+                if i == 0 and s["task"] == "antiship" and s.get("attack") in ships:
+                    mp.tasks.append(task.AttackGroup(ships[s["attack"]].id))
+                elif i == 0 and s["task"] in ("sweep", "cap"):
+                    mp.tasks.append(task.EngageTargets(max_distance=80_000, targets=[task.Targets.All.Air]))
         elif s["kind"] == "intercept":
             g = m.flight_group_from_airport(country, s["callsign"], ac, _airport(terrain, s["base"]),
                                             maintask=task.Intercept, start_type=StartType.Runway,
@@ -148,7 +206,7 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         else:
             raise ValueError(f"support kind '{s['kind']}' not supported")
         g.late_activation = bool(s.get("late_activation"))
-        _set_callsign(g, s["callsign"], country, ac, awacs=s["kind"] == "awacs")
+        _set_callsign(g, s["callsign"], country, ac, kind=s["kind"])
         groups[s["callsign"]] = g
 
     # --- random variants (rolled once at mission start) ---------------
@@ -235,19 +293,33 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     return m
 
 
-def _set_callsign(group, callsign: str, country, ac, awacs: bool = False) -> None:
+def _set_callsign(group, callsign: str, country, ac, kind: str = "") -> None:
     """Give the group the DCS callsign the story uses ("Colt 1" -> Colt 1-1, Colt 1-2), when the country has it.
 
     Western callsigns index the country's list, followed by the aircraft type's own names (A-10: Hawg, Boar...).
     """
     word, _, num = callsign.partition(" ")
-    names = country.callsign.get("AWACS" if awacs else "Air", []) + ([] if awacs else getattr(ac, "callnames", {}).get(country.name, []))
+    if kind in ("awacs", "tanker"):
+        names = country.callsign.get("AWACS" if kind == "awacs" else "Tankers", [])
+    else:
+        names = country.callsign.get("Air", []) + getattr(ac, "callnames", {}).get(country.name, [])
     lower = [n.lower() for n in names]
     if word.lower() not in lower:
         return  # e.g. red flights: Russian callsigns are numeric
     idx, num = lower.index(word.lower()), int(num) if num.isdigit() else 1
     for j, u in enumerate(group.units, 1):
         u.callsign_dict = {1: idx + 1, 2: num, 3: j, "name": f"{names[idx]}{num}{j}"}
+
+
+def _land_on_ship(fg, sg) -> None:
+    """Final waypoint: recover aboard the ship (DCS follows the ship, so the position is only nominal)."""
+    pos = sg.points[-1].position if sg.points else sg.units[0].position
+    mp = MovingPoint(pos)
+    mp.type, mp.action = "Land", PointAction.Landing
+    mp.helipad_id = mp.link_unit = sg.units[0].id
+    mp.alt, mp.speed = 0, 250 * KTS / 3.6
+    mp.properties = PointProperties()
+    fg.add_point(mp)
 
 
 def _set_presets(group, comms: list[dict]) -> None:
@@ -275,8 +347,12 @@ def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: di
             conds.append(condition.UnitInZone(player_group.units[0].id, zones[arg].id))
         elif kind == "group_dead":
             conds.append(condition.GroupDead(groups[arg].id))
+        elif kind == "group_in_zone":
+            conds.append(condition.PartOfGroupInZone(groups[arg[0]].id, zones[arg[1]].id))
         elif kind == "flag":
             conds.append(condition.FlagIsTrue(arg))
+        elif kind == "flag_false":
+            conds.append(condition.FlagIsFalse(arg))
         elif kind == "target_destroyed":
             conds.append(condition.FlagIsTrue(TARGET_FLAG))
         elif kind == "variant":
@@ -289,6 +365,8 @@ def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: di
 def _actions(m: dcs.Mission, r, spec: dict, groups: dict) -> None:
     for g in spec.get("activate", []):
         r.add_action(action.ActivateGroup(groups[g].id))
+    for g in spec.get("deactivate", []):
+        r.add_action(action.DeactivateGroup(groups[g].id))
     if "message" in spec:
         r.add_action(action.MessageToCoalition(action.Coalition.Blue, m.string(spec["message"]), spec.get("seconds", 10)))
     if "set_flag" in spec:

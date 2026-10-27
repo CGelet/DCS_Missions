@@ -140,6 +140,17 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
 .intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
 .spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
 .spoiler b { color: var(--red); }
 .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
@@ -385,7 +396,7 @@ the fight for Sukhumi starts in the streets.</p></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-const D = {"route": [{"name": "Sukhumi-Babushara", "lat": 42.86109234026534, "lon": 41.12499865194555, "kind": "base"}, {"name": "HOLD", "lat": 43.0, "lon": 41.05, "alt_ft": 9000, "kts": 250, "eta": "06:02", "zone_km": 6, "kind": "wp", "num": 1}, {"name": "CAS", "lat": 43.04, "lon": 40.95, "alt_ft": 8000, "kts": 250, "eta": "06:05", "action": "cas", "zone_km": 8, "kind": "wp", "num": 2}, {"name": "RTB", "lat": 42.93, "lon": 41.1, "alt_ft": 6000, "kts": 250, "eta": "06:40", "kind": "wp", "num": 3}, {"name": "Sukhumi-Babushara", "lat": 42.86109234026534, "lon": 41.12499865194555, "kind": "base"}], "target": {"name": "Attacking armoured column", "lat": 43.06, "lon": 40.89, "area_km": 6, "groups": ["Column Coast", "Column Highway"], "kill_pct": 70, "description": "Lead battalion of the red brigade, moving on one of the two Gumista bridges.", "dmpi": "Lead vehicle on the bridge approach first to block the road, then the Shilka."}, "threats": [{"name": "Red mechanised column", "kind": "armor", "intel": "suspected", "lat": 43.06, "lon": 40.89, "area_km": 6, "range_km": 0, "notes": "Lead battalion, around six vehicles (T-72B, BMP-2). Route unknown: coast road via Eshera or highway via New Athos."}, {"name": "ZSU-23-4 Shilka", "kind": "aaa", "intel": "possible", "lat": 43.06, "lon": 40.89, "range_km": 2.5, "notes": "Columns usually move with a Shilka. Treat any column as defended."}, {"name": "MANPADS (SA-18 Igla)", "kind": "sam", "intel": "suspected", "lat": 43.06, "lon": 40.89, "range_km": 5, "notes": "Assume an Igla team with any column. Stay above 6,000 ft west of the river."}, {"name": "SA-11 Gadfly", "kind": "sam", "intel": "possible", "lat": 43.14, "lon": 40.775, "area_km": 10, "range_km": 32, "notes": "If Operation SILENT ORCHARD didn't kill it, it could still cover the river. No emissions seen since."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.5, "lon": 41.2, "alt_ft": 28000, "heading": 300, "leg_nm": 25, "freq_mhz": 251.0}], "airfields": [{"name": "Sukhumi-Babushara", "lat": 42.86109234026534, "lon": 41.12499865194555}], "phases": [{"phase": "Scramble", "waypoints": []}, {"phase": "Check In", "waypoints": ["HOLD"]}, {"phase": "Cleared Hot", "waypoints": ["CAS"]}, {"phase": "Hold or Fall", "waypoints": []}, {"phase": "Recovery", "waypoints": ["RTB"]}], "units": [{"name": "CHISEL Position", "lat": 43.03, "lon": 40.985, "coalition": "blue", "route": [], "late": false}, {"name": "Column Coast", "lat": 43.04, "lon": 40.9, "coalition": "red", "route": [{"lat": 43.025, "lon": 40.935}, {"lat": 43.0163, "lon": 40.9498}, {"lat": 43.022, "lon": 40.975}, {"lat": 43.03, "lon": 40.985}], "late": true}, {"name": "Column Highway", "lat": 43.085, "lon": 40.84, "coalition": "red", "route": [{"lat": 43.07, "lon": 40.93}, {"lat": 43.0553, "lon": 40.9969}, {"lat": 43.04, "lon": 40.992}, {"lat": 43.03, "lon": 40.985}], "late": true}]};
+const D = {"route": [{"name": "Sukhumi-Babushara", "lat": 42.86109234026534, "lon": 41.12499865194555, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "HOLD", "lat": 43.0, "lon": 41.05, "alt_ft": 9000, "kts": 250, "eta": "06:02", "zone_km": 6, "kind": "wp", "num": 1}, {"name": "CAS", "lat": 43.04, "lon": 40.95, "alt_ft": 8000, "kts": 250, "eta": "06:05", "action": "cas", "zone_km": 8, "kind": "wp", "num": 2}, {"name": "RTB", "lat": 42.93, "lon": 41.1, "alt_ft": 6000, "kts": 250, "eta": "06:40", "kind": "wp", "num": 3}, {"name": "Sukhumi-Babushara", "lat": 42.86109234026534, "lon": 41.12499865194555, "kind": "base", "alt_ft": 0}], "target": {"name": "Attacking armoured column", "lat": 43.06, "lon": 40.89, "area_km": 6, "groups": ["Column Coast", "Column Highway"], "kill_pct": 70, "description": "Lead battalion of the red brigade, moving on one of the two Gumista bridges.", "dmpi": "Lead vehicle on the bridge approach first to block the road, then the Shilka."}, "threats": [{"name": "Red mechanised column", "kind": "armor", "intel": "suspected", "lat": 43.06, "lon": 40.89, "area_km": 6, "range_km": 0, "notes": "Lead battalion, around six vehicles (T-72B, BMP-2). Route unknown: coast road via Eshera or highway via New Athos."}, {"name": "ZSU-23-4 Shilka", "kind": "aaa", "intel": "possible", "lat": 43.06, "lon": 40.89, "range_km": 2.5, "notes": "Columns usually move with a Shilka. Treat any column as defended."}, {"name": "MANPADS (SA-18 Igla)", "kind": "sam", "intel": "suspected", "lat": 43.06, "lon": 40.89, "range_km": 5, "notes": "Assume an Igla team with any column. Stay above 6,000 ft west of the river."}, {"name": "SA-11 Gadfly", "kind": "sam", "intel": "possible", "lat": 43.14, "lon": 40.775, "area_km": 10, "range_km": 32, "notes": "If Operation SILENT ORCHARD didn't kill it, it could still cover the river. No emissions seen since."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.5, "lon": 41.2, "alt_ft": 28000, "heading": 300, "leg_nm": 25, "freq_mhz": 251.0, "track_to": {"lat": 42.70855855855856, "lon": 40.71004323374478}}], "ships": [], "airfields": [{"name": "Sukhumi-Babushara", "lat": 42.86109234026534, "lon": 41.12499865194555}], "phases": [{"phase": "Scramble", "waypoints": []}, {"phase": "Check In", "waypoints": ["HOLD"]}, {"phase": "Cleared Hot", "waypoints": ["CAS"]}, {"phase": "Hold or Fall", "waypoints": []}, {"phase": "Recovery", "waypoints": ["RTB"]}], "zones": [], "flights": [], "units": [{"name": "CHISEL Position", "lat": 43.03, "lon": 40.985, "coalition": "blue", "route": [], "late": false}, {"name": "Column Coast", "lat": 43.04, "lon": 40.9, "coalition": "red", "route": [{"lat": 43.025, "lon": 40.935}, {"lat": 43.0163, "lon": 40.9498}, {"lat": 43.022, "lon": 40.975}, {"lat": 43.03, "lon": 40.985}], "late": true}, {"name": "Column Highway", "lat": 43.085, "lon": 40.84, "coalition": "red", "route": [{"lat": 43.07, "lon": 40.93}, {"lat": 43.0553, "lon": 40.9969}, {"lat": 43.04, "lon": 40.992}, {"lat": 43.03, "lon": 40.985}], "late": true}]};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 (function () {
   const root = document.documentElement;
@@ -429,9 +440,25 @@ function draw() {
       .bindTooltip(u.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
     all.push(m.getLatLng());
   });
+  D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
+    .addTo(map).bindTooltip(`Zone: ${z.name}`, { permanent: true, direction: "center", className: "wp-label" }));
+  D.ships.forEach(sh => {
+    const c = sh.coalition === "red" ? red : ok;
+    L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.flights.forEach(f => {
+    const c = f.coalition === "blue" ? ok : red;
+    L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${f.name}</div>`, iconSize: null }) }).addTo(map);
+  });
+
   const tg = D.target;
   L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${tg.name}`);
-  const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon]))));
+  const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
+    .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
+    .concat(D.ships.map(sh => [sh.lat, sh.lon])));
   map.fitBounds(b.isValid() ? b.pad(0.6) : route.getBounds(), { padding: [24, 24] });
 }
 draw();

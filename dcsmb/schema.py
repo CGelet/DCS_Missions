@@ -17,7 +17,9 @@ class MissionError(ValueError):
 
 
 REQUIRED_TOP = ["meta", "narrative", "situation", "objectives", "flights", "target", "storyboard"]
-TRIGGER_WHEN = {"time_after", "player_in_zone", "group_dead", "flag", "target_destroyed", "variant"}
+TRIGGER_WHEN = {"time_after", "player_in_zone", "group_dead", "group_in_zone", "flag", "flag_false", "target_destroyed", "variant"}
+SUPPORT_KINDS = {"awacs", "tanker", "cap", "intercept", "flight"}
+AI_TASKS = {"antiship", "sweep", "cap", "strike"}
 INTEL = {"confirmed", "suspected", "possible"}
 
 
@@ -50,13 +52,23 @@ def _check_when(when, where: str, wp_names: set, group_names: set, variants: dic
     if not when or bad:
         errs.append(f"{where}.when: needs one or more of {sorted(TRIGGER_WHEN)}" + (f" (unknown: {sorted(bad)})" if bad else ""))
     if "player_in_zone" in when and when["player_in_zone"] not in wp_names:
-        errs.append(f"{where}: player_in_zone references unknown waypoint '{when['player_in_zone']}'")
+        errs.append(f"{where}: player_in_zone references unknown waypoint or zone '{when['player_in_zone']}'")
+    if "group_in_zone" in when:
+        g = when["group_in_zone"]
+        if not (isinstance(g, list) and len(g) == 2 and g[0] in group_names and g[1] in wp_names):
+            errs.append(f"{where}: group_in_zone must be [known group, waypoint or zone name], got {g!r}")
     if "group_dead" in when and when["group_dead"] not in group_names:
         errs.append(f"{where}: group_dead references unknown group '{when['group_dead']}'")
     if "variant" in when:
         v = when["variant"]
         if not (isinstance(v, list) and len(v) == 2 and v[0] in variants and 1 <= v[1] <= variants[v[0]]):
             errs.append(f"{where}: variant must be [variant name, option number], got {v!r}")
+
+
+def _check_deactivate(names, where: str, group_names: set, errs: list[str]) -> None:
+    for g in names or []:
+        if g not in group_names:
+            errs.append(f"{where}: deactivate references unknown group '{g}'")
 
 
 def _check_activate(names, where: str, group_names: set, late: set, errs: list[str]) -> None:
@@ -101,6 +113,36 @@ def validate(data) -> None:
                 errs.append(f"{where}.waypoints[{j}]: missing 'name'")
             wp_names.add(wp.get("name"))
 
+    # Named zones can be used anywhere a waypoint name is accepted in a trigger
+    for i, z in enumerate(data.get("zones", [])):
+        _latlon(z, f"zones[{i}] ({z.get('name', '?')})", errs)
+        if not z.get("name") or not z.get("radius_km"):
+            errs.append(f"zones[{i}]: needs 'name' and 'radius_km'")
+        wp_names.add(z.get("name"))
+
+    ship_names = set()
+    for i, sh in enumerate(data.get("ships", [])):
+        where = f"ships[{i}] ({sh.get('name', '?')})"
+        _latlon(sh, where, errs)
+        if not sh.get("name") or not sh.get("type"):
+            errs.append(f"{where}: needs 'name' and a non-empty 'type' list")
+        for j, p in enumerate(sh.get("route", [])):
+            _latlon(p, f"{where}.route[{j}]", errs)
+        ship_names.add(sh.get("name"))
+
+    for i, s in enumerate(data.get("support", [])):
+        where = f"support[{i}] ({s.get('callsign', '?')})"
+        if s.get("kind") not in SUPPORT_KINDS:
+            errs.append(f"{where}: 'kind' must be one of {sorted(SUPPORT_KINDS)}")
+        elif s["kind"] in ("awacs", "tanker"):
+            _latlon(s, where, errs)
+        elif s["kind"] == "flight":
+            _latlon(s.get("spawn") or {}, f"{where}.spawn", errs)
+            if s.get("task") not in AI_TASKS:
+                errs.append(f"{where}: 'task' must be one of {sorted(AI_TASKS)}")
+            if s.get("attack") and s["attack"] not in ship_names:
+                errs.append(f"{where}: attack references unknown ship group '{s['attack']}'")
+
     for i, u in enumerate(data.get("units", [])):
         where = f"units[{i}] ({u.get('name', '?')})"
         _latlon(u, where, errs)
@@ -116,6 +158,7 @@ def validate(data) -> None:
 
     group_names = {u["name"] for u in data.get("units", []) if "name" in u}
     group_names |= {s["callsign"] for s in data.get("support", []) if "callsign" in s}
+    group_names |= ship_names
     late = {u["name"] for u in data.get("units", []) if u.get("late_activation")}
     late |= {s["callsign"] for s in data.get("support", []) if s.get("late_activation")}
 
@@ -168,6 +211,7 @@ def validate(data) -> None:
             tw = f"{where}.triggers[{j}]"
             _check_when(trig.get("when"), tw, wp_names, group_names, variants, errs)
             _check_activate(trig.get("activate"), tw, group_names, late, errs)
+            _check_deactivate(trig.get("deactivate"), tw, group_names, errs)
             if "chance" in trig and not 0 < trig["chance"] < 100:
                 errs.append(f"{tw}: 'chance' is a percentage between 1 and 99")
 

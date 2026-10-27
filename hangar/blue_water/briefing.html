@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operation BLUE WATER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Operation BLUE WATER</div>
+    <h1>Hold the Line at Sea</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2026-03-20</b></span>
+      <span>Step <b class="mono">16:40L</b></span>
+      <span>Theater <b>Caucasus</b></span>
+      <span>Flight <b>Ford 1 · 2× F-14B Tomcat</b></span>
+      <span>Base <b>Stennis Group</b></span>
+    </div>
+    <blockquote class="hook">&#34;They only have to get lucky once. You have to be lucky every time. Tonight, be
+lucky early.&#34; BISHOP, 1600 brief</blockquote>
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#story">Story</a><a href="#plan">Storyboard &amp; map</a><a href="#brief">Briefing</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+    <button type="button" onclick="window.print()">Print</button>
+  </div>
+</nav>
+
+<main>
+<section id="story">
+  <div class="wrap">
+    <h2>The story so far</h2>
+    <div class="story">
+      <div><p>With the Gumista holding, the coalition moved the Stennis strike group into the
+eastern Black Sea to put fighters over Sukhumi around the clock. The answer from
+the north was always going to come by air. Overnight, two Tu-22M3 Backfires moved
+forward. Each carries a Kh-22 that can hit a carrier from 300 km away.</p><p>Nobody knows when they&#39;ll launch or which way they&#39;ll come. The fleet&#39;s best
+guess is dusk, with the sun in the defenders&#39; eyes. Ford flight has the evening
+CAP north of the boat, and whatever happens up there, everyone has to be back
+aboard before the light goes.</p></div>
+      <div>
+        <h3>Cast</h3>
+        <ul class="cast">
+          <li><b>Cmdr. Ray &#34;BISHOP&#34; Ortega</b><span>CAG, Carrier Air Wing aboard USS John C. Stennis</span></li><li><b>DARKSTAR</b><span>E-2C Hawkeye: the fleet&#39;s eyes, holding over the strike group</span></li><li><b>SHELL 1</b><span>KC-135 (drogue) tanker on the track south of the boat</span></li><li><b>TEXACO 1</b><span>S-3B recovery tanker overhead the carrier: little gas, always close</span></li><li><b>Ford 1-1 / 1-2</b><span>You and your wingman, F-14B Tomcats with Phoenix</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="wrap">
+    <h2>Storyboard &amp; flight plan</h2>
+    <div class="plan">
+      <div class="map-wrap">
+        <div id="map" role="img" aria-label="Mission map with route, threats and target"></div>
+        <div class="legend" id="legend">
+          <label><input type="checkbox" data-layer="route" checked> <i style="background:var(--blue)"></i>Route</label>
+          <label><input type="checkbox" data-layer="threats" checked> <i style="background:var(--red)"></i>Threat rings</label>
+          <label><input type="checkbox" data-layer="support" checked> <i style="background:var(--ok)"></i>Friendly support</label>
+          <label><input type="checkbox" data-layer="target" checked> <i style="background:var(--accent)"></i>Target</label>
+        </div>
+      </div>
+      <ol class="timeline">
+        
+        <li class="phase" data-idx="0">
+          <span class="dot">1</span>
+          <button type="button" class="phase-card" aria-label="Show Cat Shot on the map">
+            <div class="phase-head"><h3>Cat Shot</h3><span class="time">16:40</span></div>
+            <p class="beat">Cold start on the Stennis deck and launch into the wind. Mother is steaming 240
+at 25 knots. She won&#39;t be where you left her when you get back.</p>
+            
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="1">
+          <span class="dot">2</span>
+          <button type="button" class="phase-card" aria-label="Show Find the Gas on the map">
+            <div class="phase-head"><h3>Find the Gas</h3><span class="time">16:58</span></div>
+            <p class="beat">Join Shell 1 on the track south of the boat (TACAN 51Y) and top off. Texaco 1
+overhead Mother (TACAN 60Y) is a backup with very little to give.</p>
+            <div class="chips"><span class="chip">TANKER</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="2">
+          <span class="dot">3</span>
+          <button type="button" class="phase-card" aria-label="Show CAP Station on the map">
+            <div class="phase-head"><h3>CAP Station</h3><span class="time">17:12</span></div>
+            <p class="beat">Hold the CAP between the two points at 26,000 ft, north of the boat. DARKSTAR
+will call the raid when it shows. Intel&#39;s best guess is northwest over the water.</p>
+            <div class="chips"><span class="chip">CAP N</span><span class="chip">CAP S</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="3">
+          <span class="dot">4</span>
+          <button type="button" class="phase-card" aria-label="Show The Intercept on the map">
+            <div class="phase-head"><h3>The Intercept</h3><span class="time">17:20</span></div>
+            <p class="beat">Commit on DARKSTAR&#39;s call. Phoenix range is your friend: the bombers have to die
+before the launch line, about 30 nm north of the CAP.</p>
+            
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="4">
+          <span class="dot">5</span>
+          <button type="button" class="phase-card" aria-label="Show Case I at Last Light on the map">
+            <div class="phase-head"><h3>Case I at Last Light</h3><span class="time">18:05</span></div>
+            <p class="beat">Back to Mother: TACAN 74X, ICLS 1, Case I. The sun sets at about 18:20. Watch
+your fuel; Texaco can give a little if you need it.</p>
+            <div class="chips"><span class="chip">MARSHAL</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="5">
+          <span class="dot">6</span>
+          <button type="button" class="phase-card" aria-label="Show Debrief on the map">
+            <div class="phase-head"><h3>Debrief</h3><span class="time">18:30</span></div>
+            <p class="beat">Debrief in Ready Room 2 with DARKSTAR&#39;s tapes.</p>
+            
+          </button>
+        </li>
+        
+      </ol>
+    </div>
+    <div class="profile-wrap"><h3>Altitude profile</h3><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 248 km</text><line class="pleg" x1="56.0" y1="196.0" x2="157.5" y2="81.6"/><line class="pleg" x1="157.5" y1="81.6" x2="505.2" y2="60.8"/><line class="pleg" x1="505.2" y1="60.8" x2="625.6" y2="60.8"/><line class="pleg" x1="625.6" y1="60.8" x2="828.6" y2="164.8"/><line class="pleg" x1="828.6" y1="164.8" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="102.8" y="186.0" text-anchor="middle">Stennis Group</text><circle class="pwp" cx="157.5" cy="81.6" r="4"/><text class="plbl" x="157.5" y="57.6" text-anchor="middle">1 TANKER</text><text class="psub" x="157.5" y="220" text-anchor="middle">22k</text><circle class="pwp" cx="505.2" cy="60.8" r="4"/><text class="plbl" x="505.2" y="50.8" text-anchor="middle">2 CAP N</text><text class="psub" x="505.2" y="220" text-anchor="middle">26k</text><circle class="pwp" cx="625.6" cy="60.8" r="4"/><text class="plbl" x="625.6" y="50.8" text-anchor="middle">3 CAP S</text><text class="psub" x="625.6" y="220" text-anchor="middle">26k</text><circle class="pwp" cx="828.6" cy="164.8" r="4"/><text class="plbl" x="828.6" y="154.8" text-anchor="middle">4 MARSHAL</text><text class="psub" x="828.6" y="220" text-anchor="middle">6k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="797.6" y="172.0" text-anchor="middle">Stennis Group (recovery)</text></svg><p>Planned altitudes along the route. Dashed legs are terrain-following, flown above ground level (AGL), not sea level.</p></div>
+  </div>
+</section>
+
+<section id="brief">
+  <div class="wrap">
+    <h2>Briefing</h2>
+    <div class="cards">
+      <div class="card"><h3>Situation</h3><p>The Stennis strike group is operating 70 nm west of Sukhumi, steaming southwest into
+the wind. Long-range aviation has staged Tu-22M3 bombers within reach of the eastern
+Black Sea. Intelligence expects a raid this evening, most likely from the northwest
+over the water, but the mountains to the north can&#39;t be ruled out. Red fighters have
+escorted bombers before. Shell 1 provides big-wing gas south of the boat. Texaco 1,
+overhead Mother, carries a small amount for emergencies.</p></div>
+      <div class="card"><h3>Objectives</h3>
+        <ul class="obj-list"><li><span>primary</span><div>Destroy the bomber raid before it reaches the Kh-22 launch line.</div></li><li><span>secondary</span><div>Engage any fighters that threaten the CAP or the strike group.</div></li><li><span>tertiary</span><div>Recover both aircraft aboard the Stennis before last light.</div></li></ul>
+      </div>
+      <div class="card"><h3>Rules of engagement</h3><p>Weapons free on any aircraft DARKSTAR declares hostile north of 43°10&#39;N. Weapons
+tight on everything else. Civil traffic out of Sochi is possible: VID if in doubt.</p></div>
+
+      <div class="card wide"><h3>Threats</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Type</th><th>System</th><th>Intel</th><th>Range</th><th>Notes</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag air">air</span></td><td>Tu-22M3 Backfire raid</td>
+            <td><span class="intel suspected">suspected</span></td>
+            <td class="num">n/a</td><td>Two bombers, Kh-22 (300 km). Expected from the northwest over the water. Must die before the launch line.</td>
+          </tr><tr>
+            <td><span class="tag air">air</span></td><td>Su-27 Flanker escort</td>
+            <td><span class="intel possible">possible</span></td>
+            <td class="num">n/a</td><td>Escorts flew with the last raid in February. None seen staging this time.</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card"><h3>Target</h3>
+        <dl class="kv">
+          <dt>Name</dt><dd>Tu-22M3 bomber raid</dd>
+          <dt>Coords</dt><dd class="mono">43.7200N 39.1500E<br><span class="intel suspected">estimate ±40 km</span></dd>
+          <dt>Description</dt><dd>Two Tu-22M3 carrying Kh-22 anti-ship missiles. Kill them before the launch line, about 30 nm north of the CAP.</dd>
+          <dt>DMPI</dt><dd>Bombers first. Don&#39;t get drawn off by escorts unless they commit on you.</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Flight &amp; loadout</h3>
+        <dl class="kv">
+          <dt>Callsign</dt><dd>Ford 1-1 / -2</dd>
+          <dt>Start</dt><dd>Cold start, Stennis Group</dd>
+          <dt>Loadout</dt><dd>4× AIM-54C Phoenix, 2× AIM-7M, 2× AIM-9M, 2× 300 gal tanks</dd>
+          
+          <dt>Joker / Bingo</dt><dd class="mono">6000 / 4000 lb</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Weather</h3>
+        <dl class="kv">
+          <dt>Wind</dt><dd class="mono">240° / 14 kt</dd>
+          <dt>Temp</dt><dd class="mono">10 °C</dd>
+          <dt>QNH</dt><dd class="mono">29.95 inHg</dd>
+          <dt>Clouds</dt><dd>Few 5,000 ft, scattered 18,000 ft</dd>
+          <dt>Visibility</dt><dd>20+ km, sun low in the west</dd>
+        </dl>
+      </div>
+
+      <div class="card wide"><h3>Navigation</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Alt</th><th>Speed</th><th>ETA</th><th>Action</th></tr></thead>
+          <tbody><tr>
+            <td class="num">1</td><td><b>TANKER</b></td>
+            <td class="num">42.7200N 39.9000E</td>
+            <td class="num">22,000 ft</td><td class="num">300 kt</td>
+            <td class="num">16:58</td><td></td>
+          </tr><tr>
+            <td class="num">2</td><td><b>CAP N</b></td>
+            <td class="num">43.4500N 39.1000E</td>
+            <td class="num">26,000 ft</td><td class="num">350 kt</td>
+            <td class="num">17:12</td><td>CAP</td>
+          </tr><tr>
+            <td class="num">3</td><td><b>CAP S</b></td>
+            <td class="num">43.2500N 39.4500E</td>
+            <td class="num">26,000 ft</td><td class="num">350 kt</td>
+            <td class="num">17:18</td><td></td>
+          </tr><tr>
+            <td class="num">4</td><td><b>MARSHAL</b></td>
+            <td class="num">42.7500N 39.1500E</td>
+            <td class="num">6,000 ft</td><td class="num">300 kt</td>
+            <td class="num">18:05</td><td></td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card wide"><h3>Navaids</h3><p class="mono" style="font-size:14px">Stennis Group: TACAN 74X (STN), ICLS 1</p><p class="mono" style="font-size:14px">Shell 1 (tanker): TACAN 51Y, 22,000 ft, 290 kt</p><p class="mono" style="font-size:14px">Texaco 1 (tanker): TACAN 60Y, 8,000 ft, 250 kt</p></div>
+      <div class="card wide"><h3>Comms</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Station</th><th>Frequency</th><th>Preset</th><th>Notes</th></tr></thead>
+          <tbody><tr><td>Ford (inter-flight)</td><td class="num">250.000 AM</td><td class="num">UHF (pilot) · CH 1</td><td></td></tr><tr><td>DARKSTAR (E-2C)</td><td class="num">251.000 AM</td><td class="num">UHF (pilot) · CH 2</td><td>Answers the F5 AWACS menu</td></tr><tr><td>SHELL 1 (KC-135 drogue)</td><td class="num">252.000 AM</td><td class="num">UHF (pilot) · CH 3</td><td>TACAN 51Y</td></tr><tr><td>TEXACO 1 (S-3B)</td><td class="num">253.000 AM</td><td class="num">UHF (pilot) · CH 4</td><td>TACAN 60Y. Recovery tanker</td></tr><tr><td>Mother (Stennis)</td><td class="num">127.500 AM</td><td class="num">V/UHF (RIO) · CH 1</td><td>TACAN 74X, ICLS 1. Answers the ATC menu</td></tr><tr><td>BISHOP, PADDLES</td><td class="num">250.000 AM</td><td class="num">Manual / listen</td><td>Scripted calls (on-screen text); they don&#39;t answer the radio menu</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/blue_water/mission.yaml</code>. Intel is what the squadron knows at brief time; it may be incomplete.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const D = {"route": [{"name": "Stennis Group", "lat": 42.95, "lon": 39.7, "kind": "base", "alt_ft": 0, "ship": true}, {"name": "TANKER", "lat": 42.72, "lon": 39.9, "alt_ft": 22000, "kts": 300, "eta": "16:58", "zone_km": 15, "kind": "wp", "num": 1}, {"name": "CAP N", "lat": 43.45, "lon": 39.1, "alt_ft": 26000, "kts": 350, "eta": "17:12", "action": "cap", "zone_km": 25, "kind": "wp", "num": 2}, {"name": "CAP S", "lat": 43.25, "lon": 39.45, "alt_ft": 26000, "kts": 350, "eta": "17:18", "zone_km": 25, "kind": "wp", "num": 3}, {"name": "MARSHAL", "lat": 42.75, "lon": 39.15, "alt_ft": 6000, "kts": 300, "eta": "18:05", "zone_km": 15, "kind": "wp", "num": 4}, {"name": "Stennis Group (recovery)", "lat": 42.65, "lon": 39.0, "kind": "base", "alt_ft": 0}], "target": {"name": "Tu-22M3 bomber raid", "lat": 43.72, "lon": 39.15, "area_km": 40, "description": "Two Tu-22M3 carrying Kh-22 anti-ship missiles. Kill them before the launch line, about 30 nm north of the CAP.", "dmpi": "Bombers first. Don't get drawn off by escorts unless they commit on you."}, "threats": [{"name": "Tu-22M3 Backfire raid", "kind": "air", "intel": "suspected", "lat": 44.1, "lon": 38.6, "area_km": 60, "range_km": 0, "notes": "Two bombers, Kh-22 (300 km). Expected from the northwest over the water. Must die before the launch line."}, {"name": "Su-27 Flanker escort", "kind": "air", "intel": "possible", "lat": 44.3, "lon": 39.6, "area_km": 40, "range_km": 0, "notes": "Escorts flew with the last raid in February. None seen staging this time."}], "support": [{"kind": "awacs", "callsign": "DARKSTAR", "aircraft": "E_2C", "coalition": "blue", "lat": 42.9, "lon": 39.6, "alt_ft": 25000, "heading": 330, "leg_nm": 25, "freq_mhz": 251.0, "track_to": {"lat": 43.26123401977675, "lon": 39.31529509206383}}, {"kind": "tanker", "callsign": "Shell 1", "aircraft": "KC135MPRS", "coalition": "blue", "lat": 42.7, "lon": 39.95, "alt_ft": 22000, "kts": 290, "heading": 300, "leg_nm": 25, "freq_mhz": 252.0, "tacan": {"channel": "51Y", "callsign": "SHL"}, "track_to": {"lat": 42.90855855855856, "lon": 39.458468028583596}}, {"kind": "tanker", "callsign": "Texaco 1", "aircraft": "S_3B_Tanker", "coalition": "blue", "lat": 42.88, "lon": 39.45, "alt_ft": 8000, "kts": 250, "heading": 240, "leg_nm": 15, "freq_mhz": 253.0, "tacan": {"channel": "60Y", "callsign": "TEX"}, "track_to": {"lat": 42.75486486486487, "lon": 39.1542219046863}}], "ships": [{"name": "Stennis Group", "lat": 42.95, "lon": 39.7, "route": [{"lat": 42.8, "lon": 39.35}, {"lat": 42.65, "lon": 39.0}], "coalition": "blue"}], "airfields": [], "phases": [{"phase": "Cat Shot", "waypoints": []}, {"phase": "Find the Gas", "waypoints": ["TANKER"]}, {"phase": "CAP Station", "waypoints": ["CAP N", "CAP S"]}, {"phase": "The Intercept", "waypoints": []}, {"phase": "Case I at Last Light", "waypoints": ["MARSHAL"]}, {"phase": "Debrief", "waypoints": []}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// Theme toggle (remembered per viewer when storage is available)
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    drawMap();
+  });
+})();
+
+let map, layers = {}, routeLine, wpLatLng = {};
+function drawMap() {
+  if (typeof L === "undefined") { document.getElementById("map").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  const center = map ? map.getCenter() : null, zoom = map ? map.getZoom() : null;
+  if (map) map.remove();
+  map = L.map("map", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+
+  const blue = css("--blue"), red = css("--red"), amber = css("--amber"), ok = css("--ok"), accent = css("--accent");
+  layers = { route: L.layerGroup(), threats: L.layerGroup(), support: L.layerGroup(), target: L.layerGroup() };
+
+  const pts = D.route.map(p => [p.lat, p.lon]);
+  routeLine = L.polyline(pts, { color: blue, weight: 3, opacity: .9 }).addTo(layers.route);
+  D.route.forEach(p => {
+    const ll = [p.lat, p.lon];
+    if (p.kind === "wp") wpLatLng[p.name] = ll;
+    const m = L.circleMarker(ll, { radius: p.kind === "base" ? 7 : 5, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+      .addTo(layers.route);
+    if (!(p.ship && p === D.route[0])) m.bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });  // the ship marker labels the start
+    if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
+  });
+
+  // Rings show intel, not truth: solid = confirmed, dashed = suspected, dotted = possible.
+  const dash = { confirmed: null, suspected: "8 5", possible: "2 6" };
+  D.threats.forEach(t => {
+    const intel = t.intel || "confirmed";
+    const c = t.kind === "aaa" ? amber : t.kind === "air" ? blue : t.kind === "armor" ? css("--muted") : red;
+    const faint = intel === "possible" ? .5 : 1;
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: c, weight: 1, opacity: .7 * faint, fill: false, dashArray: "1 5" })
+      .addTo(layers.threats).bindTooltip(`${t.name}: last known area`, { sticky: true });
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, opacity: faint, fillColor: c, fillOpacity: .06 * faint, dashArray: dash[intel] }).addTo(layers.threats);
+    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: intel === "confirmed" ? c : css("--surface"), fillOpacity: 1, opacity: faint }).addTo(layers.threats)
+      .bindPopup(`<b>${t.name}</b><br><i>Intel: ${intel}</i>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}${t.area_km ? "<br>Position ±" + t.area_km + " km" : ""}<br>${t.notes || ""}`);
+  });
+
+  D.support.forEach(s => {
+    const c = s.coalition === "red" ? red : ok;
+    if (s.from && s.to) {
+      L.polyline([[s.from.lat, s.from.lon], [s.to.lat, s.to.lon]], { color: c, weight: 3, dashArray: "2 6" }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} CAP`, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.lat) {
+      L.circleMarker([s.lat, s.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.base_ll) {
+      L.circleMarker([s.base_ll.lat, s.base_ll.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} (${s.base_ll.name})`, { permanent: true, direction: "left", className: "wp-label" });
+    }
+  });
+
+  // Friendly ships with their planned track; AWACS / tanker orbits
+  D.ships.forEach(sh => {
+    const pts = [[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])];
+    L.polyline(pts, { color: ok, weight: 3, dashArray: "1 7", lineCap: "round" }).addTo(layers.support);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: ok, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(layers.support)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.support.filter(s => s.track_to).forEach(s => {
+    L.polyline([[s.lat, s.lon], [s.track_to.lat, s.track_to.lon]], { color: ok, weight: 5, opacity: .5, lineCap: "round" }).addTo(layers.support);
+  });
+
+  const tg = D.target;
+  if (tg.area_km) L.circle([tg.lat, tg.lon], { radius: tg.area_km * 1000, color: accent, weight: 2, fill: false, dashArray: "4 6" })
+    .addTo(layers.target).bindTooltip("Target search area", { sticky: true });
+  L.marker([tg.lat, tg.lon], { icon: L.divIcon({ className: "", html: `<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="${accent}" stroke-width="2.5"/><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="${accent}" stroke-width="2.5"/></svg>`, iconSize: [26, 26], iconAnchor: [13, 13] }) })
+    .addTo(layers.target).bindPopup(`<b>${tg.name}</b>${tg.area_km ? "<br><i>Estimated position ±" + tg.area_km + " km</i>" : ""}<br>${tg.description || ""}`);
+
+  document.querySelectorAll("#legend input").forEach(cb => { if (cb.checked) layers[cb.dataset.layer].addTo(map); });
+  // Frame the route plus every briefed threat position and uncertainty area (not full ranges, which can be huge)
+  const frame = routeLine.getBounds();
+  D.threats.concat([D.target]).forEach(t => frame.extend(L.latLng(t.lat, t.lon).toBounds(2 * (t.area_km || 1) * 1000)));
+  if (center) map.setView(center, zoom); else map.fitBounds(frame, { padding: [24, 24] });
+}
+
+document.querySelectorAll("#legend input").forEach(cb => cb.addEventListener("change", () => {
+  cb.checked ? layers[cb.dataset.layer].addTo(map) : map.removeLayer(layers[cb.dataset.layer]);
+}));
+
+let hl;
+document.querySelectorAll(".phase").forEach(li => li.querySelector(".phase-card").addEventListener("click", () => {
+  document.querySelectorAll(".phase").forEach(x => x.classList.toggle("active", x === li));
+  if (!map) return;
+  if (hl) map.removeLayer(hl);
+  const wps = D.phases[+li.dataset.idx].waypoints.map(n => wpLatLng[n]).filter(Boolean);
+  if (!wps.length) { map.fitBounds(routeLine.getBounds(), { padding: [24, 24] }); return; }
+  // Highlight the leg into the first waypoint through the last one in this phase
+  const all = D.route.map(p => [p.lat, p.lon]);
+  const names = D.route.map(p => p.name);
+  const i0 = Math.max(0, names.indexOf(D.phases[+li.dataset.idx].waypoints[0]) - 1);
+  const i1 = names.indexOf(D.phases[+li.dataset.idx].waypoints.at(-1));
+  hl = L.polyline(all.slice(i0, i1 + 1), { color: css("--accent"), weight: 6, opacity: .85 }).addTo(map);
+  map.fitBounds(L.latLngBounds(all.slice(i0, i1 + 1)).pad(0.35), { maxZoom: 10 });
+  if (matchMedia("(max-width: 900px)").matches) document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+}));
+
+drawMap();
+</script>
+</body>
+</html>

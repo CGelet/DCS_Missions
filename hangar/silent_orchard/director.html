@@ -140,6 +140,17 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
 .intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
 .spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
 .spoiler b { color: var(--red); }
 .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
@@ -421,7 +432,7 @@ Gumista will be flown under its envelope, or not at all.</p></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-const D = {"route": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base"}, {"name": "FENCE", "lat": 42.55, "lon": 41.4, "alt_ft": 22000, "kts": 450, "eta": "14:42", "zone_km": 10, "kind": "wp", "num": 1}, {"name": "HOLD", "lat": 42.8, "lon": 40.95, "alt_ft": 24000, "kts": 400, "eta": "14:47", "zone_km": 10, "kind": "wp", "num": 2}, {"name": "PUSH", "lat": 42.98, "lon": 40.82, "alt_ft": 22000, "kts": 480, "eta": "14:51", "action": "sead", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "EGRESS", "lat": 42.7, "lon": 41.15, "alt_ft": 25000, "kts": 450, "eta": "14:58", "kind": "wp", "num": 4}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base"}], "target": {"name": "SA-11 Buk battery", "lat": 43.14, "lon": 40.775, "area_km": 10, "groups": ["SA-11 Site A", "SA-11 Site B"], "kill_pct": 50, "description": "Mobile SA-11 battery: 9S18 search radar, 9S470 command post, two 9A310 TELARs. Position unconfirmed.", "dmpi": "Search radar first. The TELARs carry their own radars and can still engage on their own."}, "threats": [{"name": "SA-11 Gadfly (9K37 Buk)", "kind": "sam", "intel": "suspected", "lat": 43.14, "lon": 40.775, "area_km": 10, "range_km": 32, "notes": "Shot down MAGPIE 3. Two favourite hides: the orchards above New Athos, or off the Achandara road. Expect it to be emitting."}, {"name": "SHORAD (SA-8 / SA-15)", "kind": "sam", "intel": "possible", "lat": 43.06, "lon": 40.91, "area_km": 6, "range_km": 10, "notes": "Single human-intelligence report of a wheeled SAM near Eshera. Unconfirmed."}, {"name": "MiG-29S pair", "kind": "air", "intel": "possible", "lat": 43.124, "lon": 40.567, "range_km": 0, "notes": "Still in shelters at Gudauta. Status unknown."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.35, "lon": 41.3, "alt_ft": 30000, "heading": 300, "leg_nm": 30, "freq_mhz": 251.0}, {"kind": "intercept", "callsign": "Gudauta Alert", "aircraft": "MiG_29S", "coalition": "red", "count": 2, "base": "Gudauta", "late_activation": true, "base_ll": {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}}], "airfields": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}, {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}], "phases": [{"phase": "Launch", "waypoints": []}, {"phase": "Fence In", "waypoints": ["FENCE"]}, {"phase": "The Search", "waypoints": ["HOLD"]}, {"phase": "Push", "waypoints": ["PUSH"]}, {"phase": "Kill Assessment", "waypoints": ["EGRESS"]}, {"phase": "Recovery", "waypoints": []}], "units": [{"name": "SA-11 Site A", "lat": 43.115, "lon": 40.845, "coalition": "red", "route": [], "late": true}, {"name": "SA-11 Site B", "lat": 43.17, "lon": 40.705, "coalition": "red", "route": [], "late": true}, {"name": "Osa Picket", "lat": 43.05, "lon": 40.915, "coalition": "red", "route": [], "late": true}]};
+const D = {"route": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "FENCE", "lat": 42.55, "lon": 41.4, "alt_ft": 22000, "kts": 450, "eta": "14:42", "zone_km": 10, "kind": "wp", "num": 1}, {"name": "HOLD", "lat": 42.8, "lon": 40.95, "alt_ft": 24000, "kts": 400, "eta": "14:47", "zone_km": 10, "kind": "wp", "num": 2}, {"name": "PUSH", "lat": 42.98, "lon": 40.82, "alt_ft": 22000, "kts": 480, "eta": "14:51", "action": "sead", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "EGRESS", "lat": 42.7, "lon": 41.15, "alt_ft": 25000, "kts": 450, "eta": "14:58", "kind": "wp", "num": 4}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base", "alt_ft": 0}], "target": {"name": "SA-11 Buk battery", "lat": 43.14, "lon": 40.775, "area_km": 10, "groups": ["SA-11 Site A", "SA-11 Site B"], "kill_pct": 50, "description": "Mobile SA-11 battery: 9S18 search radar, 9S470 command post, two 9A310 TELARs. Position unconfirmed.", "dmpi": "Search radar first. The TELARs carry their own radars and can still engage on their own."}, "threats": [{"name": "SA-11 Gadfly (9K37 Buk)", "kind": "sam", "intel": "suspected", "lat": 43.14, "lon": 40.775, "area_km": 10, "range_km": 32, "notes": "Shot down MAGPIE 3. Two favourite hides: the orchards above New Athos, or off the Achandara road. Expect it to be emitting."}, {"name": "SHORAD (SA-8 / SA-15)", "kind": "sam", "intel": "possible", "lat": 43.06, "lon": 40.91, "area_km": 6, "range_km": 10, "notes": "Single human-intelligence report of a wheeled SAM near Eshera. Unconfirmed."}, {"name": "MiG-29S pair", "kind": "air", "intel": "possible", "lat": 43.124, "lon": 40.567, "range_km": 0, "notes": "Still in shelters at Gudauta. Status unknown."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.35, "lon": 41.3, "alt_ft": 30000, "heading": 300, "leg_nm": 30, "freq_mhz": 251.0, "track_to": {"lat": 42.60027027027027, "lon": 40.713456955922105}}, {"kind": "intercept", "callsign": "Gudauta Alert", "aircraft": "MiG_29S", "coalition": "red", "count": 2, "base": "Gudauta", "late_activation": true, "base_ll": {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}}], "ships": [], "airfields": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}, {"name": "Gudauta", "lat": 43.114327084603914, "lon": 40.569741075949}], "phases": [{"phase": "Launch", "waypoints": []}, {"phase": "Fence In", "waypoints": ["FENCE"]}, {"phase": "The Search", "waypoints": ["HOLD"]}, {"phase": "Push", "waypoints": ["PUSH"]}, {"phase": "Kill Assessment", "waypoints": ["EGRESS"]}, {"phase": "Recovery", "waypoints": []}], "zones": [], "flights": [], "units": [{"name": "SA-11 Site A", "lat": 43.115, "lon": 40.845, "coalition": "red", "route": [], "late": true}, {"name": "SA-11 Site B", "lat": 43.17, "lon": 40.705, "coalition": "red", "route": [], "late": true}, {"name": "Osa Picket", "lat": 43.05, "lon": 40.915, "coalition": "red", "route": [], "late": true}]};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 (function () {
   const root = document.documentElement;
@@ -465,9 +476,25 @@ function draw() {
       .bindTooltip(u.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
     all.push(m.getLatLng());
   });
+  D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
+    .addTo(map).bindTooltip(`Zone: ${z.name}`, { permanent: true, direction: "center", className: "wp-label" }));
+  D.ships.forEach(sh => {
+    const c = sh.coalition === "red" ? red : ok;
+    L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.flights.forEach(f => {
+    const c = f.coalition === "blue" ? ok : red;
+    L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${f.name}</div>`, iconSize: null }) }).addTo(map);
+  });
+
   const tg = D.target;
   L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${tg.name}`);
-  const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon]))));
+  const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
+    .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
+    .concat(D.ships.map(sh => [sh.lat, sh.lon])));
   map.fitBounds(b.isValid() ? b.pad(0.6) : route.getBounds(), { padding: [24, 24] });
 }
 draw();
