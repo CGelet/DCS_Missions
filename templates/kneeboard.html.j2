@@ -1,0 +1,57 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+/* Fixed 768x1024 page for the DCS kneeboard: high contrast, large type, no web fonts needed. */
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 768px; height: 1024px; background: #f3efe4; color: #111; font: 20px/1.35 "DejaVu Sans", Arial, sans-serif; }
+.page { padding: 34px 38px; height: 100%; display: flex; flex-direction: column; gap: 18px; }
+.top { display: flex; justify-content: space-between; border-bottom: 3px solid #111; padding-bottom: 10px; font: bold 18px "DejaVu Sans Mono", monospace; }
+h1 { font-size: 34px; margin: 0; line-height: 1.1; }
+h2 { font: bold 17px "DejaVu Sans Mono", monospace; letter-spacing: .1em; margin: 0 0 6px; color: #8a3a0c; }
+p { margin: 0 0 8px; }
+.box { border: 2px solid #111; padding: 12px 14px; }
+table { width: 100%; border-collapse: collapse; font: 19px "DejaVu Sans Mono", monospace; }
+th { text-align: left; font-size: 15px; border-bottom: 2px solid #111; padding: 4px 6px; }
+td { border-bottom: 1px solid #999; padding: 7px 6px; }
+.radio { font: 17px/1.4 "DejaVu Sans Mono", monospace; background: #1f2a24; color: #c6f6d3; padding: 10px 12px; }
+.foot { margin-top: auto; font: 14px "DejaVu Sans Mono", monospace; color: #555; display: flex; justify-content: space-between; }
+.sam { color: #a51d16; font-weight: bold; }
+</style></head>
+<body><div class="page">
+  <div class="top"><span>OP {{ narrative.operation }}</span><span>{{ player.callsign | upper }}</span><span>{{ page_no }}/{{ page_count }}</span></div>
+
+{% if page == "mission" %}
+  <h1>{{ meta.subtitle }}</h1>
+  <div class="box"><h2>SITUATION</h2><p>{{ situation | trim }}</p></div>
+  <div class="box"><h2>OBJECTIVES</h2>
+    {% for k, v in objectives.items() %}<p><b>{{ k | upper }}:</b> {{ v }}</p>{% endfor %}</div>
+  <div class="box"><h2>TARGET</h2>
+    <p><b>{{ target.name }}</b></p>
+    <p style="font-family:'DejaVu Sans Mono',monospace">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E</p>
+    <p>{{ target.description }}</p><p><b>DMPI:</b> {{ target.dmpi }}</p></div>
+  {% if narrative.hook %}<div class="radio">{{ narrative.hook | trim }}</div>{% endif %}
+
+{% elif page == "nav" %}
+  <h1>Navigation &amp; Comms</h1>
+  <table><thead><tr><th>#</th><th>WP</th><th>ALT</th><th>KTS</th><th>ETA</th><th></th></tr></thead><tbody>
+    <tr><td>0</td><td>{{ route[0].name }}</td><td>-</td><td>-</td><td>{{ meta.start_time }}</td><td>STEP</td></tr>
+    {% for wp in player.waypoints %}<tr><td>{{ loop.index }}</td><td>{{ wp.name }}</td><td>{{ (wp.alt_ft / 1000) | round(1) }}k</td><td>{{ wp.kts }}</td><td>{{ wp.eta }}</td><td>{{ wp.action | default("") | upper }}</td></tr>{% endfor %}
+  </tbody></table>
+  <table><thead><tr><th>STATION</th><th>FREQ</th><th>NOTE</th></tr></thead><tbody>
+    {% for c in comms %}<tr><td>{{ c.name }}</td><td>{{ c.freq }}</td><td>{{ c.notes }}</td></tr>{% endfor %}
+  </tbody></table>
+  <div class="box"><h2>FUEL</h2><p>JOKER {{ player.joker_lbs }} lb · BINGO {{ player.bingo_lbs }} lb</p>
+    {% if player.laser_codes %}<h2>LASER</h2><p>{{ player.laser_codes | join(" / ") }}</p>{% endif %}</div>
+
+{% elif page == "threats" %}
+  <h1>Threats, ROE &amp; Loadout</h1>
+  <table><thead><tr><th>SYSTEM</th><th>RNG</th></tr></thead><tbody>
+    {% for t in threats %}<tr><td class="{{ t.kind }}">{{ t.name }}<br><span style="font-size:15px;font-weight:normal;color:#333">{{ t.notes }}</span></td><td>{% if t.range_km %}{{ t.range_km }}km{% else %}-{% endif %}</td></tr>{% endfor %}
+  </tbody></table>
+  <div class="box"><h2>ROE</h2><p>{{ roe | trim }}</p></div>
+  <div class="box"><h2>LOADOUT</h2><p>{{ player.loadout_summary }}</p></div>
+  <div class="box"><h2>WEATHER</h2><p>Wind {{ "%03d"|format(meta.weather.wind_from_deg) }}/{{ meta.weather.wind_kts }} · {{ meta.weather.temperature_c }}°C · QNH {{ meta.weather.qnh_inhg }}<br>{{ meta.weather.clouds }}</p></div>
+{% endif %}
+
+  <div class="foot"><span>{{ meta.date }} · STEP {{ meta.start_time }}L</span><span>{{ meta.title }}</span></div>
+</div></body></html>

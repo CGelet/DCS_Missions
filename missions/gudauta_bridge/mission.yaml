@@ -1,0 +1,271 @@
+# Source of truth for the mission. `python -m dcsmb build missions/gudauta_bridge`
+# generates out/gudauta_bridge/{mission.miz, briefing.html, kneeboard/*.png}.
+#
+# Coordinates are lat/lon (decimal degrees) and approximate: open the .miz in the
+# Mission Editor and check that the "TARGET BRIDGE" zone sits on the bridge deck.
+# If it doesn't, move target.lat/lon and rebuild.
+
+meta:
+  id: gudauta_bridge
+  title: "Operation BROKEN SPAN"
+  subtitle: "Strike on the Bzyb River Bridge"
+  theater: caucasus
+  date: 2026-03-14
+  start_time: "06:40"        # local
+  weather:
+    temperature_c: 9
+    wind_from_deg: 250
+    wind_kts: 12
+    clouds: "Scattered 6,500 ft, broken 12,000 ft"
+    visibility: "10+ km, haze over the water"
+    qnh_inhg: 29.92
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "BROKEN SPAN"
+  backstory: |
+    Three weeks ago a ceasefire along the Inguri line collapsed. Separatist forces,
+    re-equipped with modern air defences and backed by Russian advisers, have been
+    pushing armour south down the coastal M-27 highway toward Sukhumi. The coalition
+    has held them at the Gumista, but intelligence shows a fresh mechanised brigade
+    staging near Gagra for a push within 36 hours.
+
+    The coast road crosses the Bzyb River on a single heavy-load bridge, the only
+    crossing that can carry tanks and bridging equipment. Drop it, and the brigade
+    is stuck on the wrong side of the river for a week.
+  characters:
+    - name: "Lt Col Dana \"HATCH\" Moreno"
+      role: "Mission commander, VFA-131 detachment, Senaki"
+    - name: "OVERLORD"
+      role: "E-3 Sentry AWACS, call sign for the coalition air picture"
+    - name: "Capt. Ilya Brenner"
+      role: "Ground liaison officer, embedded with the Gumista defence line"
+    - name: "Enfield 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets"
+  hook: |
+    "Gentlemen, there's one bridge between that brigade and Sukhumi. By breakfast
+    I want it in the river." HATCH Moreno, 0500 brief
+  outcomes:
+    success: |
+      Both spans down. Recon from a coalition drone at 0815 shows the brigade's lead
+      elements backed up along the M-27 north of Bzyb, with engineers already
+      surveying the riverbank. Brenner's men on the Gumista get the week they needed.
+    partial: |
+      The bridge is damaged but still standing. Light vehicles are getting across.
+      HATCH is already writing a re-attack tasking for this afternoon, and the SA-6
+      crews now know you're coming.
+    failure: |
+      The bridge stands. By nightfall the first T-72s are across the Bzyb, and the
+      Gumista line is bracing for contact at dawn.
+
+situation: |
+  Red mechanised forces are staging north of the Bzyb River for an offensive toward
+  Sukhumi. The M-27 road bridge at Bzyb is their only heavy crossing. Blue holds
+  air superiority over the coast, but the target is covered by a mobile SA-6
+  battery and point-defence AAA. Red keeps a MiG-29 alert pair at Gudauta.
+
+objectives:
+  primary: "Destroy the Bzyb River road bridge (both spans)."
+  secondary: "Destroy or suppress the SA-6 battery covering the bridge if it engages."
+  tertiary: "Return both aircraft to Senaki-Kolkhi."
+
+roe: |
+  Weapons free on positively identified red air and air defence systems.
+  Weapons tight on all ground targets other than the bridge and its defences.
+  No releases south of the Gumista River. Avoid civilian traffic on the M-27.
+
+threats:
+  - name: "SA-6 Gainful (2K12 Kub)"
+    kind: sam
+    lat: 43.2050
+    lon: 40.4650
+    range_km: 24
+    notes: "Mobile. Emitting only when tripped by the IP zone. Low altitude is your friend."
+  - name: "ZSU-23-4 Shilka"
+    kind: aaa
+    lat: 43.2300
+    lon: 40.3868
+    range_km: 2.5
+    notes: "At the bridge's west end. Stay above 12,000 ft on release."
+  - name: "MiG-29S alert pair"
+    kind: air
+    lat: 43.1240
+    lon: 40.5670
+    range_km: 0
+    notes: "Alert 5 at Gudauta. Expect a launch once you're inbound to the target."
+
+comms:
+  - { name: "Enfield (inter-flight)", freq: "251.000 AM", notes: "Radio 1" }
+  - { name: "Package / strike common", freq: "264.000 AM", notes: "Radio 2" }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", notes: "Shares Radio 1" }
+  - { name: "Senaki Tower", freq: "132.000 AM", notes: "TACAN 31X" }
+  - { name: "Colt (CAP)", freq: "264.000 AM", notes: "Shares Radio 2" }
+
+flights:
+  - callsign: "Enfield 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Senaki_Kolkhi
+    start: cold
+    radio1_mhz: 251.0
+    radio2_mhz: 264.0
+    laser_codes: [1688, 1688]
+    loadout:
+      # pylon number -> weapon attribute on dcs.planes.FA_18C_hornet.Pylon<N>
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      3: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      4: AN_AAQ_28_LITENING___Targeting_Pod_
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      8: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "8× GBU-12, 2× AIM-9X, 1× AIM-120C, LITENING, 1× 330 gal tank"
+    bingo_lbs: 4500
+    joker_lbs: 6000
+    waypoints:
+      - { name: "COAST", lat: 42.2600, lon: 41.5600, alt_ft: 20000, kts: 420, eta: "07:12" }
+      - { name: "SEA",   lat: 42.7500, lon: 40.9000, alt_ft: 22000, kts: 420, eta: "07:21" }
+      - { name: "IP",    lat: 43.0600, lon: 40.4300, alt_ft: 20000, kts: 450, eta: "07:28", zone_km: 8 }
+      - { name: "TGT",   lat: 43.2286, lon: 40.3900, alt_ft: 18000, kts: 450, eta: "07:31", action: bomb, zone_km: 4 }
+      - { name: "EGRESS", lat: 43.0800, lon: 40.0500, alt_ft: 22000, kts: 450, eta: "07:35" }
+      - { name: "HOME",  lat: 42.6000, lon: 40.9500, alt_ft: 24000, kts: 380, eta: "07:47" }
+    land: Senaki_Kolkhi
+
+target:
+  name: "Bzyb River road bridge"
+  lat: 43.2286
+  lon: 40.3900
+  zone_m: 150                # "map object dead in zone" radius used by target_destroyed
+  description: "~750 m concrete road bridge carrying the S1/M-27 coast highway over the Bzyb, oriented 115/295. Located from OpenStreetMap data."
+  dmpi: "Centre piers first, then the east abutment."
+
+units:
+  - name: "SA-6 Battery"
+    coalition: red
+    type: [Kub_1S91_str, Kub_2P25_ln, Kub_2P25_ln, Kub_2P25_ln]
+    lat: 43.2050
+    lon: 40.4650
+    heading: 210
+    late_activation: true
+  - name: "Bridge AAA"
+    coalition: red
+    type: [ZSU_23_4_Shilka, ZSU_23_4_Shilka]
+    lat: 43.2304
+    lon: 40.3860
+    heading: 180
+  - name: "Bridge target"
+    coalition: red
+    # Trucks on the bridge deck: a fallback for target_destroyed in case the
+    # scenery-object zone misses the bridge.
+    type: [Ural_375, Ural_375, Ural_375]
+    lat: 43.2286
+    lon: 40.3900
+    heading: 115
+
+support:
+  - kind: awacs
+    callsign: "OVERLORD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.3500
+    lon: 41.3000
+    alt_ft: 30000
+    heading: 300
+    leg_nm: 30
+    freq_mhz: 251.0
+  - kind: cap
+    callsign: "Colt"
+    aircraft: F_16C_50
+    coalition: blue
+    count: 2
+    base: Kutaisi
+    from: { lat: 42.9500, lon: 40.7000 }
+    to: { lat: 42.8000, lon: 40.9500 }
+    alt_ft: 25000
+  - kind: intercept
+    callsign: "Red Alert"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    base: Gudauta
+    late_activation: true
+    engage: true
+
+# Storyboard: ordered phases. `waypoints` link to flight waypoint names (map highlight).
+# `trigger` (optional) becomes a DCS trigger rule. Supported kinds:
+#   time_after(seconds) | player_in_zone(waypoint) | group_dead(unit name) | flag(n)
+#   target_destroyed(true): bridge scenery object in target zone dead OR "Bridge target" group dead
+# Actions: message, activate (group name), set_flag, end_mission
+storyboard:
+  - phase: "Step & Start"
+    time: "06:40"
+    waypoints: []
+    beat: |
+      Grey dawn over Senaki. HATCH watches from the line shack as the two Hornets'
+      APUs spool up. Somewhere north, a brigade is fuelling its tanks.
+    trigger:
+      when: { time_after: 10 }
+      message: "HATCH: Enfield, Senaki ops. Weather's holding, target's still standing. Clock's running. Good hunting."
+      seconds: 15
+
+  - phase: "Coast-Out"
+    time: "07:12"
+    waypoints: ["COAST", "SEA"]
+    beat: |
+      Feet wet over Poti. OVERLORD checks you in and paints a clean picture to the
+      north, with Colt flight already on station.
+    trigger:
+      when: { player_in_zone: "COAST" }
+      message: "OVERLORD: Enfield 1, OVERLORD, radar contact. Picture clean. Colt is on station, CAP at angels two-five."
+      seconds: 15
+
+  - phase: "Push at the IP"
+    time: "07:28"
+    waypoints: ["IP"]
+    beat: |
+      You turn inbound. Ten seconds later the RWR lights up with a six. The Gainful
+      battery was waiting for you.
+    trigger:
+      when: { player_in_zone: "IP" }
+      activate: ["SA-6 Battery"]
+      message: "OVERLORD: Enfield, new emitter, SA-6, four miles east-southeast of target. They're awake."
+      seconds: 15
+
+  - phase: "Target Run"
+    time: "07:31"
+    waypoints: ["TGT"]
+    beat: |
+      Pod on the centre pier. Shilka tracers float up short of your altitude.
+      Off to the east, Gudauta scrambles its alert pair.
+    trigger:
+      when: { player_in_zone: "TGT" }
+      activate: ["Red Alert"]
+      message: "OVERLORD: Enfield, pop-up group, two contacts, Gudauta, climbing. Colt is committing."
+      seconds: 15
+
+  - phase: "Egress"
+    time: "07:35"
+    waypoints: ["EGRESS", "HOME"]
+    beat: |
+      Hard turn west and down over the water. Behind you, either a cloud of dust
+      over the Bzyb or a bridge that's still standing.
+    trigger:
+      when: { target_destroyed: true }
+      message: "BRENNER (via OVERLORD): Enfield, ground eyes report the bridge is in the river. Outstanding work."
+      set_flag: 10
+      seconds: 20
+
+  - phase: "Recovery & Debrief"
+    time: "07:55"
+    waypoints: []
+    beat: |
+      Wheels down at Senaki. HATCH meets you at the jet with the drone feed on a
+      tablet. The debrief depends on what it shows.
+    trigger:
+      when: { flag: 10 }
+      message: "HATCH: Mission complete. RTB and debrief at the ops hut."
+      seconds: 20
