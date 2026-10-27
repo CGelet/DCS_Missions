@@ -19,6 +19,7 @@ def describe_when(when: dict) -> str:
             "time_after": lambda: f"{v} s after mission start",
             "player_in_zone": lambda: f"player flight enters the {v} zone",
             "group_dead": lambda: f"{v} is destroyed",
+            "group_life_below": lambda: f"{v[0]} is below {v[1]}% life",
             "flag": lambda: f"flag {v} is set",
             "flag_false": lambda: f"flag {v} is not set",
             "group_in_zone": lambda: f"{v[0]} enters {v[1]}",
@@ -61,6 +62,10 @@ def view(data: dict) -> dict:
         src = activations.get(u["name"]) or (["Active from mission start"] if not u.get("late_activation")
                                               else ["Never activated (check the YAML)"])
         units.append({**u, "activation": src, "types": _summarise(u["type"])})
+    ships = [{**sh, "types": _summarise(sh["type"]),
+              "activation": activations.get(sh["name"]) or (["Active from mission start"] if not sh.get("late_activation")
+                                                            else ["Never activated (check the YAML)"])}
+             for sh in data.get("ships", [])]
 
     for s in vm["support"]:
         s["activation"] = activations.get(s["callsign"]) or (["Active from mission start"] if not s.get("late_activation")
@@ -72,7 +77,7 @@ def view(data: dict) -> dict:
                            for s in data.get("support", []) if s["kind"] == "flight"]
     map_data["units"] = [{"name": u["name"], "lat": u["lat"], "lon": u["lon"], "coalition": u.get("coalition", "red"),
                           "route": u.get("route", []), "late": bool(u.get("late_activation"))} for u in data.get("units", [])]
-    return {**vm, "units_truth": units, "rolls": rolls, "script": script, "briefed": briefed,
+    return {**vm, "units_truth": units, "ships_truth": ships, "rolls": rolls, "script": script, "briefed": briefed,
             "map_json": json.dumps(map_data)}
 
 

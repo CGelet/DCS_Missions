@@ -9,6 +9,8 @@ A hangar of ready-to-fly DCS World missions, each with a full story, an interact
 | Operation HOLD FAST | A-10C II | The ticking clock: the attack comes down one of two roads, and the ending branches |
 | Operation BLUE WATER | F-14B, from the carrier | Fleet defense at dusk: the raid's axis is random, the big tanker may go home early, and you recover aboard at last light |
 | Operation DEEP CUT | AV-8B | The back door: tanker, then terrain-following through mountain valleys, a pop-up attack, and recovery at a different field |
+| Operation LIFELINE | F/A-18C, alert scramble | Rescue cover: stop the search party before it reaches a downed pilot, then escort the rescue helicopter in and out |
+| Operation GREY HULL | F/A-18C, from the carrier | Deception: two radar contacts, one of them warships. The intel on which one can be wrong; Harpoons from low level |
 
 Every briefing and deck now includes an **altitude profile** alongside the map. Dashed legs are flown above ground level, so you can see how differently each mission flies.
 
@@ -89,12 +91,12 @@ The **Seen by** column says which audience gets each section.
 | `narrative` | pilots, except `outcomes` (director) | Backstory, cast, opening quote. The backstory also becomes the in-game briefing text. |
 | `situation`, `objectives`, `roe`, `comms` | pilots | Briefing cards, kneeboard pages, in-game task text |
 | `threats` | pilots | **Intel, not truth.** `intel: confirmed / suspected / possible`, optional `area_km` for position uncertainty. Can be wrong on purpose. |
-| `flights` | pilots | The player flight: aircraft, `base`/`land` (an airfield or a ship group name), loadout by pylon, waypoints (`action: bomb / sead / cas / cap`; `agl: true` for terrain-following legs). A waypoint with `zone_km` gets a trigger zone. |
-| `ships` | friendly: pilots; red: director | Ship groups (first type is the lead, e.g. `Stennis`), `route` and `speed_kts`, `tacan`, `icls`, ATC `freq_mhz` |
+| `flights` | pilots | The player flight: aircraft, `base`/`land` (an airfield or a ship group name), loadout by pylon, waypoints (`action: bomb / sead / cas / cap / antiship`; `agl: true` for terrain-following legs). A waypoint with `zone_km` gets a trigger zone. |
+| `ships` | friendly: pilots; red: director | Ship groups (first type is the lead, e.g. `Stennis`), `route` and `speed_kts`, `tacan`, `icls`, ATC `freq_mhz`, `late_activation` |
 | `zones` | director | Extra named trigger zones (e.g. a missile launch line). Usable anywhere a waypoint name is. |
 | `target` | pilots (position, description) | `area_km` for an estimated position. What counts as destroyed: `zone_m` (scenery in the zone dies) and/or `groups`, with `kill_pct` (default 100). |
 | `units` | director | **Ground truth.** Ground groups, optional `route` and `speed_kmh` for moving units. `late_activation` groups wait for a trigger or variant. |
-| `support` | friendly: pilots; red: director | `awacs`, `tanker` (with `tacan`), `cap`, `intercept` (scrambles from an airfield), `flight` (spawns in the air and flies a `route`: raids, sweeps) |
+| `support` | friendly: pilots; red: director | `awacs`, `tanker` (with `tacan`), `cap`, `intercept` (scrambles from an airfield), `flight` (spawns in the air and flies a `route`: raids, sweeps, or a helicopter with `task: transport`; route points take `agl: true` and, for helicopters, `land_s` to set down for that many seconds) |
 | `variants` | director | Random choices rolled at mission start. Each option can `activate` groups, send a `message`, and wait for a `when`. |
 | `storyboard` | `brief` and `notes`: pilots; `script` and `trigger`: director | Ordered phases. `brief` is what pilots are told; `script` is what really happens; `trigger` / `triggers` become DCS trigger rules. |
 
@@ -103,6 +105,7 @@ A trigger's `when` holds one or more conditions, all of which must be true:
 - `time_after` (seconds)
 - `player_in_zone` (waypoint or zone name; watches your aircraft, not the wingman)
 - `group_dead` (group name)
+- `group_life_below: [group, percent]` (damaged: e.g. 95 means "anything hit")
 - `group_in_zone: [group, zone]`
 - `flag` / `flag_false` (number)
 - `target_destroyed`

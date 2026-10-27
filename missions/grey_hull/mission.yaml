@@ -1,0 +1,370 @@
+# Operation GREY HULL: Harpoon strike from the carrier. Source of truth; `python -m dcsmb build` renders hangar/grey_hull/.
+#
+# Story device: deception. A surface action group has sortied from Novorossiysk and is hiding among
+# merchant traffic. There are two radar contacts and only one of them is warships. The E-2C's ESM read
+# says which, but a third of the time red has put a decoy emitter on the merchants and the read is
+# wrong. Look before you shoot: a Harpoon goes for the first ship it finds.
+#
+# Sea positions checked against the OSM coastline (every ship point 14+ km offshore, south of the coast).
+
+meta:
+  id: grey_hull
+  title: "Operation GREY HULL"
+  subtitle: "Harpoon Strike off Gelendzhik"
+  theater: caucasus
+  date: 2026-03-26
+  start_time: "06:50"
+  weather:
+    temperature_c: 9
+    wind_from_deg: 300
+    wind_kts: 16
+    clouds: "Broken 2,500 ft, overcast 9,000 ft"
+    visibility: "8 km in drizzle, lower in showers"
+    qnh_inhg: 29.82
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "GREY HULL"
+  backstory: |
+    After the Backfire raid, the Black Sea Fleet stopped sending bombers and started sending
+    ships. Last night a surface action group left Novorossiysk under cover of the weather: a
+    Krivak-class frigate and a Grisha corvette, heading southeast to put SA-N-4s and a towed
+    sonar between the Stennis and the coast.
+
+    They know about the Hawkeye, so they're hiding in the shipping lanes. At 0500 the E-2C
+    had two surface groups 25 miles apart off Gelendzhik, each about the size of a frigate
+    and a corvette. One is the warships and the other is merchants bound for Novorossiysk.
+    Springfield flight has four Harpoons and has to work out which is which.
+  characters:
+    - name: "Cmdr. Ray \"BISHOP\" Ortega"
+      role: "CAG, Carrier Air Wing aboard USS John C. Stennis"
+    - name: "Lt. Hana \"PRISM\" Okafor"
+      role: "Strike group intelligence officer; owns the ESM read on the two contacts"
+    - name: "DARKSTAR"
+      role: "E-2C Hawkeye, holding northwest of the boat"
+    - name: "TEXACO 1"
+      role: "S-3B tanker overhead the carrier"
+    - name: "Springfield 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets with Harpoon"
+  hook: |
+    "Two contacts, two ships each, and one of them is full of grain. I'd love to tell you which.
+    Darkstar's going to tell you instead, and you're going to check." PRISM, 0600 brief
+  outcomes:
+    success: |
+      The Krivak is burning and dead in the water and the Grisha is picking up her crew. The
+      merchants never knew you were there. The fleet keeps its distance from the coast after
+      this, and BISHOP gets his strike group's eastern flank back.
+    partial: |
+      The warships are hit, but a Harpoon also found a bulk carrier. Nobody aboard died. It's on
+      Russian TV by lunch, and the admiral now wants a visual ID before every anti-ship shot,
+      which means getting inside SA-N-4 range next time.
+    failure: |
+      The surface group slips south into the weather untouched. By tomorrow it will be sitting
+      on the Stennis's approach to the coast. The strike group pulls back 60 miles, and Sukhumi
+      loses an hour of fighter cover every day.
+
+situation: |
+  A red surface action group (one Krivak frigate and one Grisha corvette) sortied from
+  Novorossiysk overnight and is somewhere in the shipping lanes off Gelendzhik. DARKSTAR holds two
+  surface contacts of similar size about 25 nm apart: ALPHA to the north and BRAVO to the southeast.
+  One is the warships, the other is merchant traffic. Both have SA-N-4 class air defence if
+  they're warships. The weather is low and wet, so expect to find them by radar and ESM, not by eye.
+  Krymsk has Su-27s that have flown over the fleet before. The Stennis is 100 nm southeast,
+  steaming northwest into the wind.
+
+objectives:
+  primary: "Disable the surface action group (at least half the group's damage)."
+  secondary: "Do not hit merchant shipping."
+  tertiary: "Recover both aircraft aboard the Stennis."
+
+roe: |
+  Weapons free on the warships once you've identified them by ESM, radar or sight. Weapons
+  hold on any contact you can't identify. A Harpoon will hit the first ship its seeker finds:
+  don't launch it through a merchant. Weapons free on red aircraft that DARKSTAR declares
+  hostile.
+
+threats:
+  - name: "Contact ALPHA"
+    kind: sam
+    intel: suspected
+    lat: 44.2500
+    lon: 38.3000
+    area_km: 8
+    range_km: 15
+    notes: "Two ships, frigate and corvette sized, 6 knots southeast. If it's the SAG, SA-N-4 (Osa-M) out to about 15 km."
+  - name: "Contact BRAVO"
+    kind: sam
+    intel: suspected
+    lat: 44.0500
+    lon: 38.7500
+    area_km: 8
+    range_km: 15
+    notes: "Two ships, similar size, 8 knots. Same rule: treat it as SA-N-4 until you know it's a merchant."
+  - name: "Su-27 Flankers (Krymsk)"
+    kind: air
+    intel: possible
+    lat: 44.5500
+    lon: 38.3000
+    area_km: 30
+    range_km: 0
+    notes: "Flew cover over the fleet twice last week. DARKSTAR will call them if they come."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Springfield (inter-flight)", freq: "256.000 AM", radio: 1, channel: 1 }
+  - { name: "DARKSTAR (E-2C)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "TEXACO 1 (S-3B)", freq: "253.000 AM", radio: 1, channel: 3, notes: "TACAN 60Y" }
+  - { name: "Mother (Stennis)", freq: "127.500 AM", radio: 2, channel: 1, notes: "TACAN 74X, ICLS 1. Answers the ATC menu" }
+  - { name: "BISHOP, PRISM", freq: "256.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+ships:
+  - name: "Stennis Group"
+    coalition: blue
+    type: [Stennis, TICONDEROG, USS_Arleigh_Burke_IIa]
+    lat: 43.0000
+    lon: 39.4000
+    heading: 300
+    speed_kts: 22
+    route:
+      - { lat: 43.1000, lon: 39.1000 }
+      - { lat: 43.1800, lon: 38.8500 }
+    tacan: { channel: "74X", callsign: "STN" }
+    icls: 1
+    freq_mhz: 127.5
+  # Red: director only. Which pair is where is rolled at mission start (see variants).
+  - name: "SAG Alpha"
+    coalition: red
+    type: [REZKY, ALBATROS]
+    lat: 44.2500
+    lon: 38.3000
+    heading: 125
+    speed_kts: 6
+    late_activation: true
+    route:
+      - { lat: 44.1500, lon: 38.4500 }
+  - name: "Merchants Alpha"
+    coalition: red
+    type: [Dry_cargo_ship_1, ELNYA]
+    lat: 44.2500
+    lon: 38.3000
+    heading: 300
+    speed_kts: 8
+    late_activation: true
+    route:
+      - { lat: 44.3500, lon: 38.1000 }
+  - name: "SAG Bravo"
+    coalition: red
+    type: [REZKY, ALBATROS]
+    lat: 44.0500
+    lon: 38.7500
+    heading: 125
+    speed_kts: 6
+    late_activation: true
+    route:
+      - { lat: 43.9500, lon: 38.9500 }
+  - name: "Merchants Bravo"
+    coalition: red
+    type: [HandyWind, Dry_cargo_ship_2]
+    lat: 44.0500
+    lon: 38.7500
+    heading: 300
+    speed_kts: 8
+    late_activation: true
+    route:
+      - { lat: 44.1500, lon: 38.4500 }
+
+flights:
+  - callsign: "Springfield 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: "Stennis Group"
+    start: cold
+    radio1_mhz: 256.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: AGM_84D_Harpoon_AShM
+      3: AGM_84D_Harpoon_AShM
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: AGM_84D_Harpoon_AShM
+      8: AGM_84D_Harpoon_AShM
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "4× AGM-84D Harpoon, 2× AIM-9X, 1× AIM-120C, ATFLIR, 1× 330 gal tank"
+    bingo_lbs: 4500
+    joker_lbs: 6500
+    waypoints:
+      - { name: "TEXACO",  lat: 43.0500, lon: 39.3000, alt_ft: 8000,  kts: 250, eta: "07:08", zone_km: 15 }
+      - { name: "TRANSIT", lat: 43.3000, lon: 39.0000, alt_ft: 28000, kts: 420, eta: "07:15" }
+      - { name: "DESCEND", lat: 43.4500, lon: 38.7500, alt_ft: 28000, kts: 420, eta: "07:19", zone_km: 15 }
+      - { name: "LOW",     lat: 43.5500, lon: 38.6500, alt_ft: 500,   kts: 450, eta: "07:22" }
+      - { name: "HOOK",    lat: 43.6500, lon: 38.5500, alt_ft: 500,   kts: 450, eta: "07:24", action: antiship, zone_km: 10 }
+      - { name: "OFF",     lat: 43.4500, lon: 38.3000, alt_ft: 500,   kts: 480, eta: "07:28" }
+      - { name: "CLIMB",   lat: 43.2500, lon: 38.5500, alt_ft: 25000, kts: 400, eta: "07:33" }
+      - { name: "MARSHAL", lat: 43.1500, lon: 38.9000, alt_ft: 6000,  kts: 300, eta: "07:45", zone_km: 15 }
+    land: "Stennis Group"
+
+target:
+  name: "Red surface action group"
+  lat: 44.1500
+  lon: 38.5200
+  area_km: 30
+  groups: ["SAG Alpha", "SAG Bravo"]   # only the pair that was rolled counts
+  kill_pct: 50
+  description: "Krivak-class frigate and Grisha-class corvette, in one of the two contacts off Gelendzhik. Half the group's damage disables it."
+  dmpi: "The frigate first: it carries the towed sonar and the bigger radar. Two Harpoons per ship, from different bearings if you can."
+
+support:
+  - kind: awacs
+    callsign: "DARKSTAR"
+    aircraft: E_2C
+    coalition: blue
+    lat: 43.3000
+    lon: 39.1000
+    alt_ft: 25000
+    heading: 300
+    leg_nm: 25
+    freq_mhz: 251.0
+  - kind: tanker
+    callsign: "Texaco 1"
+    aircraft: S_3B_Tanker
+    coalition: blue
+    lat: 43.0500
+    lon: 39.3000
+    alt_ft: 8000
+    kts: 250
+    heading: 300
+    leg_nm: 15
+    freq_mhz: 253.0
+    tacan: { channel: "60Y", callsign: "TEX" }
+  # Red: director only
+  - kind: flight
+    callsign: "Krymsk Flankers"
+    aircraft: Su_27
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 44.7500, lon: 38.1000, alt_ft: 25000, kts: 500 }
+    route:
+      - { lat: 44.1500, lon: 38.4500 }
+      - { lat: 43.6000, lon: 38.6000 }
+
+variants:
+  - name: "The real contact"
+    flag: 310
+    options:
+      - label: "Warships at ALPHA; the ESM read says ALPHA (true)"
+        activate: ["SAG Alpha", "Merchants Bravo"]
+        set_flag: 51
+      - label: "Warships at BRAVO; the ESM read says BRAVO (true)"
+        activate: ["SAG Bravo", "Merchants Alpha"]
+        set_flag: 50
+      - label: "Warships at BRAVO; a decoy emitter on the ALPHA merchants makes the read say ALPHA (false)"
+        activate: ["SAG Bravo", "Merchants Alpha"]
+        set_flag: 50
+
+storyboard:
+  - phase: "Cat Shot"
+    time: "06:50"
+    waypoints: []
+    brief: |
+      Cold start on the Stennis and launch into the wind. Low cloud and drizzle: it's an
+      instrument departure. Mother is steaming 300 at 22 knots, toward the target.
+    script: "BISHOP sends the flight off. Both pairs of ships spawn at mission start, per the roll."
+    trigger:
+      when: { time_after: 15 }
+      message: "BISHOP: Springfield, CAG. Two contacts, one target. Don't let anyone rush you into the wrong one."
+      seconds: 15
+
+  - phase: "Top Off"
+    time: "07:08"
+    waypoints: ["TEXACO"]
+    brief: |
+      Join Texaco 1 overhead Mother at 8,000 ft (TACAN 60Y) and top off. Four Harpoons is
+      a heavy jet, and the low-level leg burns gas fast.
+    script: "Texaco is where briefed."
+    trigger:
+      when: { player_in_zone: "TEXACO" }
+      message: "TEXACO 1: Springfield, Texaco, you're cleared pre-contact, basket's out."
+      seconds: 15
+
+  - phase: "Transit"
+    time: "07:15"
+    waypoints: ["TRANSIT", "DESCEND"]
+    notes: "Ask the room: how much do you trust a single ESM read? What would make you trust it more?"
+    brief: |
+      Climb to 28,000 ft over the weather and head northwest. Before you descend, DARKSTAR
+      will pass PRISM's ESM read on which contact is radiating warship radars. Treat it as
+      a lead, not a fact.
+    script: |
+      At DESCEND, DARKSTAR passes the ESM read: it's right in two of the three rolls. 50%:
+      two Su-27s from Krymsk sweep south over the contacts.
+    triggers:
+      - when: { player_in_zone: "DESCEND", variant: ["The real contact", 1] }
+        message: "DARKSTAR: Springfield, Darkstar. ESM has naval search radar on contact ALPHA, the northern group. Moderate confidence."
+        seconds: 25
+      - when: { player_in_zone: "DESCEND", variant: ["The real contact", 2] }
+        message: "DARKSTAR: Springfield, Darkstar. ESM has naval search radar on contact BRAVO, the southeastern group. Moderate confidence."
+        seconds: 25
+      - when: { player_in_zone: "DESCEND", variant: ["The real contact", 3] }
+        message: "DARKSTAR: Springfield, Darkstar. ESM has naval search radar on contact ALPHA, the northern group. Moderate confidence."
+        seconds: 25
+      - when: { player_in_zone: "DESCEND" }
+        chance: 50
+        activate: ["Krymsk Flankers"]
+        message: "DARKSTAR: Springfield, new group, two fast movers, Krymsk, heading south toward the contacts. Hostile."
+        seconds: 20
+
+  - phase: "Under the Radar"
+    time: "07:22"
+    waypoints: ["LOW", "HOOK"]
+    brief: |
+      Drop to 500 ft below the cloud and run in under the ships' radar horizon. From HOOK
+      both contacts are inside Harpoon range and outside SA-N-4 range. Use your radar, RWR
+      and ATFLIR to confirm which one is the warships before you commit.
+    script: |
+      The RWR should pick up the warships' radars from HOOK. A decoy emitter isn't modelled,
+      so the RWR tells the truth even when DARKSTAR doesn't. The AI wingman only engages armed ships.
+    trigger:
+      when: { player_in_zone: "HOOK" }
+      message: "DARKSTAR: Springfield, Darkstar. You're at the hook. Your call, your shot."
+      seconds: 15
+
+  - phase: "Launch and Leave"
+    time: "07:24"
+    waypoints: ["OFF"]
+    brief: |
+      Launch from HOOK with a seeker path that doesn't cross the other contact, then turn
+      southwest and stay low until OFF. Don't go and look at the damage.
+    script: "The story branches: the SAG is disabled, a merchant is hit, or both."
+    triggers:
+      - when: { target_destroyed: true }
+        message: "DARKSTAR: Springfield, Darkstar. Strong secondaries on the warship group, it's dead in the water. Good shooting."
+        set_flag: 10
+        seconds: 20
+      - when: { group_life_below: ["Merchants Alpha", 95], flag: 50 }
+        message: "DARKSTAR: Springfield, Darkstar. Explosion on the northern contact. That's the merchant group. Check your fire."
+        set_flag: 20
+        seconds: 20
+      - when: { group_life_below: ["Merchants Bravo", 95], flag: 51 }
+        message: "DARKSTAR: Springfield, Darkstar. Explosion on the southeastern contact. That's the merchant group. Check your fire."
+        set_flag: 20
+        seconds: 20
+
+  - phase: "Recovery"
+    time: "07:45"
+    waypoints: ["CLIMB", "MARSHAL"]
+    brief: |
+      Climb back over the weather and recover aboard Mother: TACAN 74X, ICLS 1. Expect Case
+      III: the cloud is low. Texaco is overhead if you need gas.
+    script: "BISHOP calls it when the flight reaches marshal."
+    triggers:
+      - when: { player_in_zone: "MARSHAL", flag: 10, flag_false: 20 }
+        message: "BISHOP: Springfield, CAG. Right ship, right shot. Come aboard."
+        seconds: 20
+      - when: { player_in_zone: "MARSHAL", flag: 20 }
+        message: "BISHOP: Springfield, CAG. Come aboard. We'll talk about the merchant in the ready room."
+        seconds: 20

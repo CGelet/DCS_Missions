@@ -50,10 +50,14 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 | HOLD FAST (A-10C II) | Ticking clock and branching ending | Attack axis is a variant that spawns on check-in; moving columns (`route`); success vs friendly position destroyed |
 | BLUE WATER (F-14B, carrier) | The threat you can't see, and gas you can't count on | Raid axis variant spawns on reaching CAP; 40% Flanker sweep; 30% the tanker is `deactivate`d before you reach it; `group_in_zone` launch-line failure; recover aboard a moving carrier |
 | DEEP CUT (AV-8B) | The long way round | Tanker, then AGL valley route; target is apron or moving convoy (variant, hint at Pskhu); 50% Tor; 40% MiG scramble; lands at a different field |
+| LIFELINE (F/A-18C) | Someone else's clock (CSAR/RESCAP) | Runway (alert) start; search party road is a variant spawned on arrival, with the survivor's hint; failure if it reaches `PICKUP`; killing it launches the AI rescue helo (`target_destroyed` → `activate`); 50% hidden gun under the helo's route; success = helo reaches PICKUP then SUKHUMI |
+| GREY HULL (F/A-18C, carrier) | Deception | Two look-alike contacts; a 3-option variant decides which is warships **and whether the ESM radio call lies** (1 in 3); hitting merchants (`group_life_below`, gated on a flag the variant sets) is a failure; low-level Harpoon run; 50% Flanker sweep |
 
 **Make routes look and fly differently** (owner feedback 2026-10-27: "all of these flight paths seem to be the same"). Vary the base (carrier or other field), the recovery field, refuelling, orbits (CAP or holding), AGL legs, pop-ups and egress direction. The altitude profile (`profile_svg`) makes the difference visible.
 
-Ideas not yet used: deception (a decoy SAM that's briefed as confirmed), weather turning, CSAR or rescue, escort of a slow friendly, a mission whose intel depends on the previous mission's outcome.
+Ideas not yet used: a decoy SAM that's briefed as confirmed, weather turning (DCS clouds aren't set in the `.miz` yet; `weather.clouds` is briefing text only), a mission whose intel depends on the previous mission's outcome.
+
+Owner asked for "2 more f18 missions" (2026-10-27). Same aircraft, so the variety had to come from the job (rescue cover, anti-ship) and the start (alert runway scramble, carrier), not the jet.
 
 The missions form a campaign (same world, cast and dates in order). The hangar sorts by `meta.date`. Write backstories that work whatever the previous outcome was.
 
@@ -91,7 +95,12 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 - **Carriers:** `flight_group_from_unit(..., ship_group)` for deck starts. Landing aboard is a hand-built `MovingPoint` (`type="Land"`, `action=Landing`, `link_unit` and `helipad_id` = carrier unit id); see `_land_on_ship`. Ship TACAN uses `ActivateBeaconCommand(..., aa=False, unit_id=carrier)`, plus `ActivateICLSCommand`. The ship's ATC frequency is `ShipGroup.set_frequency(hz)`, in hertz. The carrier moves, so maps draw the recovery at the end of the ship's route.
 - **Tankers:** `refuel_flight` creates a TACAN beacon with no unit id or callsign; `build_miz` replaces it. Tanker callsigns come from `country.callsign["Tankers"]`.
 - **No flyable F-15E in pydcs 0.15.0** (only the AI `F_15E`). Flyable player types used so far: FA_18C_hornet, F_16C_50, A_10C_2, F_14B, AV8BNA. Check `.flyable` before planning a mission.
-- AGL legs are `MovingPoint.alt_type = "RADIO"`.
+- AGL legs are `MovingPoint.alt_type = "RADIO"`. Use it for helicopter routes too: hills under a "150 ft" MSL leg would be a crash.
+- **Helicopters** are in `dcs.helicopters`, not `dcs.planes`; `_aircraft()` looks in both. `flight_group_inflight` returns a `HelicopterGroup`, which lives in `country.helicopter_group` (the test must look there). `task.Land(position, seconds)` on a route point makes a helo set down and then carry on. `UH_60A` is AI-only in 0.15.0.
+- **Anti-ship AI:** `AntishipStrike` adds a default `AntishipStrikeTaskAction` at takeoff that engages **any** ship, merchants included. `build_miz` strips it and puts `EngageTargets(Naval.Ships.ArmedShips)` on the `action: antiship` waypoint instead.
+- **Ships can be late-activated** (`late_activation` on a ship group); validation counts them as activatable.
+- **One group spawned by several variant options** (GREY HULL's SAG Bravo is in options 2 and 3): `variant_of` keeps a list, and the target helper is emitted once per option. A single (flag, option) silently made option 2's kills not count.
+- **Damage, not death:** `group_life_below: [group, pct]` → `GroupLifeLess`. Gate it on a flag set by the variant that spawned the group, since what an unspawned group reports is unverified.
 
 ## Template gotchas
 
@@ -100,7 +109,8 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 - `select_autoescape(["html","j2"])` escapes `.md.j2` too. Wrap Markdown templates in `{% autoescape false %}`.
 - Leaflet tiles: CARTO basemaps now need an API key ("API KEY REQUIRED" watermark). Use Esri `World_Topo_Map` (light) and `Canvas/World_Dark_Gray_Base` (dark), which need no key.
 - Shared page CSS lives in `templates/_base.css`, included by `briefing.html.j2` and `director.html.j2` (`{% include %}`; keep Jinja syntax out of it).
-- Slide maps are inline SVG (offline). `Labels` does simple collision avoidance; route labels get first pick. Deduplicate the home base (it's both the first and last route point).
+- Slide maps are inline SVG (offline). `Labels` does simple collision avoidance; route labels get first pick. Deduplicate the home base (it's both the first and last route point). Labels for points outside a zoomed phase frame are skipped (they used to be clipped at the edge, e.g. "G-29S pair").
+- The coastline file originally stopped at 43.6N, so BLUE WATER's raid area and anything near Novorossiysk had no coast. It now covers 41.5–45.4N, 36.8–42.0E. Check coverage before placing a mission further out.
 
 ## Geography: verify, don't guess
 

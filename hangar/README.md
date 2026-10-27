@@ -108,3 +108,43 @@ The two MiG-29s at Gudauta have shown up on every mission this month. They don't
 
 <p><a href="deep_cut/kneeboard/01_mission.png"><img src="deep_cut/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="deep_cut/kneeboard/02_nav.png"><img src="deep_cut/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="deep_cut/kneeboard/03_threats.png"><img src="deep_cut/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
 
+## Operation LIFELINE: RESCAP for Uzi 2-2
+
+**Caucasus** · **2× F/A-18C Hornet** · 2026-03-24, step 09:10L
+
+> "She's got a radio, a pistol and about twenty minutes. You've got two Hornets. Make the twenty minutes last." RAWHIDE, on the scramble line
+
+At 0735, Uzi 2-2, an F-16 on a road recce north of the Gumista, took a missile nobody saw launch. Capt. Mara "SOCKS" Lindqvist ejected over the hills above Eshera, four miles behind the line. Her beacon is good and she's checked in twice on guard. The second time she said she could hear engines.
+
+**Primary objective:** Stop the search party before it reaches Uzi 2-2.
+
+| Download | |
+| --- | --- |
+| Mission | [lifeline.miz](lifeline/lifeline.miz) |
+| Briefing | [briefing.html](lifeline/briefing.html) |
+| Slide deck | [slides.html](lifeline/slides.html) |
+| Director's cut | [director.html](lifeline/director.html): **spoilers**, for whoever runs or debriefs the mission |
+| Kneeboard | [01_mission.png](lifeline/kneeboard/01_mission.png) · [02_nav.png](lifeline/kneeboard/02_nav.png) · [03_threats.png](lifeline/kneeboard/03_threats.png) |
+
+<p><a href="lifeline/kneeboard/01_mission.png"><img src="lifeline/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="lifeline/kneeboard/02_nav.png"><img src="lifeline/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="lifeline/kneeboard/03_threats.png"><img src="lifeline/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## Operation GREY HULL: Harpoon Strike off Gelendzhik
+
+**Caucasus** · **2× F/A-18C Hornet** · 2026-03-26, step 06:50L
+
+> "Two contacts, two ships each, and one of them is full of grain. I'd love to tell you which. Darkstar's going to tell you instead, and you're going to check." PRISM, 0600 brief
+
+After the Backfire raid, the Black Sea Fleet stopped sending bombers and started sending ships. Last night a surface action group left Novorossiysk under cover of the weather: a Krivak-class frigate and a Grisha corvette, heading southeast to put SA-N-4s and a towed sonar between the Stennis and the coast.
+
+**Primary objective:** Disable the surface action group (at least half the group's damage).
+
+| Download | |
+| --- | --- |
+| Mission | [grey_hull.miz](grey_hull/grey_hull.miz) |
+| Briefing | [briefing.html](grey_hull/briefing.html) |
+| Slide deck | [slides.html](grey_hull/slides.html) |
+| Director's cut | [director.html](grey_hull/director.html): **spoilers**, for whoever runs or debriefs the mission |
+| Kneeboard | [01_mission.png](grey_hull/kneeboard/01_mission.png) · [02_nav.png](grey_hull/kneeboard/02_nav.png) · [03_threats.png](grey_hull/kneeboard/03_threats.png) |
+
+<p><a href="grey_hull/kneeboard/01_mission.png"><img src="grey_hull/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="grey_hull/kneeboard/02_nav.png"><img src="grey_hull/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="grey_hull/kneeboard/03_threats.png"><img src="grey_hull/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+

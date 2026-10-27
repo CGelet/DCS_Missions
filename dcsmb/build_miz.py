@@ -20,8 +20,10 @@ CHANCE_FLAG_BASE = 200    # one flag per `chance` trigger, rolled at mission sta
 VARIANT_FLAG_BASE = 300   # default flag for variants without an explicit one
 DEFAULT_ZONE_KM = 10
 START_TYPES = {"cold": StartType.Cold, "warm": StartType.Warm, "runway": StartType.Runway}
-MAINTASKS = {"bomb": task.GroundAttack, "sead": task.SEAD, "cas": task.CAS, "cap": task.CAP, "intercept": task.Intercept}
-AI_FLIGHT_TASKS = {"antiship": task.AntishipStrike, "sweep": task.FighterSweep, "cap": task.CAP, "strike": task.GroundAttack}
+MAINTASKS = {"bomb": task.GroundAttack, "sead": task.SEAD, "cas": task.CAS, "cap": task.CAP, "intercept": task.Intercept,
+             "antiship": task.AntishipStrike}
+AI_FLIGHT_TASKS = {"antiship": task.AntishipStrike, "sweep": task.FighterSweep, "cap": task.CAP, "strike": task.GroundAttack,
+                   "transport": task.Transport}
 
 
 def _type(module, name: str):
@@ -29,6 +31,14 @@ def _type(module, name: str):
         return getattr(module, name)
     except AttributeError:
         raise ValueError(f"unknown unit type '{name}' in {module.__name__}") from None
+
+
+def _aircraft(name: str):
+    """Planes and helicopters live in different pydcs modules."""
+    t = getattr(dcs.planes, name, None) or getattr(dcs.helicopters, name, None)
+    if t is None:
+        raise ValueError(f"unknown aircraft type '{name}' (not in dcs.planes or dcs.helicopters)")
+    return t
 
 
 def _weapon(ac, pylon: int, name: str):
@@ -99,11 +109,12 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
             sg.points[0].tasks.append(task.ActivateICLSCommand(sh["icls"], unit_id=lead.id))
         if "freq_mhz" in sh:
             sg.set_frequency(int(sh["freq_mhz"] * 1_000_000))
+        sg.late_activation = bool(sh.get("late_activation"))
         ships[sh["name"]] = groups[sh["name"]] = sg
 
     # --- flights ---------------------------------------------------------
     for f in data["flights"]:
-        ac = _type(dcs.planes, f["aircraft"])
+        ac = _aircraft(f["aircraft"])
         actions = {wp.get("action") for wp in f["waypoints"]}
         maintask = next((t for a, t in MAINTASKS.items() if a in actions), task.GroundAttack)
         start_type = START_TYPES[f.get("start", "cold")]
@@ -114,6 +125,9 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
             fg = m.flight_group_from_airport(blue, f["callsign"], ac, _airport(terrain, f["base"]), maintask=maintask,
                                              start_type=start_type, group_size=f.get("count", 1))
         groups[f["callsign"]] = fg
+        if maintask is task.AntishipStrike:
+            # pydcs's default en-route task engages *any* ship; merchants must be safe from the AI wingman
+            fg.points[0].tasks = [t for t in fg.points[0].tasks if not isinstance(t, task.AntishipStrikeTaskAction)]
         _set_callsign(fg, f["callsign"], blue, ac)
         if f.get("player"):
             fg.units[0].set_player()
@@ -138,6 +152,9 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
                 mp.tasks.append(task.EngageTargets(max_distance=80_000, targets=[task.Targets.All.GroundUnits.AirDefence]))
             elif wp.get("action") == "cas":
                 mp.tasks.append(task.EngageTargets(max_distance=15_000, targets=[task.Targets.All.GroundUnits]))
+            elif wp.get("action") == "antiship":
+                # Armed ships only, so the AI wingman never Harpoons a merchant
+                mp.tasks.append(task.EngageTargets(max_distance=130_000, targets=[task.Targets.All.Naval.Ships.ArmedShips]))
             zones[wp["name"]] = m.triggers.add_triggerzone(
                 pt, radius=wp.get("zone_km", DEFAULT_ZONE_KM) * 1000, name=f"ZONE {wp['name']}")
         if f.get("land") in ships:
@@ -161,7 +178,7 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     # --- support flights -------------------------------------------------
     for s in data.get("support", []):
         country = red if s.get("coalition") == "red" else blue
-        ac = _type(dcs.planes, s["aircraft"])
+        ac = _aircraft(s["aircraft"])
         if s["kind"] == "awacs":
             g = m.awacs_flight(country, s["callsign"], ac, None, point(terrain, s),
                                race_distance=s.get("leg_nm", 30) * NM, heading=s.get("heading", 0),
@@ -193,10 +210,14 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
             for i, p in enumerate(s.get("route", [])):
                 mp = g.add_waypoint(point(terrain, p), p.get("alt_ft", sp.get("alt_ft", 20000)) * FT,
                                     p.get("kts", sp.get("kts", 450)) * KTS)
+                if p.get("agl"):
+                    mp.alt_type = "RADIO"
                 if i == 0 and s["task"] == "antiship" and s.get("attack") in ships:
                     mp.tasks.append(task.AttackGroup(ships[s["attack"]].id))
                 elif i == 0 and s["task"] in ("sweep", "cap"):
                     mp.tasks.append(task.EngageTargets(max_distance=80_000, targets=[task.Targets.All.Air]))
+                if p.get("land_s"):  # helicopters: set down here for this many seconds, then carry on
+                    mp.tasks.append(task.Land(mp.position, p["land_s"]))
         elif s["kind"] == "intercept":
             g = m.flight_group_from_airport(country, s["callsign"], ac, _airport(terrain, s["base"]),
                                             maintask=task.Intercept, start_type=StartType.Runway,
@@ -210,7 +231,7 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         groups[s["callsign"]] = g
 
     # --- random variants (rolled once at mission start) ---------------
-    variant_of: dict[str, tuple[int, int]] = {}  # group -> (flag, option number) that activates it
+    variant_of: dict[str, list[tuple[int, int]]] = {}  # group -> every (flag, option number) that activates it
     variant_flags = {v["name"]: v.get("flag", VARIANT_FLAG_BASE + i) for i, v in enumerate(data.get("variants", []))}
     ctx = (player_group, zones, groups, variant_flags)
     for v in data.get("variants", []):
@@ -226,7 +247,7 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
             _actions(m, r, o, groups)
             m.triggerrules.triggers.append(r)
             for g in o.get("activate", []):
-                variant_of[g] = (flag, n_opt)
+                variant_of.setdefault(g, []).append((flag, n_opt))
 
     # --- target-destroyed helpers ---------------------------------------
     tgt = data["target"]
@@ -237,10 +258,10 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     kill = tgt.get("kill_pct", 100)
     for g in tgt.get("groups", []):
         gid = groups[g].id
-        conds = [condition.GroupDead(gid) if kill == 100 else condition.GroupLifeLess(gid, 100 - kill)]
-        if g in variant_of:  # only the variant that actually spawned counts
-            conds.append(condition.FlagEquals(*variant_of[g]))
-        helpers.append(conds)
+        dead = lambda: condition.GroupDead(gid) if kill == 100 else condition.GroupLifeLess(gid, 100 - kill)
+        # Only a variant that actually spawned the group counts: one helper per option that does
+        for flag_opt in variant_of.get(g, [None]):
+            helpers.append([dead()] + ([condition.FlagEquals(*flag_opt)] if flag_opt else []))
     for conds in helpers:
         r = triggers.TriggerOnce(comment="target destroyed helper")
         for c in conds:
@@ -283,7 +304,7 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
                 tail += 1
                 u.onboard_num = f"{tail:03}"
 
-    player_type = _type(dcs.planes, next(f for f in data["flights"] if f.get("player"))["aircraft"])
+    player_type = _aircraft(next(f for f in data["flights"] if f.get("player"))["aircraft"])
     for page in kneeboard_pages:
         m.add_aircraft_kneeboard(player_type, Path(page))
 
@@ -347,6 +368,8 @@ def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: di
             conds.append(condition.UnitInZone(player_group.units[0].id, zones[arg].id))
         elif kind == "group_dead":
             conds.append(condition.GroupDead(groups[arg].id))
+        elif kind == "group_life_below":
+            conds.append(condition.GroupLifeLess(groups[arg[0]].id, arg[1]))
         elif kind == "group_in_zone":
             conds.append(condition.PartOfGroupInZone(groups[arg[0]].id, zones[arg[1]].id))
         elif kind == "flag":

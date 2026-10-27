@@ -81,6 +81,10 @@
           {% for s in support %}<tr>
             <td><b>{{ s.callsign }}</b> <span class="muted">({{ s.coalition }} {{ s.kind }})</span><br><span style="font-size:13px;color:var(--muted)">{{ s.count | default(1) }}× {{ s.aircraft | replace("_", " ") }}</span></td>
             <td>{% for a in s.activation %}<div style="font-size:14px">{{ a }}</div>{% endfor %}</td>
+          </tr>{% endfor %}
+          {% for sh in ships_truth %}<tr>
+            <td><b>{{ sh.name }}</b> <span class="muted">({{ sh.coalition | default("blue") }} ships)</span><br><span style="font-size:13px;color:var(--muted)">{{ sh.types }}{% if sh.route %} · moves{% endif %}</span></td>
+            <td>{% for a in sh.activation %}<div style="font-size:14px">{{ a }}</div>{% endfor %}</td>
           </tr>{% endfor %}</tbody>
         </table></div>
       </div>

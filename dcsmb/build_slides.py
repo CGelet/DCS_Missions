@@ -62,6 +62,8 @@ class Labels:
     def render(self) -> str:
         placed, out = [], []
         for x, y, text, cls in self.items:
+            if not (0 <= x <= W and 0 <= y <= H):
+                continue  # the point is outside this (zoomed) frame; a label alone would point at nothing
             w = self.CHAR_W * len(text)
             for dx, dy, anchor in ((12, 5, "start"), (-12, 5, "end"), (-w / 2, -14, "start"), (-w / 2, 26, "start"),
                                    (12, -14, "start"), (12, 24, "start"), (-12, -14, "end"), (-12, 24, "end")):
@@ -149,6 +151,12 @@ def svg_map(vm: dict, focus: list[str] | None = None, show_rings: bool = True) -
             (x1, y1), (x2, y2) = pr(s["from"]["lat"], s["from"]["lon"]), pr(s["to"]["lat"], s["to"]["lon"])
             out.append(f'<line class="cap" x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}"/>'
                        + labels.add(x2, y2, f'{s["callsign"]} CAP', "lbl friendly"))
+        elif s.get("spawn"):
+            pts = [s["spawn"]] + s.get("route", [])
+            xy = " ".join(f"{x:.1f},{y:.1f}" for x, y in (pr(p["lat"], p["lon"]) for p in pts))
+            x, y = pr(s["spawn"]["lat"], s["spawn"]["lon"])
+            out.append(f'<polyline class="flighttrack" points="{xy}"/><circle class="friendly-dot" cx="{x:.1f}" cy="{y:.1f}" r="6"/>'
+                       + labels.add(x, y, s["callsign"], "lbl friendly"))
         elif "lat" in s:
             x, y = pr(s["lat"], s["lon"])
             out.append(f'<circle class="friendly-dot" cx="{x:.1f}" cy="{y:.1f}" r="6"/>'

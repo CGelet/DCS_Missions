@@ -54,7 +54,9 @@ def _expected_rules(data) -> int:
     chance_rolls = sum(1 for t in trigs if "chance" in t)
     variants = sum(1 + len(v["options"]) for v in data.get("variants", []))
     tgt = data["target"]
-    helpers = (1 if tgt.get("zone_m") else 0) + len(tgt.get("groups", []))
+    # one helper per target group, or one per variant option that spawns it
+    spawns = lambda g: sum(g in o.get("activate", []) for v in data.get("variants", []) for o in v["options"]) or 1
+    helpers = (1 if tgt.get("zone_m") else 0) + sum(spawns(g) for g in tgt.get("groups", []))
     return len(trigs) + chance_rolls + variants + helpers
 
 
@@ -73,7 +75,7 @@ def test_miz_round_trip(data, tmp_path):
     m = dcs.Mission()
     m.load_file(str(miz))
     groups = {g.name: g for c in m.coalition.values() for country in c.countries.values()
-              for g in country.plane_group + country.vehicle_group}
+              for g in country.plane_group + country.helicopter_group + country.vehicle_group + country.ship_group}
     expected = {player["callsign"]} | {u["name"] for u in data.get("units", [])} | {s["callsign"] for s in data.get("support", [])}
     assert expected <= set(groups)
     for u in data.get("units", []):

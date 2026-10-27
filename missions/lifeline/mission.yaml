@@ -1,0 +1,356 @@
+# Operation LIFELINE: RESCAP over a downed pilot. Source of truth; `python -m dcsmb build` renders hangar/lifeline/.
+#
+# Story device: someone else's clock. You scramble off the alert pad to cover a pilot on the ground
+# behind the Gumista line. The sim rolls which road the search party comes up (west from Novy Afon,
+# or down the valley from the north), whether whatever shot her down is still on the ridge, and
+# whether Gudauta's MiGs come up. The rescue helicopter won't launch until the search party is dead,
+# and if the search party reaches her first, it's over.
+#
+# Land positions checked against OpenStreetMap (Nominatim reverse geocoding); search-party routes
+# follow OSM roads east of Novy Afon and in the upper Gumista valley.
+
+meta:
+  id: lifeline
+  title: "Operation LIFELINE"
+  subtitle: "RESCAP for Uzi 2-2"
+  theater: caucasus
+  date: 2026-03-24
+  start_time: "09:10"
+  weather:
+    temperature_c: 11
+    wind_from_deg: 200
+    wind_kts: 8
+    clouds: "Scattered 4,000 ft over the hills, clear above 9,000 ft"
+    visibility: "15 km, valley haze"
+    qnh_inhg: 29.89
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "LIFELINE"
+  backstory: |
+    At 0735, Uzi 2-2, an F-16 on a road recce north of the Gumista, took a missile nobody
+    saw launch. Capt. Mara "SOCKS" Lindqvist ejected over the hills above Eshera, four
+    miles behind the line. Her beacon is good and she's checked in twice on guard. The
+    second time she said she could hear engines.
+
+    The rescue helicopter at Sukhumi is twelve minutes away, but it won't go into a valley
+    nobody has looked at, and the search parties will be on the roads by now. The alert
+    Hornets at Kutaisi are the closest guns. Pontiac flight is rolling.
+  characters:
+    - name: "Capt. Mara \"SOCKS\" Lindqvist"
+      role: "Uzi 2-2, F-16 pilot on the ground above Eshera"
+    - name: "Maj. Teo \"RAWHIDE\" Akana"
+      role: "Rescue mission commander, Sukhumi rescue coordination cell"
+    - name: "PEDRO 1"
+      role: "UH-60 rescue helicopter on alert at Sukhumi-Babushara"
+    - name: "OVERLORD"
+      role: "E-3 Sentry AWACS, holding over Zugdidi"
+    - name: "Pontiac 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets off the alert pad"
+  hook: |
+    "She's got a radio, a pistol and about twenty minutes. You've got two Hornets. Make
+    the twenty minutes last." RAWHIDE, on the scramble line
+  outcomes:
+    success: |
+      Pedro 1 lifts SOCKS off the hillside and is feet-dry at Sukhumi eighteen minutes
+      later with a sprained ankle and a story. The search party's wrecks are still on the
+      road above Eshera at sunset. Uzi squadron buys Pontiac's bar tab for a month.
+    partial: |
+      Pedro makes the pickup but takes hits coming out and puts down hard short of
+      Sukhumi. Everyone walks away, but the coalition is one rescue helicopter short, and
+      RAWHIDE wants every future pickup escorted all the way in.
+    failure: |
+      The search party reaches the hillside first. That evening, Russian state TV shows a
+      coalition pilot in a Gudauta hangar. The ceasefire talks now have a new item on the
+      agenda, and it isn't the Gumista.
+
+situation: |
+  Uzi 2-2's pilot is on the ground in the hills above Eshera, about 6 km behind the
+  Gumista line, in red-held territory. Her position is known from her beacon. Red has light
+  forces in Novy Afon and the upper Gumista valley, and both have roads that lead toward
+  her. Nobody saw what shot her down. Pedro 1 is on alert at Sukhumi-Babushara, 30 km south,
+  and will launch when the area around her is clear. Gudauta is 30 km west and has fighters.
+
+objectives:
+  primary: "Stop the search party before it reaches Uzi 2-2."
+  secondary: "Escort Pedro 1 in and out. If the helicopter goes down, the rescue fails."
+  tertiary: "Recover at Sukhumi-Babushara."
+
+roe: |
+  Weapons free on any red vehicle moving toward the survivor, and on any air defence that
+  engages the flight or Pedro. Weapons tight inside Sukhumi and south of the Gumista. Positively
+  identify everything you hit within 1 km of the survivor: she is wearing a green flight suit
+  and has a strobe.
+
+threats:
+  - name: "Search parties"
+    kind: armor
+    intel: suspected
+    lat: 43.0850
+    lon: 40.9300
+    area_km: 7
+    range_km: 0
+    notes: "SOCKS reported engine noise. Expect BTRs and trucks on the roads around her. Direction unknown."
+  - name: "Whatever shot down Uzi 2-2"
+    kind: aaa
+    intel: possible
+    lat: 43.0700
+    lon: 40.9200
+    area_km: 5
+    range_km: 5
+    notes: "A missile from below at 4,000 ft. Nobody saw the launch: MANPADS or a mobile SAM. It may still be there."
+  - name: "MiG-29S pair (Gudauta)"
+    kind: air
+    intel: possible
+    lat: 43.1143
+    lon: 40.5697
+    range_km: 0
+    notes: "Gudauta's alert pair. They haven't flown for a rescue before. Overlord will call them if they come up."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Pontiac (inter-flight)", freq: "255.000 AM", radio: 1, channel: 1 }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Guard", freq: "243.000 AM", radio: 1, channel: 3, notes: "SOCKS checks in on guard" }
+  - { name: "Kutaisi Tower", freq: "134.000 AM", radio: 2, channel: 1 }
+  - { name: "Sukhumi Tower", freq: "129.000 AM", radio: 2, channel: 2, notes: "Recovery field" }
+  - { name: "SOCKS, RAWHIDE, PEDRO 1", freq: "243.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Pontiac 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Kutaisi
+    start: runway        # alert scramble: engines running, on the runway
+    radio1_mhz: 255.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD
+      3: FPU_8A_Fuel_Tank_330_gallons
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: FPU_8A_Fuel_Tank_330_gallons
+      8: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× GBU-12, 2× Mk-82, 2× AIM-9X, 1× AIM-120C, ATFLIR, 3× 330 gal tanks, 578 rounds 20 mm"
+    bingo_lbs: 4000
+    joker_lbs: 6500
+    waypoints:
+      - { name: "PUSH",  lat: 42.5500, lon: 41.8000, alt_ft: 24000, kts: 450, eta: "09:17" }
+      - { name: "SANDY", lat: 43.0300, lon: 41.0300, alt_ft: 15000, kts: 300, eta: "09:24", action: cas, zone_km: 20 }
+      - { name: "LAMB",  lat: 43.0790, lon: 40.9330, alt_ft: 12000, kts: 300, eta: "09:26", zone_km: 6 }
+      - { name: "EXIT",  lat: 42.9500, lon: 40.9500, alt_ft: 8000,  kts: 350, eta: "10:05" }
+    land: "Sukhumi-Babushara"
+
+target:
+  name: "Search parties closing on Uzi 2-2"
+  lat: 43.0790
+  lon: 40.9330
+  area_km: 7
+  groups: ["Search West", "Search North"]   # only the party that was rolled counts
+  description: "Vehicles moving on the roads toward the survivor on the hillside above Eshera. Find them before they find her."
+  dmpi: "Lead vehicle first to block the road, then the rest. Nothing within 300 m of her without a positive ID."
+
+zones:
+  - { name: "PICKUP",  lat: 43.0790, lon: 40.9330, radius_km: 0.5 }
+  - { name: "SUKHUMI", lat: 42.8611, lon: 41.1250, radius_km: 3 }
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "SOCKS"
+    coalition: blue
+    type: [Soldier_M4]
+    lat: 43.0790
+    lon: 40.9330
+    heading: 90
+  - name: "Search West"
+    coalition: red
+    # Up the Bzyb highway from Novy Afon, then the hill roads east to her. About 6 km: 18 minutes.
+    type: [BTR_80, Ural_375, UAZ_469]
+    lat: 43.0652
+    lon: 40.8844
+    heading: 120
+    late_activation: true
+    speed_kmh: 20
+    route:
+      - { lat: 43.0568, lon: 40.9043 }
+      - { lat: 43.0633, lon: 40.9114 }
+      - { lat: 43.0715, lon: 40.9160 }
+      - { lat: 43.0723, lon: 40.9255 }
+      - { lat: 43.0790, lon: 40.9330 }
+  - name: "Search North"
+    coalition: red
+    # Down the upper Gumista valley road and west over the ridge. About 7 km: 20 minutes.
+    type: [BRDM_2, GAZ_66, UAZ_469]
+    lat: 43.1063
+    lon: 41.0038
+    heading: 200
+    late_activation: true
+    speed_kmh: 20
+    route:
+      - { lat: 43.0953, lon: 40.9960 }
+      - { lat: 43.0868, lon: 40.9674 }
+      - { lat: 43.0854, lon: 40.9569 }
+      - { lat: 43.0790, lon: 40.9330 }
+  - name: "Ridge Gun"
+    coalition: red
+    # What shot Uzi 2-2: a MANPADS team with a ZU-23, 2 km south of her, under Pedro's way in.
+    type: [SA_18_Igla_manpad, ZU_23_Emplacement]
+    lat: 43.0600
+    lon: 40.9300
+    heading: 160
+    late_activation: true
+
+support:
+  - kind: awacs
+    callsign: "OVERLORD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.4500
+    lon: 41.6000
+    alt_ft: 30000
+    heading: 300
+    leg_nm: 30
+    freq_mhz: 251.0
+  - kind: flight
+    callsign: "Pedro 1"
+    aircraft: UH_60A
+    coalition: blue
+    count: 1
+    task: transport
+    late_activation: true
+    # In low along the coast, up the Eshera valley, down for 90 s at the survivor, and straight home
+    spawn: { lat: 42.8700, lon: 41.1100, alt_ft: 500, kts: 120 }
+    route:
+      - { lat: 43.0050, lon: 40.9700, alt_ft: 150, kts: 120, agl: true }
+      - { lat: 43.0580, lon: 40.9280, alt_ft: 150, kts: 100, agl: true }
+      - { lat: 43.0790, lon: 40.9330, alt_ft: 100, kts: 60, agl: true, land_s: 90 }
+      - { lat: 43.0050, lon: 40.9700, alt_ft: 150, kts: 130, agl: true }
+      - { lat: 42.8611, lon: 41.1250, alt_ft: 300, kts: 120 }
+  # Red: director only
+  - kind: intercept
+    callsign: "Gudauta Alert"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    base: Gudauta
+    late_activation: true
+
+variants:
+  - name: "Search party"
+    options:
+      - label: "West, up the road from Novy Afon"
+        activate: ["Search West"]
+        when: { player_in_zone: "SANDY" }
+        message: "SOCKS: Pontiac, Uzi two-two on guard. Engines on the road west of me, getting louder. West. Hurry."
+        seconds: 20
+      - label: "North, down the Gumista valley"
+        activate: ["Search North"]
+        when: { player_in_zone: "SANDY" }
+        message: "SOCKS: Pontiac, Uzi two-two on guard. Vehicles coming down the valley north of me. I can hear them on the ridge."
+        seconds: 20
+
+storyboard:
+  - phase: "Scramble"
+    time: "09:10"
+    waypoints: []
+    brief: |
+      Alert launch: engines running on the Kutaisi runway, no taxi. Climb straight out to the
+      west. RAWHIDE will brief anything new on the way.
+    script: "RAWHIDE gives the scramble call; SOCKS is still on the ground and unseen."
+    trigger:
+      when: { time_after: 10 }
+      message: "RAWHIDE: Pontiac, Rawhide. Uzi two-two is alive and on guard. Get overhead and keep them off her. Pedro holds till you say clean."
+      seconds: 20
+
+  - phase: "Push"
+    time: "09:17"
+    waypoints: ["PUSH"]
+    brief: |
+      Climb to 24,000 ft and push northwest at 450 knots. OVERLORD will tell you whether
+      Gudauta's fighters are up. Arm up and set the ATFLIR to the survivor's coordinates.
+    script: "Nothing hostile is airborne. The Ridge Gun rolls at mission start (50%)."
+    triggers:
+      - when: { player_in_zone: "PUSH" }
+        message: "OVERLORD: Pontiac, Overlord, picture clean. Gudauta is quiet for now."
+        seconds: 15
+      - when: { time_after: 5 }
+        chance: 50
+        activate: ["Ridge Gun"]
+
+  - phase: "On Scene"
+    time: "09:24"
+    waypoints: ["SANDY"]
+    notes: "Ask the room: you've got two minutes of gas over the survivor for every minute the search party needs. What do you look at first?"
+    brief: |
+      Set up a wheel over SANDY at 15,000 ft, above anything that shot Uzi 2-2. Call SOCKS
+      on guard: she can tell you where the noise is coming from. Expect vehicles on the
+      roads, from the west or from the north.
+    script: |
+      Reaching SANDY spawns the search party on the rolled road (about 18 to 20 minutes from
+      her) and SOCKS calls its direction. 30%: Gudauta's MiG-29s scramble.
+    trigger:
+      when: { player_in_zone: "SANDY" }
+      chance: 30
+      activate: ["Gudauta Alert"]
+      message: "OVERLORD: Pontiac, Overlord, pop-up group, two contacts, departing Gudauta, northwest 25 miles. Hostile."
+      seconds: 20
+
+  - phase: "Sanitize"
+    time: "09:26"
+    waypoints: ["LAMB"]
+    brief: |
+      Find the vehicles and stop them before they reach her. Hit the lead vehicle to block
+      the road. Positively identify everything near the survivor. Pedro launches only when
+      you call the area clean.
+    script: "The story branches: the search party dies (Pedro launches) or it reaches PICKUP (failure)."
+    triggers:
+      - when: { target_destroyed: true }
+        activate: ["Pedro 1"]
+        set_flag: 41
+        message: "RAWHIDE: Copy area clean. Pedro one is launching. Pontiac, cover him in, eight minutes."
+        seconds: 20
+      - when: { group_in_zone: ["Search West", "PICKUP"] }
+        message: "SOCKS: Pontiac, they're here, they've seen me, they're..."
+        set_flag: 20
+        seconds: 20
+      - when: { group_in_zone: ["Search North", "PICKUP"] }
+        message: "SOCKS: Pontiac, they're here, they've seen me, they're..."
+        set_flag: 20
+        seconds: 20
+
+  - phase: "Pedro In"
+    time: "09:45"
+    waypoints: []
+    brief: |
+      Pedro comes in low along the coast and up the Eshera valley. Stay overhead and
+      watch his route: whatever shot Uzi 2-2 down may still be on the ridge between Pedro
+      and the survivor. He'll be on the ground for about 90 seconds.
+    script: |
+      If the Ridge Gun spawned, Pedro flies right over it. The pickup counts when Pedro
+      reaches PICKUP; losing Pedro is a failure.
+    triggers:
+      - when: { group_in_zone: ["Pedro 1", "PICKUP"], flag: 41 }
+        message: "PEDRO 1: Survivor's aboard! Pedro's lifting, coming out the way we came in."
+        set_flag: 40
+        seconds: 20
+      - when: { group_dead: "Pedro 1", flag: 41 }
+        message: "RAWHIDE: Pedro one is down, Pedro one is down. Pontiac, mark the spot."
+        set_flag: 21
+        seconds: 20
+
+  - phase: "Home"
+    time: "10:05"
+    waypoints: ["EXIT"]
+    brief: |
+      Follow Pedro out over the water, then recover at Sukhumi-Babushara (tower 129.0). It's
+      ten minutes away; Kutaisi isn't, if you've spent your gas over the hills.
+    script: "RAWHIDE closes the rescue when Pedro reaches Sukhumi with the survivor aboard."
+    trigger:
+      when: { group_in_zone: ["Pedro 1", "SUKHUMI"], flag: 40 }
+      message: "RAWHIDE: Pedro's on deck at Sukhumi. Uzi two-two is home. Pontiac, Rawhide: thanks for the cover."
+      set_flag: 10
+      seconds: 20

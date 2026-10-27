@@ -17,9 +17,10 @@ class MissionError(ValueError):
 
 
 REQUIRED_TOP = ["meta", "narrative", "situation", "objectives", "flights", "target", "storyboard"]
-TRIGGER_WHEN = {"time_after", "player_in_zone", "group_dead", "group_in_zone", "flag", "flag_false", "target_destroyed", "variant"}
+TRIGGER_WHEN = {"time_after", "player_in_zone", "group_dead", "group_life_below", "group_in_zone", "flag", "flag_false",
+                "target_destroyed", "variant"}
 SUPPORT_KINDS = {"awacs", "tanker", "cap", "intercept", "flight"}
-AI_TASKS = {"antiship", "sweep", "cap", "strike"}
+AI_TASKS = {"antiship", "sweep", "cap", "strike", "transport"}
 INTEL = {"confirmed", "suspected", "possible"}
 
 
@@ -57,6 +58,10 @@ def _check_when(when, where: str, wp_names: set, group_names: set, variants: dic
         g = when["group_in_zone"]
         if not (isinstance(g, list) and len(g) == 2 and g[0] in group_names and g[1] in wp_names):
             errs.append(f"{where}: group_in_zone must be [known group, waypoint or zone name], got {g!r}")
+    if "group_life_below" in when:
+        g = when["group_life_below"]
+        if not (isinstance(g, list) and len(g) == 2 and g[0] in group_names and 0 < g[1] <= 100):
+            errs.append(f"{where}: group_life_below must be [known group, percent of life left], got {g!r}")
     if "group_dead" in when and when["group_dead"] not in group_names:
         errs.append(f"{where}: group_dead references unknown group '{when['group_dead']}'")
     if "variant" in when:
@@ -161,6 +166,7 @@ def validate(data) -> None:
     group_names |= ship_names
     late = {u["name"] for u in data.get("units", []) if u.get("late_activation")}
     late |= {s["callsign"] for s in data.get("support", []) if s.get("late_activation")}
+    late |= {sh["name"] for sh in data.get("ships", []) if sh.get("late_activation")}
 
     tgt = data["target"]
     player = players[0] if len(players) == 1 else {}

@@ -443,6 +443,11 @@ function drawMap() {
     if (s.from && s.to) {
       L.polyline([[s.from.lat, s.from.lon], [s.to.lat, s.to.lon]], { color: c, weight: 3, dashArray: "2 6" }).addTo(layers.support)
         .bindTooltip(`${s.callsign} CAP`, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.spawn) {
+      L.polyline([[s.spawn.lat, s.spawn.lon], ...s.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "10 6" }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} planned route`, { sticky: true });
+      L.circleMarker([s.spawn.lat, s.spawn.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
     } else if (s.lat) {
       L.circleMarker([s.lat, s.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
         .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
