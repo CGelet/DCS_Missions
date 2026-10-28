@@ -1,0 +1,289 @@
+# WORK-UPS event 5: graduation composite exercise. Source of truth; `python -m dcsmb build` renders hangar/wu_5_compex/.
+#
+# Training: everything briefed, nothing random. A small package: you lead the strike two-ship with
+# GBU-38s, Uzi 1 escorts (AI), Weasel 1 does SEAD (AI). Red: an emitting, weapons-hold SA-8 at the
+# target and two live-fire F-5E aggressors that launch from the north when you cross PUSH. Time on
+# target is timed from PUSH (±30 s). Success needs the target destroyed AND the TOT in the window.
+# Target set: hulks on open ground 11 km SW of Khashuri; no buildings or villages within 500 m (OSM Overpass).
+
+meta:
+  id: wu_5_compex
+  title: "CHECKRIDE"
+  subtitle: "Graduation Composite Exercise"
+  category: training
+  theater: caucasus
+  role: "Strike (package)"
+  date: 2026-01-30
+  start_time: "09:30"
+  weather:
+    temperature_c: 2
+    wind_from_deg: 280
+    wind_kts: 14
+    clouds: "Scattered 6,000 ft, broken 12,000 ft over the ridge"
+    visibility: "20 km"
+    qnh_inhg: 30.00
+    cloud_preset: Scattered2
+    cloud_base_ft: 6000
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Det work-ups, event COMPEX-1 (checkride)"
+  rules:
+    - "Package of three flights on one timeline. You lead the strike (Colt 1). Uzi 1 escorts, Weasel 1 suppresses."
+    - "Time on target is 3:20 after PUSH, ±30 s. A strike outside the window is graded as a miss, even if the bombs hit."
+    - "The range SA-8 at the target radiates on weapons hold. Weasel 1 is cleared to kill it; you are not."
+    - "The two F-5E aggressors are live-fire: DCS has no simulated-kill mode. They're Uzi's problem first, yours if they leak."
+    - "Minimum 15,000 ft MSL over the target for the JDAM release. No releases outside TARGET AREA."
+    - "Bingo 4,500 lb to Kutaisi."
+  knock_it_off: |
+    Anyone in the package calls "Knock it off" for a midair risk, a hung store or a leaker on your
+    tail with your bombs still on. Strike flight turns west at 20,000 ft, master arm SAFE, and waits
+    for WREN on det common.
+  special_subjects:
+    - "Push timing: you control the TOT with speed after PUSH, not with turns over the target."
+    - "If the escort is busy: who calls the leaker, and does the strike abort or press?"
+    - "GBU-38 on trucks: one bomb per vehicle, release inside the LAR, don't wait for the pod."
+    - "Egress: the F-5s will be behind you. Speed and altitude home."
+  grade_sheet:
+    - { item: "Package brief execution", standard: "Crosses PUSH within 1 minute of Uzi and Weasel." }
+    - { item: "TOT", standard: "Reaches the target within ±30 s of 3:20 after PUSH." }
+    - { item: "Target", standard: "The target set is destroyed by the strike flight's JDAMs." }
+    - { item: "Leaker defence", standard: "No strike aircraft lost to the aggressors." }
+    - { item: "Egress and recovery", standard: "Fenced out, both jets recovered to Kutaisi above bingo." }
+  debrief_focus:
+    - "Timeline from PUSH to TOT: where did you lose or gain time?"
+    - "The package comms: who called what, and when."
+    - "Bomb hits against the DMPIs."
+
+narrative:
+  operation: "CHECKRIDE"
+  backstory: |
+    This is the last event of work-ups and the one WREN signs the whole card on. It puts everything
+    from the last three weeks into one sortie: a package that has to arrive together, an emitter
+    that has to be suppressed, aggressors that want to break it up, and a target that has to be
+    hit on time.
+
+    The target set is a line of old vehicles in open fields southwest of Khashuri, standing
+    in for a fuel and ammunition point. The emitter is the range's SA-8, and the aggressors are the
+    contract F-5 pilots the det will fight in February. You lead the strike.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, grading the checkride from MAGIC"
+    - name: "MAGIC"
+      role: "E-3 AWACS"
+    - name: "Uzi 1"
+      role: "Two F/A-18C, escort (AI)"
+    - name: "Weasel 1"
+      role: "Two F/A-18C with HARMs, SEAD (AI)"
+    - name: "Bandit 61"
+      role: "Two F-5E aggressors from the north"
+    - name: "Colt 1-1 / 1-2"
+      role: "You and your wingman, strike flight with GBU-38s"
+  hook: |
+    "I'm not grading the bombs. I'm grading whether the bombs land when you said they would,
+    with everyone still alive." WREN, checkride brief
+  outcomes:
+    success: |
+      Complete. Bombs on target inside the window, nobody lost. WREN signs the work-ups card in front
+      of the whole detachment, and you're cleared for the February exercise.
+    partial: |
+      Partial: re-fly items. The target is destroyed, but outside the TOT window, or a strike jet
+      was lost to a leaker. You'll re-fly the checkride with the next package.
+    failure: |
+      Incomplete: re-fly the checkride. The target is still standing. WREN debriefs the timeline
+      line by line.
+
+situation: |
+  Strike two-ship from Kutaisi with GBU-38s against a simulated fuel and ammunition point in open fields southwest of
+  Khashuri. Uzi 1 (escort) and Weasel 1 (SEAD) launch with you and
+  push together from PUSH, 43 km west of the target. TOT is 3:20 after PUSH. A weapons-hold SA-8
+  sits at the target; two live-fire F-5E aggressors come from the north when the package pushes.
+
+objectives:
+  primary: "Destroy the target set with JDAMs inside the TOT window."
+  secondary: "Lose no strike aircraft to the aggressors."
+  tertiary: "Recover both jets to Kutaisi above bingo."
+
+roe: |
+  GBU-38s on the target vehicles inside TARGET AREA only. Air-to-air against the aggressors after
+  MAGIC calls them hostile. The SA-8 is Weasel's: strike flight doesn't engage it.
+
+threats:
+  # Training: the players, exactly as they'll play
+  - name: "Range SA-8 at the target (weapons hold)"
+    kind: sam
+    lat: 41.9580
+    lon: 43.4800
+    range_km: 10
+    notes: "Live radar, weapons hold. Weasel 1 is cleared to kill it."
+  - name: "Bandit 61: two F-5E (live-fire)"
+    kind: air
+    lat: 42.3500
+    lon: 43.5500
+    range_km: 0
+    notes: "Launch from the north when the package crosses PUSH. AIM-9 and guns."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Colt (inter-flight)", freq: "254.000 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "MAGIC (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Package common", freq: "262.000 AM", radio: 1, channel: 3, notes: "Uzi and Weasel check in here" }
+  - { name: "Kutaisi Tower", freq: "134.000 AM", radio: 2, channel: 1, notes: "TACAN 44X" }
+  - { name: "WREN, MAGIC, Uzi, Weasel", freq: "262.000 AM", notes: "Scripted calls (on-screen text)" }
+
+flights:
+  - callsign: "Colt 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Kutaisi
+    start: cold
+    radio1_mhz: 254.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_55_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb
+      3: FPU_8A_Fuel_Tank_330_gallons
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: FPU_8A_Fuel_Tank_330_gallons
+      8: BRU_55_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "4× GBU-38, 1× AIM-120C, 2× AIM-9X, ATFLIR, 3× 330 gal tanks"
+    bingo_lbs: 4500
+    joker_lbs: 6000
+    waypoints:
+      - { name: "PUSH",     lat: 42.0500, lon: 42.9800, alt_ft: 20000, kts: 420, eta: "09:58", zone_km: 4 }
+      - { name: "IP",       lat: 42.0000, lon: 43.3200, alt_ft: 20000, kts: 450, eta: "10:01", zone_km: 3 }
+      - { name: "TGT",      lat: 41.9600, lon: 43.4700, alt_ft: 20000, kts: 450, eta: "10:02", action: bomb, zone_km: 3, timing: { from: "PUSH", seconds: 200, window_s: 30, flag: 61 } }
+      - { name: "EGRESS",   lat: 42.1500, lon: 43.1000, alt_ft: 24000, kts: 480, eta: "10:06", zone_km: 4 }
+    land: Kutaisi
+
+target:
+  name: "Simulated fuel and ammunition point"
+  lat: 41.9950
+  lon: 43.5200
+  groups: ["Target Set"]
+  description: "Six vehicles in a line in open fields: fuel bowsers and ammunition trucks."
+  dmpi: "One GBU-38 per vehicle. Lead takes the western three, wingman the eastern three."
+
+zones:
+  - { name: "TARGET AREA", lat: 41.9600, lon: 43.4700, radius_km: 5 }
+
+units:
+  - name: "Target Set"
+    coalition: red
+    type: [ATZ_10, ATZ_10, Ural_375, Ural_375, KAMAZ_Truck, KAMAZ_Truck]
+    lat: 41.9600
+    lon: 43.4700
+    heading: 90
+    hold_fire: true
+  - name: "Range Osa"
+    coalition: red
+    type: [Osa_9A33_ln]
+    lat: 41.9580
+    lon: 43.4800
+    heading: 270
+    hold_fire: true
+
+support:
+  - kind: awacs
+    callsign: "MAGIC"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.2000
+    lon: 42.4000
+    alt_ft: 30000
+    heading: 90
+    leg_nm: 25
+    freq_mhz: 251.0
+  - kind: flight
+    callsign: "Uzi 1"
+    aircraft: FA_18C_hornet
+    coalition: blue
+    count: 2
+    task: sweep
+    spawn: { lat: 42.0800, lon: 42.9000, alt_ft: 24000, kts: 420 }
+    route:
+      - { lat: 42.0800, lon: 43.3600, alt_ft: 26000 }
+      - { lat: 42.1500, lon: 43.5500, alt_ft: 26000 }
+      - { lat: 42.1500, lon: 43.1000, alt_ft: 26000 }
+  - kind: flight
+    callsign: "Weasel 1"
+    aircraft: FA_18C_hornet
+    coalition: blue
+    count: 2
+    task: sead
+    spawn: { lat: 42.0300, lon: 42.9300, alt_ft: 22000, kts: 450 }
+    route:
+      - { lat: 42.0100, lon: 43.3000, alt_ft: 22000 }
+      - { lat: 42.0600, lon: 43.1000, alt_ft: 22000 }
+  - kind: flight
+    callsign: "Bandit 61"
+    aircraft: F_5E_3
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 42.3500, lon: 43.5500, alt_ft: 18000, kts: 420 }
+    route:
+      - { lat: 42.0200, lon: 43.4000 }
+      - { lat: 42.0500, lon: 43.0000 }
+
+storyboard:
+  - phase: "Start and Join"
+    time: "09:30"
+    waypoints: []
+    brief: |
+      Cold start at Kutaisi, two-ship. Check the JDAM targets are loaded: three per jet, one per
+      vehicle. Depart east and climb to 20,000 ft for PUSH. Uzi and Weasel check in on package common.
+    script: "WREN opens the checkride; Uzi and Weasel are airborne from the start (spawned in the air near PUSH)."
+    trigger:
+      when: { time_after: 10 }
+      message: "WREN: Colt, Wren. Checkride's on. Uzi and Weasel are checking in on package common. Push on time."
+      seconds: 15
+
+  - phase: "Push"
+    time: "09:58"
+    waypoints: ["PUSH", "IP"]
+    notes: "Ask the strike lead what the TOT plan was if Weasel hadn't checked in."
+    brief: |
+      Cross PUSH at 20,000 ft and 420 kt. That starts the TOT clock: 3:20 to the target. The
+      aggressors will launch when the package pushes; Uzi will call them.
+    script: "Crossing PUSH sets flag 30 and launches Bandit 61 from the north."
+    trigger:
+      when: { player_in_zone: "PUSH" }
+      set_flag: 30
+      activate: ["Bandit 61"]
+      message: "MAGIC: Package, Magic. Pop-up group, two contacts, north three-five miles, angels one-eight, hot. Bandit, bandit. Uzi, commit."
+      seconds: 20
+
+  - phase: "Time on Target"
+    time: "10:02"
+    waypoints: ["TGT"]
+    brief: |
+      JDAMs from 20,000 ft inside the LAR. The sim calls your TOT at TGT. Weasel will have dealt with
+      the SA-8 by then; if it's still radiating, release and get out.
+    script: "Target destroyed with an on-time TOT (flag 61) completes the checkride (flag 10). Late or early TOT with the target destroyed: partial (flag 20)."
+    triggers:
+      - when: { target_destroyed: true, flag: 61 }
+        set_flag: 10
+        message: "WREN: Colt, Wren. Target destroyed, on time. Get out of there."
+        seconds: 15
+      - when: { target_destroyed: true, flag_false: 61, time_since_flag: [30, 330] }
+        set_flag: 20
+        message: "WREN: Colt, Wren. Target's down, but you weren't in the window. Egress."
+        seconds: 15
+
+  - phase: "Egress"
+    time: "10:06"
+    waypoints: ["EGRESS"]
+    brief: |
+      Off target to the northwest, climbing to 24,000 ft at 480 kt. Fence out at EGRESS and recover
+      to Kutaisi.
+    script: "WREN closes the checkride at EGRESS."
+    trigger:
+      when: { player_in_zone: "EGRESS", flag: 30 }
+      message: "WREN: Colt, Wren. Fence out. I'll see the package in the big room."
+      seconds: 15

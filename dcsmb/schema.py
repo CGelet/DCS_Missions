@@ -18,10 +18,11 @@ class MissionError(ValueError):
 
 REQUIRED_TOP = ["meta", "narrative", "situation", "objectives", "flights", "target", "storyboard"]
 TRIGGER_WHEN = {"time_after", "player_in_zone", "group_dead", "group_life_below", "group_in_zone", "flag", "flag_false",
-                "target_destroyed", "variant", "time_since_flag", "player_below_ft", "player_below_agl_ft"}
+                "target_destroyed", "variant", "time_since_flag", "player_below_ft", "player_below_agl_ft",
+                "player_slower_kts", "player_above_ft", "scenery_dead"}
 CATEGORIES = {"operational", "training"}
 SUPPORT_KINDS = {"awacs", "tanker", "cap", "intercept", "flight"}
-AI_TASKS = {"antiship", "sweep", "cap", "strike", "transport"}
+AI_TASKS = {"antiship", "sweep", "cap", "strike", "transport", "sead"}
 INTEL = {"confirmed", "suspected", "possible"}
 
 
@@ -67,6 +68,8 @@ def _check_when(when, where: str, wp_names: set, group_names: set, variants: dic
         t = when["time_since_flag"]
         if not (isinstance(t, list) and len(t) == 2 and all(isinstance(x, int) for x in t)):
             errs.append(f"{where}: time_since_flag must be [flag, seconds], got {t!r}")
+    if "scenery_dead" in when and when["scenery_dead"] not in wp_names:
+        errs.append(f"{where}: scenery_dead references unknown zone '{when['scenery_dead']}'")
     if "group_dead" in when and when["group_dead"] not in group_names:
         errs.append(f"{where}: group_dead references unknown group '{when['group_dead']}'")
     if "variant" in when:
@@ -113,6 +116,15 @@ def validate(data) -> None:
         for i, g in enumerate(tr.get("grade_sheet", [])):
             if not (isinstance(g, dict) and g.get("item") and g.get("standard")):
                 errs.append(f"training.grade_sheet[{i}]: needs 'item' and 'standard'")
+    w = meta.get("weather") or {}
+    if w.get("cloud_preset"):
+        from dcs.cloud_presets import Clouds
+        cp = getattr(Clouds, str(w["cloud_preset"]), None)
+        if cp is None:
+            errs.append(f"meta.weather.cloud_preset: unknown preset {w['cloud_preset']!r} (see dcs.cloud_presets.Clouds)")
+        elif not isinstance(w.get("cloud_base_ft"), int) or not cp.value.min_base <= w["cloud_base_ft"] * 0.3048 <= cp.value.max_base:
+            errs.append(f"meta.weather.cloud_base_ft: {w['cloud_preset']} needs a base between "
+                        f"{cp.value.min_base / 0.3048:.0f} and {cp.value.max_base / 0.3048:.0f} ft")
     if meta.get("theater") != "caucasus":
         errs.append(f"meta.theater: only 'caucasus' is supported so far, got {meta.get('theater')!r}")
 
@@ -240,5 +252,58 @@ def validate(data) -> None:
             if "chance" in trig and not 0 < trig["chance"] < 100:
                 errs.append(f"{tw}: 'chance' is a percentage between 1 and 99")
 
+    sets = [t.get("set_flag") for ph in data["storyboard"] for t in phase_triggers(ph)]
+    sets += [o.get("set_flag") for v in data.get("variants", []) for o in v.get("options", [])]
+    if 10 not in sets:
+        errs.append("no trigger sets flag 10, the success flag (the mission goal and DCS campaigns score on it)")
+
     if errs:
         raise MissionError("\n".join(errs))
+
+
+def load_campaigns(campaigns_dir: Path, missions: list[dict]) -> list[dict]:
+    """Load every campaigns/<id>/campaign.yaml, check it against the missions, and tag each chapter's mission.
+
+    campaign.yaml is the only place chapter order lives. Each chapter's mission gets
+    data["campaign"] = {id, title, chapter, of, previously} for the page builders.
+    """
+    by_id = {m["meta"]["id"]: m for m in missions}
+    out, owner, errs = [], {}, []
+    for path in sorted(Path(campaigns_dir).glob("*/campaign.yaml")):
+        c = yaml.safe_load(path.read_text())
+        where = f"campaigns/{path.parent.name}"
+        for k in ("id", "title", "premise", "chapters"):
+            if not c.get(k):
+                errs.append(f"{where}: missing '{k}'")
+        if c.get("id") and c["id"] != path.parent.name:
+            errs.append(f"{where}: id '{c['id']}' must match its folder name")
+        cat = c.get("category", "operational")
+        if cat not in CATEGORIES:
+            errs.append(f"{where}: category must be one of {sorted(CATEGORIES)}")
+        last_date = None
+        for i, ch in enumerate(c.get("chapters") or [], 1):
+            mid = ch.get("mission")
+            m = by_id.get(mid)
+            if m is None:
+                errs.append(f"{where}: chapter {i} references unknown mission '{mid}'")
+                continue
+            if mid in owner:
+                errs.append(f"{where}: mission '{mid}' is already chapter of campaign '{owner[mid]}'")
+            owner[mid] = c.get("id")
+            if m["meta"].get("category", "operational") != cat:
+                errs.append(f"{where}: chapter {i} ({mid}) is {m['meta'].get('category', 'operational')}, campaign is {cat}")
+            d = str(m["meta"]["date"])
+            if last_date and d < last_date:
+                errs.append(f"{where}: chapter {i} ({mid}) is dated {d}, before the chapter it follows ({last_date})")
+            last_date = d
+            if i == 1 and ch.get("previously"):
+                errs.append(f"{where}: chapter 1 can't have 'previously'")
+        out.append(c)
+    if errs:
+        raise MissionError("\n".join(errs))
+    for c in out:
+        n = len(c["chapters"])
+        for i, ch in enumerate(c["chapters"], 1):
+            by_id[ch["mission"]]["campaign"] = {"id": c["id"], "title": c["title"], "chapter": i, "of": n,
+                                                "previously": (ch.get("previously") or "").strip()}
+    return out

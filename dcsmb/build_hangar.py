@@ -31,7 +31,9 @@ def features(data: dict) -> list[str]:
 
 
 def card(data: dict, hangar: Path) -> dict:
+    from .build_campaign import miz_path
     meta, player = data["meta"], next(f for f in data["flights"] if f.get("player"))
+    camp = data.get("campaign")
     teaser = data["narrative"]["backstory"].strip().split("\n\n")[0].replace("\n", " ")
     return {
         "id": meta["id"],
@@ -50,21 +52,40 @@ def card(data: dict, hangar: Path) -> dict:
         "objective": data["objectives"].get("primary", ""),
         "hook": (data["narrative"].get("hook") or "").strip(),
         "teaser": teaser,
+        "campaign": camp["title"] if camp else "Standalone",
+        "campaign_id": camp["id"] if camp else "",
+        "chapter": f"{camp['title']} · {camp['chapter']}/{camp['of']}" if camp else "",
+        "miz": miz_path(data, hangar).relative_to(hangar).as_posix(),
         "kneeboards": sorted(p.name for p in (hangar / meta["id"] / "kneeboard").glob("*.png")),
     }
 
 
-def build(missions: list[dict], hangar: Path) -> list[Path]:
-    cards = sorted((card(m, hangar) for m in missions), key=lambda c: (str(c["date"]), c["id"]))  # campaign order
-    filters = [("aircraft", "Aircraft", sorted({c["aircraft_type"] for c in cards})),
+def build(missions: list[dict], hangar: Path, campaigns: list[dict] = ()) -> list[Path]:
+    from .build_campaign import summary
+    cards = sorted((card(m, hangar) for m in missions), key=lambda c: (str(c["date"]), c["id"]))  # story order
+    filters = [("campaign", "Campaign", [c["title"] for c in campaigns] + (["Standalone"] if any(not c["campaign_id"] for c in cards) else [])),
+               ("aircraft", "Aircraft", sorted({c["aircraft_type"] for c in cards})),
                ("role", "Mission type", sorted({c["role"] for c in cards})),
                ("features", "Features", sorted({f for c in cards for f in c["features"]}))]
+    by_id = {c["id"]: c for c in cards}
+    sections = []
+    for c in campaigns:  # one section per campaign, chapters in order
+        sm = summary(c, missions)
+        sections.append({"key": f"c-{c['id']}", "category": sm["category"], "heading": f"{c['title']} campaign",
+                         "blurb": f"{sm['subtitle']} {sm['count']} chapters, {sm['first']} to {sm['last']}.".strip(),
+                         "link": f"campaigns/{c['id']}/index.html", "missions": [by_id[ch["mission"]] for ch in c["chapters"]]})
+    for cat, heading, blurb in (
+            ("operational", "Standalone operations", "The Black Sea missions, to fly in any order. Briefings carry only what the squadron knows, and the sim decides the rest."),
+            ("training", "Standalone training", "Syllabus events. Everything is briefed as it is: training rules, grade sheet, range players.")):
+        group = [m for m in cards if m["category"] == cat and not m["campaign_id"]]
+        if group:
+            sections.append({"key": cat, "category": cat, "heading": heading, "blurb": blurb, "link": "", "missions": group})
+    summaries = [summary(c, missions) for c in campaigns]
     hangar.mkdir(parents=True, exist_ok=True)
     out = []
     for name in ("index.html", "README.md"):
         path = hangar / name
-        path.write_text(env().get_template(f"hangar.{name.split('.')[1]}.j2").render(missions=cards, filters=filters, sections=[
-            ("operational", "Operational missions", "A campaign over the Black Sea coast. Briefings carry only what the squadron knows, and the sim decides the rest."),
-            ("training", "Training missions", "Syllabus events. Everything is briefed as it is: training rules, grade sheet, range players.")]))
+        path.write_text(env().get_template(f"hangar.{name.split('.')[1]}.j2").render(
+            missions=cards, filters=filters, sections=sections, campaigns=summaries))
         out.append(path)
     return out

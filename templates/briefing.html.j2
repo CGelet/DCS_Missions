@@ -15,6 +15,7 @@
 
 <header class="hero">
   <div class="wrap">
+    {% if campaign %}<div class="eyebrow" style="margin-bottom:10px"><a href="../campaigns/{{ campaign.id }}/index.html" style="text-decoration:none">{{ "Training campaign" if is_training else "Campaign" }} {{ campaign.title }}</a> · Chapter {{ campaign.chapter }} of {{ campaign.of }}</div>{% endif %}
     <div class="eyebrow">{{ T.eyebrow }} {{ narrative.operation }}{% if training.syllabus %} · {{ training.syllabus }}{% endif %}</div>
     <h1>{{ meta.subtitle or meta.title }}</h1>
     <div class="meta-row">
@@ -25,6 +26,7 @@
       <span>Base <b>{{ route[0].name }}</b></span>
     </div>
     {% if narrative.hook %}<blockquote class="hook">{{ narrative.hook | trim }}</blockquote>{% endif %}
+    {% if campaign and campaign.previously %}<div class="previously"><h3>Previously</h3>{% for p in campaign.previously | paras %}<p>{{ p }}</p>{% endfor %}</div>{% endif %}
   </div>
 </header>
 

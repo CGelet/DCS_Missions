@@ -211,6 +211,13 @@ def slides(data: dict) -> list[dict]:
         quote=(n.get("hook") or "").strip(),
         notes="Set the tone. Read the quote out loud, then go straight into the story.")
 
+    camp = data.get("campaign")
+    if camp:
+        deck[0]["eyebrow"] = f"{camp['title']} · Chapter {camp['chapter']} of {camp['of']} · " + deck[0]["eyebrow"]
+        if camp["previously"]:
+            add("story", eyebrow="Previously", text=camp["previously"],
+                notes="Recap the last chapter in a sentence or two, then move on.")
+
     paras = [p.strip() for p in n["backstory"].strip().split("\n\n") if p.strip()]
     for i, p in enumerate(paras):
         add("story", eyebrow=T["story"] if i == 0 else T["story_more"], text=p,

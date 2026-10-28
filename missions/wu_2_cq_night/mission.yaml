@@ -1,0 +1,238 @@
+# WORK-UPS event 2: night carrier qualification, Case III. Source of truth; `python -m dcsmb build` renders hangar/wu_2_cq_night/.
+#
+# Training: nothing hidden or random. Cold start on the Stennis at night, launch, fly the departure, then
+# a Case III recovery: marshal 21 nm astern, push, and fly the approach to two traps. The sim times
+# MARSHAL to the 10-mile gate (EARLY / ON TIME / LATE) and detects traps as in event CQ-1. A night land
+# breeze (from 080) puts the boat on an easterly BRC, so marshal and the approach are over open sea.
+# Gate positions allow for the ship's 15 kt advance during the first half hour.
+
+meta:
+  id: wu_2_cq_night
+  title: "BLACK DECK"
+  subtitle: "Night Carrier Qualification"
+  category: training
+  theater: caucasus
+  role: "Carrier quals"
+  date: 2026-01-16
+  start_time: "18:45"
+  weather:
+    temperature_c: 5
+    wind_from_deg: 80
+    wind_kts: 10
+    clouds: "Broken 3,500 ft, no moon"
+    visibility: "15 km"
+    qnh_inhg: 30.00
+    cloud_preset: Broken3
+    cloud_base_ft: 3500
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Det work-ups, event CQ-2"
+  rules:
+    - "Case III. Marshal on the 260 radial at 21 nm, angels 6. Push from MARSHAL on your own: the sim times you to the 10-mile gate."
+    - "Platform at 5,000 ft: slow to 250 kt and 2,000 ft/min. At 10 nm, 1,200 ft; dirty up at 8 nm."
+    - "Two arrested landings. A trap counts only after you've climbed above 1,000 ft since the last one."
+    - "Bolter: climb straight ahead to 1,200 ft, then the bolter pattern back to the 6 nm point."
+    - "Bingo 4,500 lb to Kobuleti (TACAN 67X). TEXACO is overhead at 6,000 ft: tank below 6,000 lb."
+  knock_it_off: |
+    Vertigo, a bad ICLS, or anything that doesn't feel right on a dark night: call "Knock it off",
+    climb straight ahead to 2,000 ft, level the wings on the instruments and tell Mother. You'll be
+    sent back to marshal. Nobody gets graded for pressing on.
+  special_subjects:
+    - "The black hole: there's no horizon tonight. The boat's lights are the only thing outside."
+    - "ICLS needles versus the ball: fly the needles until the ball is in sight, then the ball."
+    - "Night tanking on the S-3B: lights, slow closure, and no stabbing at the basket."
+    - "Fatigue after a bolter: the second pass is where people get low. Fly the numbers again."
+  grade_sheet:
+    - { item: "Night launch and departure", standard: "Cat shot, climb straight ahead to 1,200 ft, then the departure to SPLIT." }
+    - { item: "Marshal and push", standard: "Arrives at MARSHAL at angels 6, pushes and reaches the 10-mile gate within ±30 s of plan." }
+    - { item: "Approach", standard: "Platform at 5,000 ft, 1,200 ft at 10 nm, dirty at 8 nm, on ICLS." }
+    - { item: "Trap 1", standard: "Arrested landing, graded by PADDLES." }
+    - { item: "Trap 2", standard: "Second arrested landing after a launch. Two traps complete night quals." }
+  debrief_focus:
+    - "ICLS needle tape from 6 nm to the ramp."
+    - "Push timing and what you did to fix it."
+    - "PADDLES' comments on each pass."
+
+narrative:
+  operation: "BLACK DECK"
+  backstory: |
+    The day traps went well enough that the strike group gave the detachment the deck again,
+    after dark. Night quals are the hardest landings in naval aviation: no horizon, a small lit
+    rectangle moving at 15 knots, and the knowledge that the only alternate is 60 km away.
+
+    You start on the deck tonight. Launch, go to marshal like it's the end of a real mission, and
+    come home on the numbers. PADDLES grades every pass. WREN will be on the platform again.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, on the LSO platform"
+    - name: "LT Marcus \"PADDLES\" Odum"
+      role: "Stennis landing signal officer"
+    - name: "Marshal"
+      role: "Stennis CATCC: marshal and approach control"
+    - name: "TEXACO 1"
+      role: "S-3B recovery tanker overhead the boat"
+    - name: "Ford 1"
+      role: "You, single-ship F/A-18C"
+  hook: |
+    "At night, the deck doesn't get bigger as you get closer. It just gets darker around it.
+    Fly the needles." PADDLES, night brief
+  outcomes:
+    success: |
+      Complete. Two night traps, on time out of marshal. You're night-qualified, and the detachment
+      can now plan carrier play for the exercise around you.
+    partial: |
+      Partial: re-fly items. One night trap in the book, or two with the push well out of the window.
+      You'll re-fly the missing items on the next deck window.
+    failure: |
+      Incomplete: re-fly the event. No night traps. You recovered at Kobuleti or tanked until the
+      deck closed. WREN schedules more day passes first.
+
+situation: |
+  Night, no moon, broken cloud at 3,500 ft. You start cold on the Stennis, 35 km west of Batumi,
+  steaming east into a 10 kt land breeze at 15 kt (BRC 080). Launch, depart to SPLIT, then fly to
+  MARSHAL, 21 nm astern on the 260 radial at 6,000 ft. Push, and fly the Case III approach to two
+  traps with a launch between them. TEXACO orbits overhead at 6,000 ft.
+
+objectives:
+  primary: "Two night arrested landings aboard the Stennis."
+  secondary: "Reach the 10-mile gate within ±30 s of plan after pushing from MARSHAL."
+  tertiary: "Fuel above bingo at all times: tank on TEXACO if you need to."
+
+roe: |
+  No weapons. Master arm SAFE. Every instruction from Marshal and PADDLES is mandatory.
+
+threats:
+  - name: "No horizon"
+    kind: hazard
+    lat: 41.7500
+    lon: 40.9000
+    range_km: 5
+    notes: "Moonless and overcast above. Over the sea there is nothing outside but the ship's lights."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Ford (det common)", freq: "255.500 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "TEXACO 1 (S-3B)", freq: "253.000 AM", radio: 1, channel: 2, notes: "TACAN 60Y" }
+  - { name: "Mother / Marshal (Stennis)", freq: "127.500 AM", radio: 2, channel: 1, notes: "TACAN 74X, ICLS 1. Answers the ATC menu" }
+  - { name: "Kobuleti Tower", freq: "133.000 AM", radio: 2, channel: 2, notes: "TACAN 67X. Bingo field" }
+  - { name: "PADDLES, Marshal, WREN", freq: "127.500 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+ships:
+  - name: "Stennis Group"
+    coalition: blue
+    type: [Stennis, TICONDEROG]
+    lat: 41.7500
+    lon: 40.9000
+    heading: 80
+    speed_kts: 15
+    route:
+      - { lat: 41.7700, lon: 41.0700 }
+      - { lat: 41.7900, lon: 41.2400 }
+    tacan: { channel: "74X", callsign: "STN" }
+    icls: 1
+    freq_mhz: 127.5
+
+flights:
+  - callsign: "Ford 1"
+    aircraft: FA_18C_hornet
+    count: 1
+    player: true
+    base: "Stennis Group"
+    start: cold
+    radio1_mhz: 255.5
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      5: FPU_8A_Fuel_Tank_330_gallons
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "1× 330 gal tank, 2× AIM-9X (inert)"
+    bingo_lbs: 4500
+    joker_lbs: 6000
+    waypoints:
+      - { name: "SPLIT",    lat: 41.8500, lon: 40.9500, alt_ft: 6000, kts: 300, eta: "19:05", zone_km: 4 }
+      - { name: "MARSHAL",  lat: 41.7100, lon: 40.6000, alt_ft: 6000, kts: 250, eta: "19:14", zone_km: 4 }
+      - { name: "TEN MILE", lat: 41.7400, lon: 40.8400, alt_ft: 1200, kts: 250, eta: "19:17", zone_km: 2.5, timing: { from: "MARSHAL", seconds: 180, window_s: 30, flag: 61 } }
+    land: "Stennis Group"
+
+target:
+  name: "The Stennis landing area, at night"
+  lat: 41.7700
+  lon: 41.0700
+  zone_m: 50
+  description: "The angled deck's centreline lights, the drop lights under the ramp, and the ball."
+  dmpi: "Target the 3-wire. Fly the needles until the ball is in sight."
+
+support:
+  - kind: tanker
+    callsign: "TEXACO 1"
+    aircraft: S_3B_Tanker
+    coalition: blue
+    lat: 41.7800
+    lon: 41.0000
+    alt_ft: 6000
+    heading: 80
+    leg_nm: 10
+    kts: 250
+    freq_mhz: 253.0
+    tacan: { channel: "60Y", callsign: "TEX" }
+
+storyboard:
+  - phase: "Night Launch"
+    time: "18:45"
+    waypoints: ["SPLIT"]
+    brief: |
+      Cold start on deck. Lights on, taxi to the catapult on the director's wands. After the shot,
+      climb straight ahead to 1,200 ft, then turn to SPLIT and climb to 6,000 ft.
+    script: "Climbing above 1,000 ft sets flag 50 (airborne), which arms the trap detection."
+    triggers:
+      - when: { time_after: 10 }
+        message: "WREN: Ford one, Wren, on the platform. It's dark out there. Fly the numbers and you'll be fine."
+        seconds: 15
+      - when: { player_above_ft: 1000 }
+        set_flag: 50
+        message: "MOTHER: Ford one, airborne. Switch Departure, then Marshal at SPLIT."
+        seconds: 15
+
+  - phase: "Marshal and Push"
+    time: "19:14"
+    waypoints: ["MARSHAL", "TEN MILE"]
+    brief: |
+      Marshal on the 260 radial at 21 nm, angels 6. Push when you arrive: platform at 5,000 ft,
+      then 1,200 ft at 10 miles. The sim calls your timing at the 10-mile gate.
+    script: "Reaching MARSHAL starts the clock; the TEN MILE gate verdict is the timing call (flag 61 if on time)."
+    trigger:
+      when: { player_in_zone: "MARSHAL" }
+      message: "MARSHAL: Ford one, Marshal. Case three, BRC zero-eight-zero, altimeter three-zero-zero-zero. Push at your discretion."
+      seconds: 20
+
+  - phase: "Trap 1"
+    time: "19:20"
+    waypoints: []
+    notes: "Ask when the student called the ball, and what the needles were doing at that moment."
+    brief: |
+      Dirty up at 8 nm, call the ball at three-quarters of a mile, and fly it to the deck. If you
+      bolter, you go round: the bolter pattern brings you back to 6 nm.
+    script: "On deck (below 150 ft MSL, under 40 kt) after flag 50: trap 1 (flag 11)."
+    trigger:
+      when: { player_below_ft: 150, player_slower_kts: 40, flag: 50, time_since_flag: [50, 120] }
+      set_flag: 11
+      message: "PADDLES: Ford one, trap one. Fair pass, little high in close. We're launching you again."
+      seconds: 20
+
+  - phase: "Trap 2"
+    time: "19:35"
+    waypoints: []
+    brief: |
+      Launch again, straight ahead to 1,200 ft, then turn downwind and come round for the second
+      trap. Tank on TEXACO first if you're below 6,000 lb.
+    script: "Above 1,000 ft after trap 1 sets flag 12; on deck again is trap 2 and completes the event (flag 10)."
+    triggers:
+      - when: { player_above_ft: 1000, flag: 11 }
+        set_flag: 12
+        message: "MARSHAL: Ford one, airborne. Turn downwind, I'll vector you to final."
+        seconds: 15
+      - when: { player_below_ft: 150, player_slower_kts: 40, flag: 12 }
+        set_flag: 10
+        message: "PADDLES: Ford one, trap two. Night qual complete. Welcome to the club."
+        seconds: 20

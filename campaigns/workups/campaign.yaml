@@ -1,0 +1,49 @@
+# WORK-UPS: the detachment's January syllabus. Chapter order lives here and nowhere else.
+# `previously` is shown on that chapter's brief and deck: briefed facts only, never director-side truth.
+id: workups
+title: "WORK-UPS"
+subtitle: "Hornet detachment syllabus, January 2026"
+category: training
+setting: "Kutaisi, Vaziani, Senaki and the Stennis"
+premise: |
+  Ten Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in
+  the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC,
+  and a graduation checkride.
+backstory: |
+  The detachment arrived at Kutaisi in the second week of January with ten F/A-18Cs, a container of
+  spares and a partner exercise in February that will put them alongside Georgian, Turkish and
+  Romanian crews. LCDR Ana "WREN" Castellano, the detachment's training officer, has three weeks to
+  make sure every pilot is current and safe in everything the exercise will ask of them.
+
+  Her syllabus builds from the boat outward: landing on a ship by day and by night, shooting radars,
+  working with a controller on the ground, and finally a checkride that puts it all on one timeline. Each event is graded. Pass one to
+  move on to the next.
+cast:
+  - name: "LCDR Ana \"WREN\" Castellano"
+    role: "Detachment training officer: briefs, grades and signs every event"
+  - name: "LT Marcus \"PADDLES\" Odum"
+    role: "Stennis landing signal officer, for the carrier events"
+  - name: "Capt. Giorgi \"AXEMAN\" Kapanadze"
+    role: "Georgian JTAC, 2nd Infantry Brigade"
+  - name: "Maj. Nino Tsereteli"
+    role: "Georgian Air Defence Command, SPARTAN range control"
+  - name: "MAGIC"
+    role: "E-3 AWACS, for the checkride"
+chapters:
+  - mission: wu_1_cq_day
+  - mission: wu_2_cq_night
+    previously: |
+      PADDLES: two day traps aboard the Stennis, 25 km west of Batumi, with PADDLES grading every pass.
+      The strike group has given the detachment the deck again, after dark.
+  - mission: wu_3_sead
+    previously: |
+      BLACK DECK: night quals. Marshal, a timed push and two traps with no horizon. The carrier
+      events are done. Back to land, and to radars.
+  - mission: wu_4_jtac
+    previously: |
+      LOUD NEIGHBOURS: two timed HARM shots at live Soviet-era radars on the SPARTAN range. Next, the
+      Georgian 2nd Infantry Brigade lends the detachment a JTAC.
+  - mission: wu_5_compex
+    previously: |
+      DANGER CLOSE: two 9-lines from AXEMAN, the second one 650 m from a friendly platoon. One event
+      left: WREN's checkride.

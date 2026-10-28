@@ -51,6 +51,13 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .actions a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
 .actions a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.camps { margin-bottom: 40px; }
+.camp { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 12px; padding: 20px 22px; box-shadow: var(--shadow); }
+.camp:hover { border-color: var(--muted); border-top-color: var(--accent); }
+.camp b { font-size: 26px; letter-spacing: -.01em; line-height: 1.1; }
+.camp .sub { font-weight: 600; }
+.camp .prem { color: var(--muted); font-size: 15px; }
+.camp .dates { font: 13px "IBM Plex Mono", monospace; color: var(--muted); margin-top: auto; }
 .kb { display: flex; gap: 8px; overflow-x: auto; }
 .kb img { height: 120px; border-radius: 4px; border: 1px solid var(--line); }
 </style>
@@ -61,6 +68,17 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
   <h1>Mission Hangar</h1>
   <p>Ready-to-fly missions. Download the .miz into <code>Saved Games/DCS/Missions/</code>, read the briefing, and print the kneeboard pages if you fly without the in-game kneeboard.</p>
 </div></header>
+{% if campaigns %}<section class="wrap camps" aria-labelledby="h-camps">
+  <div class="cat-head"><h2 id="h-camps">Campaigns</h2><p>Story arcs flown in order. Each one installs into DCS as a campaign that unlocks the next chapter when you pass the last.</p></div>
+  <div class="grid">{% for c in campaigns %}
+    <a class="camp" href="campaigns/{{ c.id }}/index.html">
+      <span class="eyebrow">{{ "Training campaign" if c.category == "training" else "Campaign" }} · {{ c.count }} chapters</span>
+      <b>{{ c.title }}</b><span class="sub">{{ c.subtitle }}</span>
+      <span class="prem">{{ c.premise }}</span>
+      <span class="dates">{{ c.first }} → {{ c.last }}{% if c.setting %} · {{ c.setting }}{% endif %}</span>
+    </a>{% endfor %}
+  </div>
+</section>{% endif %}
 <div class="wrap">
   <section class="filters" aria-label="Filter missions">
     <input type="search" id="q" placeholder="Search by operation, place, story…" aria-label="Search missions">
@@ -72,14 +90,14 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
   </section>
 </div>
 <main>
-{% for cat, heading, blurb in sections %}{% set group = missions | selectattr("category", "equalto", cat) | list %}{% if group %}
-<section class="cat" data-cat="{{ cat }}" aria-labelledby="h-{{ cat }}">
-  <div class="wrap cat-head"><h2 id="h-{{ cat }}">{{ heading }} <span class="cat-count" data-total="{{ group | length }}">{{ group | length }}</span></h2><p>{{ blurb }}</p></div>
+{% for sec in sections %}{% set group = sec.missions %}{% set cat = sec.category %}
+<section class="cat" data-cat="{{ sec.key }}" aria-labelledby="h-{{ sec.key }}">
+  <div class="wrap cat-head"><h2 id="h-{{ sec.key }}">{{ sec.heading }} <span class="cat-count" data-total="{{ group | length }}">{{ group | length }}</span></h2><p>{{ sec.blurb }}{% if sec.link %} <a href="{{ sec.link }}">Campaign page</a>{% endif %}</p></div>
   <div class="wrap grid">
 {% for m in group %}
-  <article class="m" data-aircraft="{{ m.aircraft_type }}" data-role="{{ m.role }}" data-features="{{ m.features | join('|') }}"
-           data-text="{{ [m.operation, m.title, m.theater, m.aircraft, m.role, m.hook, m.teaser, m.objective] | join(' ') | lower }}">
-    <div class="eyebrow">{{ m.eyebrow }}</div>
+  <article class="m" data-campaign="{{ m.campaign }}" data-aircraft="{{ m.aircraft_type }}" data-role="{{ m.role }}" data-features="{{ m.features | join('|') }}"
+           data-text="{{ [m.campaign, m.operation, m.title, m.theater, m.aircraft, m.role, m.hook, m.teaser, m.objective] | join(' ') | lower }}">
+    <div class="eyebrow">{% if m.chapter %}{{ m.chapter }} · {% endif %}{{ m.eyebrow }}</div>
     <h2>{{ m.title }}</h2>
     <div class="meta"><span class="chip role">{{ m.role }}</span><span class="chip">{{ m.theater }}</span><span class="chip">{{ m.aircraft }}</span><span class="chip">{{ m.date }} · {{ m.start_time }}L</span>{% for f in m.features %}<span class="chip">{{ f }}</span>{% endfor %}</div>
     {% if m.hook %}<p class="hook">{{ m.hook }}</p>{% endif %}
@@ -91,27 +109,28 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
       <a href="{{ m.id }}/slides.html">Slide deck</a>
       {% if cat == "training" %}<a href="{{ m.id }}/director.html" title="Every trigger, radio call and how each grade is decided">Instructor view</a>
       {% else %}<a href="{{ m.id }}/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>{% endif %}
-      <a href="{{ m.id }}/{{ m.id }}.miz" download>Download .miz</a>
+      <a href="{{ m.miz }}" download>Download .miz</a>
     </div>
   </article>
 {% endfor %}
   </div>
 </section>
-{% endif %}{% endfor %}
+{% endfor %}
 </main>
 <p class="wrap empty" id="empty" hidden>No missions match. Try removing a filter.</p>
 <script>
-// Within Aircraft and Mission type, any selected value matches; selected Features must all be present.
+// Within Campaign, Aircraft and Mission type, any selected value matches; selected Features must all be present.
 const cards = [...document.querySelectorAll(".m")];
 const q = document.getElementById("q"), count = document.getElementById("count"),
       clear = document.getElementById("clear"), empty = document.getElementById("empty");
-const sel = { aircraft: new Set(), role: new Set(), features: new Set() };
+const sel = { campaign: new Set(), aircraft: new Set(), role: new Set(), features: new Set() };
 function apply() {
   const text = q.value.trim().toLowerCase();
   let n = 0;
   cards.forEach(c => {
     const has = k => c.dataset[k] ? c.dataset[k].split("|") : [];
-    const ok = (!sel.aircraft.size || has("aircraft").some(v => sel.aircraft.has(v)))
+    const ok = (!sel.campaign.size || sel.campaign.has(c.dataset.campaign))
+      && (!sel.aircraft.size || has("aircraft").some(v => sel.aircraft.has(v)))
       && (!sel.role.size || has("role").some(v => sel.role.has(v)))
       && [...sel.features].every(v => has("features").includes(v))
       && (!text || text.split(/\s+/).every(w => c.dataset.text.includes(w)));

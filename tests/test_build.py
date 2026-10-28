@@ -137,3 +137,76 @@ def test_slides_cover_story_and_every_phase(data, tmp_path):
     assert all(s["svg"] for s, p in zip(phases, data["storyboard"]) if p.get("waypoints"))
     html = build_slides.build(data, tmp_path / "s.html").read_text()
     assert html.count('<section class="slide') == len(deck)
+
+
+# --- campaigns ------------------------------------------------------------------
+from dcsmb import build_campaign  # noqa: E402
+
+ROOT = Path(__file__).resolve().parent.parent
+CAMPAIGN_DIRS = sorted(p.parent for p in (ROOT / "campaigns").glob("*/campaign.yaml"))
+
+
+@pytest.fixture(scope="module")
+def everything():
+    missions = [schema.load(p) for p in MISSIONS]
+    return missions, schema.load_campaigns(ROOT / "campaigns", missions)
+
+
+def _lua_table(text: str):
+    """Just enough Lua to read back our own .cmp: keyed tables, strings, numbers."""
+    import ast
+    body = text.split("=", 1)[1].rsplit("-- end of campaign", 1)[0]
+    body = re.sub(r'\[("(?:[^"\\]|\\.)*"|\d+)\]\s*=', r"\1:", body)
+    return ast.literal_eval(body.replace("true", "True").replace("false", "False"))
+
+
+def test_campaign_validation(tmp_path, bridge):
+    camp = tmp_path / "c" / "x"
+    camp.mkdir(parents=True)
+    (camp / "campaign.yaml").write_text(
+        "id: x\ntitle: X\npremise: p\ncategory: training\nchapters:\n  - mission: gudauta_bridge\n    previously: recap\n  - mission: nowhere\n")
+    with pytest.raises(schema.MissionError) as e:
+        schema.load_campaigns(tmp_path / "c", [copy.deepcopy(bridge)])
+    msg = str(e.value)
+    assert "unknown mission 'nowhere'" in msg
+    assert "is operational, campaign is training" in msg
+    assert "chapter 1 can't have 'previously'" in msg
+
+
+def test_mission_needs_success_flag(bridge):
+    bad = copy.deepcopy(bridge)
+    for ph in bad["storyboard"]:
+        for t in phase_triggers(ph):
+            if t.get("set_flag") == 10:
+                del t["set_flag"]
+    with pytest.raises(schema.MissionError, match="sets flag 10"):
+        schema.validate(bad)
+
+
+@pytest.mark.parametrize("cdir", CAMPAIGN_DIRS, ids=lambda p: p.name)
+def test_campaign_builds(cdir, everything, tmp_path):
+    missions, campaigns = everything
+    c = next(c for c in campaigns if c["id"] == cdir.name)
+    by_id = {m["meta"]["id"]: m for m in missions}
+    chapters = [by_id[ch["mission"]] for ch in c["chapters"]]
+    for i, d in enumerate(chapters, 1):
+        assert d["campaign"]["chapter"] == i and d["campaign"]["of"] == len(chapters)
+        build_miz.build(d, build_campaign.miz_path(d, tmp_path))
+    paths = build_campaign.build(c, missions, tmp_path)
+    cmp = _lua_table(paths[0].read_text())
+    assert cmp["startStage"] == 1 and len(cmp["stages"]) == len(chapters)
+    for i, d in enumerate(chapters, 1):
+        f = paths[0].parent / cmp["stages"][i]["missions"][1]["file"]
+        assert f.exists()
+        m = dcs.Mission()
+        m.load_file(str(f))
+        assert [g.score for g in m.goals.goals["blue"]] == [100]
+    # The campaign page is pilot-facing: nothing from any chapter's director side
+    page = _text((paths[0].parent / "index.html").read_text())
+    for d in chapters:
+        leaks = [s for s in _spoilers(d) if re.sub(r"\s+", " ", s) in page]
+        assert not leaks, f"campaign page leaks {d['meta']['id']}: {leaks}"
+        pilot = _text(build_html.build(d, tmp_path / "b.html").read_text()) + _text(build_slides.build(d, tmp_path / "s.html").read_text())
+        assert f"Chapter {d['campaign']['chapter']} of" in pilot
+        if d["campaign"]["previously"]:
+            assert re.sub(r"\s+", " ", d["campaign"]["previously"]) in pilot

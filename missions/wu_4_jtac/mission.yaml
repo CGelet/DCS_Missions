@@ -1,0 +1,254 @@
+# WORK-UPS event 4: close air support with a JTAC. Source of truth; `python -m dcsmb build` renders hangar/wu_4_jtac/.
+#
+# Training: nothing hidden or random. A scripted JTAC (AXEMAN) talks you on to two target groups close to a
+# friendly platoon on the steppe south of the Gareja range. Talk-ons are text; there's no marking smoke.
+# Hitting the friendly platoon is a foul. Both target groups dead completes the event.
+# All positions on open steppe in Sagarejo district, clear of settlements (OSM).
+
+meta:
+  id: wu_4_jtac
+  title: "DANGER CLOSE"
+  subtitle: "Close Air Support with a JTAC"
+  category: training
+  theater: caucasus
+  role: "CAS"
+  date: 2026-01-22
+  start_time: "13:15"
+  weather:
+    temperature_c: 3
+    wind_from_deg: 310
+    wind_kts: 10
+    clouds: "Scattered 8,000 ft"
+    visibility: "25 km"
+    qnh_inhg: 30.06
+    cloud_preset: LightScattered1
+    cloud_base_ft: 8000
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Det work-ups, event CAS-1"
+  rules:
+    - "No weapons release without AXEMAN's \"cleared hot\". \"Continue\" means fly the pass with master arm SAFE."
+    - "Friendlies: the platoon in the three Bradleys and a Humvee at the track junction. Every attack heading must be parallel to the friendly line (north-south)."
+    - "Read back the 9-line's lines 4, 6 and 8 (elevation, target location, friendlies) before you're cleared."
+    - "Minimum 2,000 ft AGL for rocket and gun passes, 5,000 ft AGL for bombs."
+    - "Hitting the friendly platoon is a foul and ends the event."
+    - "Bingo 3,500 lb to Vaziani, 25 km west."
+  knock_it_off: |
+    AXEMAN or the pilot calls "Abort, abort, abort" for anything pointing at the friendlies, and
+    "Knock it off" for anything unsafe. Climb to 15,000 ft over CONTACT POINT, master arm SAFE, and wait
+    for AXEMAN.
+  special_subjects:
+    - "Talk-ons: from big to small. Find the track junction, then the dry stream bed, then the vehicles."
+    - "Danger close: 500 m from friendlies for a GBU-12. What changes in your attack geometry?"
+    - "Rockets versus the gun versus a GBU-12 on two trucks in a ditch."
+    - "Wind: 310 at 10 kt pushes unguided weapons toward the friendlies on the second target."
+  grade_sheet:
+    - { item: "Check-in", standard: "Checks in at CONTACT POINT with position, ordnance and playtime." }
+    - { item: "9-line readback", standard: "Reads back lines 4, 6 and 8 correctly for both 9-lines." }
+    - { item: "Target 1", standard: "Destroys the trucks north of the friendlies on AXEMAN's clearance, on a north-south heading." }
+    - { item: "Target 2", standard: "Destroys the dug-in vehicles east of the friendlies, danger close, on clearance." }
+    - { item: "Fratricide", standard: "No damage to the friendly platoon." }
+  debrief_focus:
+    - "Time from 9-line to first pass for each target."
+    - "Attack headings flown against the briefed north-south restriction."
+    - "Weapon choice for each target and why."
+
+narrative:
+  operation: "DANGER CLOSE"
+  backstory: |
+    The Georgian 2nd Infantry Brigade is on a field exercise south of the Gareja range, and they've
+    offered their joint terminal attack controllers to the detachment for an afternoon. The rules are
+    simple: they'll pretend to be in contact, put old vehicles out as the enemy, and talk you onto them
+    the way they would in a real fight. Their own platoon will be sitting right next to the targets.
+
+    The JTAC is Captain Giorgi Kapanadze, callsign AXEMAN. He's done this in Afghanistan, with real
+    friendlies. He won't clear you hot until he's sure you're looking at the right thing.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, with AXEMAN at the observation post"
+    - name: "Capt. Giorgi \"AXEMAN\" Kapanadze"
+      role: "Georgian JTAC, 2nd Infantry Brigade"
+    - name: "Dodge 1"
+      role: "You, single-ship F/A-18C"
+  hook: |
+    "I'll tell you where to look. I'll tell you when to shoot. If I say abort, you're already
+    pulling off." AXEMAN, CAS brief
+  outcomes:
+    success: |
+      Complete. Both targets destroyed on clearance and the platoon didn't get a scratch. AXEMAN
+      sends WREN a one-word message: "Again." CAS-1 is signed.
+    partial: |
+      Partial: re-fly items. One target is still standing, or you needed more than one talk-on cycle
+      for each. You'll re-fly the second target on the next field day.
+    failure: |
+      Incomplete: re-fly the event. Weapons landed on the friendly platoon. The exercise stops, and the
+      re-fly starts with a long talk with AXEMAN.
+
+situation: |
+  Single ship from Vaziani to CONTACT POINT, 35 km east, over the steppe south of the Gareja range.
+  A Georgian platoon (three Bradleys and a Humvee) holds the track junction. AXEMAN will pass two
+  9-lines in turn: trucks north of the friendlies first, then vehicles dug in east of them, closer.
+  Every target is inert and won't shoot back. Attack headings north-south only.
+
+objectives:
+  primary: "Destroy both target groups on AXEMAN's clearance."
+  secondary: "Correct 9-line readbacks and north-south attack headings."
+  tertiary: "No damage to the friendly platoon."
+
+roe: |
+  Release only on AXEMAN's "cleared hot". Friendly platoon at the track junction: positive
+  identification of the target on every pass. Master arm SAFE outside the attack run.
+
+threats:
+  - name: "Friendly platoon (DO NOT ENGAGE)"
+    kind: hazard
+    lat: 41.5000
+    lon: 45.2400
+    range_km: 0.5
+    notes: "Three Bradleys and a Humvee at the track junction. AXEMAN is with them."
+  - name: "Target 1: trucks north of the friendlies"
+    kind: armor
+    lat: 41.5085
+    lon: 45.2410
+    range_km: 0
+    notes: "Two trucks in the dry stream bed, about 950 m north of the friendlies."
+  - name: "Target 2: dug-in vehicles east of the friendlies"
+    kind: armor
+    lat: 41.5005
+    lon: 45.2480
+    range_km: 0
+    notes: "Two BMPs in scrapes, about 650 m east. Danger close."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Dodge (det common)", freq: "254.000 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "AXEMAN (JTAC)", freq: "264.000 AM", radio: 1, channel: 2, notes: "9-lines and clearances" }
+  - { name: "Vaziani Tower", freq: "140.000 AM", radio: 2, channel: 1, notes: "TACAN 22X" }
+  - { name: "AXEMAN, WREN", freq: "264.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Dodge 1"
+    aircraft: FA_18C_hornet
+    count: 1
+    player: true
+    base: Vaziani
+    start: cold
+    radio1_mhz: 254.0
+    laser_codes: [1688]
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE
+      3: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      7: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      8: BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "4× GBU-12, 4× LAU-61 (76 rockets), 578 rounds 20 mm, ATFLIR, 2× AIM-9X (inert), 1× 330 gal tank"
+    bingo_lbs: 3500
+    joker_lbs: 5000
+    waypoints:
+      - { name: "CONTACT POINT", lat: 41.5800, lon: 45.1800, alt_ft: 15000, kts: 350, eta: "13:35", zone_km: 4 }
+      - { name: "IP NORTH",      lat: 41.5800, lon: 45.2400, alt_ft: 12000, kts: 350, eta: "13:40", action: cas, zone_km: 3 }
+      - { name: "EXIT",          lat: 41.6300, lon: 45.1200, alt_ft: 12000, kts: 380, eta: "14:05", zone_km: 4 }
+    land: Vaziani
+
+target:
+  name: "AXEMAN's targets"
+  lat: 41.5085
+  lon: 45.2410
+  groups: ["Target 1 Trucks", "Target 2 BMPs"]
+  description: "Two inert target groups next to a friendly platoon. AXEMAN gives you one 9-line at a time."
+  dmpi: "Target 1: lead truck, then the second. Target 2: one weapon per BMP, attack heading north-south."
+
+units:
+  - name: "Friendly Platoon"
+    coalition: blue
+    type: [M_2_Bradley, M_2_Bradley, M_2_Bradley, Hummer]
+    lat: 41.5000
+    lon: 45.2400
+    heading: 0
+  - name: "AXEMAN"
+    coalition: blue
+    type: [JTAC]
+    lat: 41.4995
+    lon: 45.2395
+    heading: 0
+  - name: "Target 1 Trucks"
+    coalition: red
+    type: [Ural_375, GAZ_66]
+    lat: 41.5085
+    lon: 45.2410
+    heading: 180
+    hold_fire: true
+  - name: "Target 2 BMPs"
+    coalition: red
+    type: [BMP_2, BMP_2]
+    lat: 41.5005
+    lon: 45.2480
+    heading: 270
+    hold_fire: true
+
+storyboard:
+  - phase: "Start and Check-in"
+    time: "13:15"
+    waypoints: ["CONTACT POINT"]
+    brief: |
+      Cold start at Vaziani, laser code 1688. Depart east to CONTACT POINT at 15,000 ft and check in
+      with AXEMAN: position, ordnance, playtime.
+    script: "AXEMAN answers the check-in at CONTACT POINT with 9-line one (flag 50)."
+    triggers:
+      - when: { time_after: 10 }
+        message: "WREN: Dodge one, Wren, at the OP with Axeman. He's ready when you are."
+        seconds: 15
+      - when: { player_in_zone: "CONTACT POINT" }
+        set_flag: 50
+        message: "AXEMAN: Dodge one, Axeman. Type two control. From IP NORTH, heading one-eight-zero. Target elevation two-four-zero-zero. Two trucks in the dry stream bed, one kilometre north of my position. Friendlies at the track junction, three Bradleys. Egress north. Report IP inbound."
+        seconds: 40
+
+  - phase: "Target 1"
+    time: "13:40"
+    waypoints: ["IP NORTH"]
+    notes: "Ask the student which line of the 9-line they'd refuse to fly without, and why."
+    brief: |
+      Fly to IP NORTH and run in heading 180. Find the track junction and the Bradleys first, then
+      the stream bed north of them, then the trucks. Wait for "cleared hot".
+    script: "Target 1 dead after the 9-line sets flag 11 and AXEMAN passes 9-line two."
+    triggers:
+      - when: { player_in_zone: "IP NORTH", flag: 50 }
+        message: "AXEMAN: Dodge one, I have you. Continue. Look at the track junction south of you. The stream bed runs east-west, one kilometre north of it. Two trucks in the bed. Cleared hot."
+        seconds: 30
+      - when: { group_dead: "Target 1 Trucks", flag: 50 }
+        set_flag: 11
+        message: "AXEMAN: Good effects, both trucks. Dodge one, next 9-line. Two BMPs dug in, six hundred and fifty metres east of my position. Danger close. Attack heading north-south only. Report IP inbound."
+        seconds: 35
+
+  - phase: "Target 2: Danger Close"
+    time: "13:52"
+    waypoints: []
+    brief: |
+      Danger close: the BMPs are 650 m from the platoon. North-south heading only, so nothing long
+      or short lands on the friendlies. Precision weapons are the right answer here.
+    script: "Target 2 dead after target 1 completes the event (flag 10). Any damage to the platoon is fratricide (flag 22)."
+    triggers:
+      - when: { group_dead: "Target 2 BMPs", flag: 11 }
+        set_flag: 10
+        message: "AXEMAN: Both BMPs destroyed. Friendlies are fine. End of mission, Dodge one. Thanks for the work."
+        seconds: 20
+      - when: { group_life_below: ["Friendly Platoon", 100] }
+        set_flag: 22
+        message: "AXEMAN: Abort, abort, abort! Weapons on the friendlies. Knock it off, Dodge one, master arm safe."
+        seconds: 20
+
+  - phase: "Recovery"
+    time: "14:05"
+    waypoints: ["EXIT"]
+    brief: |
+      Off to the northwest via EXIT, master arm SAFE, and recover to Vaziani.
+    script: "WREN's closing call."
+    trigger:
+      when: { player_in_zone: "EXIT", flag: 50 }
+      message: "WREN: Dodge one, Wren. Axeman's writing up your passes. See you at the debrief."
+      seconds: 15

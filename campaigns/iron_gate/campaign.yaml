@@ -1,0 +1,51 @@
+# IRON GATE: the Roki tunnel campaign. Chapter order lives here and nowhere else.
+# `previously` is shown on that chapter's brief and deck: briefed facts only, never director-side truth.
+id: iron_gate
+title: "IRON GATE"
+subtitle: "Ten days in the Liakhvi valley, April 2026"
+category: operational
+setting: "Vaziani and Kutaisi, central Caucasus"
+premise: |
+  An armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at
+  Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the
+  town, and close the tunnel behind it.
+backstory: |
+  In the early hours of 6 April, the Roki tunnel border post stopped answering the phone. By dawn,
+  Georgian police north of Tskhinvali could hear tracks in the gorge. The coalition detachment at
+  Vaziani, ten Hornets that had spent the winter on exercises, was the only air power close enough
+  to do anything about it.
+
+  Over ten days, Enfield flight flies every kind of mission the valley asks for. The brigade adapts
+  after each one: it brings engineers when the bridges fall and a long-range SAM when the jets come,
+  and it attacks Gori when it has nothing left to wait for. The detachment adapts back.
+cast:
+  - name: "CDR Dana \"SABRE\" Whitfield"
+    role: "Detachment commander at Vaziani"
+  - name: "Col. Irakli Gelashvili"
+    role: "Georgian Land Forces operations, Gori"
+  - name: "Lt. Davit \"HAMMER\" Mchedlishvili"
+    role: "JTAC with the Georgian 4th Brigade"
+  - name: "RIVET"
+    role: "Coalition ELINT aircraft"
+  - name: "WIZARD"
+    role: "E-3 AWACS"
+  - name: "Enfield 1-1 / 1-2"
+    role: "You and your wingman"
+chapters:
+  - mission: ig_1_recce
+  - mission: ig_2_bridges
+    previously: |
+      Enfield found the column's vanguard on the Transcam road and stopped it. The tape showed what was
+      behind it: a mechanized brigade, its main body still in the gorge north of Java.
+  - mission: ig_3_sa11
+    previously: |
+      Both Transcam bridges went into the Great Liakhvi before the main body could cross. The brigade
+      stopped at Java and sent for its engineers.
+  - mission: ig_4_gori_cas
+    previously: |
+      The SA-11 that shot down a Georgian Su-25 is gone. With the high sky clear, the column crossed
+      on the engineers' bridge and pushed through Tskhinvali to Ergneti, five kilometres from Gori.
+  - mission: ig_5_gate
+    previously: |
+      The attack on Gori died in the fields north of the town. The northern brigade still holds
+      Tskhinvali, but everything it needs comes through one tunnel and stops at one dump south of Java.

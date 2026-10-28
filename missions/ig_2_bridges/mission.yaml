@@ -1,0 +1,290 @@
+# IRON GATE chapter 2: drop the Transcam bridges before the column's main body crosses. Source of truth;
+# `python -m dcsmb build` renders hangar/ig_2_bridges/.
+#
+# Story device: a race against a clock you can't see. The main body is in the gorge north of Java; the
+# sim rolls whether it's already moving at mission start or starts 15 minutes later. It reaching the
+# north bridge first is the failure ending. 40%: a Tor (SA-15) has moved down to cover the bridges.
+# Low-level ingress up the Ksani valley, then over the ridge and a pop-up for the JDAMs.
+# Bridges are the two Transcam (S10) road bridges between Java and Tskhinvali (OSM way centres).
+# The bridges are DCS map objects: the zone must contain the bridge (check in the editor).
+
+meta:
+  id: ig_2_bridges
+  title: "Operation IRON GATE"
+  subtitle: "Drop the Bridges"
+  theater: caucasus
+  role: "Strike"
+  date: 2026-04-07
+  start_time: "15:30"
+  weather:
+    temperature_c: 11
+    wind_from_deg: 300
+    wind_kts: 10
+    clouds: "Scattered 8,000 ft, tops of the ridges in cloud"
+    visibility: "20 km"
+    qnh_inhg: 29.92
+    cloud_preset: LightScattered1
+    cloud_base_ft: 8000
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "IRON GATE"
+  backstory: |
+    Yesterday's tape changed the conversation in Tbilisi. It isn't a raid: it's a mechanized
+    brigade, and its main body is still in the gorge north of Java, waiting for fuel and for the
+    road to clear. Between it and Tskhinvali, the Transcam road crosses the Great Liakhvi twice on
+    two concrete bridges.
+
+    Drop both, and the brigade has to wait for engineers. Drop them after it's crossed, and there's
+    nothing between it and Gori but the Georgian 4th Brigade. Nobody knows when it will start moving.
+  characters:
+    - name: "CDR Dana \"SABRE\" Whitfield"
+      role: "Detachment commander at Vaziani"
+    - name: "Col. Irakli Gelashvili"
+      role: "Georgian Land Forces operations, Gori"
+    - name: "WIZARD"
+      role: "E-3 AWACS"
+    - name: "Enfield 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets with 2,000 lb JDAMs"
+  hook: |
+    "Two bridges. Four bombs. One brigade on the wrong side of them, if you're quick." SABRE,
+    mass brief
+  outcomes:
+    success: |
+      Both spans are in the river. The brigade's main body stops at Java, and its engineers start
+      looking for a crossing. Gori has bought two days.
+    partial: |
+      One bridge is down, but the column finds a way around it on the old road. It loses a day, not
+      two.
+    failure: |
+      The main body crosses the north bridge before it falls. By nightfall the brigade is between
+      Java and Tskhinvali, and the bridges no longer matter.
+
+situation: |
+  The column's main body is in the gorge north of Java. South of Java, the Transcam road crosses the
+  Great Liakhvi on two concrete road bridges: BRIDGE NORTH, 4 km south of Java, and BRIDGE SOUTH at
+  Gupta, 6 km further on. Drop both before the main body reaches them. It hasn't moved since this
+  morning, but it could start at any time. Expect the column's Strelas along the road and the
+  vanguard's survivors near Gupta.
+
+objectives:
+  primary: "Destroy both Transcam bridges."
+  secondary: "Drop BRIDGE NORTH before the main body reaches it."
+  tertiary: "Recover both aircraft to Vaziani."
+
+roe: |
+  Weapons free on the two bridges and on military vehicles on the Transcam road north of
+  Tskhinvali. Weapons tight in Tskhinvali, Java and Gupta villages. No release north of the tunnel.
+
+threats:
+  - name: "The column's main body"
+    kind: armor
+    intel: confirmed
+    lat: 42.4300
+    lon: 43.9500
+    area_km: 4
+    range_km: 0
+    notes: "Tanks, BMPs and fuel trucks in the gorge north of Java. Stationary since this morning."
+  - name: "Column Strelas"
+    kind: sam
+    intel: suspected
+    lat: 42.3800
+    lon: 43.9300
+    area_km: 6
+    range_km: 5
+    notes: "Strela-10s along the road near Java. Stay above 12,000 ft over the valley."
+  - name: "Point defence at the bridges"
+    kind: sam
+    intel: possible
+    lat: 42.3400
+    lon: 43.9200
+    area_km: 5
+    range_km: 12
+    notes: "If they've guessed what we're after, expect something better than a Strela near the bridges."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Enfield (inter-flight)", freq: "258.000 AM", radio: 1, channel: 1 }
+  - { name: "WIZARD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Vaziani Tower", freq: "140.000 AM", radio: 2, channel: 1, notes: "TACAN 22X" }
+  - { name: "SABRE, Col. Gelashvili", freq: "258.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Enfield 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Vaziani
+    start: cold
+    radio1_mhz: 258.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb
+      3: FPU_8A_Fuel_Tank_330_gallons
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: FPU_8A_Fuel_Tank_330_gallons
+      8: GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× GBU-31 (2,000 lb JDAM), 2× AIM-9X, 1× AIM-120C, ATFLIR, 2× 330 gal tanks"
+    bingo_lbs: 4000
+    joker_lbs: 6000
+    waypoints:
+      - { name: "MUKHRANI",  lat: 41.9329, lon: 44.5746, alt_ft: 1000,  kts: 450, eta: "15:52", agl: true, zone_km: 4 }
+      - { name: "AKHALGORI", lat: 42.1219, lon: 44.4852, alt_ft: 1000,  kts: 450, eta: "15:55", agl: true, zone_km: 4 }
+      - { name: "RIDGE",     lat: 42.2200, lon: 44.2000, alt_ft: 1500,  kts: 450, eta: "15:58", agl: true, zone_km: 4 }
+      - { name: "POP",       lat: 42.2600, lon: 44.0800, alt_ft: 15000, kts: 420, eta: "15:59", zone_km: 4 }
+      - { name: "BRIDGES",   lat: 42.3400, lon: 43.9200, alt_ft: 15000, kts: 420, eta: "16:01", action: bomb, zone_km: 6 }
+      - { name: "EXIT",      lat: 42.0500, lon: 44.3500, alt_ft: 22000, kts: 450, eta: "16:08", zone_km: 5 }
+    land: Vaziani
+
+target:
+  name: "Transcam bridges over the Great Liakhvi"
+  lat: 42.3581
+  lon: 43.9009
+  description: "Two concrete road bridges on the S10 Transcam: BRIDGE NORTH (4 km south of Java) and BRIDGE SOUTH (at Gupta)."
+  dmpi: "The centre span of each bridge. One GBU-31 per bridge per jet: lead takes NORTH, wingman SOUTH."
+  zone_m: 150
+
+zones:
+  - { name: "BRIDGE NORTH", lat: 42.3581, lon: 43.9009, radius_km: 0.15 }
+  - { name: "BRIDGE SOUTH", lat: 42.3127, lon: 43.9371, radius_km: 0.15 }
+  - { name: "NORTH APPROACH", lat: 42.3640, lon: 43.9050, radius_km: 0.6 }
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "Main Body Moving"
+    coalition: red
+    # Already rolling south from the gorge at mission start: about 40 minutes to NORTH APPROACH
+    type: [T_72B, T_72B, BMP_2, BMP_2, Ural_375, ATZ_10]
+    lat: 42.4500
+    lon: 43.9650
+    heading: 200
+    late_activation: true
+    speed_kmh: 18
+    route:
+      - { lat: 42.4300, lon: 43.9600 }
+      - { lat: 42.4144, lon: 43.9586 }
+      - { lat: 42.4059, lon: 43.9444 }
+      - { lat: 42.3954, lon: 43.9257 }
+      - { lat: 42.3640, lon: 43.9050 }
+      - { lat: 42.3127, lon: 43.9371 }
+  - name: "Main Body Waiting"
+    coalition: red
+    # Starts south 15 minutes into the mission: about 48 minutes to NORTH APPROACH
+    type: [T_72B, T_72B, BMP_2, BMP_2, Ural_375, ATZ_10]
+    lat: 42.4300
+    lon: 43.9600
+    heading: 200
+    late_activation: true
+    speed_kmh: 18
+    route:
+      - { lat: 42.4144, lon: 43.9586 }
+      - { lat: 42.3954, lon: 43.9257 }
+      - { lat: 42.3640, lon: 43.9050 }
+      - { lat: 42.3127, lon: 43.9371 }
+  - name: "Java Strelas"
+    coalition: red
+    type: [Strela_10M3, Strela_10M3]
+    lat: 42.3850
+    lon: 43.9200
+    heading: 180
+  - name: "Bridge Tor"
+    coalition: red
+    type: [Tor_9A331]
+    lat: 42.3400
+    lon: 43.9150
+    heading: 180
+    late_activation: true
+
+support:
+  - kind: awacs
+    callsign: "WIZARD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 41.5000
+    lon: 44.6000
+    alt_ft: 30000
+    heading: 90
+    leg_nm: 30
+    freq_mhz: 251.0
+
+variants:
+  - name: "When the main body moves"
+    options:
+      - label: "Already rolling at mission start"
+        activate: ["Main Body Moving"]
+        when: { time_after: 5 }
+      - label: "Starts 15 minutes in"
+        activate: ["Main Body Waiting"]
+        when: { time_after: 900 }
+
+storyboard:
+  - phase: "Launch"
+    time: "15:30"
+    waypoints: []
+    brief: |
+      Cold start at Vaziani. Check both bridges are loaded as JDAM targets: lead on NORTH, wingman on
+      SOUTH, with the other bridge as each jet's second target.
+    script: "SABRE launches you; the main body timing is rolled (see variants). 40%: a Tor covers the bridges."
+    triggers:
+      - when: { time_after: 10 }
+        message: "SABRE: Enfield, Sabre. Main body hasn't moved as of an hour ago. That's all we know. Go."
+        seconds: 15
+      - when: { time_after: 5 }
+        chance: 40
+        activate: ["Bridge Tor"]
+
+  - phase: "Low Up the Ksani"
+    time: "15:52"
+    waypoints: ["MUKHRANI", "AKHALGORI", "RIDGE"]
+    brief: |
+      Down to 1,000 ft AGL at Mukhrani and up the Ksani valley past Akhalgori at 450 kt, then west
+      over the ridge. Nothing in the Liakhvi valley can see you until you pop.
+    script: "No triggers on the low leg: nothing can see you."
+    trigger:
+      when: { player_in_zone: "AKHALGORI" }
+      message: "WIZARD: Enfield, Wizard. Picture clean. Nothing airborne north of the line."
+      seconds: 10
+
+  - phase: "Pop and Release"
+    time: "15:59"
+    waypoints: ["POP", "BRIDGES"]
+    notes: "Ask the room: you pop and the column is already on BRIDGE NORTH. What do you bomb?"
+    brief: |
+      Pop to 15,000 ft at POP and run northwest. Release inside the JDAM's range: lead on BRIDGE
+      NORTH, wingman on BRIDGE SOUTH. Then turn hard south and out, above the Strelas.
+    script: "Each bridge dead sets flag 41 / 42; both completes the mission (flag 10). The main body reaching NORTH APPROACH while BRIDGE NORTH stands is the failure ending (flag 20)."
+    triggers:
+      - when: { scenery_dead: "BRIDGE NORTH" }
+        set_flag: 41
+        message: "COL. GELASHVILI: Enfield, Gori. My observers on the ridge say the north bridge is down. In the river."
+        seconds: 15
+      - when: { scenery_dead: "BRIDGE SOUTH" }
+        set_flag: 42
+        message: "COL. GELASHVILI: Enfield, the Gupta bridge is down too."
+        seconds: 15
+      - when: { flag: [41, 42] }
+        set_flag: 10
+        message: "SABRE: Enfield, Sabre. Both bridges confirmed down. Come home."
+        seconds: 15
+      - when: { group_in_zone: ["Main Body Moving", "NORTH APPROACH"], flag_false: 41 }
+        set_flag: 20
+        message: "COL. GELASHVILI: Enfield, the tanks are on the north bridge! They're crossing!"
+        seconds: 20
+      - when: { group_in_zone: ["Main Body Waiting", "NORTH APPROACH"], flag_false: 41 }
+        set_flag: 20
+        message: "COL. GELASHVILI: Enfield, the tanks are on the north bridge! They're crossing!"
+        seconds: 20
+
+  - phase: "Home"
+    time: "16:08"
+    waypoints: ["EXIT"]
+    brief: |
+      Climb out southeast to 22,000 ft and recover to Vaziani.
+    script: "SABRE asks for the bomb tapes."
+    trigger:
+      when: { player_in_zone: "EXIT" }
+      message: "SABRE: Enfield, Sabre. Copy off target. Get the pod tape to intel, I want to see those spans."
+      seconds: 15

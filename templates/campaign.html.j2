@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ c.title | title }} Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+{% include "_base.css" %}
+.chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.chap { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); }
+.chap .n { font: 600 34px/1 "IBM Plex Mono", monospace; color: var(--accent); }
+.chap h3 { font-size: 20px; margin: 4px 0 6px; }
+.chap .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chap p { margin: 0 0 10px; }
+.chap .hook { font-style: italic; border-left: 3px solid var(--accent); padding-left: 12px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
+.links a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.install ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+@media (max-width: 640px) { .chap { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><a href="../../index.html" style="text-decoration:none">Hangar</a> · {{ "Training campaign" if c.category == "training" else "Campaign" }} · {{ chapters | length }} chapters</div>
+    <h1>{{ c.title }}</h1>
+    <div class="meta-row"><span><b>{{ c.subtitle }}</b></span><span>{{ chapters[0].date }} → {{ chapters[-1].date }}</span>{% if c.setting %}<span>{{ c.setting }}</span>{% endif %}</div>
+    <blockquote class="hook">{{ c.premise | trim }}</blockquote>
+  </div>
+</header>
+<main>
+<section id="story"><div class="wrap">
+  <h2>{{ "Why this syllabus" if c.category == "training" else "The story" }}</h2>
+  <div class="story">
+    <div>{% for p in c.backstory | paras %}<p>{{ p }}</p>{% endfor %}</div>
+    <div><h3>{{ "Instructors and players" if c.category == "training" else "Cast" }}</h3>
+      <ul class="cast">{% for p in c.cast %}<li><b>{{ p.name }}</b><span>{{ p.role }}</span></li>{% endfor %}</ul></div>
+  </div>
+</div></section>
+<section id="chapters"><div class="wrap">
+  <h2>Chapters</h2>
+  <ol class="chapters">
+  {% for m in chapters %}
+    <li class="chap"><div class="n">{{ "%02d" | format(m.chapter) }}</div><div>
+      <div class="eyebrow">{{ m.eyebrow }}</div>
+      <h3>{{ m.title }}</h3>
+      <div class="meta"><span class="chip">{{ m.role }}</span><span class="chip">{{ m.date }} · {{ m.start_time }}L</span><span class="chip">{{ m.aircraft }}</span>{% for f in m.features %}<span class="chip">{{ f }}</span>{% endfor %}</div>
+      {% if m.hook %}<p class="hook">{{ m.hook }}</p>{% endif %}
+      <p>{{ m.teaser }}</p>
+      <div class="links">
+        <a class="primary" href="../../{{ m.id }}/briefing.html">Briefing</a>
+        <a href="../../{{ m.id }}/slides.html">Slide deck</a>
+        <a href="../../{{ m.id }}/director.html">{{ "Instructor view" if c.category == "training" else "Director's cut (spoilers)" }}</a>
+        <a href="{{ m.miz_name }}" download>.miz</a>
+      </div>
+    </div></li>
+  {% endfor %}
+  </ol>
+</div></section>
+<section id="install" class="install"><div class="wrap">
+  <h2>Fly it as a DCS campaign</h2>
+  <ol>
+    <li>Copy this whole folder (<code>{{ c.id }}.cmp</code> and the numbered <code>.miz</code> files) into <code>Saved Games/DCS/Missions/Campaigns/</code>.</li>
+    <li>In DCS, open <b>Campaign</b> and pick <b>{{ c.title }}</b>.</li>
+    <li>Pass a chapter to unlock the next one. Fail it and DCS gives you the same chapter again.</li>
+  </ol>
+  <p>Each chapter also works on its own: open the <code>.miz</code> from the Mission menu.</p>
+</div></section>
+</main>
+<footer><div class="wrap">Generated from <code>campaigns/{{ c.id }}/campaign.yaml</code> and each chapter's <code>mission.yaml</code>.</div></footer>
+</body>
+</html>

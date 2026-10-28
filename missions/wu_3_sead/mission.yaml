@@ -1,0 +1,256 @@
+# WORK-UPS event 3: SEAD fundamentals. Source of truth; `python -m dcsmb build` renders hangar/wu_3_sead/.
+#
+# Training: nothing hidden or random. A live-emitting but weapons-hold SA-6 and SA-8 on the steppe east
+# of the Gareja range. Two timed HARM shot points (EARLY / ON TIME / LATE from the IP). Only the radars
+# are cleared: killing an SA-6 launcher is a range foul. Both radars dead completes the event.
+# Site on open steppe in Sagarejo district, 12 km NE of David Gareja and clear of settlements (OSM).
+
+meta:
+  id: wu_3_sead
+  title: "LOUD NEIGHBOURS"
+  subtitle: "SEAD Fundamentals"
+  category: training
+  theater: caucasus
+  role: "SEAD"
+  date: 2026-01-20
+  start_time: "10:00"
+  weather:
+    temperature_c: 1
+    wind_from_deg: 290
+    wind_kts: 12
+    clouds: "Clear"
+    visibility: "40 km"
+    qnh_inhg: 30.10
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Det work-ups, event SEAD-1"
+  rules:
+    - "The range emitters are live radars on weapons hold. They will lock you; they will not fire. Treat every lock as real in your tactics."
+    - "Cleared targets: the SA-6 search-and-track radar and the SA-8. The SA-6 launchers are not cleared: hitting one is a range foul."
+    - "Shot 1 (SA-6 radar) from SHOT 1, Shot 2 (SA-8) from SHOT 2. Each point has a ±20 s window from the IP."
+    - "Altitude block 20,000 to 26,000 ft until both shots are off. Nothing below 5,000 ft AGL on the range at any time."
+    - "Range boundary: the Azerbaijan border, 10 km east of the site. Turn away from it after every shot."
+    - "Bingo 4,000 lb to Vaziani."
+  knock_it_off: |
+    Anyone can call "Knock it off" for a border infringement, an altitude bust or a hung missile.
+    Turn west, climb to 26,000 ft, master arm SAFE, and wait for SPARTAN to call the range hot again.
+  special_subjects:
+    - "Range-known versus self-protect HARM modes: why we brief a pre-planned shot and still carry the TOO page."
+    - "What the RWR shows when the SA-6 goes from search to track. Hear it, call it, then shoot."
+    - "HARM time of flight from 40 km: about 75 s. What do you do with that time?"
+    - "The SA-8 on its own: it's short range and mobile. Don't fly inside 10 km of it to make the shot."
+  grade_sheet:
+    - { item: "Range check-in", standard: "Checks in at SPARTAN IP at 24,000 ft and confirms the cleared emitters." }
+    - { item: "Shot 1 timing", standard: "Reaches SHOT 1 within ±20 s of plan from the IP." }
+    - { item: "Shot 1 result", standard: "The SA-6 search-and-track radar is destroyed." }
+    - { item: "Shot 2 timing", standard: "Reaches SHOT 2 within ±20 s of plan from the IP." }
+    - { item: "Shot 2 result", standard: "The SA-8 is destroyed." }
+    - { item: "Range discipline", standard: "No launcher hits, no border infringement, nothing below 5,000 ft AGL." }
+  debrief_focus:
+    - "RWR tape: when did each emitter lock you, and what did you do?"
+    - "HARM shot range, mode and time of flight against the plan."
+    - "Where the jet was pointing during each missile's time of flight."
+
+narrative:
+  operation: "LOUD NEIGHBOURS"
+  backstory: |
+    The Georgian Air Defence Command keeps a captured SA-6 battery and an SA-8 on the steppe east of
+    the Gareja range for exactly this: letting allied crews hear a real Soviet-era radar on the RWR
+    and shoot it. Today they've agreed to let the detachment put two live HARMs into the old radars.
+    The launchers stay; the radars were due to be scrapped anyway.
+
+    You'll get one pass at each emitter, on a timeline. The radars will lock you the whole time.
+    They won't fire. What's graded is whether you shoot on time, at the right thing, and turn away
+    like it was real.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, grading from the range control cabin"
+    - name: "Maj. Nino Tsereteli"
+      role: "Georgian Air Defence Command: SPARTAN range control"
+    - name: "Dodge 1"
+      role: "You, single-ship F/A-18C with two HARMs"
+  hook: |
+    "Those radars have been looking at people like you for forty years. Today you get to answer
+    back. Twice. On time." WREN, SEAD brief
+  outcomes:
+    success: |
+      Complete. Both radars are smoking holes, both shots were on time, and the launchers are
+      untouched. WREN signs SEAD-1 and the range officer asks for a copy of your tape.
+    partial: |
+      Partial: re-fly items. One emitter is still radiating, or a shot was outside its window. You'll
+      re-fly the missed shot on the next range day.
+    failure: |
+      Incomplete: re-fly the event. A launcher hit or a border infringement closed the range. The
+      re-fly comes after a sit-down with WREN and SPARTAN.
+
+situation: |
+  Single ship from Vaziani to the SPARTAN emitter site, 50 km east, on the steppe 12 km northeast
+  of David Gareja. The SA-6 radar and three launchers sit in a revetted battery position; the SA-8
+  is 4 km northwest of it. Both radiate and lock but are on weapons hold. Check in at SPARTAN IP,
+  then fly to SHOT 1 and SHOT 2 on the timeline, firing one HARM at each cleared radar. The
+  Azerbaijan border is 10 km east of the site.
+
+objectives:
+  primary: "Destroy the SA-6 radar and the SA-8 with one HARM each."
+  secondary: "Reach both shot points within ±20 s of plan."
+  tertiary: "No launcher hits and no border infringement."
+
+roe: |
+  HARMs at the SA-6 radar and the SA-8 only. Master arm SAFE outside the range. No weapons release
+  east of the SHOT points.
+
+threats:
+  - name: "SPARTAN SA-6 battery (radar cleared, launchers not)"
+    kind: sam
+    lat: 41.5300
+    lon: 45.4900
+    range_km: 24
+    notes: "1S91 search-and-track radar and three 2P25 launchers. Live radar, weapons hold. Only the radar is cleared."
+  - name: "SPARTAN SA-8 (cleared)"
+    kind: sam
+    lat: 41.5550
+    lon: 45.4550
+    range_km: 10
+    notes: "9A33 Osa, radar and missiles on one vehicle. Live radar, weapons hold."
+  - name: "Azerbaijan border"
+    kind: hazard
+    lat: 41.5200
+    lon: 45.6100
+    range_km: 3
+    notes: "Range boundary. Turn west after every shot."
+  - name: "David Gareja monastery: no-fly"
+    kind: hazard
+    lat: 41.4472
+    lon: 45.3766
+    range_km: 5
+    notes: "Same rule as on the Gareja range: no overflight within 5 km."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Dodge (det common)", freq: "254.000 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "SPARTAN range control", freq: "252.500 AM", radio: 1, channel: 2, notes: "Clears the range hot or cold" }
+  - { name: "Vaziani Tower", freq: "140.000 AM", radio: 2, channel: 1, notes: "TACAN 22X" }
+  - { name: "SPARTAN, WREN", freq: "252.500 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Dodge 1"
+    aircraft: FA_18C_hornet
+    count: 1
+    player: true
+    base: Vaziani
+    start: cold
+    radio1_mhz: 254.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      3: AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_
+      5: FPU_8A_Fuel_Tank_330_gallons
+      7: AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× AGM-88C HARM, 2× AIM-9X (inert), 1× 330 gal tank"
+    bingo_lbs: 4000
+    joker_lbs: 5500
+    waypoints:
+      - { name: "SPARTAN IP", lat: 41.6800, lon: 45.2300, alt_ft: 24000, kts: 420, eta: "10:22", zone_km: 4 }
+      - { name: "SHOT 1",     lat: 41.6100, lon: 45.2200, alt_ft: 24000, kts: 450, eta: "10:23", action: sead, zone_km: 3, timing: { from: "SPARTAN IP", seconds: 35, window_s: 20, flag: 61 } }
+      - { name: "SHOT 2",     lat: 41.6650, lon: 45.3100, alt_ft: 22000, kts: 450, eta: "10:26", action: sead, zone_km: 3, timing: { from: "SPARTAN IP", seconds: 180, window_s: 20, flag: 62 } }
+      - { name: "EGRESS",     lat: 41.7000, lon: 45.1000, alt_ft: 20000, kts: 400, eta: "10:30", zone_km: 4 }
+    land: Vaziani
+
+target:
+  name: "SPARTAN SA-6 radar and SA-8"
+  lat: 41.5300
+  lon: 45.4900
+  groups: ["SPARTAN Radar", "SPARTAN Osa"]
+  description: "Two live emitters on the steppe: the SA-6's 1S91 radar in the battery centre, and the SA-8, 4 km to its northwest."
+  dmpi: "One HARM each, pre-planned against the radar's position, launched from the SHOT point."
+
+zones:
+  - { name: "RANGE", lat: 41.5400, lon: 45.4700, radius_km: 12 }
+
+units:
+  - name: "SPARTAN Radar"
+    coalition: red
+    type: [Kub_1S91_str]
+    lat: 41.5300
+    lon: 45.4900
+    heading: 290
+    hold_fire: true
+  - name: "SPARTAN Launchers"
+    coalition: red
+    type: [Kub_2P25_ln, Kub_2P25_ln, Kub_2P25_ln]
+    lat: 41.5270
+    lon: 45.4950
+    heading: 290
+    hold_fire: true
+  - name: "SPARTAN Osa"
+    coalition: red
+    type: [Osa_9A33_ln]
+    lat: 41.5550
+    lon: 45.4550
+    heading: 290
+    hold_fire: true
+
+storyboard:
+  - phase: "Start and Transit"
+    time: "10:00"
+    waypoints: []
+    brief: |
+      Cold start at Vaziani. Load both emitters as pre-planned HARM targets before you taxi. Depart
+      east and climb to 24,000 ft for SPARTAN IP.
+    script: "WREN checks in from the range cabin."
+    trigger:
+      when: { time_after: 10 }
+      message: "WREN: Dodge one, Wren at Spartan. Radars are warming up. They'll be looking at you before the IP."
+      seconds: 15
+
+  - phase: "Shot 1: SA-6 Radar"
+    time: "10:22"
+    waypoints: ["SPARTAN IP", "SHOT 1"]
+    notes: "Have the student call out the RWR picture at the IP before you show the tape."
+    brief: |
+      Check in at SPARTAN IP. Range control clears the range hot. SHOT 1 is 35 s from the IP. Fire the
+      first HARM at the SA-6 radar, and turn away west while it flies.
+    script: "SPARTAN clears the range hot at the IP (flag 50). The SA-6 radar dying sets flag 11."
+    triggers:
+      - when: { player_in_zone: "SPARTAN IP" }
+        set_flag: 50
+        message: "SPARTAN: Dodge one, Spartan. Range is hot. Cleared SA-6 radar and SA-8. Launchers are not cleared."
+        seconds: 20
+      - when: { group_dead: "SPARTAN Radar", flag: 50 }
+        set_flag: 11
+        message: "SPARTAN: Direct hit on the SA-6 radar. It's off the air. Dodge one, continue to Shot 2."
+        seconds: 15
+
+  - phase: "Shot 2: SA-8"
+    time: "10:26"
+    waypoints: ["SHOT 2"]
+    brief: |
+      SHOT 2 is 3 minutes from the IP: turn away after Shot 1, then come back round to it. Fire the second HARM at the SA-8 and turn away. Don't
+      close inside 10 km of it to make the shot.
+    script: "The SA-8 dying after the SA-6 radar completes the event (flag 10). Any launcher hit is a foul (flag 22)."
+    triggers:
+      - when: { group_dead: "SPARTAN Osa", flag: 11 }
+        set_flag: 10
+        message: "SPARTAN: SA-8 destroyed. Both emitters down. Range is cold. Dodge one, cleared off to the west."
+        seconds: 15
+      - when: { group_life_below: ["SPARTAN Launchers", 100] }
+        set_flag: 22
+        message: "SPARTAN: Dodge one, you hit a launcher. That's a range foul. Range is cold, master arm safe."
+        seconds: 20
+      - when: { player_below_agl_ft: 5000, player_in_zone: "RANGE", flag: 50 }
+        set_flag: 23
+        message: "SPARTAN: Dodge one, below the range floor. Climb, climb."
+        seconds: 15
+
+  - phase: "Recovery"
+    time: "10:30"
+    waypoints: ["EGRESS"]
+    brief: |
+      Off the range to the west via EGRESS, master arm SAFE, and recover to Vaziani.
+    script: "WREN's closing call."
+    trigger:
+      when: { player_in_zone: "EGRESS", flag: 50 }
+      message: "WREN: Dodge one, Wren. Off the range. Bring me the RWR tape, I want to hear it."
+      seconds: 15

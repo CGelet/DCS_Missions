@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loud Neighbours Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Presenter deck. Dark only: it's built for a projector or a shared screen in a dim room. */
+:root {
+  --bg: #0d1012; --slide: #13171a; --ink: #ece8df; --muted: #9aa1a6; --line: #2a3136; --accent: #e07a3c;
+  --blue: #7fb0f0; --red: #ef6b62; --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #08100b; --radio-ink: #a6efbc;
+  --sea: #10202b; --coast: #8aa3b3;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; overflow: hidden; }
+.mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+#stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; background: var(--slide); padding: 80px 96px; display: none; flex-direction: column; overflow: hidden; }
+.slide.on { display: flex; }
+.slide::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--accent); }
+.eyebrow { font: 600 22px/1 "IBM Plex Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+h1 { font-size: 92px; line-height: 1.02; margin: 0; letter-spacing: -.025em; max-width: 1300px; }
+h2 { font-size: 60px; line-height: 1.06; margin: 0 0 32px; letter-spacing: -.02em; }
+p { margin: 0 0 22px; }
+.big { font-size: 42px; line-height: 1.38; max-width: 1280px; }
+.body { font-size: 28px; line-height: 1.45; color: var(--ink); }
+.muted { color: var(--muted); }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 36px; display: flex; justify-content: space-between; font: 18px "IBM Plex Mono", monospace; color: var(--muted); }
+
+.title { justify-content: center; }
+.title .sub { margin-top: 30px; font: 26px "IBM Plex Mono", monospace; color: var(--muted); }
+.title blockquote { margin: 56px 0 0; padding: 0 0 0 28px; border-left: 4px solid var(--accent); font-size: 34px; line-height: 1.4; max-width: 1150px; font-style: italic; }
+.story { justify-content: center; }
+.divider { justify-content: center; }
+.divider h1 { font-size: 120px; }
+
+.split { display: grid; grid-template-columns: 560px 1fr; gap: 56px; flex: 1; min-height: 0; align-items: center; }
+.split.nomap { grid-template-columns: 1fr; max-width: 1200px; }
+.split .text { align-self: center; }
+.radio { margin-top: 26px; background: var(--radio-bg); color: var(--radio-ink); font: 23px/1.5 "IBM Plex Mono", monospace; padding: 20px 24px; border-radius: 10px; border: 1px solid #1d3326; }
+.radio .lbl { display: block; font-size: 15px; letter-spacing: .16em; opacity: .7; margin-bottom: 6px; }
+
+svg.map { width: 100%; height: 100%; max-height: 680px; border-radius: 14px; border: 1px solid var(--line); }
+svg.map .sea { fill: var(--sea); }
+svg.map .grid { stroke: #ffffff10; stroke-width: 1; }
+svg.map .gridlbl { fill: #ffffff40; font: 12px "IBM Plex Mono", monospace; }
+svg.map .coast { fill: none; stroke: var(--coast); stroke-width: 2; stroke-linejoin: round; }
+svg.map .ring { fill-opacity: .1; stroke-width: 2; }
+svg.map .ring.suspected { stroke-dasharray: 10 6; }
+svg.map .ring.possible { stroke-dasharray: 3 7; fill-opacity: .04; opacity: .6; }
+svg.map .area { fill: none; stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+svg.map .area.sam { stroke: var(--red); } svg.map .area.aaa { stroke: var(--amber); } svg.map .area.air { stroke: var(--blue); } svg.map .area.armor { stroke: var(--muted); }
+svg.map .threat.armor, svg.map .ring.armor { fill: var(--muted); stroke: var(--muted); }
+svg.map .threat.suspected, svg.map .threat.possible { fill: var(--slide) !important; stroke-width: 3; }
+svg.map .threat.suspected.sam, svg.map .threat.possible.sam { stroke: var(--red); }
+svg.map .threat.suspected.aaa, svg.map .threat.possible.aaa { stroke: var(--amber); }
+svg.map .threat.suspected.air, svg.map .threat.possible.air { stroke: var(--blue); }
+svg.map .threat.suspected.armor, svg.map .threat.possible.armor { stroke: var(--muted); }
+svg.map .ship { fill: var(--slide); stroke: var(--ok); stroke-width: 4; }
+svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+svg.map .flighttrack { fill: none; stroke: var(--ok); stroke-width: 2.5; stroke-dasharray: 10 6; }
+svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
+svg.profile { width: 100%; height: auto; }
+.rulelist { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; font-size: 25px; line-height: 1.35; }
+.kio { margin-top: 22px; font-size: 22px; border-left: 5px solid var(--red, #d9534f); padding-left: 16px; }
+svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
+svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 14px "IBM Plex Mono", monospace; }
+svg.map .search { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 8; }
+svg.map .ring.sam, svg.map .threat.sam { fill: var(--red); stroke: var(--red); }
+svg.map .ring.aaa, svg.map .threat.aaa { fill: var(--amber); stroke: var(--amber); }
+svg.map .threat.air { fill: var(--blue); }
+svg.map .route { fill: none; stroke: var(--blue); stroke-width: 4; stroke-linejoin: round; }
+svg.map .route.dim { opacity: .35; }
+svg.map .route.hl { stroke: var(--accent); stroke-width: 7; }
+svg.map .cap { stroke: var(--ok); stroke-width: 4; stroke-dasharray: 3 9; stroke-linecap: round; }
+svg.map .friendly-dot { fill: var(--ok); }
+svg.map .wp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; }
+svg.map .wp.on { stroke: var(--accent); fill: var(--accent); }
+svg.map .lbl { fill: var(--ink); font: 600 17px "IBM Plex Mono", monospace; paint-order: stroke; stroke: var(--sea); stroke-width: 5px; }
+svg.map .lbl.friendly { fill: var(--ok); }
+svg.map .lbl.sam { fill: var(--red); }
+svg.map .lbl.aaa { fill: var(--amber); }
+svg.map .lbl.air { fill: var(--blue); }
+svg.map .lbl.armor { fill: var(--ink); }
+svg.map .lbl.hazard, svg.map .lbl.hostile { fill: var(--red); }
+svg.map .threat.hazard { fill: none; stroke: var(--red); stroke-width: 3; }
+svg.map .ring.hazard { fill: #ef6b6218; stroke: var(--red); stroke-width: 2; stroke-dasharray: 3 5; }
+svg.map .flighttrack.hostile { stroke: var(--red); }
+svg.map .hostile-dot { fill: var(--red); }
+svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
+
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.card { background: #ffffff08; border: 1px solid var(--line); border-radius: 14px; padding: 26px 30px; }
+.card b { display: block; font-size: 30px; margin-bottom: 6px; }
+.card span { font-size: 23px; color: var(--muted); }
+
+.rows { display: grid; gap: 0; max-width: 1350px; }
+.row { display: grid; grid-template-columns: 260px 1fr; gap: 28px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 28px; line-height: 1.4; }
+.row:last-child { border-bottom: 0; }
+.row .k { font: 600 18px/1.9 "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.tag { display: inline-block; font: 600 16px/1 "IBM Plex Mono", monospace; padding: 7px 10px; border-radius: 6px; text-transform: uppercase; }
+.tag.sam { background: #ef6b6222; color: var(--red); }
+.tag.aaa { background: #e3a93b22; color: var(--amber); }
+.tag.air { background: #7fb0f022; color: var(--blue); }
+.tag.armor { background: #ffffff14; color: var(--ink); }
+.tag.hazard { color: var(--red); border: 1.5px dashed var(--red); }
+.intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
+.intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.chip { font: 20px "IBM Plex Mono", monospace; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ok); }
+
+.outcome .band { height: 10px; width: 220px; border-radius: 5px; margin-bottom: 36px; }
+.outcome.success .band { background: var(--ok); }
+.outcome.partial .band { background: var(--amber); }
+.outcome.failure .band { background: var(--red); }
+
+#progress { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); transition: width .2s; z-index: 5; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; background: #000000e6; color: #ddd; font: 18px/1.5 "IBM Plex Sans", sans-serif; padding: 16px 24px 20px; display: none; z-index: 4; border-top: 1px solid var(--line); }
+#notes.on { display: block; }
+#notes .k { font: 600 13px "IBM Plex Mono", monospace; letter-spacing: .14em; color: var(--accent); margin-right: 12px; }
+#help { position: fixed; right: 16px; top: 12px; font: 13px "IBM Plex Mono", monospace; color: #ffffff55; z-index: 5; }
+
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; background: var(--slide); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #stage { position: static; transform: none !important; width: 1600px; height: auto; }
+  .slide { position: relative; display: flex !important; width: 1600px; height: 900px; page-break-after: always; break-after: page; }
+  #progress, #notes, #help { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<section class="slide title" data-notes="Set the tone. Read the quote out loud, then go straight into the story." aria-label="Slide 1">
+  
+    <div class="eyebrow">WORK-UPS · Chapter 3 of 5 · Training event LOUD NEIGHBOURS · Det work-ups, event SEAD-1</div>
+    <h1>SEAD Fundamentals</h1>
+    <div class="sub">2026-01-20 · Step 10:00L · Dodge 1 · 1× F/A-18C Hornet</div>
+    <blockquote>&#34;Those radars have been looking at people like you for forty years. Today you get to answer
+back. Twice. On time.&#34; WREN, SEAD brief</blockquote>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>1 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Recap the last chapter in a sentence or two, then move on." aria-label="Slide 2">
+  
+    <div class="eyebrow">Previously</div>
+    <p class="big">BLACK DECK: night quals. Marshal, a timed push and two traps with no horizon. The carrier
+events are done. Back to land, and to radars.</p>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>2 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 3">
+  
+    <div class="eyebrow">Why we&#39;re flying this</div>
+    <p class="big">The Georgian Air Defence Command keeps a captured SA-6 battery and an SA-8 on the steppe east of
+the Gareja range for exactly this: letting allied crews hear a real Soviet-era radar on the RWR
+and shoot it. Today they&#39;ve agreed to let the detachment put two live HARMs into the old radars.
+The launchers stay; the radars were due to be scrapped anyway.</p>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>3 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 4">
+  
+    <div class="eyebrow">Where it fits</div>
+    <p class="big">You&#39;ll get one pass at each emitter, on a timeline. The radars will lock you the whole time.
+They won&#39;t fire. What&#39;s graded is whether you shoot on time, at the right thing, and turn away
+like it was real.</p>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>4 / 23</span></div>
+</section>
+
+<section class="slide cast" data-notes="These are the voices pilots will hear on the radio during the mission." aria-label="Slide 5">
+  
+    <div class="eyebrow">Instructors and players</div>
+    <h2>The voices you'll hear</h2>
+    <div class="cards"><div class="card"><b>LCDR Ana &#34;WREN&#34; Castellano</b><span>Detachment training officer, grading from the range control cabin</span></div><div class="card"><b>Maj. Nino Tsereteli</b><span>Georgian Air Defence Command: SPARTAN range control</span></div><div class="card"><b>Dodge 1</b><span>You, single-ship F/A-18C with two HARMs</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>5 / 23</span></div>
+</section>
+
+<section class="slide map" data-notes="Walk the route from base to target and back. Point out the threat rings." aria-label="Slide 6">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Event overview</div>
+        <h2>The training area</h2>
+        <div class="body"><p>Single ship from Vaziani to the SPARTAN emitter site, 50 km east, on the steppe 12 km northeast
+of David Gareja. The SA-6 radar and three launchers sit in a revetted battery position; the SA-8
+is 4 km northwest of it. Both radiate and lock but are on weapons hold. Check in at SPARTAN IP,
+then fly to SHOT 1 and SHOT 2 on the timeline, firing one HARM at each cleared radar. The
+Azerbaijan border is 10 km east of the site.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="973.7" y2="973.7"/><text class="gridlbl" x="6" y="969.7">41.0N</text><line class="grid" x1="0" x2="900" y1="357.0" y2="357.0"/><text class="gridlbl" x="6" y="353.0">41.5N</text><line class="grid" y1="0" y2="640" x1="-383.5" x2="-383.5"/><text class="gridlbl" x="-379.5" y="632">44.5E</text><line class="grid" y1="0" y2="640" x1="78.0" x2="78.0"/><text class="gridlbl" x="82.0" y="632">45.0E</text><line class="grid" y1="0" y2="640" x1="539.5" x2="539.5"/><text class="gridlbl" x="543.5" y="632">45.5E</text><polyline class="coast" points="-6969.3,-4375.7 -6969.3,-4375.7"/><polyline class="coast" points="-6969.5,-4376.3 -6969.5,-4376.3"/><polyline class="coast" points="-6786.4,-4455.8 -6822.5,-4424.4 -6884.8,-4389.2 -6892.7,-4386.9 -6911.7,-4389.1 -6916.2,-4387.4 -6922.3,-4394.8 -6946.2,-4393.1 -6951.0,-4387.8 -6941.9,-4375.8 -6951.7,-4377.0 -6949.8,-4378.5 -6953.2,-4379.9 -6963.7,-4372.1 -6968.4,-4372.6 -6959.2,-4363.1 -6955.1,-4365.2 -6954.7,-4370.9 -6940.3,-4366.9 -6950.9,-4366.7 -6957.9,-4362.2 -6957.0,-4359.4 -6952.9,-4361.7 -6950.4,-4359.5 -6953.7,-4356.8 -6950.7,-4354.0 -6953.2,-4350.3 -6955.1,-4355.6 -6958.8,-4356.9 -6962.0,-4352.4 -6958.3,-4349.6 -6964.7,-4354.0 -6959.2,-4359.5 -6973.3,-4375.1 -6994.7,-4367.7 -7024.6,-4366.0 -7102.3,-4370.2 -7148.6,-4381.2 -7258.0,-4418.1 -7296.4,-4436.3 -7334.4,-4460.0"/><polyline class="coast" points="-6967.8,-4375.9 -6967.8,-4375.9"/><polyline class="coast" points="-7530.8,-4101.0 -7489.8,-4106.2 -7472.2,-4105.8 -7437.5,-4100.5 -7396.3,-4088.9 -7314.6,-4054.8 -7267.9,-4039.3 -7198.7,-4010.8 -7136.6,-3977.4 -7083.3,-3942.8 -7040.4,-3903.4 -7016.2,-3867.4 -7011.9,-3852.5 -7013.3,-3839.9 -7017.9,-3833.0 -7023.3,-3833.7 -7023.4,-3836.9 -7023.6,-3834.6 -7030.4,-3832.0 -7032.0,-3824.2 -6994.4,-3777.1 -6990.5,-3766.8 -6990.1,-3745.7 -6952.9,-3691.7 -6950.3,-3671.3 -6946.9,-3670.4 -6950.6,-3670.0 -6949.4,-3666.0 -6954.5,-3659.7 -6950.8,-3662.1 -6937.4,-3655.6 -6929.7,-3645.4 -6928.6,-3638.9 -6905.2,-3623.6 -6895.6,-3609.8 -6886.2,-3602.2 -6885.9,-3597.6 -6880.0,-3599.0 -6869.7,-3594.6 -6860.2,-3582.8 -6850.0,-3583.3 -6800.9,-3560.7 -6787.5,-3562.9 -6774.5,-3554.9 -6739.9,-3547.9 -6720.7,-3553.0 -6704.4,-3551.8 -6702.2,-3549.5 -6700.0,-3549.8 -6702.6,-3551.2 -6699.1,-3551.2 -6667.4,-3536.9 -6660.6,-3530.8 -6654.1,-3532.7 -6637.2,-3527.4 -6626.3,-3527.6 -6620.0,-3530.8 -6601.7,-3532.9 -6600.1,-3535.9 -6573.4,-3545.5 -6564.5,-3553.7 -6566.6,-3553.3 -6568.0,-3560.2 -6559.4,-3562.8 -6577.4,-3587.6 -6577.5,-3601.3 -6581.2,-3603.7 -6580.0,-3609.6 -6583.4,-3614.3 -6580.0,-3617.5 -6586.5,-3615.2 -6589.3,-3619.0 -6586.7,-3619.5 -6591.9,-3623.2 -6591.2,-3625.2 -6585.5,-3621.0 -6587.8,-3623.7 -6584.3,-3623.3 -6585.4,-3627.0 -6582.9,-3624.8 -6584.2,-3628.1 -6580.2,-3624.9 -6582.2,-3629.9 -6577.2,-3624.8 -6575.0,-3626.4 -6578.4,-3630.6 -6575.2,-3632.5 -6571.0,-3625.4 -6568.6,-3626.8 -6570.9,-3631.7 -6566.2,-3630.5 -6565.1,-3624.4 -6561.7,-3628.8 -6562.3,-3622.1 -6560.0,-3623.2 -6552.8,-3616.4 -6560.1,-3613.1 -6551.7,-3616.6 -6549.6,-3620.9 -6552.6,-3613.7 -6549.3,-3620.6 -6544.3,-3616.8 -6547.8,-3616.7 -6545.4,-3615.1 -6549.1,-3609.0 -6544.1,-3616.3 -6544.4,-3614.2 -6541.9,-3614.9 -6543.5,-3613.3 -6537.0,-3614.3 -6538.9,-3612.6 -6536.0,-3612.5 -6536.8,-3609.5 -6540.2,-3610.0 -6532.9,-3606.8 -6536.5,-3604.2 -6546.5,-3607.9 -6539.3,-3603.7 -6528.2,-3607.8 -6526.0,-3597.9 -6500.3,-3575.0 -6493.4,-3565.0 -6462.3,-3548.1 -6456.1,-3536.6 -6446.6,-3527.8 -6446.1,-3523.1 -6467.7,-3510.5 -6470.4,-3506.8 -6468.9,-3501.7 -6447.0,-3471.8 -6432.4,-3461.2 -6410.0,-3437.8 -6405.2,-3434.8 -6402.5,-3437.7 -6398.2,-3435.1 -6397.3,-3427.1 -6389.4,-3427.9 -6385.6,-3423.7 -6385.3,-3425.6 -6378.7,-3422.1 -6364.7,-3420.9 -6357.1,-3416.4 -6352.5,-3424.9 -6357.4,-3430.6 -6352.0,-3432.9 -6353.8,-3437.0 -6352.1,-3433.0 -6356.3,-3431.2 -6357.8,-3434.5 -6354.5,-3435.9 -6359.6,-3435.3 -6361.1,-3437.2 -6361.4,-3442.7 -6358.0,-3446.0 -6349.9,-3448.4 -6337.4,-3447.8 -6322.8,-3437.6 -6312.5,-3422.7 -6313.8,-3414.2 -6320.5,-3411.2 -6326.9,-3412.9 -6334.8,-3410.7 -6338.1,-3405.5 -6301.9,-3380.9 -6280.8,-3359.8 -6274.9,-3349.9 -6266.2,-3345.6 -6260.4,-3337.6 -6260.1,-3325.7 -6251.2,-3313.6 -6249.9,-3302.2 -6242.8,-3296.3 -6241.9,-3291.0 -6223.5,-3280.5 -6207.1,-3262.8 -6196.3,-3242.7 -6191.0,-3240.3 -6193.9,-3238.4 -6190.7,-3240.1 -6170.7,-3232.9 -6145.8,-3236.3 -6120.4,-3232.4 -6103.7,-3225.0 -6086.4,-3210.7 -6074.0,-3206.1 -6064.9,-3195.1 -6049.8,-3186.4 -6038.0,-3183.0 -6026.5,-3180.9 -6000.3,-3189.2 -5976.6,-3181.1 -5946.4,-3179.1 -5903.0,-3163.9 -5898.5,-3167.5 -5893.3,-3167.7 -5886.8,-3163.4 -5858.2,-3157.1 -5841.2,-3149.6 -5821.8,-3135.2 -5812.8,-3137.0 -5806.8,-3134.1 -5797.6,-3122.7 -5783.2,-3119.9 -5775.4,-3121.0 -5768.3,-3113.4 -5743.9,-3104.7 -5738.5,-3108.7 -5728.5,-3098.8 -5723.1,-3096.9 -5709.1,-3095.7 -5694.3,-3098.1 -5686.9,-3094.1 -5682.8,-3088.2 -5652.8,-3073.6 -5631.6,-3048.2 -5626.0,-3037.5 -5627.4,-3030.1 -5623.3,-3024.4 -5620.5,-3021.6 -5613.2,-3022.3 -5609.9,-3018.6 -5606.6,-3013.2 -5607.8,-3008.6 -5597.1,-2996.7 -5597.0,-2991.4 -5583.0,-2969.5 -5577.5,-2966.2 -5568.5,-2965.6 -5565.7,-2957.3 -5536.0,-2954.9 -5518.5,-2947.7 -5516.7,-2943.8 -5501.7,-2934.6 -5495.5,-2932.4 -5486.6,-2935.9 -5479.0,-2934.4 -5460.3,-2924.2 -5448.1,-2911.5 -5433.0,-2884.0 -5429.4,-2862.6 -5431.1,-2852.1 -5425.9,-2845.3 -5402.4,-2846.8 -5400.7,-2845.1 -5405.7,-2840.3 -5404.3,-2838.8 -5399.0,-2843.9 -5388.0,-2840.8 -5386.5,-2836.6 -5390.7,-2832.9 -5383.7,-2832.5 -5376.4,-2826.1 -5364.5,-2809.5 -5339.3,-2782.7 -5318.5,-2751.5 -5296.2,-2736.8 -5288.3,-2728.1 -5277.4,-2724.5 -5261.5,-2713.9 -5250.0,-2700.8 -5236.0,-2696.6 -5217.8,-2673.9 -5198.6,-2664.0 -5187.4,-2655.0 -5154.8,-2604.1 -5151.1,-2600.4 -5142.7,-2599.3 -5136.7,-2595.2 -5088.7,-2546.6 -5073.2,-2519.6 -5061.2,-2509.6 -5050.3,-2494.5 -5032.5,-2463.9 -4997.5,-2434.9 -4966.3,-2400.7 -4921.8,-2359.3 -4899.4,-2315.8 -4890.1,-2312.3 -4880.4,-2304.0 -4864.8,-2299.6 -4848.5,-2291.1 -4824.1,-2273.0 -4810.9,-2248.8 -4801.7,-2214.4 -4801.4,-2211.4 -4805.6,-2208.5 -4803.5,-2199.7 -4800.3,-2198.3 -4805.1,-2203.6 -4805.1,-2207.6 -4802.0,-2207.5 -4798.1,-2213.0 -4798.1,-2207.0 -4784.5,-2194.0 -4764.3,-2185.9 -4743.3,-2168.7 -4698.4,-2146.9 -4683.2,-2135.6 -4676.1,-2124.8 -4667.0,-2125.8 -4662.7,-2123.7 -4643.6,-2101.8 -4623.5,-2033.0 -4606.2,-2003.7 -4594.5,-1997.1 -4584.4,-1985.3 -4565.9,-1982.3 -4543.9,-1967.7 -4521.6,-1968.3 -4487.9,-1959.3 -4461.5,-1957.7 -4428.9,-1936.1 -4413.1,-1931.4 -4389.2,-1913.7 -4342.4,-1899.3 -4333.3,-1892.7 -4317.7,-1888.2 -4311.3,-1882.9 -4302.2,-1866.9 -4291.0,-1823.3 -4283.6,-1746.3 -4278.8,-1724.1 -4260.8,-1706.9 -4250.1,-1703.7 -4222.3,-1674.1 -4217.7,-1673.7 -4214.3,-1683.9 -4194.9,-1702.2 -4184.5,-1706.6 -4170.5,-1706.7 -4161.3,-1703.5 -4149.9,-1691.7 -4142.9,-1690.3 -4134.4,-1683.1 -4113.4,-1677.8 -4102.6,-1665.4 -4093.0,-1670.4 -4083.4,-1667.5 -4068.4,-1671.1 -4057.7,-1667.9 -4038.7,-1652.7 -4018.0,-1621.9 -4006.2,-1608.1 -3999.6,-1605.1 -3974.6,-1606.5 -3942.4,-1617.4 -3930.6,-1614.4 -3901.3,-1599.9 -3871.1,-1598.4 -3837.5,-1601.0 -3805.0,-1593.8 -3794.8,-1597.0 -3778.8,-1595.5 -3738.2,-1585.6 -3722.5,-1571.2 -3705.8,-1545.4 -3685.4,-1527.7 -3672.8,-1503.4 -3664.5,-1498.5 -3653.3,-1486.8 -3643.8,-1471.0 -3639.1,-1469.2 -3634.8,-1470.8 -3619.5,-1483.4 -3623.2,-1484.7 -3619.7,-1486.8 -3598.6,-1486.7 -3590.2,-1491.9 -3579.8,-1490.0 -3565.9,-1479.3 -3540.7,-1430.1 -3516.4,-1301.7 -3491.1,-1264.3 -3484.3,-1261.1 -3475.8,-1242.8 -3448.4,-1235.5 -3423.9,-1249.0 -3403.7,-1247.8 -3376.7,-1237.3 -3350.0,-1231.2 -3331.8,-1217.8 -3322.3,-1214.0 -3299.5,-1211.6 -3285.0,-1205.0 -3254.8,-1200.1 -3238.5,-1189.5 -3224.1,-1169.9 -3224.0,-1173.6 -3209.6,-1172.5 -3197.8,-1155.9 -3177.7,-1111.3 -3138.9,-985.7 -3124.1,-901.9 -3114.8,-817.6 -3101.3,-748.8 -3094.9,-737.0 -3078.2,-729.9 -3064.7,-711.8 -3039.5,-640.1 -3033.0,-609.9 -3028.7,-603.0 -3024.4,-556.5 -3027.6,-537.8 -3034.6,-521.0 -3033.1,-517.2 -3035.3,-516.2 -3029.2,-490.7 -3025.1,-483.1 -3021.9,-482.2 -3015.1,-456.4 -3007.0,-456.3 -3010.8,-451.7 -3012.7,-454.5 -3013.6,-451.3 -3000.6,-451.3 -3000.6,-449.0 -3012.5,-448.2 -3009.8,-445.2 -3015.0,-443.6 -3018.4,-457.6 -3015.5,-449.7 -3016.7,-444.4 -3009.6,-443.4 -3004.8,-422.6 -3001.8,-422.2 -2961.7,-359.2 -2966.6,-369.3 -2964.4,-370.2 -2958.5,-358.9 -2962.2,-364.1 -2960.9,-357.2 -2931.8,-300.6 -2918.8,-283.6 -2913.7,-253.3 -2905.8,-150.9 -2896.4,-91.1 -2898.3,-53.8 -2903.9,-18.3 -2917.4,22.9 -2923.4,33.9 -2929.1,38.2 -2951.2,103.7 -2957.8,114.7 -2961.6,116.0 -2975.2,143.0 -2986.8,155.7 -2988.1,152.9 -2987.4,157.0 -2990.7,154.6 -2992.0,165.0 -2999.7,165.8 -3002.2,169.2 -3000.5,171.8 -3004.8,171.6 -3006.0,169.0 -3015.3,172.5 -3009.1,171.9 -3007.2,175.6 -3017.1,175.9 -3019.3,165.5 -3022.7,162.5 -3028.7,163.6 -3048.0,180.5 -3083.4,225.8 -3090.1,249.0 -3095.8,301.4 -3103.8,307.4 -3109.8,334.2 -3113.3,342.3 -3118.4,345.2 -3134.0,379.6 -3132.9,376.6"/><polyline class="coast" points="-6968.6,-4373.4 -6970.5,-4375.3 -6968.6,-4373.4"/><polyline class="coast" points="-7502.3,-4360.6 -7490.3,-4333.4 -7491.8,-4341.1 -7487.2,-4339.5 -7488.9,-4333.5 -7463.5,-4345.7 -7374.1,-4365.7 -7348.9,-4365.7 -7314.5,-4359.0 -7311.5,-4359.0 -7316.9,-4362.1 -7310.6,-4362.5 -7304.6,-4358.5 -7315.9,-4347.1 -7316.9,-4339.8 -7312.2,-4319.8 -7314.4,-4314.2 -7323.4,-4306.0 -7386.6,-4293.8 -7401.4,-4277.7 -7421.4,-4269.6 -7493.2,-4258.9 -7510.9,-4254.7 -7508.1,-4252.7 -7513.0,-4249.3 -7516.0,-4249.5 -7519.2,-4254.3 -7513.8,-4255.4 -7523.6,-4256.0 -7525.8,-4247.5"/><polyline class="coast" points="-6557.0,-3555.3 -6557.0,-3555.3"/><polyline class="coast" points="-6954.9,-3660.5 -6953.5,-3663.0 -6958.1,-3662.6 -6954.9,-3660.5"/><polyline class="coast" points="-3107.9,323.8 -3107.9,323.8"/><polyline class="coast" points="-6387.5,-3422.7 -6390.6,-3423.3 -6385.8,-3421.1 -6387.5,-3422.7"/><polyline class="coast" points="-7525.6,-4471.1 -7511.6,-4461.4 -7501.1,-4443.6 -7486.8,-4443.3 -7476.2,-4439.4 -7476.2,-4431.3 -7447.7,-4430.7 -7436.4,-4427.2 -7444.4,-4419.3 -7446.2,-4421.3 -7442.6,-4424.3 -7445.0,-4425.6 -7449.7,-4415.9 -7479.1,-4398.5 -7489.8,-4397.3 -7496.5,-4403.4"/><polyline class="coast" points="-6545.3,-3547.4 -6545.3,-3547.4"/><polyline class="coast" points="-6197.1,-3244.0 -6197.1,-3244.0"/><polyline class="coast" points="-6389.7,-3426.0 -6389.7,-3426.0"/><polyline class="coast" points="-2962.6,-364.7 -2962.6,-364.7"/><polyline class="coast" points="-2964.0,-366.7 -2964.0,-366.7"/><polyline class="coast" points="-4800.4,-2203.4 -4798.7,-2204.9 -4800.4,-2203.4"/><circle class="ring sam confirmed" cx="530.3" cy="320.0" r="266.7"/><circle class="threat sam confirmed" cx="530.3" cy="320.0" r="6"/><circle class="ring sam confirmed" cx="498.0" cy="289.2" r="111.1"/><circle class="threat sam confirmed" cx="498.0" cy="289.2" r="6"/><circle class="ring hazard confirmed" cx="641.0" cy="332.3" r="33.3"/><circle class="threat hazard confirmed" cx="641.0" cy="332.3" r="6"/><circle class="ring hazard confirmed" cx="425.6" cy="422.1" r="55.6"/><circle class="threat hazard confirmed" cx="425.6" cy="422.1" r="6"/><polyline class="route" points="103.1,197.9 290.3,135.0 281.1,221.3 364.1,153.5 170.3,110.3 103.1,197.9"/><g class="target" transform="translate(530.3,320.0)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="103.1" cy="197.9" r="8"/><circle class="wp" cx="290.3" cy="135.0" r="6"/><circle class="wp" cx="281.1" cy="221.3" r="6"/><circle class="wp" cx="364.1" cy="153.5" r="6"/><circle class="wp" cx="170.3" cy="110.3" r="6"/><text class="lbl" x="115.1" y="202.9">Vaziani</text><text class="lbl" x="302.3" y="140.0">1 SPARTAN IP</text><text class="lbl" x="293.1" y="226.3">2 SHOT 1</text><text class="lbl" x="376.1" y="158.5">3 SHOT 2</text><text class="lbl" x="182.3" y="115.3">4 EGRESS</text><text class="lbl sam" x="542.3" y="325.0">SPARTAN SA-6 battery</text><text class="lbl sam" x="510.0" y="294.2">SPARTAN SA-8</text><text class="lbl hazard" x="552.6" y="358.3">Azerbaijan border</text><text class="lbl hazard" x="437.6" y="427.1">David Gareja monastery: no-fly</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>6 / 23</span></div>
+</section>
+
+<section class="slide profile" data-notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes." aria-label="Slide 7">
+  
+    <div class="eyebrow">Flight profile</div>
+    <h2>How high, where</h2>
+    <div style="flex:1;display:flex;align-items:center"><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 63 km</text><line class="pleg" x1="56.0" y1="196.0" x2="289.3" y2="71.2"/><line class="pleg" x1="289.3" y1="71.2" x2="392.1" y2="71.2"/><line class="pleg" x1="392.1" y1="71.2" x2="518.9" y2="81.6"/><line class="pleg" x1="518.9" y1="81.6" x2="753.5" y2="92.0"/><line class="pleg" x1="753.5" y1="92.0" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="81.2" y="186.0" text-anchor="middle">Vaziani</text><circle class="pwp" cx="289.3" cy="71.2" r="4"/><text class="plbl" x="289.3" y="61.2" text-anchor="middle">1 SPARTAN IP</text><text class="psub" x="289.3" y="220" text-anchor="middle">24k</text><circle class="pwp" cx="392.1" cy="71.2" r="4"/><text class="plbl" x="392.1" y="61.2" text-anchor="middle">2 SHOT 1</text><text class="psub" x="392.1" y="220" text-anchor="middle">24k</text><circle class="pwp" cx="518.9" cy="81.6" r="4"/><text class="plbl" x="518.9" y="71.6" text-anchor="middle">3 SHOT 2</text><text class="psub" x="518.9" y="220" text-anchor="middle">22k</text><circle class="pwp" cx="753.5" cy="92.0" r="4"/><text class="plbl" x="753.5" y="82.0" text-anchor="middle">4 EGRESS</text><text class="psub" x="753.5" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="858.8" y="186.0" text-anchor="middle">Vaziani</text></svg></div>
+    <p class="muted" style="font-size:22px;margin:0">Dashed legs are flown above ground level, following the terrain.</p>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>7 / 23</span></div>
+</section>
+
+<section class="slide objectives" data-notes="Primary is what wins the mission. Everything else is a bonus or a way home." aria-label="Slide 8">
+  
+    <div class="eyebrow">Tasking</div>
+    <h2>Learning objectives</h2>
+    <div class="rows"><div class="row"><span class="k">primary</span><span>Destroy the SA-6 radar and the SA-8 with one HARM each.</span></div><div class="row"><span class="k">secondary</span><span>Reach both shot points within ±20 s of plan.</span></div><div class="row"><span class="k">tertiary</span><span>No launcher hits and no border infringement.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>8 / 23</span></div>
+</section>
+
+<section class="slide map" data-notes="41.5300N 45.4900E. Laser code n/a." aria-label="Slide 9">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Range target</div>
+        <h2>SPARTAN SA-6 radar and SA-8</h2>
+        <div class="body"><p>Two live emitters on the steppe: the SA-6&#39;s 1S91 radar in the battery centre, and the SA-8, 4 km to its northwest.</p><p>41.5300N 45.4900E</p><p>DMPI: One HARM each, pre-planned against the radar&#39;s position, launched from the SHOT point.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1398.1" y2="1398.1"/><text class="gridlbl" x="6" y="1394.1">41.0N</text><line class="grid" x1="0" x2="900" y1="562.4" y2="562.4"/><text class="gridlbl" x="6" y="558.4">41.5N</text><line class="grid" y1="0" y2="640" x1="-455.6" x2="-455.6"/><text class="gridlbl" x="-451.6" y="632">44.5E</text><line class="grid" y1="0" y2="640" x1="169.0" x2="169.0"/><text class="gridlbl" x="173.0" y="632">45.0E</text><line class="grid" y1="0" y2="640" x1="793.5" x2="793.5"/><text class="gridlbl" x="797.5" y="632">45.5E</text><polyline class="coast" points="-9368.3,-5851.8 -9368.3,-5851.8"/><polyline class="coast" points="-9368.6,-5852.6 -9368.6,-5852.6"/><polyline class="coast" points="-9120.8,-5960.4 -9169.7,-5917.8 -9254.0,-5870.2 -9264.7,-5867.0 -9290.3,-5870.0 -9296.4,-5867.7 -9304.7,-5877.7 -9337.0,-5875.4 -9343.5,-5868.2 -9331.3,-5852.0 -9344.5,-5853.6 -9341.9,-5855.6 -9346.5,-5857.5 -9360.8,-5846.9 -9367.1,-5847.6 -9354.6,-5834.7 -9349.1,-5837.6 -9348.5,-5845.3 -9329.0,-5839.9 -9343.4,-5839.6 -9352.9,-5833.6 -9351.6,-5829.7 -9346.1,-5832.9 -9342.8,-5829.9 -9347.3,-5826.2 -9343.2,-5822.4 -9346.5,-5817.4 -9349.1,-5824.5 -9354.1,-5826.4 -9358.4,-5820.2 -9353.4,-5816.5 -9362.1,-5822.4 -9354.6,-5829.9 -9373.8,-5851.0 -9402.7,-5840.9 -9443.2,-5838.8 -9548.4,-5844.4 -9611.0,-5859.3 -9759.0,-5909.3 -9811.1,-5934.0 -9862.4,-5966.1"/><polyline class="coast" points="-9366.3,-5852.1 -9366.3,-5852.1"/><polyline class="coast" points="-10128.2,-5479.5 -10072.7,-5486.6 -10048.9,-5486.1 -10001.9,-5478.9 -9946.2,-5463.2 -9835.7,-5416.9 -9772.5,-5396.0 -9678.8,-5357.3 -9594.7,-5312.1 -9522.6,-5265.1 -9464.6,-5211.8 -9431.8,-5163.0 -9426.0,-5142.7 -9427.8,-5125.7 -9434.1,-5116.3 -9441.5,-5117.3 -9441.6,-5121.7 -9441.8,-5118.5 -9451.1,-5115.0 -9453.2,-5104.4 -9402.2,-5040.6 -9397.0,-5026.6 -9396.5,-4998.0 -9346.1,-4924.8 -9342.7,-4897.2 -9338.0,-4896.0 -9343.0,-4895.3 -9341.4,-4890.0 -9348.3,-4881.5 -9343.3,-4884.6 -9325.2,-4875.9 -9314.8,-4862.1 -9313.3,-4853.2 -9281.6,-4832.5 -9268.6,-4813.8 -9255.8,-4803.6 -9255.5,-4797.2 -9247.5,-4799.2 -9233.5,-4793.2 -9220.6,-4777.2 -9206.9,-4777.8 -9140.4,-4747.2 -9122.3,-4750.3 -9104.7,-4739.4 -9057.9,-4729.9 -9031.9,-4736.9 -9009.9,-4735.2 -9006.9,-4732.0 -9003.9,-4732.5 -9007.4,-4734.4 -9002.6,-4734.4 -8959.8,-4715.0 -8950.6,-4706.8 -8941.7,-4709.3 -8918.8,-4702.1 -8904.1,-4702.4 -8895.6,-4706.8 -8870.9,-4709.6 -8868.6,-4713.6 -8832.5,-4726.7 -8820.5,-4737.7 -8823.3,-4737.2 -8825.3,-4746.6 -8813.5,-4750.1 -8837.9,-4783.7 -8838.1,-4802.2 -8843.1,-4805.6 -8841.5,-4813.6 -8846.0,-4820.0 -8841.5,-4824.3 -8850.3,-4821.1 -8854.0,-4826.3 -8850.5,-4827.0 -8857.6,-4832.0 -8856.6,-4834.7 -8848.9,-4829.0 -8852.0,-4832.7 -8847.3,-4832.2 -8848.8,-4837.2 -8845.4,-4834.2 -8847.1,-4838.7 -8841.8,-4834.3 -8844.5,-4841.0 -8837.6,-4834.2 -8834.6,-4836.3 -8839.3,-4842.0 -8835.0,-4844.5 -8829.3,-4835.0 -8826.0,-4836.8 -8829.1,-4843.5 -8822.8,-4841.8 -8821.3,-4833.7 -8816.7,-4839.5 -8817.5,-4830.5 -8814.4,-4832.0 -8804.7,-4822.8 -8814.5,-4818.3 -8803.2,-4823.0 -8800.3,-4828.8 -8804.4,-4819.1 -8799.9,-4828.5 -8793.2,-4823.3 -8797.9,-4823.1 -8794.7,-4821.0 -8799.7,-4812.8 -8792.9,-4822.6 -8793.3,-4819.8 -8789.9,-4820.8 -8792.1,-4818.6 -8783.3,-4820.0 -8785.8,-4817.6 -8781.9,-4817.4 -8783.1,-4813.4 -8787.7,-4814.1 -8777.7,-4809.8 -8782.6,-4806.2 -8796.2,-4811.3 -8786.4,-4805.6 -8771.4,-4811.1 -8768.4,-4797.7 -8733.6,-4766.6 -8724.2,-4753.1 -8682.1,-4730.2 -8673.8,-4714.6 -8660.9,-4702.6 -8660.3,-4696.3 -8689.5,-4679.2 -8693.1,-4674.2 -8691.1,-4667.3 -8661.5,-4626.7 -8641.8,-4612.3 -8611.4,-4580.8 -8604.9,-4576.6 -8601.3,-4580.6 -8595.4,-4577.1 -8594.2,-4566.2 -8583.6,-4567.2 -8578.5,-4561.5 -8578.0,-4564.2 -8569.1,-4559.4 -8550.1,-4557.9 -8539.9,-4551.7 -8533.6,-4563.2 -8540.2,-4570.9 -8532.9,-4574.1 -8535.4,-4579.6 -8533.1,-4574.2 -8538.7,-4571.7 -8540.7,-4576.2 -8536.2,-4578.1 -8543.2,-4577.2 -8545.2,-4579.9 -8545.6,-4587.3 -8541.0,-4591.8 -8530.1,-4595.1 -8513.1,-4594.3 -8493.4,-4580.4 -8479.4,-4560.2 -8481.3,-4548.7 -8490.3,-4544.7 -8499.0,-4547.0 -8509.6,-4544.0 -8514.1,-4537.0 -8465.2,-4503.5 -8436.6,-4474.9 -8428.6,-4461.6 -8416.8,-4455.7 -8409.0,-4444.9 -8408.6,-4428.8 -8396.5,-4412.4 -8394.7,-4396.9 -8385.1,-4388.9 -8384.0,-4381.7 -8359.0,-4367.5 -8336.8,-4343.6 -8322.3,-4316.3 -8315.0,-4313.0 -8318.9,-4310.5 -8314.6,-4312.8 -8287.5,-4302.9 -8253.8,-4307.6 -8219.5,-4302.3 -8196.9,-4292.3 -8173.5,-4272.9 -8156.6,-4266.7 -8144.4,-4251.8 -8123.9,-4239.9 -8107.9,-4235.4 -8092.4,-4232.6 -8057.0,-4243.8 -8024.9,-4232.7 -7984.0,-4230.1 -7925.3,-4209.5 -7919.2,-4214.4 -7912.2,-4214.7 -7903.3,-4208.8 -7864.6,-4200.3 -7841.6,-4190.1 -7815.4,-4170.6 -7803.3,-4173.1 -7795.1,-4169.1 -7782.7,-4153.7 -7763.2,-4149.8 -7752.6,-4151.3 -7742.9,-4141.0 -7710.0,-4129.3 -7702.6,-4134.6 -7689.1,-4121.3 -7681.9,-4118.7 -7662.9,-4117.1 -7642.9,-4120.3 -7632.8,-4114.9 -7627.3,-4106.9 -7586.7,-4087.2 -7557.9,-4052.7 -7550.5,-4038.2 -7552.3,-4028.1 -7546.7,-4020.5 -7543.0,-4016.6 -7533.1,-4017.6 -7528.6,-4012.6 -7524.1,-4005.2 -7525.7,-3999.1 -7511.4,-3982.9 -7511.1,-3975.7 -7492.2,-3946.1 -7484.7,-3941.6 -7472.6,-3940.7 -7468.8,-3929.5 -7428.7,-3926.2 -7404.9,-3916.5 -7402.4,-3911.1 -7382.2,-3898.8 -7373.8,-3895.8 -7361.7,-3900.4 -7351.5,-3898.4 -7326.1,-3884.6 -7309.6,-3867.3 -7289.3,-3830.1 -7284.4,-3801.2 -7286.6,-3786.9 -7279.6,-3777.8 -7247.8,-3779.8 -7245.5,-3777.4 -7252.3,-3770.9 -7250.4,-3768.9 -7243.2,-3775.7 -7228.3,-3771.6 -7226.3,-3765.9 -7231.9,-3760.9 -7222.4,-3760.4 -7212.6,-3751.7 -7196.5,-3729.1 -7162.4,-3692.8 -7134.3,-3650.6 -7104.0,-3630.7 -7093.4,-3618.8 -7078.7,-3613.9 -7057.1,-3599.6 -7041.6,-3581.9 -7022.6,-3576.2 -6998.0,-3545.4 -6972.0,-3532.0 -6956.9,-3519.8 -6912.7,-3450.8 -6907.7,-3445.8 -6896.3,-3444.3 -6888.2,-3438.8 -6823.2,-3372.9 -6802.2,-3336.3 -6786.0,-3322.8 -6771.3,-3302.2 -6747.2,-3260.8 -6699.8,-3221.5 -6657.6,-3175.2 -6597.4,-3119.0 -6567.0,-3060.0 -6554.5,-3055.3 -6541.3,-3044.1 -6520.3,-3038.1 -6498.2,-3026.6 -6465.1,-3002.0 -6447.4,-2969.2 -6434.9,-2922.6 -6434.5,-2918.6 -6440.1,-2914.6 -6437.3,-2902.7 -6433.0,-2900.9 -6439.5,-2908.1 -6439.5,-2913.4 -6435.3,-2913.2 -6430.0,-2920.8 -6430.0,-2912.6 -6411.7,-2895.0 -6384.3,-2884.0 -6355.8,-2860.8 -6295.1,-2831.2 -6274.5,-2815.8 -6264.9,-2801.2 -6252.5,-2802.6 -6246.8,-2799.7 -6220.9,-2770.0 -6193.7,-2676.7 -6170.3,-2637.1 -6154.5,-2628.1 -6140.8,-2612.2 -6115.7,-2608.0 -6086.0,-2588.3 -6055.8,-2589.1 -6010.2,-2576.9 -5974.5,-2574.8 -5930.4,-2545.5 -5909.0,-2539.2 -5876.7,-2515.1 -5813.3,-2495.5 -5801.0,-2486.7 -5779.9,-2480.5 -5771.2,-2473.3 -5758.9,-2451.7 -5743.8,-2392.6 -5733.8,-2288.3 -5727.3,-2258.2 -5702.9,-2234.8 -5688.4,-2230.4 -5650.7,-2190.3 -5644.6,-2189.8 -5640.0,-2203.7 -5613.7,-2228.4 -5599.6,-2234.4 -5580.6,-2234.6 -5568.3,-2230.3 -5552.8,-2214.2 -5543.3,-2212.4 -5531.8,-2202.5 -5503.4,-2195.3 -5488.8,-2178.6 -5475.7,-2185.3 -5462.7,-2181.4 -5442.5,-2186.3 -5428.0,-2181.9 -5402.3,-2161.4 -5374.3,-2119.6 -5358.3,-2100.9 -5349.4,-2096.9 -5315.6,-2098.7 -5272.0,-2113.6 -5256.0,-2109.4 -5216.4,-2089.8 -5175.4,-2087.8 -5130.0,-2091.3 -5086.0,-2081.5 -5072.2,-2085.8 -5050.5,-2083.8 -4995.6,-2070.5 -4974.3,-2050.9 -4951.7,-2016.0 -4924.1,-1991.9 -4907.1,-1959.0 -4895.9,-1952.4 -4880.8,-1936.6 -4867.9,-1915.2 -4861.5,-1912.7 -4855.7,-1914.8 -4834.9,-1931.9 -4840.0,-1933.7 -4835.3,-1936.6 -4806.7,-1936.4 -4795.3,-1943.4 -4781.2,-1940.9 -4762.5,-1926.4 -4728.4,-1859.7 -4695.4,-1685.7 -4661.2,-1635.0 -4652.1,-1630.7 -4640.4,-1605.8 -4603.5,-1595.9 -4570.2,-1614.3 -4542.9,-1612.6 -4506.4,-1598.4 -4470.2,-1590.1 -4445.6,-1572.0 -4432.7,-1566.8 -4401.9,-1563.5 -4382.2,-1554.6 -4341.4,-1547.9 -4319.4,-1533.6 -4299.8,-1507.0 -4299.7,-1512.0 -4280.2,-1510.5 -4264.2,-1488.1 -4237.1,-1427.6 -4184.5,-1257.4 -4164.5,-1143.8 -4151.9,-1029.6 -4133.7,-936.3 -4125.1,-920.3 -4102.4,-910.7 -4084.1,-886.2 -4050.0,-789.1 -4041.2,-748.1 -4035.4,-738.7 -4029.6,-675.7 -4034.0,-650.3 -4043.4,-627.6 -4041.4,-622.4 -4044.4,-621.1 -4036.1,-586.5 -4030.5,-576.3 -4026.3,-574.9 -4017.0,-540.0 -4006.0,-539.8 -4011.1,-533.7 -4013.8,-537.5 -4015.0,-533.1 -3997.4,-533.1 -3997.4,-530.0 -4013.5,-529.0 -4009.9,-524.8 -4016.9,-522.6 -4021.5,-541.7 -4017.5,-531.0 -4019.1,-523.8 -4009.5,-522.5 -4003.0,-494.2 -3999.0,-493.7 -3944.8,-408.3 -3951.4,-422.0 -3948.4,-423.2 -3940.4,-408.0 -3945.4,-415.0 -3943.7,-405.6 -3904.3,-328.9 -3886.7,-305.8 -3879.7,-264.7 -3869.1,-126.0 -3856.4,-44.9 -3859.0,5.6 -3866.5,53.7 -3884.9,109.6 -3893.0,124.4 -3900.6,130.3 -3930.6,219.0 -3939.4,233.9 -3944.6,235.8 -3963.1,272.4 -3978.7,289.6 -3980.5,285.7 -3979.5,291.2 -3984.0,288.1 -3985.8,302.1 -3996.2,303.3 -3999.5,307.8 -3997.3,311.3 -4003.1,311.1 -4004.6,307.6 -4017.3,312.3 -4008.9,311.5 -4006.4,316.5 -4019.8,317.0 -4022.8,302.8 -4027.3,298.8 -4035.4,300.3 -4061.6,323.2 -4109.4,384.5 -4118.6,415.9 -4126.2,487.0 -4137.0,495.2 -4145.2,531.4 -4149.9,542.5 -4156.8,546.3 -4177.9,593.0 -4176.4,588.9"/><polyline class="coast" points="-9367.4,-5848.8 -9369.9,-5851.3 -9367.4,-5848.8"/><polyline class="coast" points="-10089.6,-5831.4 -10073.4,-5794.5 -10075.5,-5805.0 -10069.2,-5802.8 -10071.5,-5794.6 -10037.1,-5811.2 -9916.1,-5838.2 -9882.0,-5838.2 -9835.5,-5829.2 -9831.4,-5829.2 -9838.8,-5833.4 -9830.2,-5833.9 -9822.1,-5828.6 -9837.4,-5813.0 -9838.8,-5803.1 -9832.4,-5776.1 -9835.3,-5768.5 -9847.5,-5757.3 -9933.1,-5740.8 -9953.1,-5719.1 -9980.2,-5708.0 -10077.4,-5693.5 -10101.2,-5687.8 -10097.5,-5685.1 -10104.1,-5680.5 -10108.2,-5680.8 -10112.5,-5687.3 -10105.2,-5688.8 -10118.5,-5689.6 -10121.5,-5678.1"/><polyline class="coast" points="-8810.3,-4739.9 -8810.3,-4739.9"/><polyline class="coast" points="-9348.9,-4882.5 -9346.9,-4886.0 -9353.1,-4885.3 -9348.9,-4882.5"/><polyline class="coast" points="-4142.5,517.4 -4142.5,517.4"/><polyline class="coast" points="-8581.0,-4560.2 -8585.2,-4561.0 -8578.7,-4558.0 -8581.0,-4560.2"/><polyline class="coast" points="-10121.2,-5981.2 -10102.2,-5968.0 -10088.0,-5943.9 -10068.6,-5943.4 -10054.4,-5938.2 -10054.4,-5927.2 -10015.8,-5926.3 -10000.4,-5921.7 -10011.3,-5911.0 -10013.7,-5913.6 -10008.8,-5917.6 -10012.0,-5919.5 -10018.4,-5906.3 -10058.3,-5882.7 -10072.7,-5881.0 -10081.7,-5889.4"/><polyline class="coast" points="-8794.5,-4729.2 -8794.5,-4729.2"/><polyline class="coast" points="-8323.3,-4318.0 -8323.3,-4318.0"/><polyline class="coast" points="-8584.0,-4564.7 -8584.0,-4564.7"/><polyline class="coast" points="-3945.9,-415.8 -3945.9,-415.8"/><polyline class="coast" points="-3947.8,-418.5 -3947.8,-418.5"/><polyline class="coast" points="-6433.1,-2907.7 -6430.8,-2909.7 -6433.1,-2907.7"/><circle class="ring sam confirmed" cx="781.0" cy="512.2" r="361.4"/><circle class="threat sam confirmed" cx="781.0" cy="512.2" r="6"/><circle class="ring sam confirmed" cx="737.3" cy="470.4" r="150.6"/><circle class="threat sam confirmed" cx="737.3" cy="470.4" r="6"/><circle class="ring hazard confirmed" cx="930.9" cy="528.9" r="45.2"/><circle class="threat hazard confirmed" cx="930.9" cy="528.9" r="6"/><circle class="ring hazard confirmed" cx="639.4" cy="650.6" r="75.3"/><circle class="threat hazard confirmed" cx="639.4" cy="650.6" r="6"/><polyline class="route dim" points="203.0,346.7 456.2,261.5 443.8,378.5 556.2,286.6 293.9,228.1 203.0,346.7"/><polyline class="route hl" points="456.2,261.5 443.8,378.5"/><g class="target" transform="translate(781.0,512.2)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="203.0" cy="346.7" r="8"/><circle class="wp" cx="456.2" cy="261.5" r="6"/><circle class="wp on" cx="443.8" cy="378.5" r="6"/><circle class="wp" cx="556.2" cy="286.6" r="6"/><circle class="wp" cx="293.9" cy="228.1" r="6"/><text class="lbl" x="215.0" y="351.7">Vaziani</text><text class="lbl" x="468.2" y="266.5">1 SPARTAN IP</text><text class="lbl" x="455.8" y="383.5">2 SHOT 1</text><text class="lbl" x="568.2" y="291.6">3 SHOT 2</text><text class="lbl" x="305.9" y="233.1">4 EGRESS</text><text class="lbl sam" x="769.0" y="517.2" text-anchor="end">SPARTAN SA-6 battery</text><text class="lbl sam" x="749.3" y="475.4">SPARTAN SA-8</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>9 / 23</span></div>
+</section>
+
+<section class="slide threats" data-notes="Training: everything here is briefed as it is. Walk each player&#39;s start point and what it will do." aria-label="Slide 10">
+  
+    <div class="eyebrow">Range players and hazards</div>
+    <h2>Who and what is out there</h2>
+    <div class="rows"><div class="row"><span><span class="tag sam">sam</span></span>
+      <span><b>SPARTAN SA-6 battery (radar cleared, launchers not)</b> <span class="muted mono">· 24 km</span><br><span class="muted">1S91 search-and-track radar and three 2P25 launchers. Live radar, weapons hold. Only the radar is cleared.</span></span></div><div class="row"><span><span class="tag sam">sam</span></span>
+      <span><b>SPARTAN SA-8 (cleared)</b> <span class="muted mono">· 10 km</span><br><span class="muted">9A33 Osa, radar and missiles on one vehicle. Live radar, weapons hold.</span></span></div><div class="row"><span><span class="tag hazard">hazard</span></span>
+      <span><b>Azerbaijan border</b> <span class="muted mono">· 3 km</span><br><span class="muted">Range boundary. Turn west after every shot.</span></span></div><div class="row"><span><span class="tag hazard">hazard</span></span>
+      <span><b>David Gareja monastery: no-fly</b> <span class="muted mono">· 5 km</span><br><span class="muted">Same rule as on the Gareja range: no overflight within 5 km.</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>10 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Read every rule out loud and get an acknowledgement. Then brief knock-it-off and terminate." aria-label="Slide 11">
+  
+    <div class="eyebrow">Training rules</div>
+    <h2>How we fight safe</h2>
+    <ol class="rulelist"><li>The range emitters are live radars on weapons hold. They will lock you; they will not fire. Treat every lock as real in your tactics.</li><li>Cleared targets: the SA-6 search-and-track radar and the SA-8. The SA-6 launchers are not cleared: hitting one is a range foul.</li><li>Shot 1 (SA-6 radar) from SHOT 1, Shot 2 (SA-8) from SHOT 2. Each point has a ±20 s window from the IP.</li><li>Altitude block 20,000 to 26,000 ft until both shots are off. Nothing below 5,000 ft AGL on the range at any time.</li><li>Range boundary: the Azerbaijan border, 10 km east of the site. Turn away from it after every shot.</li><li>Bingo 4,000 lb to Vaziani.</li></ol>
+    <p class="kio"><b>Knock-it-off / terminate:</b> Anyone can call &#34;Knock it off&#34; for a border infringement, an altitude bust or a hung missile.
+Turn west, climb to 26,000 ft, master arm SAFE, and wait for SPARTAN to call the range hot again.</p>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>11 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Ask questions; don&#39;t lecture. Have the student brief one of these back." aria-label="Slide 12">
+  
+    <div class="eyebrow">Special subjects</div>
+    <h2>Talk it through</h2>
+    <ol class="rulelist"><li>Range-known versus self-protect HARM modes: why we brief a pre-planned shot and still carry the TOO page.</li><li>What the RWR shows when the SA-6 goes from search to track. Hear it, call it, then shoot.</li><li>HARM time of flight from 40 km: about 75 s. What do you do with that time?</li><li>The SA-8 on its own: it&#39;s short range and mobile. Don&#39;t fly inside 10 km of it to make the shot.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>12 / 23</span></div>
+</section>
+
+<section class="slide package" data-notes="Confirm everyone has the loadout before step." aria-label="Slide 13">
+  
+    <div class="eyebrow">Package</div>
+    <h2>Dodge 1 flight</h2>
+    <div class="rows"><div class="row"><span class="k">Aircraft</span><span>1× F/A-18C Hornet</span></div><div class="row"><span class="k">Start</span><span>Cold start, Vaziani</span></div><div class="row"><span class="k">Loadout</span><span>2× AGM-88C HARM, 2× AIM-9X (inert), 1× 330 gal tank</span></div><div class="row"><span class="k">Joker / Bingo</span><span>5500 / 4000 lb</span></div></div>
+    
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>13 / 23</span></div>
+</section>
+
+<section class="slide divider" data-notes="Training: this is exactly how the event runs." aria-label="Slide 14">
+  
+    <div class="eyebrow">The plan</div>
+    <h1>Event flow</h1>
+    
+    
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>14 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 15">
+  
+    <div class="split nomap">
+      <div class="text">
+        <div class="eyebrow">Phase 1 · 10:00</div>
+        <h2>Start and Transit</h2>
+        <div class="body"><p>Cold start at Vaziani. Load both emitters as pre-planned HARM targets before you taxi. Depart
+east and climb to 24,000 ft for SPARTAN IP.</p></div>
+        
+      </div>
+      
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>15 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="Have the student call out the RWR picture at the IP before you show the tape." aria-label="Slide 16">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 2 · 10:22</div>
+        <h2>Shot 1: SA-6 Radar</h2>
+        <div class="body"><p>Check in at SPARTAN IP. Range control clears the range hot. SHOT 1 is 35 s from the IP. Fire the
+first HARM at the SA-6 radar, and turn away west while it flies.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1398.1" y2="1398.1"/><text class="gridlbl" x="6" y="1394.1">41.0N</text><line class="grid" x1="0" x2="900" y1="562.4" y2="562.4"/><text class="gridlbl" x="6" y="558.4">41.5N</text><line class="grid" y1="0" y2="640" x1="-335.3" x2="-335.3"/><text class="gridlbl" x="-331.3" y="632">44.5E</text><line class="grid" y1="0" y2="640" x1="289.3" x2="289.3"/><text class="gridlbl" x="293.3" y="632">45.0E</text><polyline class="coast" points="-9248.7,-5851.8 -9248.7,-5851.8"/><polyline class="coast" points="-9249.0,-5852.6 -9249.0,-5852.6"/><polyline class="coast" points="-9001.2,-5960.4 -9050.0,-5917.8 -9134.4,-5870.2 -9145.1,-5867.0 -9170.7,-5870.0 -9176.8,-5867.7 -9185.1,-5877.7 -9217.4,-5875.4 -9223.9,-5868.2 -9211.7,-5852.0 -9224.9,-5853.6 -9222.3,-5855.6 -9226.9,-5857.5 -9241.2,-5846.9 -9247.5,-5847.6 -9235.0,-5834.7 -9229.6,-5837.6 -9228.9,-5845.3 -9209.4,-5839.9 -9223.8,-5839.6 -9233.3,-5833.6 -9232.1,-5829.7 -9226.6,-5832.9 -9223.2,-5829.9 -9227.7,-5826.2 -9223.6,-5822.4 -9226.9,-5817.4 -9229.6,-5824.5 -9234.5,-5826.4 -9238.8,-5820.2 -9233.8,-5816.5 -9242.5,-5822.4 -9235.0,-5829.9 -9254.2,-5851.0 -9283.1,-5840.9 -9323.6,-5838.8 -9428.8,-5844.4 -9491.4,-5859.3 -9639.4,-5909.3 -9691.5,-5934.0 -9742.8,-5966.1"/><polyline class="coast" points="-9246.7,-5852.1 -9246.7,-5852.1"/><polyline class="coast" points="-10008.7,-5479.5 -9953.2,-5486.6 -9929.4,-5486.1 -9882.4,-5478.9 -9826.7,-5463.2 -9716.1,-5416.9 -9652.9,-5396.0 -9559.2,-5357.3 -9475.1,-5312.1 -9403.1,-5265.1 -9345.0,-5211.8 -9312.2,-5163.0 -9306.4,-5142.7 -9308.3,-5125.7 -9314.5,-5116.3 -9321.9,-5117.3 -9322.0,-5121.7 -9322.2,-5118.5 -9331.5,-5115.0 -9333.6,-5104.4 -9282.6,-5040.6 -9277.4,-5026.6 -9276.9,-4998.0 -9226.6,-4924.8 -9223.1,-4897.2 -9218.4,-4896.0 -9223.4,-4895.3 -9221.8,-4890.0 -9228.7,-4881.5 -9223.7,-4884.6 -9205.6,-4875.9 -9195.2,-4862.1 -9193.7,-4853.2 -9162.0,-4832.5 -9149.0,-4813.8 -9136.2,-4803.6 -9135.9,-4797.2 -9127.9,-4799.2 -9113.9,-4793.2 -9101.0,-4777.2 -9087.3,-4777.8 -9020.8,-4747.2 -9002.7,-4750.3 -8985.1,-4739.4 -8938.2,-4729.9 -8912.3,-4736.9 -8890.3,-4735.2 -8887.3,-4732.0 -8884.3,-4732.5 -8887.8,-4734.4 -8883.0,-4734.4 -8840.2,-4715.0 -8830.9,-4706.8 -8822.1,-4709.3 -8799.2,-4702.1 -8784.5,-4702.4 -8776.0,-4706.8 -8751.2,-4709.6 -8749.0,-4713.6 -8712.9,-4726.7 -8700.9,-4737.7 -8703.6,-4737.2 -8705.6,-4746.6 -8693.9,-4750.1 -8718.3,-4783.7 -8718.5,-4802.2 -8723.5,-4805.6 -8721.9,-4813.6 -8726.4,-4820.0 -8721.9,-4824.3 -8730.6,-4821.1 -8734.4,-4826.3 -8730.9,-4827.0 -8738.0,-4832.0 -8737.0,-4834.7 -8729.2,-4829.0 -8732.4,-4832.7 -8727.6,-4832.2 -8729.1,-4837.2 -8725.8,-4834.2 -8727.5,-4838.7 -8722.1,-4834.3 -8724.9,-4841.0 -8718.0,-4834.2 -8715.0,-4836.3 -8719.6,-4842.0 -8715.4,-4844.5 -8709.6,-4835.0 -8706.4,-4836.8 -8709.5,-4843.5 -8703.1,-4841.8 -8701.6,-4833.7 -8697.0,-4839.5 -8697.9,-4830.5 -8694.8,-4832.0 -8685.0,-4822.8 -8694.9,-4818.3 -8683.5,-4823.0 -8680.7,-4828.8 -8684.8,-4819.1 -8680.3,-4828.5 -8673.5,-4823.3 -8678.3,-4823.1 -8675.0,-4821.0 -8680.0,-4812.8 -8673.3,-4822.6 -8673.7,-4819.8 -8670.3,-4820.8 -8672.4,-4818.6 -8663.7,-4820.0 -8666.2,-4817.6 -8662.3,-4817.4 -8663.4,-4813.4 -8668.0,-4814.1 -8658.0,-4809.8 -8662.9,-4806.2 -8676.5,-4811.3 -8666.8,-4805.6 -8651.8,-4811.1 -8648.8,-4797.7 -8613.9,-4766.6 -8604.6,-4753.1 -8562.5,-4730.2 -8554.1,-4714.6 -8541.2,-4702.6 -8540.6,-4696.3 -8569.9,-4679.2 -8573.5,-4674.2 -8571.5,-4667.3 -8541.9,-4626.7 -8522.1,-4612.3 -8491.8,-4580.8 -8485.3,-4576.6 -8481.7,-4580.6 -8475.8,-4577.1 -8474.5,-4566.2 -8463.9,-4567.2 -8458.8,-4561.5 -8458.3,-4564.2 -8449.4,-4559.4 -8430.4,-4557.9 -8420.2,-4551.7 -8414.0,-4563.2 -8420.6,-4570.9 -8413.2,-4574.1 -8415.7,-4579.6 -8413.5,-4574.2 -8419.1,-4571.7 -8421.1,-4576.2 -8416.6,-4578.1 -8423.6,-4577.2 -8425.6,-4579.9 -8425.9,-4587.3 -8421.3,-4591.8 -8410.5,-4595.1 -8393.5,-4594.3 -8373.7,-4580.4 -8359.7,-4560.2 -8361.6,-4548.7 -8370.6,-4544.7 -8379.3,-4547.0 -8390.0,-4544.0 -8394.5,-4537.0 -8345.5,-4503.5 -8316.9,-4474.9 -8308.9,-4461.6 -8297.2,-4455.7 -8289.3,-4444.9 -8288.9,-4428.8 -8276.8,-4412.4 -8275.0,-4396.9 -8265.4,-4388.9 -8264.3,-4381.7 -8239.3,-4367.5 -8217.1,-4343.6 -8202.6,-4316.3 -8195.3,-4313.0 -8199.2,-4310.5 -8195.0,-4312.8 -8167.9,-4302.9 -8134.1,-4307.6 -8099.8,-4302.3 -8077.2,-4292.3 -8053.8,-4272.9 -8036.9,-4266.7 -8024.7,-4251.8 -8004.2,-4239.9 -7988.2,-4235.4 -7972.7,-4232.6 -7937.3,-4243.8 -7905.2,-4232.7 -7864.3,-4230.1 -7805.6,-4209.5 -7799.5,-4214.4 -7792.5,-4214.7 -7783.6,-4208.8 -7744.9,-4200.3 -7721.9,-4190.1 -7695.7,-4170.6 -7683.5,-4173.1 -7675.4,-4169.1 -7662.9,-4153.7 -7643.4,-4149.8 -7632.8,-4151.3 -7623.2,-4141.0 -7590.2,-4129.3 -7582.9,-4134.6 -7569.4,-4121.3 -7562.1,-4118.7 -7543.1,-4117.1 -7523.1,-4120.3 -7513.0,-4114.9 -7507.5,-4106.9 -7466.9,-4087.2 -7438.2,-4052.7 -7430.7,-4038.2 -7432.6,-4028.1 -7427.0,-4020.5 -7423.2,-4016.6 -7413.3,-4017.6 -7408.8,-4012.6 -7404.3,-4005.2 -7406.0,-3999.1 -7391.6,-3982.9 -7391.4,-3975.7 -7372.5,-3946.1 -7365.0,-3941.6 -7352.9,-3940.7 -7349.0,-3929.5 -7308.9,-3926.2 -7285.2,-3916.5 -7282.7,-3911.1 -7262.4,-3898.8 -7254.1,-3895.8 -7242.0,-3900.4 -7231.7,-3898.4 -7206.4,-3884.6 -7189.9,-3867.3 -7169.5,-3830.1 -7164.6,-3801.2 -7166.9,-3786.9 -7159.9,-3777.8 -7128.0,-3779.8 -7125.8,-3777.4 -7132.5,-3770.9 -7130.7,-3768.9 -7123.4,-3775.7 -7108.5,-3771.6 -7106.5,-3765.9 -7112.2,-3760.9 -7102.7,-3760.4 -7092.8,-3751.7 -7076.7,-3729.1 -7042.6,-3692.8 -7014.5,-3650.6 -6984.2,-3630.7 -6973.6,-3618.8 -6958.9,-3613.9 -6937.3,-3599.6 -6921.8,-3581.9 -6902.8,-3576.2 -6878.2,-3545.4 -6852.2,-3532.0 -6837.1,-3519.8 -6792.9,-3450.8 -6787.9,-3445.8 -6776.5,-3444.3 -6768.4,-3438.8 -6703.4,-3372.9 -6682.4,-3336.3 -6666.2,-3322.8 -6651.5,-3302.2 -6627.3,-3260.8 -6580.0,-3221.5 -6537.8,-3175.2 -6477.6,-3119.0 -6447.2,-3060.0 -6434.7,-3055.3 -6421.5,-3044.1 -6400.5,-3038.1 -6378.4,-3026.6 -6345.3,-3002.0 -6327.5,-2969.2 -6315.0,-2922.6 -6314.7,-2918.6 -6320.3,-2914.6 -6317.4,-2902.7 -6313.2,-2900.9 -6319.7,-2908.1 -6319.7,-2913.4 -6315.4,-2913.2 -6310.2,-2920.8 -6310.2,-2912.6 -6291.8,-2895.0 -6264.5,-2884.0 -6236.0,-2860.8 -6175.3,-2831.2 -6154.7,-2815.8 -6145.0,-2801.2 -6132.7,-2802.6 -6126.9,-2799.7 -6101.1,-2770.0 -6073.8,-2676.7 -6050.5,-2637.1 -6034.6,-2628.1 -6021.0,-2612.2 -5995.9,-2608.0 -5966.1,-2588.3 -5935.9,-2589.1 -5890.3,-2576.9 -5854.6,-2574.8 -5810.5,-2545.5 -5789.1,-2539.2 -5756.8,-2515.1 -5693.4,-2495.5 -5681.1,-2486.7 -5660.0,-2480.5 -5651.4,-2473.3 -5639.0,-2451.7 -5623.9,-2392.6 -5613.9,-2288.3 -5607.4,-2258.2 -5583.0,-2234.8 -5568.5,-2230.4 -5530.8,-2190.3 -5524.7,-2189.8 -5520.1,-2203.7 -5493.8,-2228.4 -5479.7,-2234.4 -5460.7,-2234.6 -5448.4,-2230.3 -5432.9,-2214.2 -5423.4,-2212.4 -5411.9,-2202.5 -5383.5,-2195.3 -5368.9,-2178.6 -5355.8,-2185.3 -5342.8,-2181.4 -5322.6,-2186.3 -5308.1,-2181.9 -5282.3,-2161.4 -5254.4,-2119.6 -5238.4,-2100.9 -5229.5,-2096.9 -5195.6,-2098.7 -5152.0,-2113.6 -5136.1,-2109.4 -5096.5,-2089.8 -5055.5,-2087.8 -5010.0,-2091.3 -4966.0,-2081.5 -4952.3,-2085.8 -4930.6,-2083.8 -4875.6,-2070.5 -4854.4,-2050.9 -4831.8,-2016.0 -4804.1,-1991.9 -4787.2,-1959.0 -4775.9,-1952.4 -4760.8,-1936.6 -4747.9,-1915.2 -4741.6,-1912.7 -4735.7,-1914.8 -4715.0,-1931.9 -4720.1,-1933.7 -4715.3,-1936.6 -4686.7,-1936.4 -4675.4,-1943.4 -4661.2,-1940.9 -4642.5,-1926.4 -4608.4,-1859.7 -4575.4,-1685.7 -4541.2,-1635.0 -4532.1,-1630.7 -4520.5,-1605.8 -4483.5,-1595.9 -4450.2,-1614.3 -4422.9,-1612.6 -4386.4,-1598.4 -4350.2,-1590.1 -4325.6,-1572.0 -4312.7,-1566.8 -4281.9,-1563.5 -4262.2,-1554.6 -4221.4,-1547.9 -4199.4,-1533.6 -4179.8,-1507.0 -4179.7,-1512.0 -4160.2,-1510.5 -4144.2,-1488.1 -4117.1,-1427.6 -4064.5,-1257.4 -4044.5,-1143.8 -4031.9,-1029.6 -4013.7,-936.3 -4005.0,-920.3 -3982.4,-910.7 -3964.1,-886.2 -3930.0,-789.1 -3921.2,-748.1 -3915.3,-738.7 -3909.6,-675.7 -3914.0,-650.3 -3923.3,-627.6 -3921.3,-622.4 -3924.3,-621.1 -3916.1,-586.5 -3910.5,-576.3 -3906.2,-574.9 -3897.0,-540.0 -3886.0,-539.8 -3891.1,-533.7 -3893.7,-537.5 -3895.0,-533.1 -3877.4,-533.1 -3877.4,-530.0 -3893.5,-529.0 -3889.9,-524.8 -3896.9,-522.6 -3901.5,-541.7 -3897.5,-531.0 -3899.1,-523.8 -3889.5,-522.5 -3883.0,-494.2 -3879.0,-493.7 -3824.8,-408.3 -3831.4,-422.0 -3828.4,-423.2 -3820.4,-408.0 -3825.4,-415.0 -3823.6,-405.6 -3784.3,-328.9 -3766.7,-305.8 -3759.7,-264.7 -3749.1,-126.0 -3736.3,-44.9 -3739.0,5.6 -3746.4,53.7 -3764.8,109.6 -3772.9,124.4 -3780.6,130.3 -3810.5,219.0 -3819.4,233.9 -3824.5,235.8 -3843.0,272.4 -3858.6,289.6 -3860.5,285.7 -3859.5,291.2 -3864.0,288.1 -3865.7,302.1 -3876.1,303.3 -3879.5,307.8 -3877.2,311.3 -3883.1,311.1 -3884.6,307.6 -3897.2,312.3 -3888.9,311.5 -3886.4,316.5 -3899.7,317.0 -3902.7,302.8 -3907.2,298.8 -3915.3,300.3 -3941.6,323.2 -3989.4,384.5 -3998.5,415.9 -4006.2,487.0 -4017.0,495.2 -4025.1,531.4 -4029.9,542.5 -4036.8,546.3 -4057.9,593.0 -4056.4,588.9"/><polyline class="coast" points="-9247.8,-5848.8 -9250.3,-5851.3 -9247.8,-5848.8"/><polyline class="coast" points="-9970.1,-5831.4 -9953.8,-5794.5 -9956.0,-5805.0 -9949.7,-5802.8 -9952.0,-5794.6 -9917.6,-5811.2 -9796.6,-5838.2 -9762.5,-5838.2 -9716.0,-5829.2 -9711.9,-5829.2 -9719.2,-5833.4 -9710.6,-5833.9 -9702.5,-5828.6 -9717.9,-5813.0 -9719.2,-5803.1 -9712.9,-5776.1 -9715.7,-5768.5 -9728.0,-5757.3 -9813.6,-5740.8 -9833.5,-5719.1 -9860.6,-5708.0 -9957.8,-5693.5 -9981.7,-5687.8 -9977.9,-5685.1 -9984.6,-5680.5 -9988.7,-5680.8 -9992.9,-5687.3 -9985.7,-5688.8 -9998.9,-5689.6 -10001.9,-5678.1"/><polyline class="coast" points="-8690.6,-4739.9 -8690.6,-4739.9"/><polyline class="coast" points="-9229.3,-4882.5 -9227.3,-4886.0 -9233.6,-4885.3 -9229.3,-4882.5"/><polyline class="coast" points="-4022.5,517.4 -4022.5,517.4"/><polyline class="coast" points="-8461.3,-4560.2 -8465.5,-4561.0 -8459.0,-4558.0 -8461.3,-4560.2"/><polyline class="coast" points="-10001.7,-5981.2 -9982.7,-5968.0 -9968.5,-5943.9 -9949.1,-5943.4 -9934.8,-5938.2 -9934.8,-5927.2 -9896.2,-5926.3 -9880.9,-5921.7 -9891.8,-5911.0 -9894.1,-5913.6 -9889.3,-5917.6 -9892.5,-5919.5 -9898.9,-5906.3 -9938.7,-5882.7 -9953.2,-5881.0 -9962.2,-5889.4"/><polyline class="coast" points="-8674.9,-4729.2 -8674.9,-4729.2"/><polyline class="coast" points="-8203.6,-4318.0 -8203.6,-4318.0"/><polyline class="coast" points="-8464.3,-4564.7 -8464.3,-4564.7"/><polyline class="coast" points="-3825.9,-415.8 -3825.9,-415.8"/><polyline class="coast" points="-3827.8,-418.5 -3827.8,-418.5"/><polyline class="coast" points="-6313.3,-2907.7 -6310.9,-2909.7 -6313.3,-2907.7"/><circle class="ring sam confirmed" cx="901.4" cy="512.2" r="361.4"/><circle class="threat sam confirmed" cx="901.4" cy="512.2" r="6"/><circle class="ring sam confirmed" cx="857.7" cy="470.4" r="150.6"/><circle class="threat sam confirmed" cx="857.7" cy="470.4" r="6"/><circle class="ring hazard confirmed" cx="1051.3" cy="528.9" r="45.2"/><circle class="threat hazard confirmed" cx="1051.3" cy="528.9" r="6"/><circle class="ring hazard confirmed" cx="759.8" cy="650.6" r="75.3"/><circle class="threat hazard confirmed" cx="759.8" cy="650.6" r="6"/><polyline class="route dim" points="323.4,346.7 576.6,261.5 564.2,378.5 676.6,286.6 414.3,228.1 323.4,346.7"/><polyline class="route hl" points="323.4,346.7 576.6,261.5 564.2,378.5"/><g class="target" transform="translate(901.4,512.2)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="323.4" cy="346.7" r="8"/><circle class="wp on" cx="576.6" cy="261.5" r="6"/><circle class="wp on" cx="564.2" cy="378.5" r="6"/><circle class="wp" cx="676.6" cy="286.6" r="6"/><circle class="wp" cx="414.3" cy="228.1" r="6"/><text class="lbl" x="335.4" y="351.7">Vaziani</text><text class="lbl" x="588.6" y="266.5">1 SPARTAN IP</text><text class="lbl" x="576.2" y="383.5">2 SHOT 1</text><text class="lbl" x="688.6" y="291.6">3 SHOT 2</text><text class="lbl" x="426.3" y="233.1">4 EGRESS</text><text class="lbl sam" x="845.7" y="475.4" text-anchor="end">SPARTAN SA-8</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>16 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 17">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 3 · 10:26</div>
+        <h2>Shot 2: SA-8</h2>
+        <div class="body"><p>SHOT 2 is 3 minutes from the IP: turn away after Shot 1, then come back round to it. Fire the second HARM at the SA-8 and turn away. Don&#39;t
+close inside 10 km of it to make the shot.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1385.6" y2="1385.6"/><text class="gridlbl" x="6" y="1381.6">41.0N</text><line class="grid" x1="0" x2="900" y1="549.8" y2="549.8"/><text class="gridlbl" x="6" y="545.8">41.5N</text><line class="grid" y1="0" y2="640" x1="-505.7" x2="-505.7"/><text class="gridlbl" x="-501.7" y="632">44.5E</text><line class="grid" y1="0" y2="640" x1="119.0" x2="119.0"/><text class="gridlbl" x="123.0" y="632">45.0E</text><line class="grid" y1="0" y2="640" x1="743.6" x2="743.6"/><text class="gridlbl" x="747.6" y="632">45.5E</text><polyline class="coast" points="-9419.4,-5864.3 -9419.4,-5864.3"/><polyline class="coast" points="-9419.7,-5865.2 -9419.7,-5865.2"/><polyline class="coast" points="-9171.9,-5973.0 -9220.7,-5930.3 -9305.1,-5882.7 -9315.8,-5879.5 -9341.4,-5882.5 -9347.5,-5880.2 -9355.8,-5890.2 -9388.1,-5887.9 -9394.6,-5880.7 -9382.4,-5864.5 -9395.6,-5866.2 -9393.0,-5868.2 -9397.6,-5870.0 -9411.9,-5859.5 -9418.2,-5860.1 -9405.8,-5847.3 -9400.3,-5850.1 -9399.6,-5857.8 -9380.1,-5852.5 -9394.5,-5852.1 -9404.0,-5846.1 -9402.8,-5842.3 -9397.3,-5845.4 -9393.9,-5842.4 -9398.4,-5838.8 -9394.3,-5834.9 -9397.6,-5829.9 -9400.3,-5837.1 -9405.3,-5838.9 -9409.5,-5832.7 -9404.5,-5829.1 -9413.2,-5834.9 -9405.8,-5842.4 -9424.9,-5863.5 -9453.8,-5853.5 -9494.3,-5851.3 -9599.5,-5857.0 -9662.1,-5871.8 -9810.1,-5921.8 -9862.2,-5946.6 -9913.6,-5978.7"/><polyline class="coast" points="-9417.4,-5864.7 -9417.4,-5864.7"/><polyline class="coast" points="-10179.4,-5492.1 -10123.9,-5499.1 -10100.1,-5498.6 -10053.1,-5491.4 -9997.4,-5475.7 -9886.8,-5429.4 -9823.6,-5408.5 -9729.9,-5369.9 -9645.9,-5324.6 -9573.8,-5277.6 -9515.7,-5224.3 -9483.0,-5175.5 -9477.1,-5155.3 -9479.0,-5138.2 -9485.2,-5128.9 -9492.6,-5129.9 -9492.7,-5134.2 -9493.0,-5131.0 -9502.2,-5127.5 -9504.3,-5117.0 -9453.3,-5053.1 -9448.1,-5039.1 -9447.6,-5010.5 -9397.3,-4937.3 -9393.8,-4909.7 -9389.1,-4908.5 -9394.1,-4907.9 -9392.5,-4902.5 -9399.4,-4894.0 -9394.4,-4897.2 -9376.3,-4888.5 -9365.9,-4874.6 -9364.4,-4865.8 -9332.7,-4845.0 -9319.7,-4826.3 -9306.9,-4816.1 -9306.6,-4809.8 -9298.6,-4811.8 -9284.6,-4805.7 -9271.7,-4789.7 -9258.0,-4790.4 -9191.5,-4759.8 -9173.4,-4762.8 -9155.8,-4751.9 -9108.9,-4742.4 -9082.9,-4749.4 -9061.0,-4747.7 -9058.0,-4744.6 -9055.0,-4745.1 -9058.5,-4746.9 -9053.7,-4746.9 -9010.9,-4727.5 -9001.6,-4719.3 -8992.8,-4721.8 -8969.9,-4714.6 -8955.2,-4715.0 -8946.7,-4719.3 -8921.9,-4722.2 -8919.7,-4726.2 -8883.6,-4739.2 -8871.6,-4750.3 -8874.3,-4749.7 -8876.3,-4759.1 -8864.6,-4762.6 -8888.9,-4796.2 -8889.2,-4814.8 -8894.2,-4818.1 -8892.6,-4826.1 -8897.1,-4832.5 -8892.6,-4836.8 -8901.3,-4833.7 -8905.1,-4838.8 -8901.6,-4839.5 -8908.7,-4844.5 -8907.7,-4847.2 -8899.9,-4841.5 -8903.1,-4845.2 -8898.3,-4844.7 -8899.8,-4849.7 -8896.4,-4846.7 -8898.2,-4851.2 -8892.8,-4846.9 -8895.6,-4853.6 -8888.7,-4846.7 -8885.7,-4848.9 -8890.3,-4854.6 -8886.1,-4857.1 -8880.3,-4847.5 -8877.1,-4849.4 -8880.2,-4856.1 -8873.8,-4854.4 -8872.3,-4846.2 -8867.7,-4852.0 -8868.6,-4843.0 -8865.5,-4844.5 -8855.7,-4835.3 -8865.6,-4830.8 -8854.2,-4835.5 -8851.3,-4841.3 -8855.5,-4831.7 -8851.0,-4841.0 -8844.2,-4835.8 -8849.0,-4835.7 -8845.7,-4833.5 -8850.7,-4825.3 -8844.0,-4835.2 -8844.3,-4832.3 -8841.0,-4833.3 -8843.1,-4831.2 -8834.4,-4832.5 -8836.8,-4830.1 -8833.0,-4830.0 -8834.1,-4826.0 -8838.7,-4826.6 -8828.7,-4822.3 -8833.6,-4818.8 -8847.2,-4823.8 -8837.5,-4818.1 -8822.5,-4823.6 -8819.5,-4810.3 -8784.6,-4779.2 -8775.3,-4765.6 -8733.2,-4742.7 -8724.8,-4727.2 -8711.9,-4715.1 -8711.3,-4708.8 -8740.5,-4691.7 -8744.2,-4686.7 -8742.2,-4679.9 -8712.5,-4639.3 -8692.8,-4624.9 -8662.5,-4593.3 -8656.0,-4589.1 -8652.3,-4593.1 -8646.5,-4589.6 -8645.2,-4578.8 -8634.6,-4579.8 -8629.5,-4574.1 -8629.0,-4576.7 -8620.1,-4571.9 -8601.1,-4570.4 -8590.9,-4564.2 -8584.6,-4575.7 -8591.2,-4583.4 -8583.9,-4586.6 -8586.4,-4592.1 -8584.1,-4586.8 -8589.7,-4584.3 -8591.7,-4588.8 -8587.3,-4590.6 -8594.2,-4589.8 -8596.2,-4592.5 -8596.6,-4599.8 -8592.0,-4604.3 -8581.1,-4607.7 -8564.1,-4606.8 -8544.4,-4593.0 -8530.4,-4572.7 -8532.3,-4561.2 -8541.3,-4557.2 -8550.0,-4559.5 -8560.6,-4556.5 -8565.1,-4549.5 -8516.2,-4516.1 -8487.6,-4487.5 -8479.6,-4474.1 -8467.8,-4468.3 -8460.0,-4457.4 -8459.6,-4441.4 -8447.5,-4425.0 -8445.7,-4409.4 -8436.1,-4401.4 -8435.0,-4394.2 -8410.0,-4380.0 -8387.7,-4356.1 -8373.3,-4328.9 -8366.0,-4325.5 -8369.9,-4323.0 -8365.6,-4325.3 -8338.5,-4315.5 -8304.8,-4320.2 -8270.4,-4314.8 -8247.8,-4304.8 -8224.5,-4285.4 -8207.6,-4279.2 -8195.4,-4264.3 -8174.9,-4252.5 -8158.9,-4248.0 -8143.4,-4245.1 -8107.9,-4256.3 -8075.8,-4245.3 -8035.0,-4242.6 -7976.2,-4222.0 -7970.1,-4226.9 -7963.1,-4227.2 -7954.3,-4221.4 -7915.5,-4212.9 -7892.5,-4202.7 -7866.3,-4183.1 -7854.2,-4185.6 -7846.1,-4181.6 -7833.6,-4166.2 -7814.1,-4162.4 -7803.5,-4163.9 -7793.9,-4153.5 -7760.9,-4141.8 -7753.5,-4147.2 -7740.0,-4133.8 -7732.8,-4131.3 -7713.8,-4129.6 -7693.8,-4132.8 -7683.7,-4127.4 -7678.2,-4119.4 -7637.6,-4099.7 -7608.8,-4065.3 -7601.4,-4050.7 -7603.2,-4040.7 -7597.6,-4033.0 -7593.9,-4029.2 -7584.0,-4030.2 -7579.5,-4025.1 -7575.0,-4017.8 -7576.6,-4011.6 -7562.2,-3995.4 -7562.0,-3988.2 -7543.1,-3958.6 -7535.6,-3954.1 -7523.5,-3953.3 -7519.7,-3942.1 -7479.6,-3938.7 -7455.8,-3929.0 -7453.3,-3923.7 -7433.1,-3911.3 -7424.7,-3908.3 -7412.6,-3913.0 -7402.3,-3911.0 -7377.0,-3897.1 -7360.5,-3879.9 -7340.1,-3842.6 -7335.3,-3813.7 -7337.5,-3799.5 -7330.5,-3790.3 -7298.7,-3792.3 -7296.4,-3790.0 -7303.2,-3783.4 -7301.3,-3781.4 -7294.0,-3788.3 -7279.2,-3784.1 -7277.2,-3778.4 -7282.8,-3773.4 -7273.3,-3772.9 -7263.4,-3764.2 -7247.3,-3741.6 -7213.2,-3705.4 -7185.1,-3663.1 -7154.9,-3643.2 -7144.3,-3631.3 -7129.5,-3626.5 -7107.9,-3612.1 -7092.4,-3594.4 -7073.4,-3588.7 -7048.8,-3557.9 -7022.8,-3544.6 -7007.7,-3532.4 -6963.5,-3463.3 -6958.5,-3458.3 -6947.1,-3456.8 -6939.0,-3451.3 -6874.0,-3385.4 -6853.1,-3348.8 -6836.8,-3335.3 -6822.1,-3314.7 -6798.0,-3273.3 -6750.6,-3234.0 -6708.4,-3187.7 -6648.2,-3131.5 -6617.8,-3072.5 -6605.3,-3067.9 -6592.1,-3056.7 -6571.1,-3050.6 -6549.0,-3039.1 -6515.9,-3014.5 -6498.1,-2981.8 -6485.7,-2935.1 -6485.3,-2931.1 -6490.9,-2927.1 -6488.0,-2915.2 -6483.8,-2913.4 -6490.3,-2920.6 -6490.3,-2925.9 -6486.0,-2925.8 -6480.8,-2933.3 -6480.8,-2925.1 -6462.4,-2907.6 -6435.1,-2896.5 -6406.6,-2873.3 -6345.9,-2843.7 -6325.3,-2828.3 -6315.6,-2813.8 -6303.3,-2815.1 -6297.5,-2812.3 -6271.7,-2782.5 -6244.4,-2689.3 -6221.1,-2649.6 -6205.2,-2640.6 -6191.6,-2624.7 -6166.5,-2620.6 -6136.7,-2600.8 -6106.5,-2601.7 -6060.9,-2589.5 -6025.2,-2587.3 -5981.1,-2558.0 -5959.7,-2551.7 -5927.4,-2527.6 -5864.0,-2508.1 -5851.7,-2499.2 -5830.6,-2493.0 -5821.9,-2485.8 -5809.6,-2464.3 -5794.5,-2405.1 -5784.5,-2300.8 -5778.0,-2270.7 -5753.6,-2247.3 -5739.1,-2243.0 -5701.4,-2202.8 -5695.3,-2202.3 -5690.6,-2216.2 -5664.4,-2241.0 -5650.3,-2247.0 -5631.3,-2247.1 -5618.9,-2242.8 -5603.4,-2226.7 -5593.9,-2224.9 -5582.5,-2215.0 -5554.1,-2207.9 -5539.5,-2191.1 -5526.4,-2197.8 -5513.4,-2194.0 -5493.1,-2198.8 -5478.6,-2194.5 -5452.9,-2173.9 -5424.9,-2132.1 -5408.9,-2113.4 -5400.1,-2109.4 -5366.2,-2111.2 -5322.6,-2126.1 -5306.6,-2121.9 -5267.0,-2102.4 -5226.0,-2100.4 -5180.6,-2103.9 -5136.6,-2094.0 -5122.9,-2098.4 -5101.1,-2096.4 -5046.2,-2083.0 -5024.9,-2063.4 -5002.3,-2028.5 -4974.7,-2004.4 -4957.7,-1971.5 -4946.5,-1965.0 -4931.4,-1949.1 -4918.5,-1927.7 -4912.1,-1925.2 -4906.2,-1927.4 -4885.5,-1944.4 -4890.6,-1946.3 -4885.9,-1949.1 -4857.3,-1948.9 -4845.9,-1956.0 -4831.8,-1953.4 -4813.0,-1938.9 -4778.9,-1872.2 -4746.0,-1698.2 -4711.7,-1647.6 -4702.6,-1643.2 -4691.0,-1618.3 -4654.0,-1608.4 -4620.8,-1626.8 -4593.4,-1625.2 -4557.0,-1611.0 -4520.7,-1602.6 -4496.1,-1584.5 -4483.2,-1579.4 -4452.4,-1576.0 -4432.8,-1567.2 -4391.9,-1560.5 -4369.9,-1546.1 -4350.3,-1519.5 -4350.2,-1524.5 -4330.7,-1523.0 -4314.7,-1500.6 -4287.6,-1440.1 -4235.0,-1270.0 -4215.0,-1156.3 -4202.4,-1042.1 -4184.2,-948.9 -4175.6,-932.8 -4152.9,-923.3 -4134.6,-898.7 -4100.5,-801.6 -4091.7,-760.6 -4085.9,-751.3 -4080.1,-688.3 -4084.5,-662.9 -4093.9,-640.1 -4091.9,-634.9 -4094.9,-633.6 -4086.6,-599.0 -4081.0,-588.8 -4076.7,-587.5 -4067.5,-552.5 -4056.5,-552.4 -4061.6,-546.2 -4064.3,-550.0 -4065.5,-545.7 -4047.9,-545.7 -4047.9,-542.5 -4064.0,-541.5 -4060.4,-537.3 -4067.4,-535.2 -4072.0,-554.2 -4068.0,-543.5 -4069.6,-536.3 -4060.0,-535.0 -4053.5,-506.7 -4049.5,-506.2 -3995.3,-420.8 -4001.9,-434.5 -3998.9,-435.7 -3990.9,-420.5 -3995.9,-427.5 -3994.2,-418.1 -3954.8,-341.4 -3937.2,-318.4 -3930.2,-277.2 -3919.6,-138.5 -3906.8,-57.4 -3909.5,-7.0 -3917.0,41.2 -3935.3,97.0 -3943.5,111.9 -3951.1,117.7 -3981.1,206.5 -3989.9,221.4 -3995.0,223.2 -4013.5,259.8 -4029.1,277.0 -4031.0,273.2 -4030.0,278.7 -4034.5,275.5 -4036.3,289.6 -4046.6,290.7 -4050.0,295.3 -4047.8,298.8 -4053.6,298.6 -4055.1,295.1 -4067.8,299.8 -4059.4,298.9 -4056.9,304.0 -4070.2,304.5 -4073.2,290.2 -4077.7,286.2 -4085.9,287.7 -4112.1,310.6 -4159.9,372.0 -4169.1,403.4 -4176.7,474.4 -4187.6,482.6 -4195.7,518.9 -4200.4,529.9 -4207.3,533.8 -4228.4,580.4 -4226.9,576.4"/><polyline class="coast" points="-9418.5,-5861.3 -9421.0,-5863.8 -9418.5,-5861.3"/><polyline class="coast" points="-10140.8,-5843.9 -10124.6,-5807.0 -10126.7,-5817.5 -10120.4,-5815.3 -10122.7,-5807.2 -10088.3,-5823.7 -9967.3,-5850.8 -9933.2,-5850.8 -9886.7,-5841.8 -9882.6,-5841.8 -9890.0,-5845.9 -9881.3,-5846.4 -9873.2,-5841.1 -9888.6,-5825.5 -9890.0,-5815.7 -9883.6,-5788.6 -9886.5,-5781.1 -9898.7,-5769.9 -9984.3,-5753.3 -10004.3,-5731.6 -10031.4,-5720.6 -10128.6,-5706.0 -10152.4,-5700.3 -10148.7,-5697.7 -10155.3,-5693.0 -10159.4,-5693.3 -10163.7,-5699.8 -10156.4,-5701.4 -10169.7,-5702.2 -10172.7,-5690.7"/><polyline class="coast" points="-8861.3,-4752.4 -8861.3,-4752.4"/><polyline class="coast" points="-9400.0,-4895.0 -9398.0,-4898.5 -9404.3,-4897.8 -9400.0,-4895.0"/><polyline class="coast" points="-4193.0,504.9 -4193.0,504.9"/><polyline class="coast" points="-8632.0,-4572.7 -8636.2,-4573.6 -8629.7,-4570.6 -8632.0,-4572.7"/><polyline class="coast" points="-10172.4,-5993.7 -10153.4,-5980.5 -10139.2,-5956.4 -10119.8,-5955.9 -10105.6,-5950.7 -10105.6,-5939.7 -10067.0,-5938.9 -10051.6,-5934.2 -10062.5,-5923.5 -10064.9,-5926.2 -10060.0,-5930.2 -10063.2,-5932.0 -10069.6,-5918.8 -10109.5,-5895.2 -10123.9,-5893.6 -10132.9,-5901.9"/><polyline class="coast" points="-8845.6,-4741.7 -8845.6,-4741.7"/><polyline class="coast" points="-8374.3,-4330.5 -8374.3,-4330.5"/><polyline class="coast" points="-8635.0,-4577.2 -8635.0,-4577.2"/><polyline class="coast" points="-3996.4,-428.3 -3996.4,-428.3"/><polyline class="coast" points="-3998.3,-431.0 -3998.3,-431.0"/><polyline class="coast" points="-6483.9,-2920.3 -6481.5,-2922.3 -6483.9,-2920.3"/><circle class="ring sam confirmed" cx="731.1" cy="499.7" r="361.4"/><circle class="threat sam confirmed" cx="731.1" cy="499.7" r="6"/><circle class="ring sam confirmed" cx="687.4" cy="457.9" r="150.6"/><circle class="threat sam confirmed" cx="687.4" cy="457.9" r="6"/><circle class="ring hazard confirmed" cx="881.0" cy="516.4" r="45.2"/><circle class="threat hazard confirmed" cx="881.0" cy="516.4" r="6"/><circle class="ring hazard confirmed" cx="589.4" cy="638.1" r="75.3"/><circle class="threat hazard confirmed" cx="589.4" cy="638.1" r="6"/><polyline class="route dim" points="153.0,334.2 406.3,249.0 393.8,366.0 506.2,274.0 243.9,215.5 153.0,334.2"/><polyline class="route hl" points="393.8,366.0 506.2,274.0"/><g class="target" transform="translate(731.1,499.7)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="153.0" cy="334.2" r="8"/><circle class="wp" cx="406.3" cy="249.0" r="6"/><circle class="wp" cx="393.8" cy="366.0" r="6"/><circle class="wp on" cx="506.2" cy="274.0" r="6"/><circle class="wp" cx="243.9" cy="215.5" r="6"/><text class="lbl" x="165.0" y="339.2">Vaziani</text><text class="lbl" x="418.3" y="254.0">1 SPARTAN IP</text><text class="lbl" x="405.8" y="371.0">2 SHOT 1</text><text class="lbl" x="518.2" y="279.0">3 SHOT 2</text><text class="lbl" x="255.9" y="220.5">4 EGRESS</text><text class="lbl sam" x="719.1" y="504.7" text-anchor="end">SPARTAN SA-6 battery</text><text class="lbl sam" x="699.4" y="462.9">SPARTAN SA-8</text><text class="lbl hazard" x="869.0" y="540.4" text-anchor="end">Azerbaijan border</text><text class="lbl hazard" x="433.4" y="624.1">David Gareja monastery: no-fly</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>17 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 18">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 4 · 10:30</div>
+        <h2>Recovery</h2>
+        <div class="body"><p>Off the range to the west via EGRESS, master arm SAFE, and recover to Vaziani.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1460.8" y2="1460.8"/><text class="gridlbl" x="6" y="1456.8">41.0N</text><line class="grid" x1="0" x2="900" y1="625.1" y2="625.1"/><text class="gridlbl" x="6" y="621.1">41.5N</text><line class="grid" y1="0" y2="640" x1="-430.1" x2="-430.1"/><text class="gridlbl" x="-426.1" y="632">44.5E</text><line class="grid" y1="0" y2="640" x1="194.1" x2="194.1"/><text class="gridlbl" x="198.1" y="632">45.0E</text><line class="grid" y1="0" y2="640" x1="818.3" x2="818.3"/><text class="gridlbl" x="822.3" y="632">45.5E</text><polyline class="coast" points="-9337.6,-5789.1 -9337.6,-5789.1"/><polyline class="coast" points="-9337.9,-5789.9 -9337.9,-5789.9"/><polyline class="coast" points="-9090.3,-5897.8 -9139.1,-5855.1 -9223.3,-5807.5 -9234.1,-5804.3 -9259.7,-5807.3 -9265.8,-5805.0 -9274.0,-5815.0 -9306.4,-5812.7 -9312.9,-5805.5 -9300.6,-5789.3 -9313.9,-5790.9 -9311.2,-5793.0 -9315.9,-5794.8 -9330.1,-5784.3 -9336.5,-5784.9 -9324.0,-5772.1 -9318.5,-5774.9 -9317.8,-5782.6 -9298.4,-5777.2 -9312.7,-5776.9 -9322.2,-5770.9 -9321.0,-5767.0 -9315.5,-5770.2 -9312.1,-5767.2 -9316.6,-5763.5 -9312.5,-5759.7 -9315.9,-5754.7 -9318.5,-5761.9 -9323.5,-5763.7 -9327.7,-5757.5 -9322.7,-5753.8 -9331.5,-5759.7 -9324.0,-5767.2 -9343.1,-5788.3 -9372.0,-5778.2 -9412.5,-5776.1 -9517.6,-5781.8 -9580.1,-5796.6 -9728.1,-5846.6 -9780.1,-5871.3 -9831.4,-5903.4"/><polyline class="coast" points="-9335.6,-5789.4 -9335.6,-5789.4"/><polyline class="coast" points="-10097.1,-5416.9 -10041.7,-5423.9 -10017.8,-5423.4 -9970.9,-5416.2 -9915.2,-5400.5 -9804.7,-5354.2 -9741.5,-5333.3 -9647.9,-5294.7 -9563.9,-5249.4 -9491.9,-5202.4 -9433.8,-5149.1 -9401.1,-5100.3 -9395.2,-5080.0 -9397.1,-5063.0 -9403.4,-5053.6 -9410.7,-5054.6 -9410.9,-5059.0 -9411.1,-5055.8 -9420.3,-5052.3 -9422.5,-5041.8 -9371.5,-4977.9 -9366.3,-4963.9 -9365.8,-4935.3 -9315.5,-4862.1 -9312.0,-4834.5 -9307.4,-4833.3 -9312.4,-4832.7 -9310.7,-4827.3 -9317.6,-4818.8 -9312.6,-4822.0 -9294.5,-4813.3 -9284.1,-4799.4 -9282.6,-4790.5 -9250.9,-4769.8 -9238.0,-4751.1 -9225.2,-4740.9 -9224.8,-4734.5 -9216.9,-4736.5 -9202.9,-4730.5 -9190.0,-4714.5 -9176.3,-4715.1 -9109.9,-4684.6 -9091.8,-4687.6 -9074.2,-4676.7 -9027.4,-4667.2 -9001.4,-4674.2 -8979.4,-4672.5 -8976.4,-4669.3 -8973.4,-4669.8 -8976.9,-4671.7 -8972.2,-4671.7 -8929.4,-4652.3 -8920.1,-4644.1 -8911.3,-4646.6 -8888.4,-4639.4 -8873.7,-4639.8 -8865.2,-4644.1 -8840.5,-4646.9 -8838.2,-4651.0 -8802.1,-4664.0 -8790.2,-4675.0 -8792.9,-4674.5 -8794.9,-4683.9 -8783.2,-4687.4 -8807.5,-4721.0 -8807.8,-4739.6 -8812.8,-4742.9 -8811.1,-4750.9 -8815.6,-4757.3 -8811.1,-4761.6 -8819.9,-4758.4 -8823.6,-4763.6 -8820.1,-4764.3 -8827.2,-4769.3 -8826.2,-4772.0 -8818.5,-4766.3 -8821.6,-4770.0 -8816.9,-4769.5 -8818.4,-4774.5 -8815.0,-4771.5 -8816.8,-4776.0 -8811.4,-4771.6 -8814.1,-4778.3 -8807.3,-4771.5 -8804.3,-4773.7 -8808.9,-4779.3 -8804.6,-4781.8 -8798.9,-4772.3 -8795.7,-4774.2 -8798.8,-4780.8 -8792.4,-4779.2 -8790.9,-4771.0 -8786.3,-4776.8 -8787.2,-4767.8 -8784.0,-4769.3 -8774.3,-4760.1 -8784.2,-4755.6 -8772.8,-4760.3 -8769.9,-4766.1 -8774.1,-4756.4 -8769.6,-4765.8 -8762.8,-4760.6 -8767.6,-4760.4 -8764.3,-4758.3 -8769.3,-4750.1 -8762.6,-4759.9 -8763.0,-4757.1 -8759.6,-4758.1 -8761.7,-4755.9 -8753.0,-4757.3 -8755.5,-4754.9 -8751.6,-4754.8 -8752.7,-4750.8 -8757.3,-4751.4 -8747.3,-4747.1 -8752.2,-4743.6 -8765.8,-4748.6 -8756.1,-4742.9 -8741.1,-4748.4 -8738.1,-4735.0 -8703.3,-4703.9 -8693.9,-4690.4 -8651.8,-4667.5 -8643.5,-4652.0 -8630.6,-4639.9 -8630.0,-4633.6 -8659.2,-4616.5 -8662.8,-4611.5 -8660.8,-4604.7 -8631.2,-4564.0 -8611.5,-4549.7 -8581.2,-4518.1 -8574.7,-4513.9 -8571.1,-4517.9 -8565.2,-4514.4 -8564.0,-4503.5 -8553.3,-4504.5 -8548.2,-4498.9 -8547.7,-4501.5 -8538.9,-4496.7 -8519.9,-4495.2 -8509.7,-4489.0 -8503.4,-4500.5 -8510.0,-4508.2 -8502.7,-4511.4 -8505.2,-4516.9 -8502.9,-4511.6 -8508.5,-4509.0 -8510.5,-4513.6 -8506.0,-4515.4 -8513.0,-4514.6 -8515.0,-4517.2 -8515.4,-4524.6 -8510.8,-4529.1 -8499.9,-4532.4 -8482.9,-4531.6 -8463.2,-4517.7 -8449.2,-4497.5 -8451.1,-4486.0 -8460.1,-4482.0 -8468.8,-4484.3 -8479.4,-4481.3 -8483.9,-4474.3 -8435.0,-4440.9 -8406.4,-4412.3 -8398.4,-4398.9 -8386.7,-4393.0 -8378.8,-4382.2 -8378.5,-4366.1 -8366.3,-4349.8 -8364.6,-4334.2 -8355.0,-4326.2 -8353.9,-4319.0 -8328.9,-4304.8 -8306.7,-4280.9 -8292.2,-4253.6 -8285.0,-4250.3 -8288.8,-4247.8 -8284.6,-4250.1 -8257.5,-4240.3 -8223.8,-4244.9 -8189.5,-4239.6 -8166.9,-4229.6 -8143.5,-4210.2 -8126.7,-4204.0 -8114.4,-4189.1 -8094.0,-4177.2 -8078.0,-4172.7 -8062.5,-4169.9 -8027.0,-4181.1 -7995.0,-4170.1 -7954.1,-4167.4 -7895.5,-4146.8 -7889.3,-4151.7 -7882.4,-4152.0 -7873.5,-4146.2 -7834.8,-4137.6 -7811.8,-4127.4 -7785.6,-4107.9 -7773.5,-4110.4 -7765.4,-4106.4 -7752.9,-4091.0 -7733.4,-4087.2 -7722.8,-4088.7 -7713.2,-4078.3 -7680.2,-4066.6 -7672.9,-4071.9 -7659.4,-4058.6 -7652.2,-4056.1 -7633.2,-4054.4 -7613.2,-4057.6 -7603.1,-4052.2 -7597.6,-4044.2 -7557.0,-4024.5 -7528.3,-3990.0 -7520.8,-3975.5 -7522.7,-3965.5 -7517.1,-3957.8 -7513.3,-3953.9 -7503.5,-3954.9 -7499.0,-3949.9 -7494.5,-3942.6 -7496.1,-3936.4 -7481.8,-3920.2 -7481.5,-3913.0 -7462.7,-3883.4 -7455.2,-3878.9 -7443.1,-3878.0 -7439.2,-3866.8 -7399.1,-3863.5 -7375.4,-3853.8 -7372.9,-3848.5 -7352.7,-3836.1 -7344.3,-3833.1 -7332.2,-3837.8 -7322.0,-3835.8 -7296.6,-3821.9 -7280.1,-3804.7 -7259.8,-3767.4 -7254.9,-3738.5 -7257.2,-3724.3 -7250.2,-3715.1 -7218.3,-3717.1 -7216.1,-3714.7 -7222.8,-3708.2 -7221.0,-3706.2 -7213.7,-3713.1 -7198.9,-3708.9 -7196.9,-3703.2 -7202.5,-3698.2 -7193.0,-3697.7 -7183.1,-3689.0 -7167.0,-3666.4 -7133.0,-3630.2 -7104.9,-3587.9 -7074.7,-3568.0 -7064.0,-3556.1 -7049.3,-3551.3 -7027.7,-3536.9 -7012.2,-3519.2 -6993.3,-3513.5 -6968.7,-3482.7 -6942.7,-3469.4 -6927.6,-3457.2 -6883.4,-3388.1 -6878.4,-3383.1 -6867.1,-3381.6 -6858.9,-3376.1 -6794.0,-3310.2 -6773.1,-3273.6 -6756.8,-3260.1 -6742.1,-3239.5 -6718.0,-3198.1 -6670.7,-3158.8 -6628.5,-3112.5 -6568.3,-3056.3 -6538.0,-2997.3 -6525.5,-2992.6 -6512.3,-2981.4 -6491.3,-2975.4 -6469.2,-2963.9 -6436.1,-2939.3 -6418.4,-2906.6 -6405.9,-2859.9 -6405.5,-2855.9 -6411.2,-2851.9 -6408.3,-2840.0 -6404.0,-2838.2 -6410.5,-2845.4 -6410.5,-2850.7 -6406.3,-2850.6 -6401.0,-2858.1 -6401.0,-2849.9 -6382.7,-2832.3 -6355.3,-2821.3 -6326.9,-2798.1 -6266.2,-2768.5 -6245.6,-2753.1 -6236.0,-2738.6 -6223.6,-2739.9 -6217.9,-2737.1 -6192.1,-2707.3 -6164.8,-2614.0 -6141.5,-2574.4 -6125.6,-2565.4 -6112.0,-2549.5 -6087.0,-2545.3 -6057.2,-2525.6 -6027.0,-2526.4 -5981.5,-2514.2 -5945.8,-2512.1 -5901.7,-2482.8 -5880.3,-2476.5 -5848.0,-2452.4 -5784.7,-2432.8 -5772.4,-2424.0 -5751.3,-2417.8 -5742.7,-2410.6 -5730.3,-2389.0 -5715.2,-2329.9 -5705.2,-2225.6 -5698.7,-2195.5 -5674.4,-2172.1 -5659.9,-2167.7 -5622.2,-2127.6 -5616.1,-2127.1 -5611.4,-2141.0 -5585.2,-2165.7 -5571.1,-2171.7 -5552.1,-2171.9 -5539.8,-2167.6 -5524.3,-2151.5 -5514.8,-2149.7 -5503.3,-2139.8 -5475.0,-2132.6 -5460.4,-2115.9 -5447.3,-2122.6 -5434.3,-2118.8 -5414.1,-2123.6 -5399.6,-2119.3 -5373.9,-2098.7 -5345.9,-2056.9 -5329.9,-2038.2 -5321.1,-2034.2 -5287.2,-2036.0 -5243.7,-2050.9 -5227.7,-2046.7 -5188.1,-2027.2 -5147.2,-2025.2 -5101.7,-2028.7 -5057.8,-2018.8 -5044.1,-2023.1 -5022.3,-2021.1 -4967.4,-2007.8 -4946.2,-1988.2 -4923.6,-1953.3 -4896.0,-1929.2 -4879.0,-1896.3 -4867.8,-1889.8 -4852.7,-1873.9 -4839.8,-1852.5 -4833.5,-1850.0 -4827.6,-1852.2 -4806.9,-1869.2 -4812.0,-1871.0 -4807.2,-1873.9 -4778.7,-1873.7 -4767.3,-1880.7 -4753.2,-1878.2 -4734.5,-1863.7 -4700.4,-1797.0 -4667.4,-1623.0 -4633.2,-1572.3 -4624.1,-1568.0 -4612.5,-1543.1 -4575.6,-1533.2 -4542.3,-1551.6 -4515.0,-1549.9 -4478.6,-1535.7 -4442.4,-1527.4 -4417.8,-1509.3 -4404.9,-1504.1 -4374.1,-1500.8 -4354.5,-1491.9 -4313.6,-1485.3 -4291.7,-1470.9 -4272.1,-1444.3 -4271.9,-1449.3 -4252.5,-1447.8 -4236.5,-1425.4 -4209.4,-1364.9 -4156.8,-1194.7 -4136.9,-1081.1 -4124.3,-966.9 -4106.0,-873.6 -4097.4,-857.6 -4074.8,-848.1 -4056.5,-823.5 -4022.4,-726.4 -4013.7,-685.4 -4007.8,-676.1 -4002.1,-613.0 -4006.4,-587.6 -4015.8,-564.9 -4013.8,-559.7 -4016.8,-558.4 -4008.5,-523.8 -4002.9,-513.6 -3998.7,-512.3 -3989.4,-477.3 -3978.5,-477.2 -3983.6,-471.0 -3986.2,-474.8 -3987.4,-470.5 -3969.8,-470.5 -3969.8,-467.3 -3985.9,-466.3 -3982.3,-462.1 -3989.3,-459.9 -3993.9,-479.0 -3989.9,-468.3 -3991.6,-461.1 -3982.0,-459.8 -3975.5,-431.5 -3971.5,-431.0 -3917.3,-345.6 -3923.9,-359.3 -3920.9,-360.5 -3912.9,-345.3 -3917.9,-352.3 -3916.2,-342.9 -3876.8,-266.2 -3859.2,-243.1 -3852.2,-202.0 -3841.6,-63.3 -3828.9,17.8 -3831.5,68.3 -3839.0,116.4 -3857.4,172.2 -3865.5,187.1 -3873.1,193.0 -3903.1,281.7 -3911.9,296.6 -3917.0,298.4 -3935.5,335.0 -3951.1,352.3 -3953.0,348.4 -3952.0,353.9 -3956.5,350.8 -3958.2,364.8 -3968.6,366.0 -3972.0,370.5 -3969.7,374.0 -3975.6,373.8 -3977.1,370.3 -3989.7,375.0 -3981.3,374.2 -3978.8,379.2 -3992.2,379.7 -3995.2,365.5 -3999.7,361.5 -4007.8,363.0 -4034.0,385.9 -4081.8,447.2 -4090.9,478.6 -4098.6,549.7 -4109.4,557.9 -4117.5,594.1 -4122.3,605.2 -4129.1,609.0 -4150.2,655.6 -4148.7,651.6"/><polyline class="coast" points="-9336.7,-5786.1 -9339.2,-5788.6 -9336.7,-5786.1"/><polyline class="coast" points="-10058.5,-5768.7 -10042.3,-5731.8 -10044.4,-5742.3 -10038.2,-5740.1 -10040.4,-5731.9 -10006.1,-5748.5 -9885.1,-5775.6 -9851.0,-5775.6 -9804.6,-5766.5 -9800.5,-5766.5 -9807.8,-5770.7 -9799.2,-5771.2 -9791.1,-5765.9 -9806.5,-5750.3 -9807.8,-5740.5 -9801.5,-5713.4 -9804.3,-5705.9 -9816.6,-5694.7 -9902.1,-5678.1 -9922.1,-5656.4 -9949.1,-5645.4 -10046.3,-5630.8 -10070.1,-5625.1 -10066.4,-5622.5 -10073.0,-5617.8 -10077.1,-5618.1 -10081.4,-5624.6 -10074.1,-5626.1 -10087.3,-5627.0 -10090.3,-5615.4"/><polyline class="coast" points="-8779.9,-4677.2 -8779.9,-4677.2"/><polyline class="coast" points="-9318.2,-4819.8 -9316.2,-4823.3 -9322.5,-4822.6 -9318.2,-4819.8"/><polyline class="coast" points="-4114.9,580.1 -4114.9,580.1"/><polyline class="coast" points="-8550.7,-4497.5 -8555.0,-4498.4 -8548.5,-4495.3 -8550.7,-4497.5"/><polyline class="coast" points="-10090.1,-5918.5 -10071.1,-5905.3 -10056.9,-5881.2 -10037.5,-5880.7 -10023.3,-5875.5 -10023.3,-5864.5 -9984.7,-5863.7 -9969.4,-5859.0 -9980.2,-5848.3 -9982.6,-5851.0 -9977.7,-5855.0 -9981.0,-5856.8 -9987.3,-5843.6 -10027.2,-5820.0 -10041.7,-5818.4 -10050.6,-5826.7"/><polyline class="coast" points="-8764.2,-4666.5 -8764.2,-4666.5"/><polyline class="coast" points="-8293.2,-4255.3 -8293.2,-4255.3"/><polyline class="coast" points="-8553.7,-4502.0 -8553.7,-4502.0"/><polyline class="coast" points="-3918.4,-353.1 -3918.4,-353.1"/><polyline class="coast" points="-3920.3,-355.8 -3920.3,-355.8"/><polyline class="coast" points="-6404.2,-2845.0 -6401.8,-2847.0 -6404.2,-2845.0"/><circle class="ring sam confirmed" cx="805.8" cy="574.9" r="361.4"/><circle class="threat sam confirmed" cx="805.8" cy="574.9" r="6"/><circle class="ring sam confirmed" cx="762.1" cy="533.1" r="150.6"/><circle class="threat sam confirmed" cx="762.1" cy="533.1" r="6"/><circle class="ring hazard confirmed" cx="955.6" cy="591.6" r="45.2"/><circle class="threat hazard confirmed" cx="955.6" cy="591.6" r="6"/><circle class="ring hazard confirmed" cx="664.2" cy="713.3" r="75.3"/><circle class="threat hazard confirmed" cx="664.2" cy="713.3" r="6"/><polyline class="route dim" points="228.1,409.4 481.2,324.2 468.7,441.2 581.1,349.3 318.9,290.7 228.1,409.4"/><polyline class="route hl" points="581.1,349.3 318.9,290.7"/><g class="target" transform="translate(805.8,574.9)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="228.1" cy="409.4" r="8"/><circle class="wp" cx="481.2" cy="324.2" r="6"/><circle class="wp" cx="468.7" cy="441.2" r="6"/><circle class="wp" cx="581.1" cy="349.3" r="6"/><circle class="wp on" cx="318.9" cy="290.7" r="6"/><text class="lbl" x="240.1" y="414.4">Vaziani</text><text class="lbl" x="493.2" y="329.2">1 SPARTAN IP</text><text class="lbl" x="480.7" y="446.2">2 SHOT 1</text><text class="lbl" x="593.1" y="354.3">3 SHOT 2</text><text class="lbl" x="330.9" y="295.7">4 EGRESS</text><text class="lbl sam" x="793.8" y="579.9" text-anchor="end">SPARTAN SA-6 battery</text><text class="lbl sam" x="750.1" y="538.1" text-anchor="end">SPARTAN SA-8</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>18 / 23</span></div>
+</section>
+
+<section class="slide comms" data-notes="Kneeboard page 2 carries this card in the cockpit." aria-label="Slide 19">
+  
+    <div class="eyebrow">Comms</div>
+    <h2>Frequencies</h2>
+    <div class="rows"><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">254.000 AM</span><span>Dodge (det common) <span class="muted mono">· COMM1 · CH 1</span><br><span class="muted" style="font-size:22px">WREN monitors here</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">252.500 AM</span><span>SPARTAN range control <span class="muted mono">· COMM1 · CH 2</span><br><span class="muted" style="font-size:22px">Clears the range hot or cold</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">140.000 AM</span><span>Vaziani Tower <span class="muted mono">· COMM2 · CH 1</span><br><span class="muted" style="font-size:22px">TACAN 22X</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">252.500 AM</span><span>SPARTAN, WREN <span class="muted mono">· Manual / listen</span><br><span class="muted" style="font-size:22px">Scripted calls (on-screen text); they don&#39;t answer the radio menu</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>19 / 23</span></div>
+</section>
+
+<section class="slide package" data-notes="" aria-label="Slide 20">
+  
+    <div class="eyebrow">Conditions</div>
+    <h2>Weather &amp; ROE</h2>
+    <div class="rows"><div class="row"><span class="k">Wind</span><span>290° / 12 kt</span></div><div class="row"><span class="k">Clouds</span><span>Clear</span></div><div class="row"><span class="k">Visibility</span><span>40 km</span></div><div class="row"><span class="k">Temp / QNH</span><span>1 °C / 30.1 inHg</span></div><div class="row"><span class="k">Range and weapons clearance</span><span>HARMs at the SA-6 radar and the SA-8 only. Master arm SAFE outside the range. No weapons release
+east of the SHOT points.</span></div></div>
+    
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>20 / 23</span></div>
+</section>
+
+<section class="slide grade" data-notes="Students should know the standards before they step. The same sheet drives the debrief." aria-label="Slide 21">
+  
+    <div class="eyebrow">Grade sheet</div>
+    <h2>What a pass looks like</h2>
+    <div class="rows"><div class="row"><span class="k">Range check-in</span><span>Checks in at SPARTAN IP at 24,000 ft and confirms the cleared emitters.</span></div><div class="row"><span class="k">Shot 1 timing</span><span>Reaches SHOT 1 within ±20 s of plan from the IP.</span></div><div class="row"><span class="k">Shot 1 result</span><span>The SA-6 search-and-track radar is destroyed.</span></div><div class="row"><span class="k">Shot 2 timing</span><span>Reaches SHOT 2 within ±20 s of plan from the IP.</span></div><div class="row"><span class="k">Shot 2 result</span><span>The SA-8 is destroyed.</span></div><div class="row"><span class="k">Range discipline</span><span>No launcher hits, no border infringement, nothing below 5,000 ft AGL.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>21 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Tell them now what the debrief will focus on, so they fly it with that in mind." aria-label="Slide 22">
+  
+    <div class="eyebrow">Debrief</div>
+    <h2>What we&#39;ll look at afterwards</h2>
+    <ol class="rulelist"><li>RWR tape: when did each emitter lock you, and what did you do?</li><li>HARM shot range, mode and time of flight against the plan.</li><li>Where the jet was pointing during each missile&#39;s time of flight.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>22 / 23</span></div>
+</section>
+
+<section class="slide title" data-notes="End of the pilot brief. Debrief outcomes live in director.html, so they don&#39;t spoil the mission." aria-label="Slide 23">
+  
+    <div class="eyebrow">Training event LOUD NEIGHBOURS</div>
+    <h1>Questions?</h1>
+    <div class="sub">Step 10:00L</div>
+    
+
+  
+  <div class="foot"><span>TRAINING LOUD NEIGHBOURS</span><span>23 / 23</span></div>
+</section>
+
+</div>
+<div id="progress"></div>
+<div id="notes"><span class="k">NOTES</span><span id="notes-text"></span></div>
+<div id="help">← → navigate · N notes · F fullscreen</div>
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+const stage = document.getElementById("stage");
+let cur = 0;
+
+function fit() {
+  const s = Math.min(innerWidth / 1600, innerHeight / 900);
+  stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+}
+function show(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((el, j) => el.classList.toggle("on", j === cur));
+  document.getElementById("progress").style.width = `${(cur + 1) / slides.length * 100}%`;
+  document.getElementById("notes-text").textContent = slides[cur].dataset.notes || "(no notes)";
+  history.replaceState(null, "", `#${cur + 1}`);
+}
+addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(slides.length - 1);
+  else if (e.key.toLowerCase() === "n") document.getElementById("notes").classList.toggle("on");
+  else if (e.key.toLowerCase() === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+});
+addEventListener("click", e => { if (!e.target.closest("a")) show(cur + (e.clientX > innerWidth / 3 ? 1 : -1)); });
+let tx = null;
+addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+addEventListener("touchend", e => { if (tx !== null) { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); tx = null; } });
+addEventListener("resize", fit);
+fit();
+show((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+# IRON GATE chapter 5: close the gate. Source of truth; `python -m dcsmb build` renders hangar/ig_5_gate/.
+#
+# Story device: the fighters you can't see. High and fast from Kutaisi over the Racha range to the
+# brigade's supply dump at Java, with the vehicles queued at the Roki tunnel's south portal as a second
+# target. The sim rolls whether fighters come and from where: MiG-29s from Beslan through the tunnel,
+# Su-27s from Nalchik over the main ridge, or nobody. Recover to Vaziani, not Kutaisi.
+# Dump on open ground south of Java; portal queue on the Transcam south of the tunnel (OSM).
+
+meta:
+  id: ig_5_gate
+  title: "Operation IRON GATE"
+  subtitle: "Close the Gate"
+  theater: caucasus
+  role: "Strike"
+  date: 2026-04-16
+  start_time: "10:50"
+  weather:
+    temperature_c: 13
+    wind_from_deg: 280
+    wind_kts: 18
+    clouds: "Scattered 12,000 ft, clear above"
+    visibility: "40 km"
+    qnh_inhg: 30.01
+    cloud_preset: LightScattered1
+    cloud_base_ft: 12000
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "IRON GATE"
+  backstory: |
+    Gori held, and the northern brigade has run out of ways forward. It still has tanks in
+    Tskhinvali and an attack battalion licking its wounds at Ergneti, but everything it needs to keep fighting comes
+    through one tunnel and stops at one dump: a field of fuel trucks and ammunition south of Java.
+
+    Col. Gelashvili's request is short. Burn the dump, and hit whatever is queued at the tunnel's
+    south portal waiting to come through. Then the brigade has a week of fuel and nowhere to get more.
+    The tunnel is close to the border, and the airfields on the other side have fighters.
+  characters:
+    - name: "CDR Dana \"SABRE\" Whitfield"
+      role: "Detachment commander at Vaziani"
+    - name: "Col. Irakli Gelashvili"
+      role: "Georgian Land Forces operations, Gori"
+    - name: "WIZARD"
+      role: "E-3 AWACS, south of the main ridge"
+    - name: "Enfield 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets"
+  hook: |
+    "Everything they have came through that tunnel. Everything they need still has to. Close it."
+    Col. Gelashvili, by phone to Vaziani
+  outcomes:
+    success: |
+      The dump at Java burns for two days. Without fuel, the northern brigade starts pulling its
+      tanks back toward the tunnel on the third. IRON GATE is over; the gate is closed.
+    partial: |
+      Part of the dump survives, and the brigade rations what's left. It holds Tskhinvali for another
+      week before the talks in Geneva do what the bombs didn't.
+    failure: |
+      The dump is untouched and the trucks keep coming through the tunnel. The war in the valley
+      settles into a stalemate that lasts the summer.
+
+situation: |
+  The northern brigade's main supply dump is on open ground south of Java: fuel bowsers and
+  ammunition trucks under nets, defended by an SA-15. Vehicles queue at the Roki tunnel's south
+  portal, 25 km north, waiting to come through. Both MiG-29s at Beslan and Su-27s at Nalchik have
+  flown over the tunnel this week; both are inside 100 km. You'll come over the Racha range from the
+  west at 30,000 ft and recover to Vaziani.
+
+objectives:
+  primary: "Destroy the supply dump south of Java."
+  secondary: "Destroy the vehicles queued at the tunnel's south portal."
+  tertiary: "Recover both aircraft to Vaziani."
+
+roe: |
+  Weapons free on the dump, the portal queue and any military vehicle on the Transcam road north of
+  Tskhinvali. No release north of the tunnel. No pursuit of aircraft north of the main ridge.
+
+threats:
+  - name: "SA-15 at the dump"
+    kind: sam
+    intel: confirmed
+    lat: 42.3800
+    lon: 43.9250
+    range_km: 12
+    notes: "9K331 Tor. Seen yesterday by a Georgian drone. Stay above 20,000 ft over Java."
+  - name: "MiG-29s (Beslan)"
+    kind: air
+    intel: possible
+    lat: 43.2057
+    lon: 44.6058
+    range_km: 0
+    notes: "Flew CAP over the tunnel twice this week. They'd come south through the pass."
+  - name: "Su-27s (Nalchik)"
+    kind: air
+    intel: possible
+    lat: 43.5140
+    lon: 43.6365
+    range_km: 0
+    notes: "Flew over the main ridge on Tuesday. They'd come from the northwest."
+  - name: "Portal Strelas"
+    kind: sam
+    intel: suspected
+    lat: 42.5900
+    lon: 44.0700
+    area_km: 3
+    range_km: 5
+    notes: "Probably with the queue at the portal."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Enfield (inter-flight)", freq: "258.000 AM", radio: 1, channel: 1 }
+  - { name: "WIZARD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Kutaisi Tower", freq: "134.000 AM", radio: 2, channel: 1, notes: "TACAN 44X" }
+  - { name: "Vaziani Tower", freq: "140.000 AM", radio: 2, channel: 2, notes: "TACAN 22X. Recovery field" }
+  - { name: "SABRE, Col. Gelashvili", freq: "258.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Enfield 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Kutaisi
+    start: cold
+    radio1_mhz: 258.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: AGM_154A___JSOW_CEB__CBU_type_
+      3: GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb
+      8: AGM_154A___JSOW_CEB__CBU_type_
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× GBU-31 (2,000 lb JDAM), 2× AGM-154A JSOW, 2× AIM-9X, 1× AIM-120C, ATFLIR, 1× 330 gal tank"
+    bingo_lbs: 4500
+    joker_lbs: 6500
+    waypoints:
+      - { name: "AMBROLAURI", lat: 42.5186, lon: 43.1532, alt_ft: 28000, kts: 450, eta: "11:08", zone_km: 5 }
+      - { name: "ONI",        lat: 42.5853, lon: 43.4427, alt_ft: 30000, kts: 480, eta: "11:10", zone_km: 5 }
+      - { name: "IP RACHA",   lat: 42.5300, lon: 43.7200, alt_ft: 30000, kts: 480, eta: "11:12", zone_km: 5 }
+      - { name: "JAVA DUMP",  lat: 42.3780, lon: 43.9200, alt_ft: 30000, kts: 480, eta: "11:14", action: bomb, zone_km: 6 }
+      - { name: "PORTAL",     lat: 42.5900, lon: 44.0700, alt_ft: 28000, kts: 480, eta: "11:17", zone_km: 6 }
+      - { name: "GORI EXIT",  lat: 42.0000, lon: 44.1500, alt_ft: 26000, kts: 480, eta: "11:22", zone_km: 6 }
+    land: Vaziani
+
+target:
+  name: "Supply dump south of Java"
+  lat: 42.3780
+  lon: 43.9200
+  groups: ["Java Dump"]
+  kill_pct: 75
+  description: "Fuel bowsers and ammunition trucks under nets in a field south of Java, beside the Transcam road."
+  dmpi: "GBU-31s on the fuel bowsers at the centre, JSOWs across the ammunition trucks. Save one JSOW for the portal if you can."
+
+zones:
+  - { name: "TUNNEL", lat: 42.6215, lon: 44.0973, radius_km: 4 }
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "Java Dump"
+    coalition: red
+    type: [ATZ_10, ATZ_10, ATZ_10, Ural_375, Ural_375, Ural_375, KAMAZ_Truck, KAMAZ_Truck]
+    lat: 42.3780
+    lon: 43.9200
+    heading: 180
+  - name: "Java Tor"
+    coalition: red
+    type: [Tor_9A331]
+    lat: 42.3800
+    lon: 43.9250
+    heading: 270
+  - name: "Portal Queue"
+    coalition: red
+    type: [Ural_375, Ural_375, ATZ_10, BTR_80, Strela_10M3]
+    lat: 42.5900
+    lon: 44.0700
+    heading: 200
+
+support:
+  - kind: awacs
+    callsign: "WIZARD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.0000
+    lon: 43.4000
+    alt_ft: 30000
+    heading: 90
+    leg_nm: 30
+    freq_mhz: 251.0
+  # Red: director only
+  - kind: flight
+    callsign: "Beslan Pair"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 43.0000, lon: 44.4000, alt_ft: 25000, kts: 480 }
+    route:
+      - { lat: 42.4500, lon: 43.9500 }
+  - kind: flight
+    callsign: "Nalchik Pair"
+    aircraft: Su_27
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 43.2000, lon: 43.6000, alt_ft: 30000, kts: 500 }
+    route:
+      - { lat: 42.5000, lon: 43.8000 }
+
+variants:
+  - name: "Fighters"
+    options:
+      - label: "MiG-29s from Beslan, through the pass"
+        activate: ["Beslan Pair"]
+        when: { player_in_zone: "IP RACHA" }
+        message: "WIZARD: Enfield, Wizard. Pop-up group, two contacts, north of the tunnel, three-five miles, angels two-five, heading south. Hostile."
+        seconds: 20
+      - label: "Su-27s from Nalchik, over the main ridge"
+        activate: ["Nalchik Pair"]
+        when: { player_in_zone: "IP RACHA" }
+        message: "WIZARD: Enfield, Wizard. New group, two contacts, northwest four-zero miles over the ridge, angels three-zero, fast, heading at you. Hostile."
+        seconds: 20
+      - label: "Nobody comes"
+        when: { player_in_zone: "IP RACHA" }
+        message: "WIZARD: Enfield, Wizard. Picture clean north of the ridge. Keep your heads up."
+        seconds: 15
+
+storyboard:
+  - phase: "Launch"
+    time: "10:50"
+    waypoints: ["AMBROLAURI"]
+    brief: |
+      Cold start at Kutaisi. Northeast to Ambrolauri climbing to 28,000 ft. Load the dump as the
+      JDAM target and the portal as the second JSOW target.
+    script: "SABRE launches you. The fighter variant is rolled at mission start and plays at IP RACHA."
+    trigger:
+      when: { time_after: 10 }
+      message: "SABRE: Enfield, Sabre. Last one. Close the gate and come home to Vaziani."
+      seconds: 15
+
+  - phase: "Over Racha"
+    time: "11:10"
+    waypoints: ["ONI", "IP RACHA"]
+    notes: "Ask the room: fighters at 35 miles with bombs still on. Jettison and fight, or press?"
+    brief: |
+      East over Oni at 30,000 ft and 480 kt. At IP RACHA, WIZARD will tell you if anything's coming
+      off Beslan or Nalchik. You'll have the bombs on when it does.
+    script: "WIZARD's call at IP RACHA depends on the rolled fighters (see variants)."
+    trigger:
+      when: { player_in_zone: "ONI" }
+      message: "WIZARD: Enfield, Wizard. Picture clean for now. Beslan and Nalchik both have jets on alert."
+      seconds: 15
+
+  - phase: "The Dump"
+    time: "11:14"
+    waypoints: ["JAVA DUMP"]
+    brief: |
+      Release on the dump from 30,000 ft, above the Tor's reach. Watch for secondaries: fuel burns
+      black, ammunition burns white.
+    script: "Dump 75% destroyed: success (flag 10)."
+    trigger:
+      when: { target_destroyed: true }
+      set_flag: 10
+      message: "COL. GELASHVILI: Enfield, Gori. We can see the smoke from here. It's black and it's big."
+      seconds: 20
+
+  - phase: "The Portal"
+    time: "11:17"
+    waypoints: ["PORTAL"]
+    brief: |
+      If you still have a JSOW, turn north for the portal and put it across the queue. Don't go north
+      of the tunnel, and don't chase anything over the ridge.
+    script: "Portal queue destroyed: secondary (flag 11)."
+    trigger:
+      when: { group_life_below: ["Portal Queue", 40] }
+      set_flag: 11
+      message: "WIZARD: Enfield, Wizard. Big secondaries at the tunnel. Nothing moving there now."
+      seconds: 15
+
+  - phase: "Home"
+    time: "11:22"
+    waypoints: ["GORI EXIT"]
+    brief: |
+      South down the valley, high and fast, past Gori, and recover to Vaziani.
+    script: "SABRE closes IRON GATE."
+    trigger:
+      when: { player_in_zone: "GORI EXIT" }
+      message: "SABRE: Enfield, Sabre. That's the gate. Come home."
+      seconds: 15

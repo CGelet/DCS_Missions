@@ -1,0 +1,79 @@
+campaign = 
+{
+    ["name"] = "WORK-UPS",
+    ["name_EN"] = "WORK-UPS",
+    ["description"] = "Hornet detachment syllabus, January 2026\n\nTen Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride.",
+    ["description_EN"] = "Hornet detachment syllabus, January 2026\n\nTen Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride.",
+    ["necessaryUnits"] = {
+        ["FA-18C_hornet"] = "FA-18C_hornet",
+    },
+    ["version"] = 1,
+    ["startStage"] = 1,
+    ["stages"] = {
+        [1] = {
+            ["name"] = "Chapter 1: Day Carrier Qualification",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "01_wu_1_cq_day.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [2] = {
+            ["name"] = "Chapter 2: Night Carrier Qualification",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "02_wu_2_cq_night.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [3] = {
+            ["name"] = "Chapter 3: SEAD Fundamentals",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "03_wu_3_sead.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [4] = {
+            ["name"] = "Chapter 4: Close Air Support with a JTAC",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "04_wu_4_jtac.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [5] = {
+            ["name"] = "Chapter 5: Graduation Composite Exercise",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "05_wu_5_compex.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+    },
+} -- end of campaign

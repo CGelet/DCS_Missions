@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOUD NEIGHBOURS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow" style="margin-bottom:10px"><a href="../campaigns/workups/index.html" style="text-decoration:none">Training campaign WORK-UPS</a> · Chapter 3 of 5</div>
+    <div class="eyebrow">Training event LOUD NEIGHBOURS · Det work-ups, event SEAD-1</div>
+    <h1>SEAD Fundamentals</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2026-01-20</b></span>
+      <span>Step <b class="mono">10:00L</b></span>
+      <span>Theater <b>Caucasus</b></span>
+      <span>Flight <b>Dodge 1 · 1× F/A-18C Hornet</b></span>
+      <span>Base <b>Vaziani</b></span>
+    </div>
+    <blockquote class="hook">&#34;Those radars have been looking at people like you for forty years. Today you get to answer
+back. Twice. On time.&#34; WREN, SEAD brief</blockquote>
+    <div class="previously"><h3>Previously</h3><p>BLACK DECK: night quals. Marshal, a timed push and two traps with no horizon. The carrier
+events are done. Back to land, and to radars.</p></div>
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#story">Overview</a><a href="#plan">Event flow &amp; map</a><a href="#brief">Briefing</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+    <button type="button" onclick="window.print()">Print</button>
+  </div>
+</nav>
+
+<main>
+<section id="story">
+  <div class="wrap">
+    <h2>Why we&#39;re flying this</h2>
+    <div class="story">
+      <div><p>The Georgian Air Defence Command keeps a captured SA-6 battery and an SA-8 on the steppe east of
+the Gareja range for exactly this: letting allied crews hear a real Soviet-era radar on the RWR
+and shoot it. Today they&#39;ve agreed to let the detachment put two live HARMs into the old radars.
+The launchers stay; the radars were due to be scrapped anyway.</p><p>You&#39;ll get one pass at each emitter, on a timeline. The radars will lock you the whole time.
+They won&#39;t fire. What&#39;s graded is whether you shoot on time, at the right thing, and turn away
+like it was real.</p></div>
+      <div>
+        <h3>Instructors and players</h3>
+        <ul class="cast">
+          <li><b>LCDR Ana &#34;WREN&#34; Castellano</b><span>Detachment training officer, grading from the range control cabin</span></li><li><b>Maj. Nino Tsereteli</b><span>Georgian Air Defence Command: SPARTAN range control</span></li><li><b>Dodge 1</b><span>You, single-ship F/A-18C with two HARMs</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="wrap">
+    <h2>Event flow &amp; flight plan</h2>
+    <div class="plan">
+      <div class="map-wrap">
+        <div id="map" role="img" aria-label="Mission map with route, threats and target"></div>
+        <div class="legend" id="legend">
+          <label><input type="checkbox" data-layer="route" checked> <i style="background:var(--blue)"></i>Route</label>
+          <label><input type="checkbox" data-layer="threats" checked> <i style="background:var(--red)"></i>Range players</label>
+          <label><input type="checkbox" data-layer="support" checked> <i style="background:var(--ok)"></i>Friendly support</label>
+          <label><input type="checkbox" data-layer="target" checked> <i style="background:var(--accent)"></i>Target</label>
+        </div>
+      </div>
+      <ol class="timeline">
+        
+        <li class="phase" data-idx="0">
+          <span class="dot">1</span>
+          <button type="button" class="phase-card" aria-label="Show Start and Transit on the map">
+            <div class="phase-head"><h3>Start and Transit</h3><span class="time">10:00</span></div>
+            <p class="beat">Cold start at Vaziani. Load both emitters as pre-planned HARM targets before you taxi. Depart
+east and climb to 24,000 ft for SPARTAN IP.</p>
+            
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="1">
+          <span class="dot">2</span>
+          <button type="button" class="phase-card" aria-label="Show Shot 1: SA-6 Radar on the map">
+            <div class="phase-head"><h3>Shot 1: SA-6 Radar</h3><span class="time">10:22</span></div>
+            <p class="beat">Check in at SPARTAN IP. Range control clears the range hot. SHOT 1 is 35 s from the IP. Fire the
+first HARM at the SA-6 radar, and turn away west while it flies.</p>
+            <div class="chips"><span class="chip">SPARTAN IP</span><span class="chip">SHOT 1</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="2">
+          <span class="dot">3</span>
+          <button type="button" class="phase-card" aria-label="Show Shot 2: SA-8 on the map">
+            <div class="phase-head"><h3>Shot 2: SA-8</h3><span class="time">10:26</span></div>
+            <p class="beat">SHOT 2 is 3 minutes from the IP: turn away after Shot 1, then come back round to it. Fire the second HARM at the SA-8 and turn away. Don&#39;t
+close inside 10 km of it to make the shot.</p>
+            <div class="chips"><span class="chip">SHOT 2</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="3">
+          <span class="dot">4</span>
+          <button type="button" class="phase-card" aria-label="Show Recovery on the map">
+            <div class="phase-head"><h3>Recovery</h3><span class="time">10:30</span></div>
+            <p class="beat">Off the range to the west via EGRESS, master arm SAFE, and recover to Vaziani.</p>
+            <div class="chips"><span class="chip">EGRESS</span></div>
+          </button>
+        </li>
+        
+      </ol>
+    </div>
+    <div class="profile-wrap"><h3>Altitude profile</h3><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 63 km</text><line class="pleg" x1="56.0" y1="196.0" x2="289.3" y2="71.2"/><line class="pleg" x1="289.3" y1="71.2" x2="392.1" y2="71.2"/><line class="pleg" x1="392.1" y1="71.2" x2="518.9" y2="81.6"/><line class="pleg" x1="518.9" y1="81.6" x2="753.5" y2="92.0"/><line class="pleg" x1="753.5" y1="92.0" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="81.2" y="186.0" text-anchor="middle">Vaziani</text><circle class="pwp" cx="289.3" cy="71.2" r="4"/><text class="plbl" x="289.3" y="61.2" text-anchor="middle">1 SPARTAN IP</text><text class="psub" x="289.3" y="220" text-anchor="middle">24k</text><circle class="pwp" cx="392.1" cy="71.2" r="4"/><text class="plbl" x="392.1" y="61.2" text-anchor="middle">2 SHOT 1</text><text class="psub" x="392.1" y="220" text-anchor="middle">24k</text><circle class="pwp" cx="518.9" cy="81.6" r="4"/><text class="plbl" x="518.9" y="71.6" text-anchor="middle">3 SHOT 2</text><text class="psub" x="518.9" y="220" text-anchor="middle">22k</text><circle class="pwp" cx="753.5" cy="92.0" r="4"/><text class="plbl" x="753.5" y="82.0" text-anchor="middle">4 EGRESS</text><text class="psub" x="753.5" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="858.8" y="186.0" text-anchor="middle">Vaziani</text></svg><p>Planned altitudes along the route. Dashed legs are terrain-following, flown above ground level (AGL), not sea level.</p></div>
+  </div>
+</section>
+
+<section id="brief">
+  <div class="wrap">
+    <h2>Briefing</h2>
+    <div class="cards">
+      <div class="card"><h3>Event overview</h3><p>Single ship from Vaziani to the SPARTAN emitter site, 50 km east, on the steppe 12 km northeast
+of David Gareja. The SA-6 radar and three launchers sit in a revetted battery position; the SA-8
+is 4 km northwest of it. Both radiate and lock but are on weapons hold. Check in at SPARTAN IP,
+then fly to SHOT 1 and SHOT 2 on the timeline, firing one HARM at each cleared radar. The
+Azerbaijan border is 10 km east of the site.</p></div>
+      <div class="card"><h3>Learning objectives</h3>
+        <ul class="obj-list"><li><span>primary</span><div>Destroy the SA-6 radar and the SA-8 with one HARM each.</div></li><li><span>secondary</span><div>Reach both shot points within ±20 s of plan.</div></li><li><span>tertiary</span><div>No launcher hits and no border infringement.</div></li></ul>
+      </div>
+      <div class="card"><h3>Range and weapons clearance</h3><p>HARMs at the SA-6 radar and the SA-8 only. Master arm SAFE outside the range. No weapons release
+east of the SHOT points.</p></div>
+      
+      <div class="card"><h3>Training rules</h3><ol class="rules"><li>The range emitters are live radars on weapons hold. They will lock you; they will not fire. Treat every lock as real in your tactics.</li><li>Cleared targets: the SA-6 search-and-track radar and the SA-8. The SA-6 launchers are not cleared: hitting one is a range foul.</li><li>Shot 1 (SA-6 radar) from SHOT 1, Shot 2 (SA-8) from SHOT 2. Each point has a ±20 s window from the IP.</li><li>Altitude block 20,000 to 26,000 ft until both shots are off. Nothing below 5,000 ft AGL on the range at any time.</li><li>Range boundary: the Azerbaijan border, 10 km east of the site. Turn away from it after every shot.</li><li>Bingo 4,000 lb to Vaziani.</li></ol></div>
+      <div class="card kio"><h3>Knock-it-off and terminate</h3><p>Anyone can call &#34;Knock it off&#34; for a border infringement, an altitude bust or a hung missile.
+Turn west, climb to 26,000 ft, master arm SAFE, and wait for SPARTAN to call the range hot again.</p></div>
+      <div class="card"><h3>Special subjects</h3><ul class="rules"><li>Range-known versus self-protect HARM modes: why we brief a pre-planned shot and still carry the TOO page.</li><li>What the RWR shows when the SA-6 goes from search to track. Hear it, call it, then shoot.</li><li>HARM time of flight from 40 km: about 75 s. What do you do with that time?</li><li>The SA-8 on its own: it&#39;s short range and mobile. Don&#39;t fly inside 10 km of it to make the shot.</li></ul></div>
+      <div class="card wide"><h3>Grade sheet</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Item</th><th>Standard to pass</th></tr></thead>
+          <tbody><tr><td class="num">1</td><td><b>Range check-in</b></td><td>Checks in at SPARTAN IP at 24,000 ft and confirms the cleared emitters.</td></tr><tr><td class="num">2</td><td><b>Shot 1 timing</b></td><td>Reaches SHOT 1 within ±20 s of plan from the IP.</td></tr><tr><td class="num">3</td><td><b>Shot 1 result</b></td><td>The SA-6 search-and-track radar is destroyed.</td></tr><tr><td class="num">4</td><td><b>Shot 2 timing</b></td><td>Reaches SHOT 2 within ±20 s of plan from the IP.</td></tr><tr><td class="num">5</td><td><b>Shot 2 result</b></td><td>The SA-8 is destroyed.</td></tr><tr><td class="num">6</td><td><b>Range discipline</b></td><td>No launcher hits, no border infringement, nothing below 5,000 ft AGL.</td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="card"><h3>Debrief focus</h3><ul class="rules"><li>RWR tape: when did each emitter lock you, and what did you do?</li><li>HARM shot range, mode and time of flight against the plan.</li><li>Where the jet was pointing during each missile&#39;s time of flight.</li></ul></div>
+      
+
+      <div class="card wide"><h3>Range players and hazards</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Type</th><th>Player</th><th>Range</th><th>Notes</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag sam">sam</span></td><td>SPARTAN SA-6 battery (radar cleared, launchers not)</td>
+            
+            <td class="num">24 km</td><td>1S91 search-and-track radar and three 2P25 launchers. Live radar, weapons hold. Only the radar is cleared.</td>
+          </tr><tr>
+            <td><span class="tag sam">sam</span></td><td>SPARTAN SA-8 (cleared)</td>
+            
+            <td class="num">10 km</td><td>9A33 Osa, radar and missiles on one vehicle. Live radar, weapons hold.</td>
+          </tr><tr>
+            <td><span class="tag hazard">hazard</span></td><td>Azerbaijan border</td>
+            
+            <td class="num">3 km</td><td>Range boundary. Turn west after every shot.</td>
+          </tr><tr>
+            <td><span class="tag hazard">hazard</span></td><td>David Gareja monastery: no-fly</td>
+            
+            <td class="num">5 km</td><td>Same rule as on the Gareja range: no overflight within 5 km.</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card"><h3>Range target</h3>
+        <dl class="kv">
+          <dt>Name</dt><dd>SPARTAN SA-6 radar and SA-8</dd>
+          <dt>Coords</dt><dd class="mono">41.5300N 45.4900E</dd>
+          <dt>Description</dt><dd>Two live emitters on the steppe: the SA-6&#39;s 1S91 radar in the battery centre, and the SA-8, 4 km to its northwest.</dd>
+          <dt>DMPI</dt><dd>One HARM each, pre-planned against the radar&#39;s position, launched from the SHOT point.</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Flight &amp; loadout</h3>
+        <dl class="kv">
+          <dt>Callsign</dt><dd>Dodge 1-1</dd>
+          <dt>Start</dt><dd>Cold start, Vaziani</dd>
+          <dt>Loadout</dt><dd>2× AGM-88C HARM, 2× AIM-9X (inert), 1× 330 gal tank</dd>
+          
+          <dt>Joker / Bingo</dt><dd class="mono">5500 / 4000 lb</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Weather</h3>
+        <dl class="kv">
+          <dt>Wind</dt><dd class="mono">290° / 12 kt</dd>
+          <dt>Temp</dt><dd class="mono">1 °C</dd>
+          <dt>QNH</dt><dd class="mono">30.1 inHg</dd>
+          <dt>Clouds</dt><dd>Clear</dd>
+          <dt>Visibility</dt><dd>40 km</dd>
+        </dl>
+      </div>
+
+      <div class="card wide"><h3>Navigation</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Alt</th><th>Speed</th><th>ETA</th><th>Action</th></tr></thead>
+          <tbody><tr>
+            <td class="num">1</td><td><b>SPARTAN IP</b></td>
+            <td class="num">41.6800N 45.2300E</td>
+            <td class="num">24,000 ft</td><td class="num">420 kt</td>
+            <td class="num">10:22</td><td></td>
+          </tr><tr>
+            <td class="num">2</td><td><b>SHOT 1</b></td>
+            <td class="num">41.6100N 45.2200E</td>
+            <td class="num">24,000 ft</td><td class="num">450 kt</td>
+            <td class="num">10:23</td><td>SEAD</td>
+          </tr><tr>
+            <td class="num">3</td><td><b>SHOT 2</b></td>
+            <td class="num">41.6650N 45.3100E</td>
+            <td class="num">22,000 ft</td><td class="num">450 kt</td>
+            <td class="num">10:26</td><td>SEAD</td>
+          </tr><tr>
+            <td class="num">4</td><td><b>EGRESS</b></td>
+            <td class="num">41.7000N 45.1000E</td>
+            <td class="num">20,000 ft</td><td class="num">400 kt</td>
+            <td class="num">10:30</td><td></td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      
+      <div class="card wide"><h3>Comms</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Station</th><th>Frequency</th><th>Preset</th><th>Notes</th></tr></thead>
+          <tbody><tr><td>Dodge (det common)</td><td class="num">254.000 AM</td><td class="num">COMM1 · CH 1</td><td>WREN monitors here</td></tr><tr><td>SPARTAN range control</td><td class="num">252.500 AM</td><td class="num">COMM1 · CH 2</td><td>Clears the range hot or cold</td></tr><tr><td>Vaziani Tower</td><td class="num">140.000 AM</td><td class="num">COMM2 · CH 1</td><td>TACAN 22X</td></tr><tr><td>SPARTAN, WREN</td><td class="num">252.500 AM</td><td class="num">Manual / listen</td><td>Scripted calls (on-screen text); they don&#39;t answer the radio menu</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/wu_3_sead/mission.yaml</code>. Intel is what the squadron knows at brief time; it may be incomplete.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const D = {"route": [{"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "SPARTAN IP", "lat": 41.68, "lon": 45.23, "alt_ft": 24000, "kts": 420, "eta": "10:22", "zone_km": 4, "kind": "wp", "num": 1}, {"name": "SHOT 1", "lat": 41.61, "lon": 45.22, "alt_ft": 24000, "kts": 450, "eta": "10:23", "action": "sead", "zone_km": 3, "timing": {"from": "SPARTAN IP", "seconds": 35, "window_s": 20, "flag": 61}, "kind": "wp", "num": 2}, {"name": "SHOT 2", "lat": 41.665, "lon": 45.31, "alt_ft": 22000, "kts": 450, "eta": "10:26", "action": "sead", "zone_km": 3, "timing": {"from": "SPARTAN IP", "seconds": 180, "window_s": 20, "flag": 62}, "kind": "wp", "num": 3}, {"name": "EGRESS", "lat": 41.7, "lon": 45.1, "alt_ft": 20000, "kts": 400, "eta": "10:30", "zone_km": 4, "kind": "wp", "num": 4}, {"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328, "kind": "base", "alt_ft": 0}], "target": {"name": "SPARTAN SA-6 radar and SA-8", "lat": 41.53, "lon": 45.49, "description": "Two live emitters on the steppe: the SA-6's 1S91 radar in the battery centre, and the SA-8, 4 km to its northwest.", "dmpi": "One HARM each, pre-planned against the radar's position, launched from the SHOT point."}, "threats": [{"name": "SPARTAN SA-6 battery (radar cleared, launchers not)", "kind": "sam", "lat": 41.53, "lon": 45.49, "range_km": 24, "notes": "1S91 search-and-track radar and three 2P25 launchers. Live radar, weapons hold. Only the radar is cleared."}, {"name": "SPARTAN SA-8 (cleared)", "kind": "sam", "lat": 41.555, "lon": 45.455, "range_km": 10, "notes": "9A33 Osa, radar and missiles on one vehicle. Live radar, weapons hold."}, {"name": "Azerbaijan border", "kind": "hazard", "lat": 41.52, "lon": 45.61, "range_km": 3, "notes": "Range boundary. Turn west after every shot."}, {"name": "David Gareja monastery: no-fly", "kind": "hazard", "lat": 41.4472, "lon": 45.3766, "range_km": 5, "notes": "Same rule as on the Gareja range: no overflight within 5 km."}], "support": [], "ships": [], "airfields": [{"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328}], "phases": [{"phase": "Start and Transit", "waypoints": []}, {"phase": "Shot 1: SA-6 Radar", "waypoints": ["SPARTAN IP", "SHOT 1"]}, {"phase": "Shot 2: SA-8", "waypoints": ["SHOT 2"]}, {"phase": "Recovery", "waypoints": ["EGRESS"]}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// Theme toggle (remembered per viewer when storage is available)
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    drawMap();
+  });
+})();
+
+let map, layers = {}, routeLine, wpLatLng = {};
+function drawMap() {
+  if (typeof L === "undefined") { document.getElementById("map").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  const center = map ? map.getCenter() : null, zoom = map ? map.getZoom() : null;
+  if (map) map.remove();
+  map = L.map("map", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+
+  const blue = css("--blue"), red = css("--red"), amber = css("--amber"), ok = css("--ok"), accent = css("--accent");
+  layers = { route: L.layerGroup(), threats: L.layerGroup(), support: L.layerGroup(), target: L.layerGroup() };
+
+  const pts = D.route.map(p => [p.lat, p.lon]);
+  routeLine = L.polyline(pts, { color: blue, weight: 3, opacity: .9 }).addTo(layers.route);
+  D.route.forEach(p => {
+    const ll = [p.lat, p.lon];
+    if (p.kind === "wp") wpLatLng[p.name] = ll;
+    const m = L.circleMarker(ll, { radius: p.kind === "base" ? 7 : 5, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+      .addTo(layers.route);
+    if (!(p.ship && p === D.route[0])) m.bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });  // the ship marker labels the start
+    if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
+  });
+
+  // Rings show intel, not truth: solid = confirmed, dashed = suspected, dotted = possible.
+  const dash = { confirmed: null, suspected: "8 5", possible: "2 6" };
+  D.threats.forEach(t => {
+    const intel = t.intel || "confirmed";
+    const c = t.kind === "aaa" ? amber : t.kind === "air" ? blue : t.kind === "armor" ? css("--muted") : red;
+    const faint = intel === "possible" ? .5 : 1;
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: c, weight: 1, opacity: .7 * faint, fill: false, dashArray: "1 5" })
+      .addTo(layers.threats).bindTooltip(`${t.name}: last known area`, { sticky: true });
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, opacity: faint, fillColor: c, fillOpacity: .06 * faint, dashArray: dash[intel] }).addTo(layers.threats);
+    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: intel === "confirmed" ? c : css("--surface"), fillOpacity: 1, opacity: faint }).addTo(layers.threats)
+      .bindPopup(`<b>${t.name}</b><br><i>Intel: ${intel}</i>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}${t.area_km ? "<br>Position ±" + t.area_km + " km" : ""}<br>${t.notes || ""}`);
+  });
+
+  D.support.forEach(s => {
+    const c = s.coalition === "red" ? red : ok;
+    if (s.from && s.to) {
+      L.polyline([[s.from.lat, s.from.lon], [s.to.lat, s.to.lon]], { color: c, weight: 3, dashArray: "2 6" }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} CAP`, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.spawn) {
+      L.polyline([[s.spawn.lat, s.spawn.lon], ...s.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "10 6" }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} planned route`, { sticky: true });
+      L.circleMarker([s.spawn.lat, s.spawn.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.lat) {
+      L.circleMarker([s.lat, s.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.base_ll) {
+      L.circleMarker([s.base_ll.lat, s.base_ll.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} (${s.base_ll.name})`, { permanent: true, direction: "left", className: "wp-label" });
+    }
+  });
+
+  // Friendly ships with their planned track; AWACS / tanker orbits
+  D.ships.forEach(sh => {
+    const pts = [[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])];
+    L.polyline(pts, { color: ok, weight: 3, dashArray: "1 7", lineCap: "round" }).addTo(layers.support);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: ok, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(layers.support)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.support.filter(s => s.track_to).forEach(s => {
+    L.polyline([[s.lat, s.lon], [s.track_to.lat, s.track_to.lon]], { color: ok, weight: 5, opacity: .5, lineCap: "round" }).addTo(layers.support);
+  });
+
+  const tg = D.target;
+  if (tg.area_km) L.circle([tg.lat, tg.lon], { radius: tg.area_km * 1000, color: accent, weight: 2, fill: false, dashArray: "4 6" })
+    .addTo(layers.target).bindTooltip("Target search area", { sticky: true });
+  L.marker([tg.lat, tg.lon], { icon: L.divIcon({ className: "", html: `<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="${accent}" stroke-width="2.5"/><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="${accent}" stroke-width="2.5"/></svg>`, iconSize: [26, 26], iconAnchor: [13, 13] }) })
+    .addTo(layers.target).bindPopup(`<b>${tg.name}</b>${tg.area_km ? "<br><i>Estimated position ±" + tg.area_km + " km</i>" : ""}<br>${tg.description || ""}`);
+
+  document.querySelectorAll("#legend input").forEach(cb => { if (cb.checked) layers[cb.dataset.layer].addTo(map); });
+  // Frame the route plus every briefed threat position and uncertainty area (not full ranges, which can be huge)
+  const frame = routeLine.getBounds();
+  D.threats.concat([D.target]).forEach(t => frame.extend(L.latLng(t.lat, t.lon).toBounds(2 * (t.area_km || 1) * 1000)));
+  if (center) map.setView(center, zoom); else map.fitBounds(frame, { padding: [24, 24] });
+}
+
+document.querySelectorAll("#legend input").forEach(cb => cb.addEventListener("change", () => {
+  cb.checked ? layers[cb.dataset.layer].addTo(map) : map.removeLayer(layers[cb.dataset.layer]);
+}));
+
+let hl;
+document.querySelectorAll(".phase").forEach(li => li.querySelector(".phase-card").addEventListener("click", () => {
+  document.querySelectorAll(".phase").forEach(x => x.classList.toggle("active", x === li));
+  if (!map) return;
+  if (hl) map.removeLayer(hl);
+  const wps = D.phases[+li.dataset.idx].waypoints.map(n => wpLatLng[n]).filter(Boolean);
+  if (!wps.length) { map.fitBounds(routeLine.getBounds(), { padding: [24, 24] }); return; }
+  // Highlight the leg into the first waypoint through the last one in this phase
+  const all = D.route.map(p => [p.lat, p.lon]);
+  const names = D.route.map(p => p.name);
+  const i0 = Math.max(0, names.indexOf(D.phases[+li.dataset.idx].waypoints[0]) - 1);
+  const i1 = names.indexOf(D.phases[+li.dataset.idx].waypoints.at(-1));
+  hl = L.polyline(all.slice(i0, i1 + 1), { color: css("--accent"), weight: 6, opacity: .85 }).addTo(map);
+  map.fitBounds(L.latLngBounds(all.slice(i0, i1 + 1)).pad(0.35), { maxZoom: 10 });
+  if (matchMedia("(max-width: 900px)").matches) document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+}));
+
+drawMap();
+</script>
+</body>
+</html>

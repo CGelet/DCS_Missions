@@ -8,6 +8,7 @@ from pathlib import Path
 
 import dcs
 from dcs import action, condition, task, triggers, weather
+from dcs.goals import Goal
 from dcs.mission import StartType
 from dcs.point import MovingPoint, PointAction, PointProperties
 from dcs.terrain import Caucasus
@@ -16,6 +17,7 @@ from .geo import FT, KTS, NM, point
 from .schema import phase_triggers
 
 TARGET_FLAG = 99          # set by any target-destroyed helper rule
+SUCCESS_FLAG = 10         # every mission's success trigger sets it; the mission goal scores on it
 CHANCE_FLAG_BASE = 200    # one flag per `chance` trigger, rolled at mission start
 VARIANT_FLAG_BASE = 300   # default flag for variants without an explicit one
 TIMING_FLAG_BASE = 400    # timed checkpoints: start-of-leg and window flags
@@ -24,7 +26,7 @@ START_TYPES = {"cold": StartType.Cold, "warm": StartType.Warm, "runway": StartTy
 MAINTASKS = {"bomb": task.GroundAttack, "sead": task.SEAD, "cas": task.CAS, "cap": task.CAP, "intercept": task.Intercept,
              "antiship": task.AntishipStrike}
 AI_FLIGHT_TASKS = {"antiship": task.AntishipStrike, "sweep": task.FighterSweep, "cap": task.CAP, "strike": task.GroundAttack,
-                   "transport": task.Transport}
+                   "transport": task.Transport, "sead": task.SEAD}
 
 
 def _type(module, name: str):
@@ -53,7 +55,7 @@ def _weapon(ac, pylon: int, name: str):
 
 
 def _vehicle(name: str):
-    for cat in ("AirDefence", "Armor", "Unarmed", "Infantry", "Artillery"):
+    for cat in ("AirDefence", "Armor", "Unarmed", "Infantry", "Artillery", "MissilesSS", "Fortification"):
         t = getattr(getattr(dcs.vehicles, cat), name, None)
         if t is not None:
             return t
@@ -79,6 +81,14 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
     m.weather.wind_at_8000 = wind
     m.weather.season_temperature = w.get("temperature_c", 15)
     m.weather.qnh = w.get("qnh_inhg", 29.92) * 25.4
+    if w.get("cloud_preset"):  # real DCS clouds; without it the `clouds` line is briefing text only
+        from dcs.cloud_presets import Clouds
+        m.weather.clouds_preset = Clouds[w["cloud_preset"]].value
+        m.weather.clouds_base = int(w["cloud_base_ft"] * FT)
+    if w.get("fog_visibility_m"):
+        m.weather.enable_fog = True
+        m.weather.fog_visibility = w["fog_visibility_m"]
+        m.weather.fog_thickness = w.get("fog_thickness_m", 300)
 
     groups: dict[str, object] = {}
     zones: dict[str, object] = {}
@@ -217,6 +227,8 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
                     mp.alt_type = "RADIO"
                 if i == 0 and s["task"] == "antiship" and s.get("attack") in ships:
                     mp.tasks.append(task.AttackGroup(ships[s["attack"]].id))
+                elif i == 0 and s["task"] == "sead":
+                    mp.tasks.append(task.EngageTargets(max_distance=60_000, targets=[task.Targets.All.GroundUnits.AirDefence]))
                 elif i == 0 and s["task"] in ("sweep", "cap"):
                     mp.tasks.append(task.EngageTargets(max_distance=80_000, targets=[task.Targets.All.Air]))
                 if p.get("land_s"):  # helicopters: set down here for this many seconds, then carry on
@@ -327,6 +339,11 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
             _actions(m, r, trig, groups)
             m.triggerrules.triggers.append(r)
 
+    # --- mission goal: DCS scores 100 on success, 0 otherwise (campaigns advance on > 50) ---
+    goal = Goal("Mission success", score=100)
+    goal.rules.append(condition.FlagIsTrue(SUCCESS_FLAG))
+    m.goals.add_blue(goal)
+
     # --- briefing text ---------------------------------------------------
     n = data["narrative"]
     m.set_sortie_text(f"{meta['title']}: {meta.get('subtitle', '')}".strip(": "))
@@ -423,6 +440,12 @@ def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: di
             conds.append(condition.TimeSinceFlag(arg[0], arg[1]))
         elif kind == "player_below_ft":
             conds.append(condition.UnitAltitudeLower(player_group.units[0].id, arg * FT))
+        elif kind == "scenery_dead":  # a map object (bridge, building) inside the zone is destroyed
+            conds.append(condition.MapObjectIsDead(zones[arg].id))
+        elif kind == "player_above_ft":
+            conds.append(condition.UnitAltitudeHigher(player_group.units[0].id, arg * FT))
+        elif kind == "player_slower_kts":  # with player_below_ft over the sea: on the deck
+            conds.append(condition.UnitSpeedLower(player_group.units[0].id, arg * KTS / 3.6))
         elif kind == "player_below_agl_ft":
             conds.append(condition.UnitAltitudeLowerAGL(player_group.units[0].id, arg * FT))
         elif kind == "variant":

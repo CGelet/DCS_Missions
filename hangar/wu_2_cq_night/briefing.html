@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLACK DECK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow" style="margin-bottom:10px"><a href="../campaigns/workups/index.html" style="text-decoration:none">Training campaign WORK-UPS</a> · Chapter 2 of 5</div>
+    <div class="eyebrow">Training event BLACK DECK · Det work-ups, event CQ-2</div>
+    <h1>Night Carrier Qualification</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2026-01-16</b></span>
+      <span>Step <b class="mono">18:45L</b></span>
+      <span>Theater <b>Caucasus</b></span>
+      <span>Flight <b>Ford 1 · 1× F/A-18C Hornet</b></span>
+      <span>Base <b>Stennis Group</b></span>
+    </div>
+    <blockquote class="hook">&#34;At night, the deck doesn&#39;t get bigger as you get closer. It just gets darker around it.
+Fly the needles.&#34; PADDLES, night brief</blockquote>
+    <div class="previously"><h3>Previously</h3><p>PADDLES: two day traps aboard the Stennis, 25 km west of Batumi, with PADDLES grading every pass.
+The strike group has given the detachment the deck again, after dark.</p></div>
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#story">Overview</a><a href="#plan">Event flow &amp; map</a><a href="#brief">Briefing</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+    <button type="button" onclick="window.print()">Print</button>
+  </div>
+</nav>
+
+<main>
+<section id="story">
+  <div class="wrap">
+    <h2>Why we&#39;re flying this</h2>
+    <div class="story">
+      <div><p>The day traps went well enough that the strike group gave the detachment the deck again,
+after dark. Night quals are the hardest landings in naval aviation: no horizon, a small lit
+rectangle moving at 15 knots, and the knowledge that the only alternate is 60 km away.</p><p>You start on the deck tonight. Launch, go to marshal like it&#39;s the end of a real mission, and
+come home on the numbers. PADDLES grades every pass. WREN will be on the platform again.</p></div>
+      <div>
+        <h3>Instructors and players</h3>
+        <ul class="cast">
+          <li><b>LCDR Ana &#34;WREN&#34; Castellano</b><span>Detachment training officer, on the LSO platform</span></li><li><b>LT Marcus &#34;PADDLES&#34; Odum</b><span>Stennis landing signal officer</span></li><li><b>Marshal</b><span>Stennis CATCC: marshal and approach control</span></li><li><b>TEXACO 1</b><span>S-3B recovery tanker overhead the boat</span></li><li><b>Ford 1</b><span>You, single-ship F/A-18C</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="wrap">
+    <h2>Event flow &amp; flight plan</h2>
+    <div class="plan">
+      <div class="map-wrap">
+        <div id="map" role="img" aria-label="Mission map with route, threats and target"></div>
+        <div class="legend" id="legend">
+          <label><input type="checkbox" data-layer="route" checked> <i style="background:var(--blue)"></i>Route</label>
+          <label><input type="checkbox" data-layer="threats" checked> <i style="background:var(--red)"></i>Range players</label>
+          <label><input type="checkbox" data-layer="support" checked> <i style="background:var(--ok)"></i>Friendly support</label>
+          <label><input type="checkbox" data-layer="target" checked> <i style="background:var(--accent)"></i>Target</label>
+        </div>
+      </div>
+      <ol class="timeline">
+        
+        <li class="phase" data-idx="0">
+          <span class="dot">1</span>
+          <button type="button" class="phase-card" aria-label="Show Night Launch on the map">
+            <div class="phase-head"><h3>Night Launch</h3><span class="time">18:45</span></div>
+            <p class="beat">Cold start on deck. Lights on, taxi to the catapult on the director&#39;s wands. After the shot,
+climb straight ahead to 1,200 ft, then turn to SPLIT and climb to 6,000 ft.</p>
+            <div class="chips"><span class="chip">SPLIT</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="1">
+          <span class="dot">2</span>
+          <button type="button" class="phase-card" aria-label="Show Marshal and Push on the map">
+            <div class="phase-head"><h3>Marshal and Push</h3><span class="time">19:14</span></div>
+            <p class="beat">Marshal on the 260 radial at 21 nm, angels 6. Push when you arrive: platform at 5,000 ft,
+then 1,200 ft at 10 miles. The sim calls your timing at the 10-mile gate.</p>
+            <div class="chips"><span class="chip">MARSHAL</span><span class="chip">TEN MILE</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="2">
+          <span class="dot">3</span>
+          <button type="button" class="phase-card" aria-label="Show Trap 1 on the map">
+            <div class="phase-head"><h3>Trap 1</h3><span class="time">19:20</span></div>
+            <p class="beat">Dirty up at 8 nm, call the ball at three-quarters of a mile, and fly it to the deck. If you
+bolter, you go round: the bolter pattern brings you back to 6 nm.</p>
+            
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="3">
+          <span class="dot">4</span>
+          <button type="button" class="phase-card" aria-label="Show Trap 2 on the map">
+            <div class="phase-head"><h3>Trap 2</h3><span class="time">19:35</span></div>
+            <p class="beat">Launch again, straight ahead to 1,200 ft, then turn downwind and come round for the second
+trap. Tank on TEXACO first if you&#39;re below 6,000 lb.</p>
+            
+          </button>
+        </li>
+        
+      </ol>
+    </div>
+    <div class="profile-wrap"><h3>Altitude profile</h3><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 99 km</text><line class="pleg" x1="56.0" y1="196.0" x2="155.6" y2="164.8"/><line class="pleg" x1="155.6" y1="164.8" x2="432.1" y2="164.8"/><line class="pleg" x1="432.1" y1="164.8" x2="601.6" y2="189.8"/><line class="pleg" x1="601.6" y1="189.8" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="102.8" y="186.0" text-anchor="middle">Stennis Group</text><circle class="pwp" cx="155.6" cy="164.8" r="4"/><text class="plbl" x="155.6" y="140.8" text-anchor="middle">1 SPLIT</text><text class="psub" x="155.6" y="220" text-anchor="middle">6k</text><circle class="pwp" cx="432.1" cy="164.8" r="4"/><text class="plbl" x="432.1" y="154.8" text-anchor="middle">2 MARSHAL</text><text class="psub" x="432.1" y="220" text-anchor="middle">6k</text><circle class="pwp" cx="601.6" cy="189.8" r="4"/><text class="plbl" x="601.6" y="179.8" text-anchor="middle">3 TEN MILE</text><text class="psub" x="601.6" y="220" text-anchor="middle">1.2k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="797.6" y="186.0" text-anchor="middle">Stennis Group (recovery)</text></svg><p>Planned altitudes along the route. Dashed legs are terrain-following, flown above ground level (AGL), not sea level.</p></div>
+  </div>
+</section>
+
+<section id="brief">
+  <div class="wrap">
+    <h2>Briefing</h2>
+    <div class="cards">
+      <div class="card"><h3>Event overview</h3><p>Night, no moon, broken cloud at 3,500 ft. You start cold on the Stennis, 35 km west of Batumi,
+steaming east into a 10 kt land breeze at 15 kt (BRC 080). Launch, depart to SPLIT, then fly to
+MARSHAL, 21 nm astern on the 260 radial at 6,000 ft. Push, and fly the Case III approach to two
+traps with a launch between them. TEXACO orbits overhead at 6,000 ft.</p></div>
+      <div class="card"><h3>Learning objectives</h3>
+        <ul class="obj-list"><li><span>primary</span><div>Two night arrested landings aboard the Stennis.</div></li><li><span>secondary</span><div>Reach the 10-mile gate within ±30 s of plan after pushing from MARSHAL.</div></li><li><span>tertiary</span><div>Fuel above bingo at all times: tank on TEXACO if you need to.</div></li></ul>
+      </div>
+      <div class="card"><h3>Range and weapons clearance</h3><p>No weapons. Master arm SAFE. Every instruction from Marshal and PADDLES is mandatory.</p></div>
+      
+      <div class="card"><h3>Training rules</h3><ol class="rules"><li>Case III. Marshal on the 260 radial at 21 nm, angels 6. Push from MARSHAL on your own: the sim times you to the 10-mile gate.</li><li>Platform at 5,000 ft: slow to 250 kt and 2,000 ft/min. At 10 nm, 1,200 ft; dirty up at 8 nm.</li><li>Two arrested landings. A trap counts only after you&#39;ve climbed above 1,000 ft since the last one.</li><li>Bolter: climb straight ahead to 1,200 ft, then the bolter pattern back to the 6 nm point.</li><li>Bingo 4,500 lb to Kobuleti (TACAN 67X). TEXACO is overhead at 6,000 ft: tank below 6,000 lb.</li></ol></div>
+      <div class="card kio"><h3>Knock-it-off and terminate</h3><p>Vertigo, a bad ICLS, or anything that doesn&#39;t feel right on a dark night: call &#34;Knock it off&#34;,
+climb straight ahead to 2,000 ft, level the wings on the instruments and tell Mother. You&#39;ll be
+sent back to marshal. Nobody gets graded for pressing on.</p></div>
+      <div class="card"><h3>Special subjects</h3><ul class="rules"><li>The black hole: there&#39;s no horizon tonight. The boat&#39;s lights are the only thing outside.</li><li>ICLS needles versus the ball: fly the needles until the ball is in sight, then the ball.</li><li>Night tanking on the S-3B: lights, slow closure, and no stabbing at the basket.</li><li>Fatigue after a bolter: the second pass is where people get low. Fly the numbers again.</li></ul></div>
+      <div class="card wide"><h3>Grade sheet</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Item</th><th>Standard to pass</th></tr></thead>
+          <tbody><tr><td class="num">1</td><td><b>Night launch and departure</b></td><td>Cat shot, climb straight ahead to 1,200 ft, then the departure to SPLIT.</td></tr><tr><td class="num">2</td><td><b>Marshal and push</b></td><td>Arrives at MARSHAL at angels 6, pushes and reaches the 10-mile gate within ±30 s of plan.</td></tr><tr><td class="num">3</td><td><b>Approach</b></td><td>Platform at 5,000 ft, 1,200 ft at 10 nm, dirty at 8 nm, on ICLS.</td></tr><tr><td class="num">4</td><td><b>Trap 1</b></td><td>Arrested landing, graded by PADDLES.</td></tr><tr><td class="num">5</td><td><b>Trap 2</b></td><td>Second arrested landing after a launch. Two traps complete night quals.</td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="card"><h3>Debrief focus</h3><ul class="rules"><li>ICLS needle tape from 6 nm to the ramp.</li><li>Push timing and what you did to fix it.</li><li>PADDLES&#39; comments on each pass.</li></ul></div>
+      
+
+      <div class="card wide"><h3>Range players and hazards</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Type</th><th>Player</th><th>Range</th><th>Notes</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag hazard">hazard</span></td><td>No horizon</td>
+            
+            <td class="num">5 km</td><td>Moonless and overcast above. Over the sea there is nothing outside but the ship&#39;s lights.</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card"><h3>Range target</h3>
+        <dl class="kv">
+          <dt>Name</dt><dd>The Stennis landing area, at night</dd>
+          <dt>Coords</dt><dd class="mono">41.7700N 41.0700E</dd>
+          <dt>Description</dt><dd>The angled deck&#39;s centreline lights, the drop lights under the ramp, and the ball.</dd>
+          <dt>DMPI</dt><dd>Target the 3-wire. Fly the needles until the ball is in sight.</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Flight &amp; loadout</h3>
+        <dl class="kv">
+          <dt>Callsign</dt><dd>Ford 1-1</dd>
+          <dt>Start</dt><dd>Cold start, Stennis Group</dd>
+          <dt>Loadout</dt><dd>1× 330 gal tank, 2× AIM-9X (inert)</dd>
+          
+          <dt>Joker / Bingo</dt><dd class="mono">6000 / 4500 lb</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Weather</h3>
+        <dl class="kv">
+          <dt>Wind</dt><dd class="mono">080° / 10 kt</dd>
+          <dt>Temp</dt><dd class="mono">5 °C</dd>
+          <dt>QNH</dt><dd class="mono">30.0 inHg</dd>
+          <dt>Clouds</dt><dd>Broken 3,500 ft, no moon</dd>
+          <dt>Visibility</dt><dd>15 km</dd>
+        </dl>
+      </div>
+
+      <div class="card wide"><h3>Navigation</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Alt</th><th>Speed</th><th>ETA</th><th>Action</th></tr></thead>
+          <tbody><tr>
+            <td class="num">1</td><td><b>SPLIT</b></td>
+            <td class="num">41.8500N 40.9500E</td>
+            <td class="num">6,000 ft</td><td class="num">300 kt</td>
+            <td class="num">19:05</td><td></td>
+          </tr><tr>
+            <td class="num">2</td><td><b>MARSHAL</b></td>
+            <td class="num">41.7100N 40.6000E</td>
+            <td class="num">6,000 ft</td><td class="num">250 kt</td>
+            <td class="num">19:14</td><td></td>
+          </tr><tr>
+            <td class="num">3</td><td><b>TEN MILE</b></td>
+            <td class="num">41.7400N 40.8400E</td>
+            <td class="num">1,200 ft</td><td class="num">250 kt</td>
+            <td class="num">19:17</td><td></td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card wide"><h3>Navaids</h3><p class="mono" style="font-size:14px">Stennis Group: TACAN 74X (STN), ICLS 1</p><p class="mono" style="font-size:14px">TEXACO 1 (tanker): TACAN 60Y, 6,000 ft, 250 kt</p></div>
+      <div class="card wide"><h3>Comms</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Station</th><th>Frequency</th><th>Preset</th><th>Notes</th></tr></thead>
+          <tbody><tr><td>Ford (det common)</td><td class="num">255.500 AM</td><td class="num">COMM1 · CH 1</td><td>WREN monitors here</td></tr><tr><td>TEXACO 1 (S-3B)</td><td class="num">253.000 AM</td><td class="num">COMM1 · CH 2</td><td>TACAN 60Y</td></tr><tr><td>Mother / Marshal (Stennis)</td><td class="num">127.500 AM</td><td class="num">COMM2 · CH 1</td><td>TACAN 74X, ICLS 1. Answers the ATC menu</td></tr><tr><td>Kobuleti Tower</td><td class="num">133.000 AM</td><td class="num">COMM2 · CH 2</td><td>TACAN 67X. Bingo field</td></tr><tr><td>PADDLES, Marshal, WREN</td><td class="num">127.500 AM</td><td class="num">Manual / listen</td><td>Scripted calls (on-screen text); they don&#39;t answer the radio menu</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/wu_2_cq_night/mission.yaml</code>. Intel is what the squadron knows at brief time; it may be incomplete.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const D = {"route": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "kind": "base", "alt_ft": 0, "ship": true}, {"name": "SPLIT", "lat": 41.85, "lon": 40.95, "alt_ft": 6000, "kts": 300, "eta": "19:05", "zone_km": 4, "kind": "wp", "num": 1}, {"name": "MARSHAL", "lat": 41.71, "lon": 40.6, "alt_ft": 6000, "kts": 250, "eta": "19:14", "zone_km": 4, "kind": "wp", "num": 2}, {"name": "TEN MILE", "lat": 41.74, "lon": 40.84, "alt_ft": 1200, "kts": 250, "eta": "19:17", "zone_km": 2.5, "timing": {"from": "MARSHAL", "seconds": 180, "window_s": 30, "flag": 61}, "kind": "wp", "num": 3}, {"name": "Stennis Group (recovery)", "lat": 41.79, "lon": 41.24, "kind": "base", "alt_ft": 0}], "target": {"name": "The Stennis landing area, at night", "lat": 41.77, "lon": 41.07, "description": "The angled deck's centreline lights, the drop lights under the ramp, and the ball.", "dmpi": "Target the 3-wire. Fly the needles until the ball is in sight."}, "threats": [{"name": "No horizon", "kind": "hazard", "lat": 41.75, "lon": 40.9, "range_km": 5, "notes": "Moonless and overcast above. Over the sea there is nothing outside but the ship's lights."}], "support": [{"kind": "tanker", "callsign": "TEXACO 1", "aircraft": "S_3B_Tanker", "coalition": "blue", "lat": 41.78, "lon": 41.0, "alt_ft": 6000, "heading": 80, "leg_nm": 10, "kts": 250, "freq_mhz": 253.0, "tacan": {"channel": "60Y", "callsign": "TEX"}, "track_to": {"lat": 41.80897265090443, "lon": 41.22034352879611}}], "ships": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "route": [{"lat": 41.77, "lon": 41.07}, {"lat": 41.79, "lon": 41.24}], "coalition": "blue"}], "airfields": [], "phases": [{"phase": "Night Launch", "waypoints": ["SPLIT"]}, {"phase": "Marshal and Push", "waypoints": ["MARSHAL", "TEN MILE"]}, {"phase": "Trap 1", "waypoints": []}, {"phase": "Trap 2", "waypoints": []}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// Theme toggle (remembered per viewer when storage is available)
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    drawMap();
+  });
+})();
+
+let map, layers = {}, routeLine, wpLatLng = {};
+function drawMap() {
+  if (typeof L === "undefined") { document.getElementById("map").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  const center = map ? map.getCenter() : null, zoom = map ? map.getZoom() : null;
+  if (map) map.remove();
+  map = L.map("map", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+
+  const blue = css("--blue"), red = css("--red"), amber = css("--amber"), ok = css("--ok"), accent = css("--accent");
+  layers = { route: L.layerGroup(), threats: L.layerGroup(), support: L.layerGroup(), target: L.layerGroup() };
+
+  const pts = D.route.map(p => [p.lat, p.lon]);
+  routeLine = L.polyline(pts, { color: blue, weight: 3, opacity: .9 }).addTo(layers.route);
+  D.route.forEach(p => {
+    const ll = [p.lat, p.lon];
+    if (p.kind === "wp") wpLatLng[p.name] = ll;
+    const m = L.circleMarker(ll, { radius: p.kind === "base" ? 7 : 5, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+      .addTo(layers.route);
+    if (!(p.ship && p === D.route[0])) m.bindTooltip(p.kind === "wp" ? `${p.num} ${p.name}` : p.name, { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });  // the ship marker labels the start
+    if (p.kind === "wp") m.bindPopup(`<b>WP${p.num} ${p.name}</b><br>${p.alt_ft.toLocaleString()} ft · ${p.kts} kt<br>ETA ${p.eta}${p.action ? "<br>Action: " + p.action.toUpperCase() : ""}`);
+  });
+
+  // Rings show intel, not truth: solid = confirmed, dashed = suspected, dotted = possible.
+  const dash = { confirmed: null, suspected: "8 5", possible: "2 6" };
+  D.threats.forEach(t => {
+    const intel = t.intel || "confirmed";
+    const c = t.kind === "aaa" ? amber : t.kind === "air" ? blue : t.kind === "armor" ? css("--muted") : red;
+    const faint = intel === "possible" ? .5 : 1;
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: c, weight: 1, opacity: .7 * faint, fill: false, dashArray: "1 5" })
+      .addTo(layers.threats).bindTooltip(`${t.name}: last known area`, { sticky: true });
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, opacity: faint, fillColor: c, fillOpacity: .06 * faint, dashArray: dash[intel] }).addTo(layers.threats);
+    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: intel === "confirmed" ? c : css("--surface"), fillOpacity: 1, opacity: faint }).addTo(layers.threats)
+      .bindPopup(`<b>${t.name}</b><br><i>Intel: ${intel}</i>${t.range_km ? "<br>Range " + t.range_km + " km" : ""}${t.area_km ? "<br>Position ±" + t.area_km + " km" : ""}<br>${t.notes || ""}`);
+  });
+
+  D.support.forEach(s => {
+    const c = s.coalition === "red" ? red : ok;
+    if (s.from && s.to) {
+      L.polyline([[s.from.lat, s.from.lon], [s.to.lat, s.to.lon]], { color: c, weight: 3, dashArray: "2 6" }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} CAP`, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.spawn) {
+      L.polyline([[s.spawn.lat, s.spawn.lon], ...s.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "10 6" }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} planned route`, { sticky: true });
+      L.circleMarker([s.spawn.lat, s.spawn.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.lat) {
+      L.circleMarker([s.lat, s.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(s.callsign, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.base_ll) {
+      L.circleMarker([s.base_ll.lat, s.base_ll.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(`${s.callsign} (${s.base_ll.name})`, { permanent: true, direction: "left", className: "wp-label" });
+    }
+  });
+
+  // Friendly ships with their planned track; AWACS / tanker orbits
+  D.ships.forEach(sh => {
+    const pts = [[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])];
+    L.polyline(pts, { color: ok, weight: 3, dashArray: "1 7", lineCap: "round" }).addTo(layers.support);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: ok, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(layers.support)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.support.filter(s => s.track_to).forEach(s => {
+    L.polyline([[s.lat, s.lon], [s.track_to.lat, s.track_to.lon]], { color: ok, weight: 5, opacity: .5, lineCap: "round" }).addTo(layers.support);
+  });
+
+  const tg = D.target;
+  if (tg.area_km) L.circle([tg.lat, tg.lon], { radius: tg.area_km * 1000, color: accent, weight: 2, fill: false, dashArray: "4 6" })
+    .addTo(layers.target).bindTooltip("Target search area", { sticky: true });
+  L.marker([tg.lat, tg.lon], { icon: L.divIcon({ className: "", html: `<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="${accent}" stroke-width="2.5"/><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="${accent}" stroke-width="2.5"/></svg>`, iconSize: [26, 26], iconAnchor: [13, 13] }) })
+    .addTo(layers.target).bindPopup(`<b>${tg.name}</b>${tg.area_km ? "<br><i>Estimated position ±" + tg.area_km + " km</i>" : ""}<br>${tg.description || ""}`);
+
+  document.querySelectorAll("#legend input").forEach(cb => { if (cb.checked) layers[cb.dataset.layer].addTo(map); });
+  // Frame the route plus every briefed threat position and uncertainty area (not full ranges, which can be huge)
+  const frame = routeLine.getBounds();
+  D.threats.concat([D.target]).forEach(t => frame.extend(L.latLng(t.lat, t.lon).toBounds(2 * (t.area_km || 1) * 1000)));
+  if (center) map.setView(center, zoom); else map.fitBounds(frame, { padding: [24, 24] });
+}
+
+document.querySelectorAll("#legend input").forEach(cb => cb.addEventListener("change", () => {
+  cb.checked ? layers[cb.dataset.layer].addTo(map) : map.removeLayer(layers[cb.dataset.layer]);
+}));
+
+let hl;
+document.querySelectorAll(".phase").forEach(li => li.querySelector(".phase-card").addEventListener("click", () => {
+  document.querySelectorAll(".phase").forEach(x => x.classList.toggle("active", x === li));
+  if (!map) return;
+  if (hl) map.removeLayer(hl);
+  const wps = D.phases[+li.dataset.idx].waypoints.map(n => wpLatLng[n]).filter(Boolean);
+  if (!wps.length) { map.fitBounds(routeLine.getBounds(), { padding: [24, 24] }); return; }
+  // Highlight the leg into the first waypoint through the last one in this phase
+  const all = D.route.map(p => [p.lat, p.lon]);
+  const names = D.route.map(p => p.name);
+  const i0 = Math.max(0, names.indexOf(D.phases[+li.dataset.idx].waypoints[0]) - 1);
+  const i1 = names.indexOf(D.phases[+li.dataset.idx].waypoints.at(-1));
+  hl = L.polyline(all.slice(i0, i1 + 1), { color: css("--accent"), weight: 6, opacity: .85 }).addTo(map);
+  map.fitBounds(L.latLngBounds(all.slice(i0, i1 + 1)).pad(0.35), { maxZoom: 10 });
+  if (matchMedia("(max-width: 900px)").matches) document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+}));
+
+drawMap();
+</script>
+</body>
+</html>

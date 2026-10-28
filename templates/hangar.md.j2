@@ -9,13 +9,23 @@ Pilots: the briefing, slides and kneeboard only contain what your squadron knows
 
 These files are generated from `missions/<id>/mission.yaml`. Don't edit them by hand; see the main README to change a mission.
 
-{% for cat, heading, blurb in sections %}{% set group = missions | selectattr("category", "equalto", cat) | list %}{% if group %}
-# {{ heading }}
+{% if campaigns %}
+# Campaigns
 
-{{ blurb }}
+Story arcs flown in order. Each campaign folder under `campaigns/` installs into DCS as a campaign (see its README).
+
+| Campaign | Chapters | Dates | Premise |
+| --- | --- | --- | --- |
+{% for c in campaigns %}| [{{ c.title }}](campaigns/{{ c.id }}/README.md): {{ c.subtitle }} | {{ c.count }} | {{ c.first }} → {{ c.last }} | {{ c.premise | replace("\n", " ") }} |
+{% endfor %}
+{% endif %}
+{% for sec in sections %}{% set group = sec.missions %}{% set cat = sec.category %}
+# {{ sec.heading }}
+
+{{ sec.blurb }}{% if sec.link %} [Campaign page]({{ sec.link | replace("index.html", "README.md") }}){% endif %}
 
 {% for m in group -%}
-## {{ m.eyebrow }}: {{ m.title }}
+## {% if m.chapter %}{{ m.chapter }} · {% endif %}{{ m.eyebrow }}: {{ m.title }}
 
 **{{ m.theater }}** · **{{ m.aircraft }}** · **{{ m.role }}** · {{ m.date }}, step {{ m.start_time }}L{% if m.features %} · {{ m.features | join(", ") }}{% endif %}
 
@@ -28,7 +38,7 @@ These files are generated from `missions/<id>/mission.yaml`. Don't edit them by 
 
 | Download | |
 | --- | --- |
-| Mission | [{{ m.id }}.miz]({{ m.id }}/{{ m.id }}.miz) |
+| Mission | [{{ m.miz.split('/')[-1] }}]({{ m.miz }}) |
 | Briefing | [briefing.html]({{ m.id }}/briefing.html) |
 | Slide deck | [slides.html]({{ m.id }}/slides.html) |
 {% if cat == "training" %}| Instructor view | [director.html]({{ m.id }}/director.html): every trigger and how each grade is decided |
@@ -39,5 +49,5 @@ These files are generated from `missions/<id>/mission.yaml`. Don't edit them by 
 {% if m.kneeboards %}<p>{% for k in m.kneeboards %}<a href="{{ m.id }}/kneeboard/{{ k }}"><img src="{{ m.id }}/kneeboard/{{ k }}" width="220" alt="{{ k }}"></a> {% endfor %}</p>
 {% endif %}
 {% endfor -%}
-{% endif %}{% endfor %}
+{% endfor %}
 {% endautoescape %}

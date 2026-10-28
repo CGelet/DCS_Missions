@@ -18,7 +18,7 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
 .sam { color: #a51d16; font-weight: bold; }
 </style></head>
 <body><div class="page">
-  <div class="top"><span>{{ "TRAINING" if is_training else "OP" }} {{ narrative.operation }}</span><span>{{ player.callsign | upper }}</span><span>{{ page_no }}/{{ page_count }}</span></div>
+  <div class="top"><span>{{ "TRAINING" if is_training else "OP" }} {{ narrative.operation }}{% if campaign %} · CH {{ campaign.chapter }}/{{ campaign.of }}{% endif %}</span><span>{{ player.callsign | upper }}</span><span>{{ page_no }}/{{ page_count }}</span></div>
 
 {% if page == "mission" %}
   <h1>{{ meta.subtitle }}</h1>

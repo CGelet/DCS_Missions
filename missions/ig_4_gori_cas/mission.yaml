@@ -1,0 +1,296 @@
+# IRON GATE chapter 4: close air support at Gori. Source of truth; `python -m dcsmb build` renders hangar/ig_4_gori_cas/.
+#
+# Story device: the attack is coming, but from where? The sim rolls the axis: down the highway from
+# Ergneti, or across country from the northeast through Tirdznisi. HAMMER (a Georgian JTAC) calls it
+# when you check in. 50%: a Tunguska rides with the attack. The Georgian defenders use T-72s too, so
+# every pass needs positive ID by position. The attack reaching the GORI LINE is the failure ending.
+# Positions follow OSM roads north of Gori; the Georgian line holds the northern edge of the town.
+
+meta:
+  id: ig_4_gori_cas
+  title: "Operation IRON GATE"
+  subtitle: "Hold Gori"
+  theater: caucasus
+  role: "CAS"
+  date: 2026-04-11
+  start_time: "09:40"
+  weather:
+    temperature_c: 14
+    wind_from_deg: 290
+    wind_kts: 10
+    clouds: "Scattered 6,000 ft"
+    visibility: "20 km, smoke over the north of town"
+    qnh_inhg: 29.96
+    cloud_preset: LightScattered1
+    cloud_base_ft: 6000
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "IRON GATE"
+  backstory: |
+    With the SA-11 gone, the column did what everyone expected: it came south. By last night its
+    lead battalion was through Tskhinvali and dug in at Ergneti, five kilometres from Gori. The
+    Georgian 4th Brigade holds the northern edge of the town with infantry, a company of T-72s and
+    not much else.
+
+    At 0900 the brigade's radios started picking up the attack orders. They know it's coming this
+    morning. They don't know which way. HAMMER, the brigade's JTAC, will be on the radio when you
+    check in.
+  characters:
+    - name: "CDR Dana \"SABRE\" Whitfield"
+      role: "Detachment commander at Vaziani"
+    - name: "Lt. Davit \"HAMMER\" Mchedlishvili"
+      role: "JTAC with the Georgian 4th Brigade, northern edge of Gori"
+    - name: "Col. Irakli Gelashvili"
+      role: "Georgian Land Forces operations, Gori"
+    - name: "WIZARD"
+      role: "E-3 AWACS"
+    - name: "Enfield 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets"
+  hook: |
+    "My tanks are the same tanks as their tanks. If you're not sure, ask me. If you're still not
+    sure, don't." HAMMER, on the check-in
+  outcomes:
+    success: |
+      The attack dies in the fields north of Gori. By noon the northern edge of the town is quiet,
+      and the brigade is counting wrecks instead of losses. IRON GATE turns from defence to the gate
+      itself.
+    partial: |
+      The attack is stopped, but not before it reaches the brigade's line and costs it two tanks
+      and a platoon. Gori holds, barely.
+    failure: |
+      The attack breaks into the northern edge of Gori. The brigade falls back across the Mtkvari,
+      and the town is a battlefield by evening.
+
+situation: |
+  The Georgian 4th Brigade holds the northern edge of Gori. A mechanized battalion is dug in at
+  Ergneti, 5 km north, and its attack is expected this morning. Two approaches are possible: south
+  down the highway from Ergneti, or across country from the northeast past Tirdznisi. The Georgians
+  have T-72s too, in hull-down positions along their line. HAMMER will call the attack's axis and
+  pass 9-lines. Expect mobile short-range air defence with the attack.
+
+objectives:
+  primary: "Stop the attack before it reaches the Georgian line."
+  secondary: "No fratricide: every pass on HAMMER's clearance, positively identified."
+  tertiary: "Recover both aircraft to Vaziani."
+
+roe: |
+  Release only on HAMMER's clearance. Weapons free on vehicles moving south of Ergneti toward Gori.
+  Nothing within 500 m of the Georgian line without HAMMER confirming. Weapons tight in Gori itself.
+
+threats:
+  - name: "Mechanized battalion at Ergneti"
+    kind: armor
+    intel: confirmed
+    lat: 42.1990
+    lon: 43.9920
+    area_km: 3
+    range_km: 0
+    notes: "T-72s and BMP-2s. Its attack will come south or southeast."
+  - name: "Mobile SAMs with the battalion"
+    kind: sam
+    intel: suspected
+    lat: 42.1700
+    lon: 44.0300
+    area_km: 6
+    range_km: 8
+    notes: "Strela-10s seen yesterday. Possibly a Tunguska: guns and missiles to 8 km."
+  - name: "Georgian line (DO NOT ENGAGE)"
+    kind: hazard
+    lat: 42.0050
+    lon: 44.1000
+    range_km: 1
+    notes: "Georgian T-72s and infantry on the northern edge of Gori. Same tanks as the enemy's."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Enfield (inter-flight)", freq: "258.000 AM", radio: 1, channel: 1 }
+  - { name: "WIZARD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "HAMMER (JTAC)", freq: "264.500 AM", radio: 1, channel: 3, notes: "9-lines and clearances" }
+  - { name: "Vaziani Tower", freq: "140.000 AM", radio: 2, channel: 1, notes: "TACAN 22X" }
+  - { name: "HAMMER, SABRE", freq: "264.500 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Enfield 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Vaziani
+    start: cold
+    radio1_mhz: 258.0
+    laser_codes: [1688]
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_33_with_2_x_CBU_99___490lbs__247_x_HEAT_Bomblets
+      3: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      8: LAU_117_AGM_65F
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "4× GBU-12, 2× CBU-99, 1× AGM-65F, 2× AIM-9X, 1× AIM-120C, ATFLIR, 1× 330 gal tank, 578 rounds 20 mm"
+    bingo_lbs: 4000
+    joker_lbs: 6000
+    waypoints:
+      - { name: "KASPI",    lat: 41.9300, lon: 44.4200, alt_ft: 16000, kts: 400, eta: "10:00", zone_km: 4 }
+      - { name: "ANVIL",    lat: 41.9500, lon: 44.1500, alt_ft: 15000, kts: 300, eta: "10:04", action: cas, zone_km: 6 }
+      - { name: "EXIT",     lat: 41.8500, lon: 44.4500, alt_ft: 18000, kts: 400, eta: "10:40", zone_km: 4 }
+    land: Vaziani
+
+target:
+  name: "The attack on Gori"
+  lat: 42.0900
+  lon: 44.0600
+  area_km: 6
+  groups: ["Attack Highway", "Attack Tirdznisi"]
+  kill_pct: 70
+  description: "A mechanized company group attacking south toward Gori: tanks leading, BMPs behind."
+  dmpi: "Lead tanks first to stall the attack. CBU-99 on anything bunched up, GBU-12 on tanks in the open."
+
+zones:
+  - { name: "GORI LINE", lat: 42.0050, lon: 44.1000, radius_km: 1.5 }
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "Georgian Line"
+    coalition: blue
+    type: [T_72B, T_72B, T_72B, BMP_2, Infantry_AK, Infantry_AK]
+    lat: 42.0050
+    lon: 44.1000
+    heading: 0
+  - name: "HAMMER"
+    coalition: blue
+    type: [JTAC]
+    lat: 42.0030
+    lon: 44.1020
+    heading: 0
+  - name: "Attack Highway"
+    coalition: red
+    # South from Ergneti down the Tskhinvali-Gori road
+    type: [T_72B, T_72B, T_72B, BMP_2, BMP_2, BMP_2]
+    lat: 42.1850
+    lon: 44.0000
+    heading: 160
+    late_activation: true
+    speed_kmh: 22
+    route:
+      - { lat: 42.1300, lon: 44.0350 }
+      - { lat: 42.0700, lon: 44.0700 }
+      - { lat: 42.0050, lon: 44.1000 }
+  - name: "Attack Tirdznisi"
+    coalition: red
+    # Across country from the northeast, past Tirdznisi
+    type: [T_72B, T_72B, T_72B, BMP_2, BMP_2, BMP_2]
+    lat: 42.1350
+    lon: 44.1900
+    heading: 220
+    late_activation: true
+    on_road: false
+    speed_kmh: 18
+    route:
+      - { lat: 42.0900, lon: 44.1500 }
+      - { lat: 42.0450, lon: 44.1200 }
+      - { lat: 42.0050, lon: 44.1000 }
+  - name: "Attack Tunguska"
+    coalition: red
+    type: [X_2S6_Tunguska]
+    lat: 42.1500
+    lon: 44.0500
+    heading: 180
+    late_activation: true
+  - name: "Ergneti Strelas"
+    coalition: red
+    type: [Strela_10M3]
+    lat: 42.1950
+    lon: 43.9950
+    heading: 180
+
+support:
+  - kind: awacs
+    callsign: "WIZARD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 41.5000
+    lon: 44.3000
+    alt_ft: 30000
+    heading: 90
+    leg_nm: 30
+    freq_mhz: 251.0
+
+variants:
+  - name: "Attack axis"
+    options:
+      - label: "South down the highway from Ergneti"
+        activate: ["Attack Highway"]
+        when: { player_in_zone: "ANVIL" }
+        message: "HAMMER: Enfield, Hammer. They're moving. Tanks on the highway south of Ergneti, coming straight down the road. Six vehicles, tanks leading. Friendlies are my position, north edge of town. Cleared to engage anything on the highway north of the river bend."
+        seconds: 35
+      - label: "Across country from the northeast, past Tirdznisi"
+        activate: ["Attack Tirdznisi"]
+        when: { player_in_zone: "ANVIL" }
+        message: "HAMMER: Enfield, Hammer. They're moving, not on the road. Six vehicles in the fields northeast of town, west of Tirdznisi, heading southwest at us. Friendlies are my position, north edge of town. Cleared to engage anything east of the highway and north of the orchards."
+        seconds: 35
+
+storyboard:
+  - phase: "Launch"
+    time: "09:40"
+    waypoints: ["KASPI"]
+    brief: |
+      Cold start at Vaziani. West along the Mtkvari past Kaspi at 16,000 ft. Check the laser code
+      (1688) and the CBU fuzing before the CAS stack.
+    script: "SABRE checks in; nothing moves until you're at ANVIL."
+    trigger:
+      when: { time_after: 10 }
+      message: "SABRE: Enfield, Sabre. Gori says the attack orders are out. Get to ANVIL and talk to Hammer."
+      seconds: 15
+
+  - phase: "Check In"
+    time: "10:04"
+    waypoints: ["ANVIL"]
+    notes: "Ask the room how they'll tell a Georgian T-72 from an attacking one with only a pod and a talk-on."
+    brief: |
+      Hold at ANVIL, south of Gori at 15,000 ft, and check in with HAMMER. He'll tell you which way
+      the attack is coming. Then he'll clear you on it.
+    script: "The axis is rolled at mission start and the attack spawns when you reach ANVIL, with HAMMER's call (see variants). 50%: a Tunguska joins."
+    trigger:
+      when: { player_in_zone: "ANVIL" }
+      chance: 50
+      activate: ["Attack Tunguska"]
+
+  - phase: "Stop the Attack"
+    time: "10:10"
+    waypoints: []
+    brief: |
+      Stop the lead tanks first, then work back. Every pass on HAMMER's clearance. If the attack
+      reaches the Georgian line, the fight becomes close quarters and your weapons stop being useful.
+    script: "Attack 70% destroyed: success (flag 10). The attack reaching GORI LINE: flag 20. Any damage to the Georgian line: fratricide (flag 22)."
+    triggers:
+      - when: { target_destroyed: true }
+        set_flag: 10
+        message: "HAMMER: Enfield, Hammer. They're stopped. Burning in the fields. The ones left are pulling back. Thank you."
+        seconds: 20
+      - when: { group_in_zone: ["Attack Highway", "GORI LINE"], flag_false: 10 }
+        set_flag: 20
+        message: "HAMMER: Enfield, they're in our line! Danger close, danger close, I can't clear you now!"
+        seconds: 20
+      - when: { group_in_zone: ["Attack Tirdznisi", "GORI LINE"], flag_false: 10 }
+        set_flag: 20
+        message: "HAMMER: Enfield, they're in our line! Danger close, danger close, I can't clear you now!"
+        seconds: 20
+      - when: { group_life_below: ["Georgian Line", 100] }
+        set_flag: 22
+        message: "HAMMER: Check fire, check fire! That was my tank! Enfield, abort!"
+        seconds: 20
+
+  - phase: "Home"
+    time: "10:40"
+    waypoints: ["EXIT"]
+    brief: |
+      Off to the east via EXIT at 18,000 ft and recover to Vaziani.
+    script: "SABRE's closing call."
+    trigger:
+      when: { player_in_zone: "EXIT" }
+      message: "SABRE: Enfield, Sabre. Copy off station. Col. Gelashvili wants to talk to you when you land."
+      seconds: 15

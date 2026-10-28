@@ -1,0 +1,79 @@
+campaign = 
+{
+    ["name"] = "IRON GATE",
+    ["name_EN"] = "IRON GATE",
+    ["description"] = "Ten days in the Liakhvi valley, April 2026\n\nAn armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it.",
+    ["description_EN"] = "Ten days in the Liakhvi valley, April 2026\n\nAn armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it.",
+    ["necessaryUnits"] = {
+        ["FA-18C_hornet"] = "FA-18C_hornet",
+    },
+    ["version"] = 1,
+    ["startStage"] = 1,
+    ["stages"] = {
+        [1] = {
+            ["name"] = "Chapter 1: Armed Recce, Liakhvi Valley",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "01_ig_1_recce.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [2] = {
+            ["name"] = "Chapter 2: Drop the Bridges",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "02_ig_2_bridges.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [3] = {
+            ["name"] = "Chapter 3: Hunt the SA-11",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "03_ig_3_sa11.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [4] = {
+            ["name"] = "Chapter 4: Hold Gori",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "04_ig_4_gori_cas.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [5] = {
+            ["name"] = "Chapter 5: Close the Gate",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "05_ig_5_gate.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+    },
+} -- end of campaign

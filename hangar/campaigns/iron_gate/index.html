@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iron Gate Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+.chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.chap { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); }
+.chap .n { font: 600 34px/1 "IBM Plex Mono", monospace; color: var(--accent); }
+.chap h3 { font-size: 20px; margin: 4px 0 6px; }
+.chap .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chap p { margin: 0 0 10px; }
+.chap .hook { font-style: italic; border-left: 3px solid var(--accent); padding-left: 12px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
+.links a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.install ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+@media (max-width: 640px) { .chap { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><a href="../../index.html" style="text-decoration:none">Hangar</a> · Campaign · 5 chapters</div>
+    <h1>IRON GATE</h1>
+    <div class="meta-row"><span><b>Ten days in the Liakhvi valley, April 2026</b></span><span>2026-04-06 → 2026-04-16</span><span>Vaziani and Kutaisi, central Caucasus</span></div>
+    <blockquote class="hook">An armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at
+Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the
+town, and close the tunnel behind it.</blockquote>
+  </div>
+</header>
+<main>
+<section id="story"><div class="wrap">
+  <h2>The story</h2>
+  <div class="story">
+    <div><p>In the early hours of 6 April, the Roki tunnel border post stopped answering the phone. By dawn,
+Georgian police north of Tskhinvali could hear tracks in the gorge. The coalition detachment at
+Vaziani, ten Hornets that had spent the winter on exercises, was the only air power close enough
+to do anything about it.</p><p>Over ten days, Enfield flight flies every kind of mission the valley asks for. The brigade adapts
+after each one: it brings engineers when the bridges fall and a long-range SAM when the jets come,
+and it attacks Gori when it has nothing left to wait for. The detachment adapts back.</p></div>
+    <div><h3>Cast</h3>
+      <ul class="cast"><li><b>CDR Dana &#34;SABRE&#34; Whitfield</b><span>Detachment commander at Vaziani</span></li><li><b>Col. Irakli Gelashvili</b><span>Georgian Land Forces operations, Gori</span></li><li><b>Lt. Davit &#34;HAMMER&#34; Mchedlishvili</b><span>JTAC with the Georgian 4th Brigade</span></li><li><b>RIVET</b><span>Coalition ELINT aircraft</span></li><li><b>WIZARD</b><span>E-3 AWACS</span></li><li><b>Enfield 1-1 / 1-2</b><span>You and your wingman</span></li></ul></div>
+  </div>
+</div></section>
+<section id="chapters"><div class="wrap">
+  <h2>Chapters</h2>
+  <ol class="chapters">
+  
+    <li class="chap"><div class="n">01</div><div>
+      <div class="eyebrow">Operation IRON GATE</div>
+      <h3>Armed Recce, Liakhvi Valley</h3>
+      <div class="meta"><span class="chip">Armed recce</span><span class="chip">2026-04-06 · 06:20L</span><span class="chip">2× F/A-18C Hornet</span></div>
+      <p class="hook">&#34;Find the front of it. Tell me what it is. If you can stop the first few vehicles, do it.
+Everything behind them will have to wait.&#34; Col. Gelashvili, 0530 phone call</p>
+      <p>At 0200 the Roki tunnel border post stopped answering the phone. By 0400, Georgian police at Tskhinvali&#39;s northern checkpoint were reporting engine noise in the gorge: tracks, a lot of them, coming south. Nobody has seen the column yet. The valley is under cloud, and the drones that went up at first light came back with nothing but grey.</p>
+      <div class="links">
+        <a class="primary" href="../../ig_1_recce/briefing.html">Briefing</a>
+        <a href="../../ig_1_recce/slides.html">Slide deck</a>
+        <a href="../../ig_1_recce/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="01_ig_1_recce.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">02</div><div>
+      <div class="eyebrow">Operation IRON GATE</div>
+      <h3>Drop the Bridges</h3>
+      <div class="meta"><span class="chip">Strike</span><span class="chip">2026-04-07 · 15:30L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Low level</span></div>
+      <p class="hook">&#34;Two bridges. Four bombs. One brigade on the wrong side of them, if you&#39;re quick.&#34; SABRE,
+mass brief</p>
+      <p>Yesterday&#39;s tape changed the conversation in Tbilisi. It isn&#39;t a raid: it&#39;s a mechanized brigade, and its main body is still in the gorge north of Java, waiting for fuel and for the road to clear. Between it and Tskhinvali, the Transcam road crosses the Great Liakhvi twice on two concrete bridges.</p>
+      <div class="links">
+        <a class="primary" href="../../ig_2_bridges/briefing.html">Briefing</a>
+        <a href="../../ig_2_bridges/slides.html">Slide deck</a>
+        <a href="../../ig_2_bridges/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="02_ig_2_bridges.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">03</div><div>
+      <div class="eyebrow">Operation IRON GATE</div>
+      <h3>Hunt the SA-11</h3>
+      <div class="meta"><span class="chip">SEAD</span><span class="chip">2026-04-09 · 13:40L</span><span class="chip">2× F/A-18C Hornet</span></div>
+      <p class="hook">&#34;It&#39;s killed one jet already. It&#39;s going to be watching the valley for the next one. Don&#39;t be
+the next one. Be the one that comes from the side.&#34; SABRE, mass brief</p>
+      <p>The bridges slowed the column, but they didn&#39;t stop it. Engineers had a crossing in by yesterday afternoon, and something came over it with them. Last night a Georgian Su-25 on a recce run up the valley was shot down at 18,000 ft, far above anything a Strela can reach. The pilot&#39;s last call was &#34;big radar, big missile.&#34;</p>
+      <div class="links">
+        <a class="primary" href="../../ig_3_sa11/briefing.html">Briefing</a>
+        <a href="../../ig_3_sa11/slides.html">Slide deck</a>
+        <a href="../../ig_3_sa11/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="03_ig_3_sa11.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">04</div><div>
+      <div class="eyebrow">Operation IRON GATE</div>
+      <h3>Hold Gori</h3>
+      <div class="meta"><span class="chip">CAS</span><span class="chip">2026-04-11 · 09:40L</span><span class="chip">2× F/A-18C Hornet</span></div>
+      <p class="hook">&#34;My tanks are the same tanks as their tanks. If you&#39;re not sure, ask me. If you&#39;re still not
+sure, don&#39;t.&#34; HAMMER, on the check-in</p>
+      <p>With the SA-11 gone, the column did what everyone expected: it came south. By last night its lead battalion was through Tskhinvali and dug in at Ergneti, five kilometres from Gori. The Georgian 4th Brigade holds the northern edge of the town with infantry, a company of T-72s and not much else.</p>
+      <div class="links">
+        <a class="primary" href="../../ig_4_gori_cas/briefing.html">Briefing</a>
+        <a href="../../ig_4_gori_cas/slides.html">Slide deck</a>
+        <a href="../../ig_4_gori_cas/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="04_ig_4_gori_cas.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">05</div><div>
+      <div class="eyebrow">Operation IRON GATE</div>
+      <h3>Close the Gate</h3>
+      <div class="meta"><span class="chip">Strike</span><span class="chip">2026-04-16 · 10:50L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Different recovery field</span></div>
+      <p class="hook">&#34;Everything they have came through that tunnel. Everything they need still has to. Close it.&#34;
+Col. Gelashvili, by phone to Vaziani</p>
+      <p>Gori held, and the northern brigade has run out of ways forward. It still has tanks in Tskhinvali and an attack battalion licking its wounds at Ergneti, but everything it needs to keep fighting comes through one tunnel and stops at one dump: a field of fuel trucks and ammunition south of Java.</p>
+      <div class="links">
+        <a class="primary" href="../../ig_5_gate/briefing.html">Briefing</a>
+        <a href="../../ig_5_gate/slides.html">Slide deck</a>
+        <a href="../../ig_5_gate/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="05_ig_5_gate.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+  </ol>
+</div></section>
+<section id="install" class="install"><div class="wrap">
+  <h2>Fly it as a DCS campaign</h2>
+  <ol>
+    <li>Copy this whole folder (<code>iron_gate.cmp</code> and the numbered <code>.miz</code> files) into <code>Saved Games/DCS/Missions/Campaigns/</code>.</li>
+    <li>In DCS, open <b>Campaign</b> and pick <b>IRON GATE</b>.</li>
+    <li>Pass a chapter to unlock the next one. Fail it and DCS gives you the same chapter again.</li>
+  </ol>
+  <p>Each chapter also works on its own: open the <code>.miz</code> from the Mission menu.</p>
+</div></section>
+</main>
+<footer><div class="wrap">Generated from <code>campaigns/iron_gate/campaign.yaml</code> and each chapter's <code>mission.yaml</code>.</div></footer>
+</body>
+</html>

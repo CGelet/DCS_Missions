@@ -1,0 +1,22 @@
+{% autoescape false -%}
+# {{ c.title }}: {{ c.subtitle }}
+
+{{ "Training campaign" if c.category == "training" else "Campaign" }}, {{ chapters | length }} chapters, {{ chapters[0].date }} to {{ chapters[-1].date }}.
+
+> {{ c.premise | trim | replace("\n", " ") }}
+
+## Install
+
+1. Copy this folder (`{{ c.id }}.cmp` and the numbered `.miz` files) into `Saved Games/DCS/Missions/Campaigns/`.
+2. In DCS, open **Campaign** and pick **{{ c.title }}**.
+3. Pass a chapter to unlock the next. Fail it and DCS gives you the same chapter again.
+
+Open `index.html` in a browser for the full campaign page. Pilots: don't open the director pages before you fly.
+
+## Chapters
+
+| # | Chapter | Date | Type | Briefing |
+| --- | --- | --- | --- | --- |
+{% for m in chapters %}| {{ m.chapter }} | {{ m.title }} ([{{ m.miz_name }}]({{ m.miz_name }})) | {{ m.date }} {{ m.start_time }}L | {{ m.role }} | [briefing](../../{{ m.id }}/briefing.html) · [slides](../../{{ m.id }}/slides.html) |
+{% endfor %}
+{% endautoescape %}

@@ -9,9 +9,240 @@ Pilots: the briefing, slides and kneeboard only contain what your squadron knows
 These files are generated from `missions/<id>/mission.yaml`. Don't edit them by hand; see the main README to change a mission.
 
 
-# Operational missions
+# Campaigns
 
-A campaign over the Black Sea coast. Briefings carry only what the squadron knows, and the sim decides the rest.
+Story arcs flown in order. Each campaign folder under `campaigns/` installs into DCS as a campaign (see its README).
+
+| Campaign | Chapters | Dates | Premise |
+| --- | --- | --- | --- |
+| [IRON GATE](campaigns/iron_gate/README.md): Ten days in the Liakhvi valley, April 2026 | 5 | 2026-04-06 → 2026-04-16 | An armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it. |
+| [WORK-UPS](campaigns/workups/README.md): Hornet detachment syllabus, January 2026 | 5 | 2026-01-15 → 2026-01-30 | Ten Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride. |
+
+
+
+# IRON GATE campaign
+
+Ten days in the Liakhvi valley, April 2026 5 chapters, 2026-04-06 to 2026-04-16. [Campaign page](campaigns/iron_gate/README.md)
+
+## IRON GATE · 1/5 · Operation IRON GATE: Armed Recce, Liakhvi Valley
+
+**Caucasus** · **2× F/A-18C Hornet** · **Armed recce** · 2026-04-06, step 06:20L
+
+> "Find the front of it. Tell me what it is. If you can stop the first few vehicles, do it. Everything behind them will have to wait." Col. Gelashvili, 0530 phone call
+
+At 0200 the Roki tunnel border post stopped answering the phone. By 0400, Georgian police at Tskhinvali's northern checkpoint were reporting engine noise in the gorge: tracks, a lot of them, coming south. Nobody has seen the column yet. The valley is under cloud, and the drones that went up at first light came back with nothing but grey.
+
+**Primary objective:** Find the column's vanguard and destroy it.
+
+| Download | |
+| --- | --- |
+| Mission | [01_ig_1_recce.miz](campaigns/iron_gate/01_ig_1_recce.miz) |
+| Briefing | [briefing.html](ig_1_recce/briefing.html) |
+| Slide deck | [slides.html](ig_1_recce/slides.html) |
+| Director's cut | [director.html](ig_1_recce/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ig_1_recce/kneeboard/01_mission.png) · [02_nav.png](ig_1_recce/kneeboard/02_nav.png) · [03_threats.png](ig_1_recce/kneeboard/03_threats.png) |
+
+<p><a href="ig_1_recce/kneeboard/01_mission.png"><img src="ig_1_recce/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ig_1_recce/kneeboard/02_nav.png"><img src="ig_1_recce/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ig_1_recce/kneeboard/03_threats.png"><img src="ig_1_recce/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## IRON GATE · 2/5 · Operation IRON GATE: Drop the Bridges
+
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2026-04-07, step 15:30L · Low level
+
+> "Two bridges. Four bombs. One brigade on the wrong side of them, if you're quick." SABRE, mass brief
+
+Yesterday's tape changed the conversation in Tbilisi. It isn't a raid: it's a mechanized brigade, and its main body is still in the gorge north of Java, waiting for fuel and for the road to clear. Between it and Tskhinvali, the Transcam road crosses the Great Liakhvi twice on two concrete bridges.
+
+**Primary objective:** Destroy both Transcam bridges.
+
+| Download | |
+| --- | --- |
+| Mission | [02_ig_2_bridges.miz](campaigns/iron_gate/02_ig_2_bridges.miz) |
+| Briefing | [briefing.html](ig_2_bridges/briefing.html) |
+| Slide deck | [slides.html](ig_2_bridges/slides.html) |
+| Director's cut | [director.html](ig_2_bridges/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ig_2_bridges/kneeboard/01_mission.png) · [02_nav.png](ig_2_bridges/kneeboard/02_nav.png) · [03_threats.png](ig_2_bridges/kneeboard/03_threats.png) |
+
+<p><a href="ig_2_bridges/kneeboard/01_mission.png"><img src="ig_2_bridges/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ig_2_bridges/kneeboard/02_nav.png"><img src="ig_2_bridges/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ig_2_bridges/kneeboard/03_threats.png"><img src="ig_2_bridges/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## IRON GATE · 3/5 · Operation IRON GATE: Hunt the SA-11
+
+**Caucasus** · **2× F/A-18C Hornet** · **SEAD** · 2026-04-09, step 13:40L
+
+> "It's killed one jet already. It's going to be watching the valley for the next one. Don't be the next one. Be the one that comes from the side." SABRE, mass brief
+
+The bridges slowed the column, but they didn't stop it. Engineers had a crossing in by yesterday afternoon, and something came over it with them. Last night a Georgian Su-25 on a recce run up the valley was shot down at 18,000 ft, far above anything a Strela can reach. The pilot's last call was "big radar, big missile."
+
+**Primary objective:** Destroy the SA-11 battery: radar and launchers.
+
+| Download | |
+| --- | --- |
+| Mission | [03_ig_3_sa11.miz](campaigns/iron_gate/03_ig_3_sa11.miz) |
+| Briefing | [briefing.html](ig_3_sa11/briefing.html) |
+| Slide deck | [slides.html](ig_3_sa11/slides.html) |
+| Director's cut | [director.html](ig_3_sa11/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ig_3_sa11/kneeboard/01_mission.png) · [02_nav.png](ig_3_sa11/kneeboard/02_nav.png) · [03_threats.png](ig_3_sa11/kneeboard/03_threats.png) |
+
+<p><a href="ig_3_sa11/kneeboard/01_mission.png"><img src="ig_3_sa11/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ig_3_sa11/kneeboard/02_nav.png"><img src="ig_3_sa11/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ig_3_sa11/kneeboard/03_threats.png"><img src="ig_3_sa11/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## IRON GATE · 4/5 · Operation IRON GATE: Hold Gori
+
+**Caucasus** · **2× F/A-18C Hornet** · **CAS** · 2026-04-11, step 09:40L
+
+> "My tanks are the same tanks as their tanks. If you're not sure, ask me. If you're still not sure, don't." HAMMER, on the check-in
+
+With the SA-11 gone, the column did what everyone expected: it came south. By last night its lead battalion was through Tskhinvali and dug in at Ergneti, five kilometres from Gori. The Georgian 4th Brigade holds the northern edge of the town with infantry, a company of T-72s and not much else.
+
+**Primary objective:** Stop the attack before it reaches the Georgian line.
+
+| Download | |
+| --- | --- |
+| Mission | [04_ig_4_gori_cas.miz](campaigns/iron_gate/04_ig_4_gori_cas.miz) |
+| Briefing | [briefing.html](ig_4_gori_cas/briefing.html) |
+| Slide deck | [slides.html](ig_4_gori_cas/slides.html) |
+| Director's cut | [director.html](ig_4_gori_cas/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ig_4_gori_cas/kneeboard/01_mission.png) · [02_nav.png](ig_4_gori_cas/kneeboard/02_nav.png) · [03_threats.png](ig_4_gori_cas/kneeboard/03_threats.png) |
+
+<p><a href="ig_4_gori_cas/kneeboard/01_mission.png"><img src="ig_4_gori_cas/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ig_4_gori_cas/kneeboard/02_nav.png"><img src="ig_4_gori_cas/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ig_4_gori_cas/kneeboard/03_threats.png"><img src="ig_4_gori_cas/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## IRON GATE · 5/5 · Operation IRON GATE: Close the Gate
+
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2026-04-16, step 10:50L · Different recovery field
+
+> "Everything they have came through that tunnel. Everything they need still has to. Close it." Col. Gelashvili, by phone to Vaziani
+
+Gori held, and the northern brigade has run out of ways forward. It still has tanks in Tskhinvali and an attack battalion licking its wounds at Ergneti, but everything it needs to keep fighting comes through one tunnel and stops at one dump: a field of fuel trucks and ammunition south of Java.
+
+**Primary objective:** Destroy the supply dump south of Java.
+
+| Download | |
+| --- | --- |
+| Mission | [05_ig_5_gate.miz](campaigns/iron_gate/05_ig_5_gate.miz) |
+| Briefing | [briefing.html](ig_5_gate/briefing.html) |
+| Slide deck | [slides.html](ig_5_gate/slides.html) |
+| Director's cut | [director.html](ig_5_gate/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ig_5_gate/kneeboard/01_mission.png) · [02_nav.png](ig_5_gate/kneeboard/02_nav.png) · [03_threats.png](ig_5_gate/kneeboard/03_threats.png) |
+
+<p><a href="ig_5_gate/kneeboard/01_mission.png"><img src="ig_5_gate/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ig_5_gate/kneeboard/02_nav.png"><img src="ig_5_gate/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ig_5_gate/kneeboard/03_threats.png"><img src="ig_5_gate/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+
+# WORK-UPS campaign
+
+Hornet detachment syllabus, January 2026 5 chapters, 2026-01-15 to 2026-01-30. [Campaign page](campaigns/workups/README.md)
+
+## WORK-UPS · 1/5 · Training · Det work-ups, event CQ-1: Day Carrier Qualification
+
+**Caucasus** · **1× F/A-18C Hornet** · **Carrier quals** · 2026-01-15, step 12:30L · Carrier, Air refuelling, Low level, Different recovery field
+
+> "Fly the ball all the way to the deck. If I wave you off, you go around, every time. The boat isn't going anywhere, but it is moving." PADDLES, LSO brief
+
+The detachment landed at Kutaisi last week with ten Hornets and a February partner exercise to get ready for. The USS John C. Stennis is passing through the eastern Black Sea for a port call, and the strike group has agreed to keep a deck open for the detachment for one afternoon. The Hornets are land-based for this deployment, but every pilot has to stay current at the boat, and the February exercise will have carrier play.
+
+**Primary objective:** Two arrested landings aboard the Stennis, with a catapult launch between them.
+
+| Download | |
+| --- | --- |
+| Mission | [01_wu_1_cq_day.miz](campaigns/workups/01_wu_1_cq_day.miz) |
+| Briefing | [briefing.html](wu_1_cq_day/briefing.html) |
+| Slide deck | [slides.html](wu_1_cq_day/slides.html) |
+| Instructor view | [director.html](wu_1_cq_day/director.html): every trigger and how each grade is decided |
+
+| Kneeboard | [01_mission.png](wu_1_cq_day/kneeboard/01_mission.png) · [02_nav.png](wu_1_cq_day/kneeboard/02_nav.png) · [03_rules.png](wu_1_cq_day/kneeboard/03_rules.png) |
+
+<p><a href="wu_1_cq_day/kneeboard/01_mission.png"><img src="wu_1_cq_day/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="wu_1_cq_day/kneeboard/02_nav.png"><img src="wu_1_cq_day/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="wu_1_cq_day/kneeboard/03_rules.png"><img src="wu_1_cq_day/kneeboard/03_rules.png" width="220" alt="03_rules.png"></a> </p>
+
+## WORK-UPS · 2/5 · Training · Det work-ups, event CQ-2: Night Carrier Qualification
+
+**Caucasus** · **1× F/A-18C Hornet** · **Carrier quals** · 2026-01-16, step 18:45L · Carrier, Air refuelling
+
+> "At night, the deck doesn't get bigger as you get closer. It just gets darker around it. Fly the needles." PADDLES, night brief
+
+The day traps went well enough that the strike group gave the detachment the deck again, after dark. Night quals are the hardest landings in naval aviation: no horizon, a small lit rectangle moving at 15 knots, and the knowledge that the only alternate is 60 km away.
+
+**Primary objective:** Two night arrested landings aboard the Stennis.
+
+| Download | |
+| --- | --- |
+| Mission | [02_wu_2_cq_night.miz](campaigns/workups/02_wu_2_cq_night.miz) |
+| Briefing | [briefing.html](wu_2_cq_night/briefing.html) |
+| Slide deck | [slides.html](wu_2_cq_night/slides.html) |
+| Instructor view | [director.html](wu_2_cq_night/director.html): every trigger and how each grade is decided |
+
+| Kneeboard | [01_mission.png](wu_2_cq_night/kneeboard/01_mission.png) · [02_nav.png](wu_2_cq_night/kneeboard/02_nav.png) · [03_rules.png](wu_2_cq_night/kneeboard/03_rules.png) |
+
+<p><a href="wu_2_cq_night/kneeboard/01_mission.png"><img src="wu_2_cq_night/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="wu_2_cq_night/kneeboard/02_nav.png"><img src="wu_2_cq_night/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="wu_2_cq_night/kneeboard/03_rules.png"><img src="wu_2_cq_night/kneeboard/03_rules.png" width="220" alt="03_rules.png"></a> </p>
+
+## WORK-UPS · 3/5 · Training · Det work-ups, event SEAD-1: SEAD Fundamentals
+
+**Caucasus** · **1× F/A-18C Hornet** · **SEAD** · 2026-01-20, step 10:00L
+
+> "Those radars have been looking at people like you for forty years. Today you get to answer back. Twice. On time." WREN, SEAD brief
+
+The Georgian Air Defence Command keeps a captured SA-6 battery and an SA-8 on the steppe east of the Gareja range for exactly this: letting allied crews hear a real Soviet-era radar on the RWR and shoot it. Today they've agreed to let the detachment put two live HARMs into the old radars. The launchers stay; the radars were due to be scrapped anyway.
+
+**Primary objective:** Destroy the SA-6 radar and the SA-8 with one HARM each.
+
+| Download | |
+| --- | --- |
+| Mission | [03_wu_3_sead.miz](campaigns/workups/03_wu_3_sead.miz) |
+| Briefing | [briefing.html](wu_3_sead/briefing.html) |
+| Slide deck | [slides.html](wu_3_sead/slides.html) |
+| Instructor view | [director.html](wu_3_sead/director.html): every trigger and how each grade is decided |
+
+| Kneeboard | [01_mission.png](wu_3_sead/kneeboard/01_mission.png) · [02_nav.png](wu_3_sead/kneeboard/02_nav.png) · [03_rules.png](wu_3_sead/kneeboard/03_rules.png) |
+
+<p><a href="wu_3_sead/kneeboard/01_mission.png"><img src="wu_3_sead/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="wu_3_sead/kneeboard/02_nav.png"><img src="wu_3_sead/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="wu_3_sead/kneeboard/03_rules.png"><img src="wu_3_sead/kneeboard/03_rules.png" width="220" alt="03_rules.png"></a> </p>
+
+## WORK-UPS · 4/5 · Training · Det work-ups, event CAS-1: Close Air Support with a JTAC
+
+**Caucasus** · **1× F/A-18C Hornet** · **CAS** · 2026-01-22, step 13:15L
+
+> "I'll tell you where to look. I'll tell you when to shoot. If I say abort, you're already pulling off." AXEMAN, CAS brief
+
+The Georgian 2nd Infantry Brigade is on a field exercise south of the Gareja range, and they've offered their joint terminal attack controllers to the detachment for an afternoon. The rules are simple: they'll pretend to be in contact, put old vehicles out as the enemy, and talk you onto them the way they would in a real fight. Their own platoon will be sitting right next to the targets.
+
+**Primary objective:** Destroy both target groups on AXEMAN's clearance.
+
+| Download | |
+| --- | --- |
+| Mission | [04_wu_4_jtac.miz](campaigns/workups/04_wu_4_jtac.miz) |
+| Briefing | [briefing.html](wu_4_jtac/briefing.html) |
+| Slide deck | [slides.html](wu_4_jtac/slides.html) |
+| Instructor view | [director.html](wu_4_jtac/director.html): every trigger and how each grade is decided |
+
+| Kneeboard | [01_mission.png](wu_4_jtac/kneeboard/01_mission.png) · [02_nav.png](wu_4_jtac/kneeboard/02_nav.png) · [03_rules.png](wu_4_jtac/kneeboard/03_rules.png) |
+
+<p><a href="wu_4_jtac/kneeboard/01_mission.png"><img src="wu_4_jtac/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="wu_4_jtac/kneeboard/02_nav.png"><img src="wu_4_jtac/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="wu_4_jtac/kneeboard/03_rules.png"><img src="wu_4_jtac/kneeboard/03_rules.png" width="220" alt="03_rules.png"></a> </p>
+
+## WORK-UPS · 5/5 · Training · Det work-ups, event COMPEX-1 (checkride): Graduation Composite Exercise
+
+**Caucasus** · **2× F/A-18C Hornet** · **Strike (package)** · 2026-01-30, step 09:30L
+
+> "I'm not grading the bombs. I'm grading whether the bombs land when you said they would, with everyone still alive." WREN, checkride brief
+
+This is the last event of work-ups and the one WREN signs the whole card on. It puts everything from the last three weeks into one sortie: a package that has to arrive together, an emitter that has to be suppressed, aggressors that want to break it up, and a target that has to be hit on time.
+
+**Primary objective:** Destroy the target set with JDAMs inside the TOT window.
+
+| Download | |
+| --- | --- |
+| Mission | [05_wu_5_compex.miz](campaigns/workups/05_wu_5_compex.miz) |
+| Briefing | [briefing.html](wu_5_compex/briefing.html) |
+| Slide deck | [slides.html](wu_5_compex/slides.html) |
+| Instructor view | [director.html](wu_5_compex/director.html): every trigger and how each grade is decided |
+
+| Kneeboard | [01_mission.png](wu_5_compex/kneeboard/01_mission.png) · [02_nav.png](wu_5_compex/kneeboard/02_nav.png) · [03_rules.png](wu_5_compex/kneeboard/03_rules.png) |
+
+<p><a href="wu_5_compex/kneeboard/01_mission.png"><img src="wu_5_compex/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="wu_5_compex/kneeboard/02_nav.png"><img src="wu_5_compex/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="wu_5_compex/kneeboard/03_rules.png"><img src="wu_5_compex/kneeboard/03_rules.png" width="220" alt="03_rules.png"></a> </p>
+
+
+# Standalone operations
+
+The Black Sea missions, to fly in any order. Briefings carry only what the squadron knows, and the sim decides the rest.
 
 ## Operation BROKEN SPAN: Strike on the Bzyb River Bridge
 
@@ -161,7 +392,7 @@ After the Backfire raid, the Black Sea Fleet stopped sending bombers and started
 <p><a href="grey_hull/kneeboard/01_mission.png"><img src="grey_hull/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="grey_hull/kneeboard/02_nav.png"><img src="grey_hull/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="grey_hull/kneeboard/03_threats.png"><img src="grey_hull/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
 
 
-# Training missions
+# Standalone training
 
 Syllabus events. Everything is briefed as it is: training rules, grade sheet, range players.
 

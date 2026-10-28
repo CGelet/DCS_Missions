@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Black Deck Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Presenter deck. Dark only: it's built for a projector or a shared screen in a dim room. */
+:root {
+  --bg: #0d1012; --slide: #13171a; --ink: #ece8df; --muted: #9aa1a6; --line: #2a3136; --accent: #e07a3c;
+  --blue: #7fb0f0; --red: #ef6b62; --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #08100b; --radio-ink: #a6efbc;
+  --sea: #10202b; --coast: #8aa3b3;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; overflow: hidden; }
+.mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+#stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; background: var(--slide); padding: 80px 96px; display: none; flex-direction: column; overflow: hidden; }
+.slide.on { display: flex; }
+.slide::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--accent); }
+.eyebrow { font: 600 22px/1 "IBM Plex Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+h1 { font-size: 92px; line-height: 1.02; margin: 0; letter-spacing: -.025em; max-width: 1300px; }
+h2 { font-size: 60px; line-height: 1.06; margin: 0 0 32px; letter-spacing: -.02em; }
+p { margin: 0 0 22px; }
+.big { font-size: 42px; line-height: 1.38; max-width: 1280px; }
+.body { font-size: 28px; line-height: 1.45; color: var(--ink); }
+.muted { color: var(--muted); }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 36px; display: flex; justify-content: space-between; font: 18px "IBM Plex Mono", monospace; color: var(--muted); }
+
+.title { justify-content: center; }
+.title .sub { margin-top: 30px; font: 26px "IBM Plex Mono", monospace; color: var(--muted); }
+.title blockquote { margin: 56px 0 0; padding: 0 0 0 28px; border-left: 4px solid var(--accent); font-size: 34px; line-height: 1.4; max-width: 1150px; font-style: italic; }
+.story { justify-content: center; }
+.divider { justify-content: center; }
+.divider h1 { font-size: 120px; }
+
+.split { display: grid; grid-template-columns: 560px 1fr; gap: 56px; flex: 1; min-height: 0; align-items: center; }
+.split.nomap { grid-template-columns: 1fr; max-width: 1200px; }
+.split .text { align-self: center; }
+.radio { margin-top: 26px; background: var(--radio-bg); color: var(--radio-ink); font: 23px/1.5 "IBM Plex Mono", monospace; padding: 20px 24px; border-radius: 10px; border: 1px solid #1d3326; }
+.radio .lbl { display: block; font-size: 15px; letter-spacing: .16em; opacity: .7; margin-bottom: 6px; }
+
+svg.map { width: 100%; height: 100%; max-height: 680px; border-radius: 14px; border: 1px solid var(--line); }
+svg.map .sea { fill: var(--sea); }
+svg.map .grid { stroke: #ffffff10; stroke-width: 1; }
+svg.map .gridlbl { fill: #ffffff40; font: 12px "IBM Plex Mono", monospace; }
+svg.map .coast { fill: none; stroke: var(--coast); stroke-width: 2; stroke-linejoin: round; }
+svg.map .ring { fill-opacity: .1; stroke-width: 2; }
+svg.map .ring.suspected { stroke-dasharray: 10 6; }
+svg.map .ring.possible { stroke-dasharray: 3 7; fill-opacity: .04; opacity: .6; }
+svg.map .area { fill: none; stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+svg.map .area.sam { stroke: var(--red); } svg.map .area.aaa { stroke: var(--amber); } svg.map .area.air { stroke: var(--blue); } svg.map .area.armor { stroke: var(--muted); }
+svg.map .threat.armor, svg.map .ring.armor { fill: var(--muted); stroke: var(--muted); }
+svg.map .threat.suspected, svg.map .threat.possible { fill: var(--slide) !important; stroke-width: 3; }
+svg.map .threat.suspected.sam, svg.map .threat.possible.sam { stroke: var(--red); }
+svg.map .threat.suspected.aaa, svg.map .threat.possible.aaa { stroke: var(--amber); }
+svg.map .threat.suspected.air, svg.map .threat.possible.air { stroke: var(--blue); }
+svg.map .threat.suspected.armor, svg.map .threat.possible.armor { stroke: var(--muted); }
+svg.map .ship { fill: var(--slide); stroke: var(--ok); stroke-width: 4; }
+svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+svg.map .flighttrack { fill: none; stroke: var(--ok); stroke-width: 2.5; stroke-dasharray: 10 6; }
+svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
+svg.profile { width: 100%; height: auto; }
+.rulelist { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; font-size: 25px; line-height: 1.35; }
+.kio { margin-top: 22px; font-size: 22px; border-left: 5px solid var(--red, #d9534f); padding-left: 16px; }
+svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
+svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 14px "IBM Plex Mono", monospace; }
+svg.map .search { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 8; }
+svg.map .ring.sam, svg.map .threat.sam { fill: var(--red); stroke: var(--red); }
+svg.map .ring.aaa, svg.map .threat.aaa { fill: var(--amber); stroke: var(--amber); }
+svg.map .threat.air { fill: var(--blue); }
+svg.map .route { fill: none; stroke: var(--blue); stroke-width: 4; stroke-linejoin: round; }
+svg.map .route.dim { opacity: .35; }
+svg.map .route.hl { stroke: var(--accent); stroke-width: 7; }
+svg.map .cap { stroke: var(--ok); stroke-width: 4; stroke-dasharray: 3 9; stroke-linecap: round; }
+svg.map .friendly-dot { fill: var(--ok); }
+svg.map .wp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; }
+svg.map .wp.on { stroke: var(--accent); fill: var(--accent); }
+svg.map .lbl { fill: var(--ink); font: 600 17px "IBM Plex Mono", monospace; paint-order: stroke; stroke: var(--sea); stroke-width: 5px; }
+svg.map .lbl.friendly { fill: var(--ok); }
+svg.map .lbl.sam { fill: var(--red); }
+svg.map .lbl.aaa { fill: var(--amber); }
+svg.map .lbl.air { fill: var(--blue); }
+svg.map .lbl.armor { fill: var(--ink); }
+svg.map .lbl.hazard, svg.map .lbl.hostile { fill: var(--red); }
+svg.map .threat.hazard { fill: none; stroke: var(--red); stroke-width: 3; }
+svg.map .ring.hazard { fill: #ef6b6218; stroke: var(--red); stroke-width: 2; stroke-dasharray: 3 5; }
+svg.map .flighttrack.hostile { stroke: var(--red); }
+svg.map .hostile-dot { fill: var(--red); }
+svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
+
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.card { background: #ffffff08; border: 1px solid var(--line); border-radius: 14px; padding: 26px 30px; }
+.card b { display: block; font-size: 30px; margin-bottom: 6px; }
+.card span { font-size: 23px; color: var(--muted); }
+
+.rows { display: grid; gap: 0; max-width: 1350px; }
+.row { display: grid; grid-template-columns: 260px 1fr; gap: 28px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 28px; line-height: 1.4; }
+.row:last-child { border-bottom: 0; }
+.row .k { font: 600 18px/1.9 "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.tag { display: inline-block; font: 600 16px/1 "IBM Plex Mono", monospace; padding: 7px 10px; border-radius: 6px; text-transform: uppercase; }
+.tag.sam { background: #ef6b6222; color: var(--red); }
+.tag.aaa { background: #e3a93b22; color: var(--amber); }
+.tag.air { background: #7fb0f022; color: var(--blue); }
+.tag.armor { background: #ffffff14; color: var(--ink); }
+.tag.hazard { color: var(--red); border: 1.5px dashed var(--red); }
+.intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
+.intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.chip { font: 20px "IBM Plex Mono", monospace; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ok); }
+
+.outcome .band { height: 10px; width: 220px; border-radius: 5px; margin-bottom: 36px; }
+.outcome.success .band { background: var(--ok); }
+.outcome.partial .band { background: var(--amber); }
+.outcome.failure .band { background: var(--red); }
+
+#progress { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); transition: width .2s; z-index: 5; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; background: #000000e6; color: #ddd; font: 18px/1.5 "IBM Plex Sans", sans-serif; padding: 16px 24px 20px; display: none; z-index: 4; border-top: 1px solid var(--line); }
+#notes.on { display: block; }
+#notes .k { font: 600 13px "IBM Plex Mono", monospace; letter-spacing: .14em; color: var(--accent); margin-right: 12px; }
+#help { position: fixed; right: 16px; top: 12px; font: 13px "IBM Plex Mono", monospace; color: #ffffff55; z-index: 5; }
+
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; background: var(--slide); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #stage { position: static; transform: none !important; width: 1600px; height: auto; }
+  .slide { position: relative; display: flex !important; width: 1600px; height: 900px; page-break-after: always; break-after: page; }
+  #progress, #notes, #help { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<section class="slide title" data-notes="Set the tone. Read the quote out loud, then go straight into the story." aria-label="Slide 1">
+  
+    <div class="eyebrow">WORK-UPS · Chapter 2 of 5 · Training event BLACK DECK · Det work-ups, event CQ-2</div>
+    <h1>Night Carrier Qualification</h1>
+    <div class="sub">2026-01-16 · Step 18:45L · Ford 1 · 1× F/A-18C Hornet</div>
+    <blockquote>&#34;At night, the deck doesn&#39;t get bigger as you get closer. It just gets darker around it.
+Fly the needles.&#34; PADDLES, night brief</blockquote>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>1 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Recap the last chapter in a sentence or two, then move on." aria-label="Slide 2">
+  
+    <div class="eyebrow">Previously</div>
+    <p class="big">PADDLES: two day traps aboard the Stennis, 25 km west of Batumi, with PADDLES grading every pass.
+The strike group has given the detachment the deck again, after dark.</p>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>2 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 3">
+  
+    <div class="eyebrow">Why we&#39;re flying this</div>
+    <p class="big">The day traps went well enough that the strike group gave the detachment the deck again,
+after dark. Night quals are the hardest landings in naval aviation: no horizon, a small lit
+rectangle moving at 15 knots, and the knowledge that the only alternate is 60 km away.</p>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>3 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 4">
+  
+    <div class="eyebrow">Where it fits</div>
+    <p class="big">You start on the deck tonight. Launch, go to marshal like it&#39;s the end of a real mission, and
+come home on the numbers. PADDLES grades every pass. WREN will be on the platform again.</p>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>4 / 23</span></div>
+</section>
+
+<section class="slide cast" data-notes="These are the voices pilots will hear on the radio during the mission." aria-label="Slide 5">
+  
+    <div class="eyebrow">Instructors and players</div>
+    <h2>The voices you'll hear</h2>
+    <div class="cards"><div class="card"><b>LCDR Ana &#34;WREN&#34; Castellano</b><span>Detachment training officer, on the LSO platform</span></div><div class="card"><b>LT Marcus &#34;PADDLES&#34; Odum</b><span>Stennis landing signal officer</span></div><div class="card"><b>Marshal</b><span>Stennis CATCC: marshal and approach control</span></div><div class="card"><b>TEXACO 1</b><span>S-3B recovery tanker overhead the boat</span></div><div class="card"><b>Ford 1</b><span>You, single-ship F/A-18C</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>5 / 23</span></div>
+</section>
+
+<section class="slide map" data-notes="Walk the route from base to target and back. Point out the threat rings." aria-label="Slide 6">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Event overview</div>
+        <h2>The training area</h2>
+        <div class="body"><p>Night, no moon, broken cloud at 3,500 ft. You start cold on the Stennis, 35 km west of Batumi,
+steaming east into a 10 kt land breeze at 15 kt (BRC 080). Launch, depart to SPLIT, then fly to
+MARSHAL, 21 nm astern on the 260 radial at 6,000 ft. Push, and fly the Case III approach to two
+traps with a launch between them. TEXACO orbits overhead at 6,000 ft.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="755.9" y2="755.9"/><text class="gridlbl" x="6" y="751.9">41.5N</text><line class="grid" y1="0" y2="640" x1="-42.2" x2="-42.2"/><text class="gridlbl" x="-38.2" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="543.7" x2="543.7"/><text class="gridlbl" x="547.7" y="632">41.0E</text><polyline class="coast" points="-3716.4,-5272.5 -3716.4,-5272.5"/><polyline class="coast" points="-3716.7,-5273.3 -3716.7,-5273.3"/><polyline class="coast" points="-3484.2,-5374.6 -3530.0,-5334.5 -3609.1,-5289.8 -3619.2,-5286.8 -3643.2,-5289.6 -3649.0,-5287.4 -3656.7,-5296.8 -3687.1,-5294.6 -3693.2,-5287.9 -3681.7,-5272.6 -3694.1,-5274.2 -3691.6,-5276.1 -3696.0,-5277.8 -3709.3,-5267.9 -3715.3,-5268.6 -3703.6,-5256.5 -3698.4,-5259.1 -3697.9,-5266.4 -3679.6,-5261.3 -3693.0,-5261.0 -3702.0,-5255.4 -3700.8,-5251.8 -3695.6,-5254.7 -3692.5,-5251.9 -3696.7,-5248.5 -3692.8,-5244.8 -3696.0,-5240.1 -3698.4,-5246.9 -3703.1,-5248.6 -3707.1,-5242.8 -3702.4,-5239.3 -3710.6,-5244.8 -3703.6,-5251.9 -3721.5,-5271.7 -3748.7,-5262.3 -3786.7,-5260.2 -3885.4,-5265.6 -3944.1,-5279.6 -4082.9,-5326.5 -4131.8,-5349.8 -4180.0,-5379.9"/><polyline class="coast" points="-3714.5,-5272.8 -3714.5,-5272.8"/><polyline class="coast" points="-4429.3,-4922.6 -4377.3,-4929.2 -4354.9,-4928.8 -4310.9,-4922.0 -4258.6,-4907.2 -4154.9,-4863.7 -4095.6,-4844.1 -4007.7,-4807.8 -3928.8,-4765.2 -3861.2,-4721.1 -3806.7,-4671.0 -3776.0,-4625.1 -3770.5,-4606.1 -3772.3,-4590.0 -3778.1,-4581.2 -3785.0,-4582.2 -3785.2,-4586.3 -3785.4,-4583.3 -3794.1,-4580.0 -3796.1,-4570.1 -3748.2,-4510.1 -3743.3,-4496.9 -3742.9,-4470.0 -3695.6,-4401.2 -3692.3,-4375.3 -3688.0,-4374.2 -3692.7,-4373.6 -3691.2,-4368.5 -3697.6,-4360.5 -3692.9,-4363.5 -3675.9,-4355.3 -3666.2,-4342.3 -3664.8,-4334.0 -3635.0,-4314.5 -3622.9,-4296.9 -3610.9,-4287.3 -3610.5,-4281.3 -3603.0,-4283.2 -3589.9,-4277.6 -3577.9,-4262.5 -3565.0,-4263.1 -3502.6,-4234.4 -3485.6,-4237.2 -3469.1,-4227.0 -3425.2,-4218.0 -3400.8,-4224.6 -3380.2,-4223.1 -3377.3,-4220.1 -3374.5,-4220.5 -3377.8,-4222.3 -3373.4,-4222.3 -3333.2,-4204.0 -3324.5,-4196.4 -3316.2,-4198.7 -3294.7,-4192.0 -3280.9,-4192.3 -3272.9,-4196.4 -3249.7,-4199.0 -3247.6,-4202.8 -3213.8,-4215.0 -3202.5,-4225.4 -3205.1,-4224.9 -3207.0,-4233.7 -3195.9,-4237.0 -3218.8,-4268.6 -3219.0,-4286.1 -3223.7,-4289.2 -3222.2,-4296.7 -3226.4,-4302.7 -3222.2,-4306.8 -3230.4,-4303.8 -3233.9,-4308.7 -3230.6,-4309.3 -3237.3,-4314.0 -3236.4,-4316.5 -3229.1,-4311.2 -3232.0,-4314.6 -3227.6,-4314.2 -3229.0,-4318.9 -3225.8,-4316.1 -3227.5,-4320.3 -3222.4,-4316.2 -3225.0,-4322.5 -3218.6,-4316.1 -3215.7,-4318.1 -3220.1,-4323.4 -3216.1,-4325.8 -3210.7,-4316.8 -3207.7,-4318.6 -3210.6,-4324.9 -3204.6,-4323.3 -3203.2,-4315.6 -3198.9,-4321.1 -3199.7,-4312.6 -3196.8,-4314.0 -3187.6,-4305.4 -3196.9,-4301.1 -3186.2,-4305.5 -3183.5,-4311.0 -3187.4,-4301.9 -3183.2,-4310.7 -3176.8,-4305.9 -3181.3,-4305.7 -3178.2,-4303.7 -3182.9,-4296.0 -3176.6,-4305.2 -3177.0,-4302.6 -3173.8,-4303.5 -3175.8,-4301.5 -3167.6,-4302.7 -3169.9,-4300.5 -3166.3,-4300.4 -3167.3,-4296.6 -3171.7,-4297.2 -3162.3,-4293.1 -3166.9,-4289.8 -3179.6,-4294.5 -3170.5,-4289.2 -3156.4,-4294.4 -3153.6,-4281.8 -3120.9,-4252.6 -3112.1,-4239.9 -3072.7,-4218.3 -3064.8,-4203.7 -3052.7,-4192.4 -3052.1,-4186.5 -3079.6,-4170.4 -3083.0,-4165.7 -3081.1,-4159.3 -3053.3,-4121.1 -3034.8,-4107.6 -3006.3,-4077.9 -3000.2,-4074.0 -2996.8,-4077.7 -2991.3,-4074.4 -2990.2,-4064.2 -2980.2,-4065.2 -2975.4,-4059.8 -2974.9,-4062.3 -2966.6,-4057.8 -2948.8,-4056.4 -2939.2,-4050.6 -2933.3,-4061.4 -2939.5,-4068.6 -2932.6,-4071.6 -2935.0,-4076.8 -2932.9,-4071.8 -2938.1,-4069.4 -2940.0,-4073.7 -2935.8,-4075.4 -2942.3,-4074.6 -2944.2,-4077.1 -2944.6,-4084.0 -2940.2,-4088.3 -2930.0,-4091.4 -2914.1,-4090.6 -2895.6,-4077.6 -2882.5,-4058.6 -2884.2,-4047.7 -2892.7,-4044.0 -2900.9,-4046.2 -2910.8,-4043.3 -2915.0,-4036.7 -2869.1,-4005.3 -2842.3,-3978.5 -2834.8,-3965.9 -2823.8,-3960.4 -2816.4,-3950.2 -2816.0,-3935.1 -2804.6,-3919.7 -2803.0,-3905.1 -2794.0,-3897.5 -2792.9,-3890.8 -2769.5,-3877.4 -2748.6,-3855.0 -2735.0,-3829.4 -2728.2,-3826.2 -2731.9,-3823.9 -2727.9,-3826.1 -2702.5,-3816.8 -2670.8,-3821.2 -2638.6,-3816.2 -2617.4,-3806.7 -2595.5,-3788.5 -2579.6,-3782.7 -2568.2,-3768.7 -2548.9,-3757.6 -2533.9,-3753.3 -2519.4,-3750.7 -2486.1,-3761.2 -2456.0,-3750.8 -2417.7,-3748.3 -2362.6,-3729.0 -2356.9,-3733.5 -2350.3,-3733.8 -2342.0,-3728.4 -2305.7,-3720.3 -2284.1,-3710.8 -2259.5,-3692.4 -2248.1,-3694.7 -2240.5,-3691.0 -2228.8,-3676.5 -2210.5,-3672.9 -2200.5,-3674.3 -2191.5,-3664.6 -2160.6,-3653.6 -2153.7,-3658.6 -2141.0,-3646.0 -2134.2,-3643.7 -2116.4,-3642.1 -2097.7,-3645.1 -2088.2,-3640.1 -2083.0,-3632.5 -2044.9,-3614.0 -2018.0,-3581.6 -2010.9,-3568.0 -2012.7,-3558.5 -2007.4,-3551.3 -2003.9,-3547.7 -1994.6,-3548.6 -1990.4,-3543.9 -1986.2,-3537.0 -1987.7,-3531.2 -1974.3,-3516.0 -1974.0,-3509.2 -1956.3,-3481.4 -1949.3,-3477.1 -1937.9,-3476.4 -1934.3,-3465.8 -1896.7,-3462.7 -1874.4,-3453.6 -1872.1,-3448.6 -1853.1,-3436.9 -1845.2,-3434.1 -1833.9,-3438.5 -1824.3,-3436.6 -1800.5,-3423.6 -1785.0,-3407.4 -1765.9,-3372.4 -1761.3,-3345.2 -1763.4,-3331.8 -1756.9,-3323.2 -1727.0,-3325.1 -1724.9,-3322.9 -1731.2,-3316.7 -1729.5,-3314.9 -1722.7,-3321.3 -1708.7,-3317.4 -1706.8,-3312.0 -1712.1,-3307.3 -1703.2,-3306.9 -1693.9,-3298.7 -1678.8,-3277.5 -1646.8,-3243.4 -1620.5,-3203.6 -1592.1,-3184.9 -1582.1,-3173.8 -1568.3,-3169.2 -1548.0,-3155.7 -1533.5,-3139.1 -1515.7,-3133.7 -1492.6,-3104.8 -1468.2,-3092.3 -1454.1,-3080.8 -1412.6,-3015.9 -1407.9,-3011.2 -1397.2,-3009.8 -1389.6,-3004.6 -1328.7,-2942.7 -1309.0,-2908.3 -1293.7,-2895.6 -1279.9,-2876.2 -1257.3,-2837.3 -1212.9,-2800.4 -1173.3,-2756.8 -1116.8,-2704.1 -1088.3,-2648.6 -1076.6,-2644.2 -1064.2,-2633.7 -1044.5,-2628.0 -1023.8,-2617.2 -992.7,-2594.1 -976.1,-2563.3 -964.3,-2519.5 -964.0,-2515.7 -969.3,-2511.9 -966.6,-2500.8 -962.6,-2499.0 -968.7,-2505.8 -968.7,-2510.8 -964.7,-2510.7 -959.8,-2517.7 -959.8,-2510.0 -942.5,-2493.5 -916.9,-2483.2 -890.2,-2461.3 -833.2,-2433.5 -813.9,-2419.1 -804.8,-2405.4 -793.2,-2406.7 -787.9,-2404.0 -763.6,-2376.0 -738.0,-2288.4 -716.1,-2251.1 -701.2,-2242.7 -688.5,-2227.7 -664.9,-2223.8 -637.0,-2205.3 -608.7,-2206.0 -565.9,-2194.6 -532.4,-2192.5 -491.0,-2165.0 -471.0,-2159.1 -440.6,-2136.5 -381.2,-2118.1 -369.6,-2109.7 -349.8,-2103.9 -341.7,-2097.2 -330.1,-2076.9 -315.9,-2021.3 -306.6,-1923.3 -300.5,-1895.0 -277.6,-1873.0 -264.0,-1868.9 -228.6,-1831.2 -222.9,-1830.7 -218.6,-1843.8 -193.9,-1867.0 -180.7,-1872.7 -162.9,-1872.8 -151.3,-1868.8 -136.8,-1853.7 -127.9,-1851.9 -117.1,-1842.7 -90.5,-1835.9 -76.8,-1820.2 -64.5,-1826.5 -52.3,-1822.9 -33.3,-1827.4 -19.7,-1823.4 4.5,-1804.0 30.7,-1764.8 45.7,-1747.2 54.0,-1743.4 85.8,-1745.1 126.7,-1759.1 141.7,-1755.2 178.8,-1736.8 217.3,-1734.9 259.9,-1738.2 301.2,-1728.9 314.1,-1733.0 334.5,-1731.1 386.0,-1718.6 405.9,-1700.2 427.1,-1667.4 453.0,-1644.7 469.0,-1613.8 479.5,-1607.7 493.7,-1592.7 505.8,-1572.6 511.8,-1570.3 517.3,-1572.3 536.7,-1588.3 531.9,-1590.1 536.4,-1592.7 563.2,-1592.6 573.9,-1599.2 587.1,-1596.8 604.7,-1583.1 636.7,-1520.5 667.6,-1356.9 699.7,-1309.3 708.3,-1305.2 719.2,-1281.8 753.9,-1272.6 785.0,-1289.8 810.7,-1288.3 844.9,-1274.9 878.9,-1267.1 902.0,-1250.1 914.1,-1245.2 943.0,-1242.1 961.4,-1233.8 999.7,-1227.5 1020.4,-1214.0 1038.8,-1189.0 1038.9,-1193.7 1057.1,-1192.3 1072.1,-1171.2 1097.6,-1114.4 1146.9,-954.4 1165.7,-847.6 1177.5,-740.3 1194.6,-652.6 1202.7,-637.6 1223.9,-628.6 1241.1,-605.5 1273.1,-514.2 1281.3,-475.7 1286.8,-467.0 1292.2,-407.7 1288.1,-383.8 1279.3,-362.5 1281.2,-357.6 1278.4,-356.4 1286.1,-323.8 1291.4,-314.2 1295.4,-313.0 1304.1,-280.2 1314.4,-280.0 1309.6,-274.2 1307.1,-277.8 1305.9,-273.7 1322.5,-273.7 1322.5,-270.7 1307.3,-269.8 1310.7,-265.9 1304.2,-263.8 1299.8,-281.7 1303.6,-271.7 1302.1,-264.9 1311.1,-263.7 1317.2,-237.1 1320.9,-236.6 1371.8,-156.4 1365.6,-169.2 1368.4,-170.3 1375.9,-156.0 1371.2,-162.6 1372.9,-153.8 1409.8,-81.7 1426.3,-60.1 1432.9,-21.4 1442.8,109.0 1454.8,185.2 1452.3,232.6 1445.3,277.9 1428.0,330.3 1420.4,344.3 1413.3,349.8 1385.2,433.2 1376.8,447.2 1372.0,448.9 1354.7,483.3 1340.0,499.5 1338.3,495.9 1339.2,501.1 1335.0,498.1 1333.4,511.3 1323.6,512.4 1320.5,516.7 1322.6,520.0 1317.1,519.8 1315.7,516.5 1303.8,520.9 1311.7,520.1 1314.0,524.8 1301.5,525.3 1298.7,511.9 1294.5,508.2 1286.8,509.6 1262.2,531.1 1217.3,588.8 1208.8,618.3 1201.6,685.1 1191.4,692.8 1183.8,726.9 1179.4,737.2 1172.9,740.8 1153.1,784.7 1154.5,780.9"/><polyline class="coast" points="-3715.5,-5269.7 -3717.9,-5272.0 -3715.5,-5269.7"/><polyline class="coast" points="-4393.1,-5253.3 -4377.9,-5218.6 -4379.9,-5228.5 -4374.0,-5226.5 -4376.1,-5218.8 -4343.9,-5234.3 -4230.4,-5259.8 -4198.4,-5259.8 -4154.8,-5251.3 -4150.9,-5251.3 -4157.8,-5255.2 -4149.7,-5255.7 -4142.1,-5250.7 -4156.5,-5236.0 -4157.8,-5226.8 -4151.8,-5201.3 -4154.5,-5194.3 -4166.0,-5183.7 -4246.3,-5168.2 -4265.0,-5147.8 -4290.5,-5137.4 -4381.6,-5123.7 -4404.0,-5118.4 -4400.5,-5115.9 -4406.7,-5111.5 -4410.6,-5111.8 -4414.6,-5117.9 -4407.8,-5119.3 -4420.2,-5120.1 -4423.0,-5109.3"/><polyline class="coast" points="-3192.9,-4227.5 -3192.9,-4227.5"/><polyline class="coast" points="-3698.2,-4361.5 -3696.3,-4364.8 -3702.2,-4364.1 -3698.2,-4361.5"/><polyline class="coast" points="1186.3,713.7 1186.3,713.7"/><polyline class="coast" points="-2977.7,-4058.6 -2981.7,-4059.4 -2975.6,-4056.5 -2977.7,-4058.6"/><polyline class="coast" points="-4422.8,-5394.1 -4405.0,-5381.7 -4391.6,-5359.1 -4373.4,-5358.6 -4360.1,-5353.7 -4360.1,-5343.3 -4323.9,-5342.6 -4309.5,-5338.2 -4319.6,-5328.1 -4321.9,-5330.6 -4317.3,-5334.4 -4320.4,-5336.1 -4326.3,-5323.7 -4363.7,-5301.6 -4377.3,-5300.0 -4385.7,-5307.8"/><polyline class="coast" points="-3178.1,-4217.4 -3178.1,-4217.4"/><polyline class="coast" points="-2736.0,-3830.9 -2736.0,-3830.9"/><polyline class="coast" points="-2980.5,-4062.8 -2980.5,-4062.8"/><polyline class="coast" points="1370.7,-163.4 1370.7,-163.4"/><polyline class="coast" points="1369.0,-165.9 1369.0,-165.9"/><polyline class="coast" points="-962.7,-2505.5 -960.5,-2507.4 -962.7,-2505.5"/><circle class="ring hazard confirmed" cx="426.6" cy="363.2" r="70.8"/><circle class="threat hazard confirmed" cx="426.6" cy="363.2" r="6"/><polyline class="shiptrack" points="426.6,363.2 625.8,331.7 825.0,300.3"/><circle class="ship" cx="426.6" cy="363.2" r="9"/><line class="orbit" x1="543.7" y1="316.0" x2="802.0" y2="270.5"/><circle class="friendly-dot" cx="543.7" cy="316.0" r="6"/><polyline class="route" points="426.6,363.2 485.2,206.1 75.0,426.0 356.3,378.9 825.0,300.3"/><g class="target" transform="translate(625.8,331.7)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="485.2" cy="206.1" r="6"/><circle class="wp" cx="75.0" cy="426.0" r="6"/><circle class="wp" cx="356.3" cy="378.9" r="6"/><circle class="wp" cx="825.0" cy="300.3" r="8"/><text class="lbl" x="497.2" y="211.1">1 SPLIT</text><text class="lbl" x="87.0" y="431.0">2 MARSHAL</text><text class="lbl" x="368.3" y="383.9">3 TEN MILE</text><text class="lbl" x="813.0" y="305.3" text-anchor="end">Stennis Group (recovery)</text><text class="lbl hazard" x="374.6" y="349.2">No horizon</text><text class="lbl friendly" x="438.6" y="368.2">Stennis Group</text><text class="lbl friendly" x="531.7" y="321.0" text-anchor="end">TEXACO 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>6 / 23</span></div>
+</section>
+
+<section class="slide profile" data-notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes." aria-label="Slide 7">
+  
+    <div class="eyebrow">Flight profile</div>
+    <h2>How high, where</h2>
+    <div style="flex:1;display:flex;align-items:center"><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 99 km</text><line class="pleg" x1="56.0" y1="196.0" x2="155.6" y2="164.8"/><line class="pleg" x1="155.6" y1="164.8" x2="432.1" y2="164.8"/><line class="pleg" x1="432.1" y1="164.8" x2="601.6" y2="189.8"/><line class="pleg" x1="601.6" y1="189.8" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="102.8" y="186.0" text-anchor="middle">Stennis Group</text><circle class="pwp" cx="155.6" cy="164.8" r="4"/><text class="plbl" x="155.6" y="140.8" text-anchor="middle">1 SPLIT</text><text class="psub" x="155.6" y="220" text-anchor="middle">6k</text><circle class="pwp" cx="432.1" cy="164.8" r="4"/><text class="plbl" x="432.1" y="154.8" text-anchor="middle">2 MARSHAL</text><text class="psub" x="432.1" y="220" text-anchor="middle">6k</text><circle class="pwp" cx="601.6" cy="189.8" r="4"/><text class="plbl" x="601.6" y="179.8" text-anchor="middle">3 TEN MILE</text><text class="psub" x="601.6" y="220" text-anchor="middle">1.2k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="797.6" y="186.0" text-anchor="middle">Stennis Group (recovery)</text></svg></div>
+    <p class="muted" style="font-size:22px;margin:0">Dashed legs are flown above ground level, following the terrain.</p>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>7 / 23</span></div>
+</section>
+
+<section class="slide objectives" data-notes="Primary is what wins the mission. Everything else is a bonus or a way home." aria-label="Slide 8">
+  
+    <div class="eyebrow">Tasking</div>
+    <h2>Learning objectives</h2>
+    <div class="rows"><div class="row"><span class="k">primary</span><span>Two night arrested landings aboard the Stennis.</span></div><div class="row"><span class="k">secondary</span><span>Reach the 10-mile gate within ±30 s of plan after pushing from MARSHAL.</span></div><div class="row"><span class="k">tertiary</span><span>Fuel above bingo at all times: tank on TEXACO if you need to.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>8 / 23</span></div>
+</section>
+
+<section class="slide map" data-notes="41.7700N 41.0700E. Laser code n/a." aria-label="Slide 9">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Range target</div>
+        <h2>The Stennis landing area, at night</h2>
+        <div class="body"><p>The angled deck&#39;s centreline lights, the drop lights under the ramp, and the ball.</p><p>41.7700N 41.0700E</p><p>DMPI: Target the 3-wire. Fly the needles until the ball is in sight.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="755.9" y2="755.9"/><text class="gridlbl" x="6" y="751.9">41.5N</text><line class="grid" y1="0" y2="640" x1="-42.2" x2="-42.2"/><text class="gridlbl" x="-38.2" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="543.7" x2="543.7"/><text class="gridlbl" x="547.7" y="632">41.0E</text><polyline class="coast" points="-3716.4,-5272.5 -3716.4,-5272.5"/><polyline class="coast" points="-3716.7,-5273.3 -3716.7,-5273.3"/><polyline class="coast" points="-3484.2,-5374.6 -3530.0,-5334.5 -3609.1,-5289.8 -3619.2,-5286.8 -3643.2,-5289.6 -3649.0,-5287.4 -3656.7,-5296.8 -3687.1,-5294.6 -3693.2,-5287.9 -3681.7,-5272.6 -3694.1,-5274.2 -3691.6,-5276.1 -3696.0,-5277.8 -3709.3,-5267.9 -3715.3,-5268.6 -3703.6,-5256.5 -3698.4,-5259.1 -3697.9,-5266.4 -3679.6,-5261.3 -3693.0,-5261.0 -3702.0,-5255.4 -3700.8,-5251.8 -3695.6,-5254.7 -3692.5,-5251.9 -3696.7,-5248.5 -3692.8,-5244.8 -3696.0,-5240.1 -3698.4,-5246.9 -3703.1,-5248.6 -3707.1,-5242.8 -3702.4,-5239.3 -3710.6,-5244.8 -3703.6,-5251.9 -3721.5,-5271.7 -3748.7,-5262.3 -3786.7,-5260.2 -3885.4,-5265.6 -3944.1,-5279.6 -4082.9,-5326.5 -4131.8,-5349.8 -4180.0,-5379.9"/><polyline class="coast" points="-3714.5,-5272.8 -3714.5,-5272.8"/><polyline class="coast" points="-4429.3,-4922.6 -4377.3,-4929.2 -4354.9,-4928.8 -4310.9,-4922.0 -4258.6,-4907.2 -4154.9,-4863.7 -4095.6,-4844.1 -4007.7,-4807.8 -3928.8,-4765.2 -3861.2,-4721.1 -3806.7,-4671.0 -3776.0,-4625.1 -3770.5,-4606.1 -3772.3,-4590.0 -3778.1,-4581.2 -3785.0,-4582.2 -3785.2,-4586.3 -3785.4,-4583.3 -3794.1,-4580.0 -3796.1,-4570.1 -3748.2,-4510.1 -3743.3,-4496.9 -3742.9,-4470.0 -3695.6,-4401.2 -3692.3,-4375.3 -3688.0,-4374.2 -3692.7,-4373.6 -3691.2,-4368.5 -3697.6,-4360.5 -3692.9,-4363.5 -3675.9,-4355.3 -3666.2,-4342.3 -3664.8,-4334.0 -3635.0,-4314.5 -3622.9,-4296.9 -3610.9,-4287.3 -3610.5,-4281.3 -3603.0,-4283.2 -3589.9,-4277.6 -3577.9,-4262.5 -3565.0,-4263.1 -3502.6,-4234.4 -3485.6,-4237.2 -3469.1,-4227.0 -3425.2,-4218.0 -3400.8,-4224.6 -3380.2,-4223.1 -3377.3,-4220.1 -3374.5,-4220.5 -3377.8,-4222.3 -3373.4,-4222.3 -3333.2,-4204.0 -3324.5,-4196.4 -3316.2,-4198.7 -3294.7,-4192.0 -3280.9,-4192.3 -3272.9,-4196.4 -3249.7,-4199.0 -3247.6,-4202.8 -3213.8,-4215.0 -3202.5,-4225.4 -3205.1,-4224.9 -3207.0,-4233.7 -3195.9,-4237.0 -3218.8,-4268.6 -3219.0,-4286.1 -3223.7,-4289.2 -3222.2,-4296.7 -3226.4,-4302.7 -3222.2,-4306.8 -3230.4,-4303.8 -3233.9,-4308.7 -3230.6,-4309.3 -3237.3,-4314.0 -3236.4,-4316.5 -3229.1,-4311.2 -3232.0,-4314.6 -3227.6,-4314.2 -3229.0,-4318.9 -3225.8,-4316.1 -3227.5,-4320.3 -3222.4,-4316.2 -3225.0,-4322.5 -3218.6,-4316.1 -3215.7,-4318.1 -3220.1,-4323.4 -3216.1,-4325.8 -3210.7,-4316.8 -3207.7,-4318.6 -3210.6,-4324.9 -3204.6,-4323.3 -3203.2,-4315.6 -3198.9,-4321.1 -3199.7,-4312.6 -3196.8,-4314.0 -3187.6,-4305.4 -3196.9,-4301.1 -3186.2,-4305.5 -3183.5,-4311.0 -3187.4,-4301.9 -3183.2,-4310.7 -3176.8,-4305.9 -3181.3,-4305.7 -3178.2,-4303.7 -3182.9,-4296.0 -3176.6,-4305.2 -3177.0,-4302.6 -3173.8,-4303.5 -3175.8,-4301.5 -3167.6,-4302.7 -3169.9,-4300.5 -3166.3,-4300.4 -3167.3,-4296.6 -3171.7,-4297.2 -3162.3,-4293.1 -3166.9,-4289.8 -3179.6,-4294.5 -3170.5,-4289.2 -3156.4,-4294.4 -3153.6,-4281.8 -3120.9,-4252.6 -3112.1,-4239.9 -3072.7,-4218.3 -3064.8,-4203.7 -3052.7,-4192.4 -3052.1,-4186.5 -3079.6,-4170.4 -3083.0,-4165.7 -3081.1,-4159.3 -3053.3,-4121.1 -3034.8,-4107.6 -3006.3,-4077.9 -3000.2,-4074.0 -2996.8,-4077.7 -2991.3,-4074.4 -2990.2,-4064.2 -2980.2,-4065.2 -2975.4,-4059.8 -2974.9,-4062.3 -2966.6,-4057.8 -2948.8,-4056.4 -2939.2,-4050.6 -2933.3,-4061.4 -2939.5,-4068.6 -2932.6,-4071.6 -2935.0,-4076.8 -2932.9,-4071.8 -2938.1,-4069.4 -2940.0,-4073.7 -2935.8,-4075.4 -2942.3,-4074.6 -2944.2,-4077.1 -2944.6,-4084.0 -2940.2,-4088.3 -2930.0,-4091.4 -2914.1,-4090.6 -2895.6,-4077.6 -2882.5,-4058.6 -2884.2,-4047.7 -2892.7,-4044.0 -2900.9,-4046.2 -2910.8,-4043.3 -2915.0,-4036.7 -2869.1,-4005.3 -2842.3,-3978.5 -2834.8,-3965.9 -2823.8,-3960.4 -2816.4,-3950.2 -2816.0,-3935.1 -2804.6,-3919.7 -2803.0,-3905.1 -2794.0,-3897.5 -2792.9,-3890.8 -2769.5,-3877.4 -2748.6,-3855.0 -2735.0,-3829.4 -2728.2,-3826.2 -2731.9,-3823.9 -2727.9,-3826.1 -2702.5,-3816.8 -2670.8,-3821.2 -2638.6,-3816.2 -2617.4,-3806.7 -2595.5,-3788.5 -2579.6,-3782.7 -2568.2,-3768.7 -2548.9,-3757.6 -2533.9,-3753.3 -2519.4,-3750.7 -2486.1,-3761.2 -2456.0,-3750.8 -2417.7,-3748.3 -2362.6,-3729.0 -2356.9,-3733.5 -2350.3,-3733.8 -2342.0,-3728.4 -2305.7,-3720.3 -2284.1,-3710.8 -2259.5,-3692.4 -2248.1,-3694.7 -2240.5,-3691.0 -2228.8,-3676.5 -2210.5,-3672.9 -2200.5,-3674.3 -2191.5,-3664.6 -2160.6,-3653.6 -2153.7,-3658.6 -2141.0,-3646.0 -2134.2,-3643.7 -2116.4,-3642.1 -2097.7,-3645.1 -2088.2,-3640.1 -2083.0,-3632.5 -2044.9,-3614.0 -2018.0,-3581.6 -2010.9,-3568.0 -2012.7,-3558.5 -2007.4,-3551.3 -2003.9,-3547.7 -1994.6,-3548.6 -1990.4,-3543.9 -1986.2,-3537.0 -1987.7,-3531.2 -1974.3,-3516.0 -1974.0,-3509.2 -1956.3,-3481.4 -1949.3,-3477.1 -1937.9,-3476.4 -1934.3,-3465.8 -1896.7,-3462.7 -1874.4,-3453.6 -1872.1,-3448.6 -1853.1,-3436.9 -1845.2,-3434.1 -1833.9,-3438.5 -1824.3,-3436.6 -1800.5,-3423.6 -1785.0,-3407.4 -1765.9,-3372.4 -1761.3,-3345.2 -1763.4,-3331.8 -1756.9,-3323.2 -1727.0,-3325.1 -1724.9,-3322.9 -1731.2,-3316.7 -1729.5,-3314.9 -1722.7,-3321.3 -1708.7,-3317.4 -1706.8,-3312.0 -1712.1,-3307.3 -1703.2,-3306.9 -1693.9,-3298.7 -1678.8,-3277.5 -1646.8,-3243.4 -1620.5,-3203.6 -1592.1,-3184.9 -1582.1,-3173.8 -1568.3,-3169.2 -1548.0,-3155.7 -1533.5,-3139.1 -1515.7,-3133.7 -1492.6,-3104.8 -1468.2,-3092.3 -1454.1,-3080.8 -1412.6,-3015.9 -1407.9,-3011.2 -1397.2,-3009.8 -1389.6,-3004.6 -1328.7,-2942.7 -1309.0,-2908.3 -1293.7,-2895.6 -1279.9,-2876.2 -1257.3,-2837.3 -1212.9,-2800.4 -1173.3,-2756.8 -1116.8,-2704.1 -1088.3,-2648.6 -1076.6,-2644.2 -1064.2,-2633.7 -1044.5,-2628.0 -1023.8,-2617.2 -992.7,-2594.1 -976.1,-2563.3 -964.3,-2519.5 -964.0,-2515.7 -969.3,-2511.9 -966.6,-2500.8 -962.6,-2499.0 -968.7,-2505.8 -968.7,-2510.8 -964.7,-2510.7 -959.8,-2517.7 -959.8,-2510.0 -942.5,-2493.5 -916.9,-2483.2 -890.2,-2461.3 -833.2,-2433.5 -813.9,-2419.1 -804.8,-2405.4 -793.2,-2406.7 -787.9,-2404.0 -763.6,-2376.0 -738.0,-2288.4 -716.1,-2251.1 -701.2,-2242.7 -688.5,-2227.7 -664.9,-2223.8 -637.0,-2205.3 -608.7,-2206.0 -565.9,-2194.6 -532.4,-2192.5 -491.0,-2165.0 -471.0,-2159.1 -440.6,-2136.5 -381.2,-2118.1 -369.6,-2109.7 -349.8,-2103.9 -341.7,-2097.2 -330.1,-2076.9 -315.9,-2021.3 -306.6,-1923.3 -300.5,-1895.0 -277.6,-1873.0 -264.0,-1868.9 -228.6,-1831.2 -222.9,-1830.7 -218.6,-1843.8 -193.9,-1867.0 -180.7,-1872.7 -162.9,-1872.8 -151.3,-1868.8 -136.8,-1853.7 -127.9,-1851.9 -117.1,-1842.7 -90.5,-1835.9 -76.8,-1820.2 -64.5,-1826.5 -52.3,-1822.9 -33.3,-1827.4 -19.7,-1823.4 4.5,-1804.0 30.7,-1764.8 45.7,-1747.2 54.0,-1743.4 85.8,-1745.1 126.7,-1759.1 141.7,-1755.2 178.8,-1736.8 217.3,-1734.9 259.9,-1738.2 301.2,-1728.9 314.1,-1733.0 334.5,-1731.1 386.0,-1718.6 405.9,-1700.2 427.1,-1667.4 453.0,-1644.7 469.0,-1613.8 479.5,-1607.7 493.7,-1592.7 505.8,-1572.6 511.8,-1570.3 517.3,-1572.3 536.7,-1588.3 531.9,-1590.1 536.4,-1592.7 563.2,-1592.6 573.9,-1599.2 587.1,-1596.8 604.7,-1583.1 636.7,-1520.5 667.6,-1356.9 699.7,-1309.3 708.3,-1305.2 719.2,-1281.8 753.9,-1272.6 785.0,-1289.8 810.7,-1288.3 844.9,-1274.9 878.9,-1267.1 902.0,-1250.1 914.1,-1245.2 943.0,-1242.1 961.4,-1233.8 999.7,-1227.5 1020.4,-1214.0 1038.8,-1189.0 1038.9,-1193.7 1057.1,-1192.3 1072.1,-1171.2 1097.6,-1114.4 1146.9,-954.4 1165.7,-847.6 1177.5,-740.3 1194.6,-652.6 1202.7,-637.6 1223.9,-628.6 1241.1,-605.5 1273.1,-514.2 1281.3,-475.7 1286.8,-467.0 1292.2,-407.7 1288.1,-383.8 1279.3,-362.5 1281.2,-357.6 1278.4,-356.4 1286.1,-323.8 1291.4,-314.2 1295.4,-313.0 1304.1,-280.2 1314.4,-280.0 1309.6,-274.2 1307.1,-277.8 1305.9,-273.7 1322.5,-273.7 1322.5,-270.7 1307.3,-269.8 1310.7,-265.9 1304.2,-263.8 1299.8,-281.7 1303.6,-271.7 1302.1,-264.9 1311.1,-263.7 1317.2,-237.1 1320.9,-236.6 1371.8,-156.4 1365.6,-169.2 1368.4,-170.3 1375.9,-156.0 1371.2,-162.6 1372.9,-153.8 1409.8,-81.7 1426.3,-60.1 1432.9,-21.4 1442.8,109.0 1454.8,185.2 1452.3,232.6 1445.3,277.9 1428.0,330.3 1420.4,344.3 1413.3,349.8 1385.2,433.2 1376.8,447.2 1372.0,448.9 1354.7,483.3 1340.0,499.5 1338.3,495.9 1339.2,501.1 1335.0,498.1 1333.4,511.3 1323.6,512.4 1320.5,516.7 1322.6,520.0 1317.1,519.8 1315.7,516.5 1303.8,520.9 1311.7,520.1 1314.0,524.8 1301.5,525.3 1298.7,511.9 1294.5,508.2 1286.8,509.6 1262.2,531.1 1217.3,588.8 1208.8,618.3 1201.6,685.1 1191.4,692.8 1183.8,726.9 1179.4,737.2 1172.9,740.8 1153.1,784.7 1154.5,780.9"/><polyline class="coast" points="-3715.5,-5269.7 -3717.9,-5272.0 -3715.5,-5269.7"/><polyline class="coast" points="-4393.1,-5253.3 -4377.9,-5218.6 -4379.9,-5228.5 -4374.0,-5226.5 -4376.1,-5218.8 -4343.9,-5234.3 -4230.4,-5259.8 -4198.4,-5259.8 -4154.8,-5251.3 -4150.9,-5251.3 -4157.8,-5255.2 -4149.7,-5255.7 -4142.1,-5250.7 -4156.5,-5236.0 -4157.8,-5226.8 -4151.8,-5201.3 -4154.5,-5194.3 -4166.0,-5183.7 -4246.3,-5168.2 -4265.0,-5147.8 -4290.5,-5137.4 -4381.6,-5123.7 -4404.0,-5118.4 -4400.5,-5115.9 -4406.7,-5111.5 -4410.6,-5111.8 -4414.6,-5117.9 -4407.8,-5119.3 -4420.2,-5120.1 -4423.0,-5109.3"/><polyline class="coast" points="-3192.9,-4227.5 -3192.9,-4227.5"/><polyline class="coast" points="-3698.2,-4361.5 -3696.3,-4364.8 -3702.2,-4364.1 -3698.2,-4361.5"/><polyline class="coast" points="1186.3,713.7 1186.3,713.7"/><polyline class="coast" points="-2977.7,-4058.6 -2981.7,-4059.4 -2975.6,-4056.5 -2977.7,-4058.6"/><polyline class="coast" points="-4422.8,-5394.1 -4405.0,-5381.7 -4391.6,-5359.1 -4373.4,-5358.6 -4360.1,-5353.7 -4360.1,-5343.3 -4323.9,-5342.6 -4309.5,-5338.2 -4319.6,-5328.1 -4321.9,-5330.6 -4317.3,-5334.4 -4320.4,-5336.1 -4326.3,-5323.7 -4363.7,-5301.6 -4377.3,-5300.0 -4385.7,-5307.8"/><polyline class="coast" points="-3178.1,-4217.4 -3178.1,-4217.4"/><polyline class="coast" points="-2736.0,-3830.9 -2736.0,-3830.9"/><polyline class="coast" points="-2980.5,-4062.8 -2980.5,-4062.8"/><polyline class="coast" points="1370.7,-163.4 1370.7,-163.4"/><polyline class="coast" points="1369.0,-165.9 1369.0,-165.9"/><polyline class="coast" points="-962.7,-2505.5 -960.5,-2507.4 -962.7,-2505.5"/><circle class="ring hazard confirmed" cx="426.6" cy="363.2" r="70.8"/><circle class="threat hazard confirmed" cx="426.6" cy="363.2" r="6"/><polyline class="shiptrack" points="426.6,363.2 625.8,331.7 825.0,300.3"/><circle class="ship" cx="426.6" cy="363.2" r="9"/><line class="orbit" x1="543.7" y1="316.0" x2="802.0" y2="270.5"/><circle class="friendly-dot" cx="543.7" cy="316.0" r="6"/><polyline class="route" points="426.6,363.2 485.2,206.1 75.0,426.0 356.3,378.9 825.0,300.3"/><g class="target" transform="translate(625.8,331.7)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="485.2" cy="206.1" r="6"/><circle class="wp" cx="75.0" cy="426.0" r="6"/><circle class="wp" cx="356.3" cy="378.9" r="6"/><circle class="wp" cx="825.0" cy="300.3" r="8"/><text class="lbl" x="497.2" y="211.1">1 SPLIT</text><text class="lbl" x="87.0" y="431.0">2 MARSHAL</text><text class="lbl" x="368.3" y="383.9">3 TEN MILE</text><text class="lbl" x="813.0" y="305.3" text-anchor="end">Stennis Group (recovery)</text><text class="lbl hazard" x="374.6" y="349.2">No horizon</text><text class="lbl friendly" x="438.6" y="368.2">Stennis Group</text><text class="lbl friendly" x="531.7" y="321.0" text-anchor="end">TEXACO 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>9 / 23</span></div>
+</section>
+
+<section class="slide threats" data-notes="Training: everything here is briefed as it is. Walk each player&#39;s start point and what it will do." aria-label="Slide 10">
+  
+    <div class="eyebrow">Range players and hazards</div>
+    <h2>Who and what is out there</h2>
+    <div class="rows"><div class="row"><span><span class="tag hazard">hazard</span></span>
+      <span><b>No horizon</b> <span class="muted mono">· 5 km</span><br><span class="muted">Moonless and overcast above. Over the sea there is nothing outside but the ship&#39;s lights.</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>10 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Read every rule out loud and get an acknowledgement. Then brief knock-it-off and terminate." aria-label="Slide 11">
+  
+    <div class="eyebrow">Training rules</div>
+    <h2>How we fight safe</h2>
+    <ol class="rulelist"><li>Case III. Marshal on the 260 radial at 21 nm, angels 6. Push from MARSHAL on your own: the sim times you to the 10-mile gate.</li><li>Platform at 5,000 ft: slow to 250 kt and 2,000 ft/min. At 10 nm, 1,200 ft; dirty up at 8 nm.</li><li>Two arrested landings. A trap counts only after you&#39;ve climbed above 1,000 ft since the last one.</li><li>Bolter: climb straight ahead to 1,200 ft, then the bolter pattern back to the 6 nm point.</li><li>Bingo 4,500 lb to Kobuleti (TACAN 67X). TEXACO is overhead at 6,000 ft: tank below 6,000 lb.</li></ol>
+    <p class="kio"><b>Knock-it-off / terminate:</b> Vertigo, a bad ICLS, or anything that doesn&#39;t feel right on a dark night: call &#34;Knock it off&#34;,
+climb straight ahead to 2,000 ft, level the wings on the instruments and tell Mother. You&#39;ll be
+sent back to marshal. Nobody gets graded for pressing on.</p>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>11 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Ask questions; don&#39;t lecture. Have the student brief one of these back." aria-label="Slide 12">
+  
+    <div class="eyebrow">Special subjects</div>
+    <h2>Talk it through</h2>
+    <ol class="rulelist"><li>The black hole: there&#39;s no horizon tonight. The boat&#39;s lights are the only thing outside.</li><li>ICLS needles versus the ball: fly the needles until the ball is in sight, then the ball.</li><li>Night tanking on the S-3B: lights, slow closure, and no stabbing at the basket.</li><li>Fatigue after a bolter: the second pass is where people get low. Fly the numbers again.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>12 / 23</span></div>
+</section>
+
+<section class="slide package" data-notes="Confirm everyone has the loadout before step." aria-label="Slide 13">
+  
+    <div class="eyebrow">Package</div>
+    <h2>Ford 1 flight</h2>
+    <div class="rows"><div class="row"><span class="k">Aircraft</span><span>1× F/A-18C Hornet</span></div><div class="row"><span class="k">Start</span><span>Cold start, Stennis Group</span></div><div class="row"><span class="k">Loadout</span><span>1× 330 gal tank, 2× AIM-9X (inert)</span></div><div class="row"><span class="k">Joker / Bingo</span><span>6000 / 4500 lb</span></div></div>
+    <div class="chips"><span class="chip">TEXACO 1: 1× S-3B tanker (TANKER)</span></div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>13 / 23</span></div>
+</section>
+
+<section class="slide divider" data-notes="Training: this is exactly how the event runs." aria-label="Slide 14">
+  
+    <div class="eyebrow">The plan</div>
+    <h1>Event flow</h1>
+    
+    
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>14 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 15">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 1 · 18:45</div>
+        <h2>Night Launch</h2>
+        <div class="body"><p>Cold start on deck. Lights on, taxi to the catapult on the director&#39;s wands. After the shot,
+climb straight ahead to 1,200 ft, then turn to SPLIT and climb to 6,000 ft.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="821.5" y2="821.5"/><text class="gridlbl" x="6" y="817.5">41.5N</text><line class="grid" y1="0" y2="640" x1="-79.6" x2="-79.6"/><text class="gridlbl" x="-75.6" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="543.5" x2="543.5"/><text class="gridlbl" x="547.5" y="632">41.0E</text><polyline class="coast" points="-3986.4,-5592.7 -3986.4,-5592.7"/><polyline class="coast" points="-3986.8,-5593.5 -3986.8,-5593.5"/><polyline class="coast" points="-3739.6,-5701.4 -3788.3,-5658.7 -3872.4,-5611.1 -3883.1,-5607.9 -3908.7,-5610.9 -3914.8,-5608.6 -3923.0,-5618.6 -3955.3,-5616.3 -3961.8,-5609.1 -3949.6,-5592.9 -3962.8,-5594.5 -3960.1,-5596.5 -3964.8,-5598.4 -3979.0,-5587.9 -3985.3,-5588.5 -3972.9,-5575.7 -3967.4,-5578.5 -3966.7,-5586.2 -3947.3,-5580.8 -3961.6,-5580.5 -3971.1,-5574.5 -3969.9,-5570.6 -3964.4,-5573.8 -3961.0,-5570.8 -3965.5,-5567.1 -3961.4,-5563.3 -3964.8,-5558.3 -3967.4,-5565.5 -3972.4,-5567.3 -3976.6,-5561.1 -3971.6,-5557.4 -3980.3,-5563.3 -3972.9,-5570.8 -3991.9,-5591.9 -4020.8,-5581.8 -4061.2,-5579.7 -4166.1,-5585.3 -4228.6,-5600.2 -4376.2,-5650.2 -4428.2,-5674.9 -4479.4,-5707.0"/><polyline class="coast" points="-3984.4,-5593.0 -3984.4,-5593.0"/><polyline class="coast" points="-4744.6,-5220.5 -4689.2,-5227.5 -4665.4,-5227.0 -4618.6,-5219.8 -4563.0,-5204.1 -4452.7,-5157.8 -4389.7,-5136.9 -4296.2,-5098.3 -4212.4,-5053.0 -4140.5,-5006.0 -4082.5,-4952.7 -4049.9,-4903.9 -4044.0,-4883.6 -4045.9,-4866.6 -4052.1,-4857.2 -4059.5,-4858.2 -4059.6,-4862.6 -4059.8,-4859.4 -4069.1,-4855.9 -4071.2,-4845.4 -4020.3,-4781.5 -4015.1,-4767.5 -4014.6,-4738.9 -3964.4,-4665.7 -3960.9,-4638.1 -3956.3,-4636.9 -3961.3,-4636.3 -3959.6,-4630.9 -3966.5,-4622.4 -3961.5,-4625.6 -3943.4,-4616.9 -3933.1,-4603.0 -3931.6,-4594.1 -3900.0,-4573.4 -3887.0,-4554.7 -3874.3,-4544.5 -3873.9,-4538.1 -3865.9,-4540.1 -3852.0,-4534.1 -3839.1,-4518.1 -3825.4,-4518.7 -3759.2,-4488.2 -3741.1,-4491.2 -3723.5,-4480.3 -3676.8,-4470.8 -3650.9,-4477.8 -3628.9,-4476.1 -3625.9,-4472.9 -3623.0,-4473.4 -3626.4,-4475.3 -3621.7,-4475.3 -3579.0,-4455.9 -3569.7,-4447.7 -3560.9,-4450.2 -3538.1,-4443.0 -3523.4,-4443.4 -3514.9,-4447.7 -3490.2,-4450.5 -3488.0,-4454.6 -3452.0,-4467.6 -3440.0,-4478.6 -3442.8,-4478.1 -3444.8,-4487.5 -3433.1,-4491.0 -3457.3,-4524.6 -3457.6,-4543.1 -3462.6,-4546.5 -3461.0,-4554.5 -3465.4,-4560.9 -3461.0,-4565.2 -3469.7,-4562.0 -3473.4,-4567.2 -3469.9,-4567.9 -3477.0,-4572.9 -3476.0,-4575.6 -3468.3,-4569.9 -3471.4,-4573.6 -3466.7,-4573.1 -3468.2,-4578.1 -3464.8,-4575.1 -3466.6,-4579.6 -3461.2,-4575.2 -3464.0,-4581.9 -3457.1,-4575.1 -3454.1,-4577.2 -3458.7,-4582.9 -3454.5,-4585.4 -3448.8,-4575.9 -3445.5,-4577.7 -3448.6,-4584.4 -3442.3,-4582.8 -3440.8,-4574.6 -3436.2,-4580.4 -3437.0,-4571.4 -3433.9,-4572.9 -3424.2,-4563.7 -3434.0,-4559.2 -3422.7,-4563.9 -3419.8,-4569.7 -3424.0,-4560.0 -3419.5,-4569.4 -3412.7,-4564.2 -3417.5,-4564.0 -3414.2,-4561.9 -3419.2,-4553.7 -3412.5,-4563.5 -3412.9,-4560.7 -3409.5,-4561.7 -3411.6,-4559.5 -3402.9,-4560.9 -3405.4,-4558.5 -3401.5,-4558.4 -3402.6,-4554.3 -3407.3,-4555.0 -3397.3,-4550.7 -3402.1,-4547.2 -3415.7,-4552.2 -3406.0,-4546.5 -3391.1,-4552.0 -3388.1,-4538.6 -3353.3,-4507.5 -3344.0,-4494.0 -3302.0,-4471.1 -3293.6,-4455.6 -3280.8,-4443.5 -3280.2,-4437.2 -3309.3,-4420.1 -3312.9,-4415.1 -3310.9,-4408.3 -3281.4,-4367.6 -3261.7,-4353.3 -3231.4,-4321.7 -3225.0,-4317.5 -3221.3,-4321.5 -3215.5,-4318.0 -3214.2,-4307.1 -3203.6,-4308.1 -3198.5,-4302.4 -3198.0,-4305.1 -3189.2,-4300.3 -3170.3,-4298.8 -3160.0,-4292.6 -3153.8,-4304.1 -3160.4,-4311.8 -3153.1,-4315.0 -3155.5,-4320.5 -3153.3,-4315.2 -3158.9,-4312.6 -3160.9,-4317.2 -3156.4,-4319.0 -3163.4,-4318.2 -3165.4,-4320.8 -3165.8,-4328.2 -3161.2,-4332.7 -3150.3,-4336.0 -3133.4,-4335.2 -3113.7,-4321.3 -3099.7,-4301.1 -3101.6,-4289.6 -3110.6,-4285.6 -3119.3,-4287.9 -3129.9,-4284.9 -3134.4,-4277.9 -3085.5,-4244.4 -3057.0,-4215.9 -3049.0,-4202.5 -3037.3,-4196.6 -3029.4,-4185.8 -3029.1,-4169.7 -3017.0,-4153.3 -3015.2,-4137.8 -3005.6,-4129.8 -3004.5,-4122.6 -2979.6,-4108.4 -2957.4,-4084.5 -2943.0,-4057.2 -2935.7,-4053.9 -2939.6,-4051.4 -2935.4,-4053.7 -2908.3,-4043.9 -2874.7,-4048.5 -2840.4,-4043.2 -2817.9,-4033.2 -2794.6,-4013.8 -2777.7,-4007.6 -2765.5,-3992.7 -2745.1,-3980.8 -2729.1,-3976.3 -2713.7,-3973.5 -2678.3,-3984.7 -2646.3,-3973.7 -2605.5,-3971.0 -2547.0,-3950.4 -2540.9,-3955.3 -2533.9,-3955.6 -2525.0,-3949.8 -2486.4,-3941.2 -2463.5,-3931.0 -2437.3,-3911.5 -2425.2,-3914.0 -2417.1,-3910.0 -2404.7,-3894.6 -2385.2,-3890.7 -2374.6,-3892.3 -2365.0,-3881.9 -2332.1,-3870.2 -2324.8,-3875.5 -2311.3,-3862.2 -2304.1,-3859.7 -2285.2,-3858.0 -2265.2,-3861.2 -2255.1,-3855.8 -2249.6,-3847.8 -2209.1,-3828.1 -2180.5,-3793.6 -2173.0,-3779.1 -2174.9,-3769.1 -2169.3,-3761.4 -2165.5,-3757.5 -2155.7,-3758.5 -2151.2,-3753.5 -2146.7,-3746.2 -2148.3,-3740.0 -2134.0,-3723.8 -2133.8,-3716.6 -2114.9,-3687.0 -2107.5,-3682.5 -2095.4,-3681.6 -2091.5,-3670.4 -2051.5,-3667.1 -2027.8,-3657.4 -2025.3,-3652.1 -2005.2,-3639.7 -1996.8,-3636.7 -1984.7,-3641.4 -1974.5,-3639.4 -1949.2,-3625.5 -1932.8,-3608.3 -1912.5,-3571.0 -1907.6,-3542.1 -1909.8,-3527.9 -1902.9,-3518.7 -1871.1,-3520.7 -1868.8,-3518.3 -1875.6,-3511.8 -1873.7,-3509.8 -1866.5,-3516.7 -1851.6,-3512.5 -1849.6,-3506.8 -1855.3,-3501.8 -1845.8,-3501.3 -1835.9,-3492.6 -1819.9,-3470.0 -1785.9,-3433.8 -1757.8,-3391.5 -1727.7,-3371.6 -1717.1,-3359.7 -1702.4,-3354.9 -1680.8,-3340.5 -1665.4,-3322.8 -1646.4,-3317.1 -1621.9,-3286.3 -1595.9,-3273.0 -1580.9,-3260.8 -1536.8,-3191.7 -1531.8,-3186.7 -1520.4,-3185.2 -1512.3,-3179.7 -1447.5,-3113.8 -1426.6,-3077.2 -1410.4,-3063.7 -1395.7,-3043.1 -1371.7,-3001.7 -1324.4,-2962.4 -1282.3,-2916.1 -1222.2,-2859.9 -1192.0,-2800.9 -1179.5,-2796.2 -1166.3,-2785.0 -1145.4,-2779.0 -1123.3,-2767.5 -1090.3,-2742.9 -1072.6,-2710.1 -1060.1,-2663.5 -1059.8,-2659.5 -1065.4,-2655.5 -1062.5,-2643.6 -1058.3,-2641.8 -1064.7,-2649.0 -1064.7,-2654.3 -1060.5,-2654.2 -1055.3,-2661.7 -1055.3,-2653.5 -1037.0,-2635.9 -1009.7,-2624.9 -981.3,-2601.7 -920.7,-2572.1 -900.1,-2556.7 -890.5,-2542.2 -878.2,-2543.5 -872.5,-2540.7 -846.7,-2510.9 -819.5,-2417.6 -796.2,-2378.0 -780.4,-2369.0 -766.8,-2353.1 -741.8,-2348.9 -712.1,-2329.2 -681.9,-2330.0 -636.5,-2317.8 -600.8,-2315.7 -556.8,-2286.4 -535.5,-2280.1 -503.3,-2256.0 -440.1,-2236.4 -427.7,-2227.6 -406.7,-2221.4 -398.1,-2214.2 -385.7,-2192.6 -370.7,-2133.5 -360.7,-2029.2 -354.2,-1999.1 -329.9,-1975.7 -315.5,-1971.3 -277.8,-1931.2 -271.7,-1930.7 -267.1,-1944.6 -241.0,-1969.3 -226.9,-1975.3 -207.9,-1975.5 -195.6,-1971.2 -180.1,-1955.1 -170.7,-1953.3 -159.2,-1943.4 -130.9,-1936.2 -116.3,-1919.5 -103.3,-1926.2 -90.3,-1922.4 -70.1,-1927.2 -55.7,-1922.9 -30.0,-1902.3 -2.1,-1860.5 13.9,-1841.8 22.7,-1837.8 56.5,-1839.6 100.0,-1854.5 115.9,-1850.3 155.4,-1830.8 196.3,-1828.8 241.7,-1832.3 285.5,-1822.4 299.2,-1826.7 320.9,-1824.7 375.7,-1811.4 396.9,-1791.8 419.5,-1756.9 447.0,-1732.8 464.0,-1699.9 475.2,-1693.4 490.2,-1677.5 503.1,-1656.1 509.4,-1653.6 515.3,-1655.7 536.0,-1672.8 530.9,-1674.6 535.6,-1677.5 564.1,-1677.3 575.5,-1684.3 589.6,-1681.8 608.3,-1667.3 642.3,-1600.6 675.2,-1426.6 709.3,-1375.9 718.4,-1371.6 730.0,-1346.7 766.9,-1336.8 800.0,-1355.2 827.3,-1353.5 863.7,-1339.3 899.8,-1331.0 924.4,-1312.9 937.2,-1307.7 968.0,-1304.4 987.6,-1295.5 1028.3,-1288.8 1050.2,-1274.5 1069.8,-1247.9 1069.9,-1252.9 1089.4,-1251.4 1105.3,-1229.0 1132.4,-1168.5 1184.8,-998.3 1204.8,-884.7 1217.3,-770.5 1235.5,-677.2 1244.1,-661.2 1266.7,-651.7 1285.0,-627.1 1319.0,-530.0 1327.7,-489.0 1333.6,-479.7 1339.3,-416.6 1335.0,-391.2 1325.6,-368.5 1327.6,-363.3 1324.6,-362.0 1332.9,-327.4 1338.5,-317.2 1342.7,-315.8 1351.9,-280.9 1362.9,-280.7 1357.8,-274.6 1355.2,-278.4 1353.9,-274.1 1371.5,-274.1 1371.5,-270.9 1355.4,-269.9 1359.0,-265.7 1352.0,-263.5 1347.4,-282.6 1351.4,-271.9 1349.8,-264.7 1359.4,-263.4 1365.9,-235.1 1369.9,-234.6 1423.9,-149.2 1417.3,-162.9 1420.3,-164.1 1428.3,-148.9 1423.3,-155.9 1425.1,-146.5 1464.3,-69.8 1481.9,-46.7 1488.9,-5.6 1499.5,133.1 1512.2,214.2 1509.5,264.7 1502.1,312.8 1483.8,368.6 1475.7,383.5 1468.1,389.4 1438.1,478.1 1429.3,493.0 1424.2,494.8 1405.7,531.4 1390.2,548.7 1388.3,544.8 1389.3,550.3 1384.8,547.2 1383.1,561.2 1372.7,562.4 1369.4,566.9 1371.6,570.4 1365.7,570.2 1364.3,566.7 1351.7,571.4 1360.0,570.6 1362.5,575.6 1349.2,576.1 1346.2,561.9 1341.7,557.9 1333.6,559.4 1307.4,582.3 1259.7,643.6 1250.6,675.0 1243.0,746.1 1232.2,754.3 1224.1,790.5 1219.3,801.6 1212.5,805.4 1191.4,852.0 1192.9,848.0"/><polyline class="coast" points="-3985.6,-5589.7 -3988.1,-5592.2 -3985.6,-5589.7"/><polyline class="coast" points="-4706.1,-5572.3 -4689.9,-5535.4 -4692.0,-5545.9 -4685.7,-5543.7 -4688.0,-5535.5 -4653.7,-5552.1 -4533.0,-5579.2 -4499.0,-5579.2 -4452.6,-5570.1 -4448.5,-5570.1 -4455.8,-5574.3 -4447.2,-5574.8 -4439.1,-5569.5 -4454.5,-5553.9 -4455.8,-5544.1 -4449.5,-5517.0 -4452.3,-5509.5 -4464.6,-5498.3 -4549.9,-5481.7 -4569.9,-5460.0 -4596.9,-5448.9 -4693.8,-5434.4 -4717.6,-5428.7 -4713.9,-5426.0 -4720.5,-5421.4 -4724.6,-5421.7 -4728.9,-5428.2 -4721.6,-5429.7 -4734.8,-5430.6 -4737.8,-5419.0"/><polyline class="coast" points="-3429.8,-4480.8 -3429.8,-4480.8"/><polyline class="coast" points="-3967.1,-4623.4 -3965.1,-4626.9 -3971.4,-4626.2 -3967.1,-4623.4"/><polyline class="coast" points="1226.7,776.5 1226.7,776.5"/><polyline class="coast" points="-3201.0,-4301.1 -3205.3,-4301.9 -3198.8,-4298.9 -3201.0,-4301.1"/><polyline class="coast" points="-4737.6,-5722.1 -4718.6,-5708.9 -4704.4,-5684.8 -4685.1,-5684.3 -4670.9,-5679.1 -4670.9,-5668.1 -4632.4,-5667.3 -4617.1,-5662.6 -4627.9,-5651.9 -4630.3,-5654.5 -4625.4,-5658.6 -4628.7,-5660.4 -4635.0,-5647.2 -4674.8,-5623.6 -4689.2,-5622.0 -4698.2,-5630.3"/><polyline class="coast" points="-3414.1,-4470.1 -3414.1,-4470.1"/><polyline class="coast" points="-2944.0,-4058.9 -2944.0,-4058.9"/><polyline class="coast" points="-3204.0,-4305.6 -3204.0,-4305.6"/><polyline class="coast" points="1422.8,-156.7 1422.8,-156.7"/><polyline class="coast" points="1420.9,-159.4 1420.9,-159.4"/><polyline class="coast" points="-1058.4,-2648.6 -1056.0,-2650.6 -1058.4,-2648.6"/><circle class="ring hazard confirmed" cx="418.8" cy="403.6" r="75.3"/><circle class="threat hazard confirmed" cx="418.8" cy="403.6" r="6"/><polyline class="shiptrack" points="418.8,403.6 630.7,370.1 842.5,336.7"/><circle class="ship" cx="418.8" cy="403.6" r="9"/><line class="orbit" x1="543.5" y1="353.4" x2="818.0" y2="305.0"/><circle class="friendly-dot" cx="543.5" cy="353.4" r="6"/><polyline class="route dim" points="418.8,403.6 481.2,236.4 45.0,470.4 344.1,420.3 842.5,336.7"/><polyline class="route hl" points="418.8,403.6 481.2,236.4"/><g class="target" transform="translate(630.7,370.1)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp on" cx="481.2" cy="236.4" r="6"/><circle class="wp" cx="45.0" cy="470.4" r="6"/><circle class="wp" cx="344.1" cy="420.3" r="6"/><circle class="wp" cx="842.5" cy="336.7" r="8"/><text class="lbl" x="493.2" y="241.4">1 SPLIT</text><text class="lbl" x="57.0" y="475.4">2 MARSHAL</text><text class="lbl" x="356.1" y="425.3">3 TEN MILE</text><text class="lbl" x="830.5" y="341.7" text-anchor="end">Stennis Group (recovery)</text><text class="lbl hazard" x="366.8" y="389.6">No horizon</text><text class="lbl friendly" x="430.8" y="408.6">Stennis Group</text><text class="lbl friendly" x="531.5" y="358.4" text-anchor="end">TEXACO 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>15 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 16">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 2 · 19:14</div>
+        <h2>Marshal and Push</h2>
+        <div class="body"><p>Marshal on the 260 radial at 21 nm, angels 6. Push when you arrive: platform at 5,000 ft,
+then 1,200 ft at 10 miles. The sim calls your timing at the 10-mile gate.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="788.0" y2="788.0"/><text class="gridlbl" x="6" y="784.0">41.5N</text><line class="grid" y1="0" y2="640" x1="-516.2" x2="-516.2"/><text class="gridlbl" x="-512.2" y="632">40.0E</text><line class="grid" y1="0" y2="640" x1="107.1" x2="107.1"/><text class="gridlbl" x="111.1" y="632">40.5E</text><line class="grid" y1="0" y2="640" x1="730.5" x2="730.5"/><text class="gridlbl" x="734.5" y="632">41.0E</text><polyline class="coast" points="-3801.7,-5626.1 -3801.7,-5626.1"/><polyline class="coast" points="-3802.1,-5627.0 -3802.1,-5627.0"/><polyline class="coast" points="-3554.8,-5734.8 -3603.5,-5692.2 -3687.7,-5644.5 -3698.4,-5641.3 -3723.9,-5644.4 -3730.0,-5642.0 -3738.3,-5652.0 -3770.6,-5649.7 -3777.0,-5642.5 -3764.8,-5626.3 -3778.0,-5628.0 -3775.4,-5630.0 -3780.0,-5631.8 -3794.3,-5621.3 -3800.6,-5622.0 -3788.1,-5609.1 -3782.7,-5611.9 -3782.0,-5619.6 -3762.6,-5614.3 -3776.9,-5613.9 -3786.4,-5607.9 -3785.2,-5604.1 -3779.7,-5607.2 -3776.3,-5604.2 -3780.8,-5600.6 -3776.7,-5596.7 -3780.0,-5591.7 -3782.7,-5598.9 -3787.6,-5600.7 -3791.9,-5594.5 -3786.9,-5590.9 -3795.6,-5596.7 -3788.1,-5604.2 -3807.2,-5625.3 -3836.1,-5615.3 -3876.5,-5613.1 -3981.5,-5618.8 -4044.0,-5633.7 -4191.7,-5683.6 -4243.7,-5708.4 -4294.9,-5740.5"/><polyline class="coast" points="-3799.7,-5626.5 -3799.7,-5626.5"/><polyline class="coast" points="-4560.2,-5253.9 -4504.9,-5260.9 -4481.1,-5260.4 -4434.2,-5253.2 -4378.6,-5237.5 -4268.3,-5191.2 -4205.2,-5170.3 -4111.7,-5131.7 -4027.8,-5086.4 -3955.8,-5039.4 -3897.9,-4986.1 -3865.2,-4937.3 -3859.3,-4917.1 -3861.2,-4900.0 -3867.4,-4890.7 -3874.8,-4891.7 -3874.9,-4896.0 -3875.2,-4892.8 -3884.4,-4889.3 -3886.5,-4878.8 -3835.6,-4814.9 -3830.4,-4800.9 -3829.9,-4772.3 -3779.7,-4699.1 -3776.2,-4671.5 -3771.6,-4670.4 -3776.5,-4669.7 -3774.9,-4664.3 -3781.8,-4655.8 -3776.8,-4659.0 -3758.7,-4650.3 -3748.4,-4636.4 -3746.9,-4627.6 -3715.2,-4606.8 -3702.2,-4588.1 -3689.5,-4577.9 -3689.2,-4571.6 -3681.2,-4573.6 -3667.2,-4567.6 -3654.4,-4551.5 -3640.7,-4552.2 -3574.3,-4521.6 -3556.3,-4524.6 -3538.7,-4513.7 -3491.9,-4504.2 -3466.0,-4511.2 -3444.0,-4509.5 -3441.1,-4506.4 -3438.1,-4506.9 -3441.6,-4508.7 -3436.8,-4508.7 -3394.1,-4489.3 -3384.8,-4481.1 -3376.0,-4483.6 -3353.2,-4476.5 -3338.4,-4476.8 -3330.0,-4481.1 -3305.3,-4484.0 -3303.0,-4488.0 -3267.0,-4501.0 -3255.0,-4512.1 -3257.8,-4511.6 -3259.8,-4520.9 -3248.1,-4524.4 -3272.4,-4558.0 -3272.6,-4576.6 -3277.6,-4579.9 -3276.0,-4587.9 -3280.5,-4594.3 -3276.0,-4598.6 -3284.7,-4595.5 -3288.5,-4600.6 -3285.0,-4601.3 -3292.1,-4606.3 -3291.1,-4609.0 -3283.3,-4603.3 -3286.5,-4607.0 -3281.7,-4606.5 -3283.2,-4611.5 -3279.9,-4608.5 -3281.6,-4613.0 -3276.2,-4608.7 -3279.0,-4615.4 -3272.1,-4608.5 -3269.1,-4610.7 -3273.7,-4616.4 -3269.5,-4618.9 -3263.8,-4609.3 -3260.5,-4611.2 -3263.6,-4617.9 -3257.3,-4616.2 -3255.8,-4608.0 -3251.2,-4613.9 -3252.0,-4604.8 -3248.9,-4606.3 -3239.2,-4597.1 -3249.1,-4592.6 -3237.7,-4597.3 -3234.8,-4603.2 -3239.0,-4593.5 -3234.5,-4602.8 -3227.7,-4597.6 -3232.5,-4597.5 -3229.2,-4595.3 -3234.2,-4587.1 -3227.5,-4597.0 -3227.9,-4594.1 -3224.5,-4595.1 -3226.6,-4593.0 -3217.9,-4594.3 -3220.4,-4592.0 -3216.5,-4591.8 -3217.6,-4587.8 -3222.3,-4588.4 -3212.3,-4584.1 -3217.1,-4580.6 -3230.7,-4585.6 -3221.0,-4579.9 -3206.0,-4585.4 -3203.1,-4572.1 -3168.3,-4541.0 -3158.9,-4527.4 -3116.9,-4504.5 -3108.6,-4489.0 -3095.7,-4477.0 -3095.1,-4470.6 -3124.3,-4453.6 -3127.9,-4448.5 -3125.9,-4441.7 -3096.3,-4401.1 -3076.6,-4386.7 -3046.3,-4355.1 -3039.9,-4350.9 -3036.2,-4354.9 -3030.4,-4351.4 -3029.1,-4340.6 -3018.5,-4341.6 -3013.4,-4335.9 -3012.9,-4338.6 -3004.1,-4333.7 -2985.1,-4332.2 -2974.9,-4326.0 -2968.7,-4337.5 -2975.3,-4345.2 -2967.9,-4348.4 -2970.4,-4353.9 -2968.2,-4348.6 -2973.8,-4346.1 -2975.8,-4350.6 -2971.3,-4352.4 -2978.3,-4351.6 -2980.3,-4354.3 -2980.6,-4361.6 -2976.0,-4366.1 -2965.2,-4369.5 -2948.2,-4368.6 -2928.5,-4354.8 -2914.6,-4334.5 -2916.4,-4323.0 -2925.4,-4319.0 -2934.1,-4321.3 -2944.7,-4318.3 -2949.2,-4311.3 -2900.3,-4277.9 -2871.8,-4249.3 -2863.8,-4235.9 -2852.1,-4230.1 -2844.2,-4219.2 -2843.9,-4203.2 -2831.8,-4186.8 -2830.0,-4171.2 -2820.4,-4163.2 -2819.3,-4156.0 -2794.4,-4141.8 -2772.2,-4117.9 -2757.7,-4090.7 -2750.5,-4087.3 -2754.4,-4084.8 -2750.1,-4087.2 -2723.1,-4077.3 -2689.4,-4082.0 -2655.1,-4076.6 -2632.5,-4066.6 -2609.2,-4047.2 -2592.4,-4041.0 -2580.2,-4026.1 -2559.7,-4014.3 -2543.8,-4009.8 -2528.3,-4006.9 -2492.9,-4018.1 -2460.9,-4007.1 -2420.1,-4004.4 -2361.5,-3983.9 -2355.4,-3988.7 -2348.4,-3989.0 -2339.6,-3983.2 -2300.9,-3974.7 -2278.0,-3964.5 -2251.8,-3944.9 -2239.7,-3947.4 -2231.6,-3943.4 -2219.1,-3928.0 -2199.7,-3924.2 -2189.1,-3925.7 -2179.5,-3915.3 -2146.6,-3903.6 -2139.2,-3909.0 -2125.8,-3895.6 -2118.5,-3893.1 -2099.6,-3891.4 -2079.6,-3894.6 -2069.5,-3889.2 -2064.0,-3881.2 -2023.5,-3861.5 -1994.8,-3827.1 -1987.4,-3812.5 -1989.2,-3802.5 -1983.6,-3794.8 -1979.9,-3791.0 -1970.0,-3792.0 -1965.5,-3786.9 -1961.1,-3779.6 -1962.7,-3773.4 -1948.3,-3757.2 -1948.1,-3750.0 -1929.3,-3720.4 -1921.8,-3715.9 -1909.7,-3715.1 -1905.8,-3703.9 -1865.8,-3700.5 -1842.1,-3690.8 -1839.6,-3685.5 -1819.4,-3673.1 -1811.1,-3670.1 -1799.0,-3674.8 -1788.8,-3672.8 -1763.4,-3658.9 -1747.0,-3641.7 -1726.7,-3604.4 -1721.8,-3575.5 -1724.1,-3561.3 -1717.1,-3552.1 -1685.3,-3554.1 -1683.0,-3551.8 -1689.8,-3545.2 -1687.9,-3543.2 -1680.7,-3550.1 -1665.8,-3545.9 -1663.8,-3540.2 -1669.4,-3535.2 -1660.0,-3534.7 -1650.1,-3526.0 -1634.0,-3503.5 -1600.0,-3467.2 -1572.0,-3424.9 -1541.8,-3405.0 -1531.2,-3393.1 -1516.5,-3388.3 -1494.9,-3373.9 -1479.4,-3356.2 -1460.5,-3350.5 -1435.9,-3319.8 -1410.0,-3306.4 -1394.9,-3294.2 -1350.8,-3225.1 -1345.8,-3220.1 -1334.4,-3218.6 -1326.3,-3213.1 -1261.5,-3147.3 -1240.6,-3110.6 -1224.4,-3097.1 -1209.7,-3076.5 -1185.6,-3035.1 -1138.3,-2995.8 -1096.2,-2949.5 -1036.1,-2893.3 -1005.8,-2834.3 -993.3,-2829.7 -980.1,-2818.5 -959.2,-2812.4 -937.1,-2800.9 -904.1,-2776.3 -886.4,-2743.6 -873.9,-2696.9 -873.5,-2692.9 -879.1,-2688.9 -876.3,-2677.1 -872.0,-2675.2 -878.5,-2682.4 -878.5,-2687.8 -874.3,-2687.6 -869.0,-2695.1 -869.0,-2686.9 -850.7,-2669.4 -823.4,-2658.3 -795.0,-2635.1 -734.4,-2605.5 -713.8,-2590.1 -704.2,-2575.6 -691.9,-2576.9 -686.1,-2574.1 -660.3,-2544.3 -633.2,-2451.1 -609.8,-2411.4 -594.0,-2402.4 -580.4,-2386.5 -555.4,-2382.4 -525.7,-2362.6 -495.5,-2363.5 -450.0,-2351.3 -414.4,-2349.1 -370.4,-2319.8 -349.0,-2313.5 -316.7,-2289.4 -253.5,-2269.9 -241.2,-2261.0 -220.1,-2254.8 -211.5,-2247.6 -199.2,-2226.1 -184.1,-2166.9 -174.1,-2062.6 -167.6,-2032.5 -143.3,-2009.1 -128.9,-2004.8 -91.2,-1964.6 -85.1,-1964.1 -80.5,-1978.0 -54.3,-2002.8 -40.2,-2008.8 -21.3,-2008.9 -8.9,-2004.6 6.5,-1988.5 16.0,-1986.7 27.5,-1976.8 55.8,-1969.7 70.4,-1952.9 83.5,-1959.6 96.4,-1955.8 116.6,-1960.6 131.1,-1956.3 156.8,-1935.7 184.7,-1893.9 200.7,-1875.2 209.5,-1871.2 243.3,-1873.0 286.8,-1887.9 302.8,-1883.7 342.3,-1864.2 383.2,-1862.2 428.6,-1865.7 472.4,-1855.8 486.2,-1860.2 507.8,-1858.2 562.7,-1844.8 583.9,-1825.2 606.5,-1790.3 634.0,-1766.2 651.0,-1733.3 662.2,-1726.8 677.3,-1710.9 690.1,-1689.5 696.5,-1687.0 702.3,-1689.2 723.0,-1706.2 717.9,-1708.1 722.7,-1710.9 751.2,-1710.7 762.6,-1717.8 776.6,-1715.3 795.3,-1700.7 829.4,-1634.0 862.3,-1460.0 896.5,-1409.4 905.6,-1405.0 917.2,-1380.1 954.1,-1370.3 987.2,-1388.6 1014.5,-1387.0 1050.9,-1372.8 1087.1,-1364.4 1111.6,-1346.3 1124.5,-1341.2 1155.3,-1337.8 1174.9,-1329.0 1215.6,-1322.3 1237.6,-1307.9 1257.1,-1281.3 1257.3,-1286.3 1276.7,-1284.8 1292.7,-1262.4 1319.7,-1201.9 1372.2,-1031.8 1392.2,-918.1 1404.7,-803.9 1423.0,-710.7 1431.6,-694.6 1454.1,-685.1 1472.4,-660.5 1506.5,-563.4 1515.2,-522.5 1521.1,-513.1 1526.8,-450.1 1522.4,-424.7 1513.1,-401.9 1515.1,-396.8 1512.1,-395.4 1520.3,-360.8 1525.9,-350.6 1530.2,-349.3 1539.4,-314.3 1550.4,-314.2 1545.3,-308.0 1542.6,-311.8 1541.4,-307.5 1559.0,-307.5 1559.0,-304.3 1542.9,-303.3 1546.5,-299.1 1539.5,-297.0 1534.9,-316.0 1538.9,-305.3 1537.3,-298.1 1546.9,-296.8 1553.4,-268.5 1557.3,-268.0 1611.5,-182.6 1604.8,-196.3 1607.8,-197.5 1615.8,-182.3 1610.8,-189.3 1612.6,-180.0 1651.9,-103.2 1669.4,-80.2 1676.4,-39.0 1687.0,99.7 1699.7,180.8 1697.1,231.2 1689.6,279.4 1671.3,335.2 1663.2,350.1 1655.6,355.9 1625.7,444.7 1616.8,459.6 1611.7,461.4 1593.3,498.0 1577.7,515.2 1575.8,511.4 1576.8,516.9 1572.3,513.7 1570.6,527.8 1560.2,528.9 1556.8,533.5 1559.1,537.0 1553.2,536.8 1551.7,533.3 1539.1,538.0 1547.5,537.1 1550.0,542.1 1536.7,542.6 1533.7,528.4 1529.2,524.4 1521.1,525.9 1494.9,548.8 1447.1,610.2 1438.0,641.6 1430.4,712.6 1419.6,720.8 1411.5,757.1 1406.7,768.1 1399.9,772.0 1378.8,818.6 1380.3,814.6"/><polyline class="coast" points="-3800.9,-5623.1 -3803.4,-5625.6 -3800.9,-5623.1"/><polyline class="coast" points="-4521.7,-5605.7 -4505.5,-5568.8 -4507.6,-5579.3 -4501.4,-5577.2 -4503.6,-5569.0 -4469.4,-5585.5 -4348.6,-5612.6 -4314.5,-5612.6 -4268.1,-5603.6 -4264.0,-5603.6 -4271.4,-5607.7 -4262.8,-5608.2 -4254.7,-5602.9 -4270.0,-5587.4 -4271.4,-5577.5 -4265.0,-5550.4 -4267.9,-5542.9 -4280.1,-5531.7 -4365.5,-5515.1 -4385.5,-5493.4 -4412.5,-5482.4 -4509.5,-5467.8 -4533.3,-5462.2 -4529.6,-5459.5 -4536.2,-5454.8 -4540.3,-5455.1 -4544.5,-5461.7 -4537.3,-5463.2 -4550.5,-5464.0 -4553.5,-5452.5"/><polyline class="coast" points="-3244.8,-4514.2 -3244.8,-4514.2"/><polyline class="coast" points="-3782.4,-4656.8 -3780.4,-4660.3 -3786.6,-4659.7 -3782.4,-4656.8"/><polyline class="coast" points="1414.1,743.1 1414.1,743.1"/><polyline class="coast" points="-3015.9,-4334.5 -3020.2,-4335.4 -3013.7,-4332.4 -3015.9,-4334.5"/><polyline class="coast" points="-4553.3,-5755.5 -4534.3,-5742.3 -4520.1,-5718.2 -4500.8,-5717.7 -4486.6,-5712.5 -4486.6,-5701.5 -4448.0,-5700.7 -4432.7,-5696.0 -4443.6,-5685.3 -4445.9,-5688.0 -4441.1,-5692.0 -4444.3,-5693.8 -4450.7,-5680.6 -4490.4,-5657.1 -4504.9,-5655.4 -4513.9,-5663.7"/><polyline class="coast" points="-3229.1,-4503.5 -3229.1,-4503.5"/><polyline class="coast" points="-2758.7,-4092.3 -2758.7,-4092.3"/><polyline class="coast" points="-3018.9,-4339.1 -3018.9,-4339.1"/><polyline class="coast" points="1610.3,-190.2 1610.3,-190.2"/><polyline class="coast" points="1608.5,-192.8 1608.5,-192.8"/><polyline class="coast" points="-872.2,-2682.1 -869.8,-2684.1 -872.2,-2682.1"/><circle class="ring hazard confirmed" cx="605.8" cy="370.1" r="75.3"/><circle class="threat hazard confirmed" cx="605.8" cy="370.1" r="6"/><polyline class="shiptrack" points="605.8,370.1 817.8,336.7 1029.7,303.3"/><circle class="ship" cx="605.8" cy="370.1" r="9"/><line class="orbit" x1="730.5" y1="320.0" x2="1005.2" y2="271.6"/><circle class="friendly-dot" cx="730.5" cy="320.0" r="6"/><polyline class="route dim" points="605.8,370.1 668.2,203.0 231.8,437.0 531.0,386.9 1029.7,303.3"/><polyline class="route hl" points="668.2,203.0 231.8,437.0 531.0,386.9"/><g class="target" transform="translate(817.8,336.7)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="668.2" cy="203.0" r="6"/><circle class="wp on" cx="231.8" cy="437.0" r="6"/><circle class="wp on" cx="531.0" cy="386.9" r="6"/><text class="lbl" x="680.2" y="208.0">1 SPLIT</text><text class="lbl" x="243.8" y="442.0">2 MARSHAL</text><text class="lbl" x="543.0" y="391.9">3 TEN MILE</text><text class="lbl hazard" x="553.8" y="356.1">No horizon</text><text class="lbl friendly" x="617.8" y="375.1">Stennis Group</text><text class="lbl friendly" x="742.5" y="325.0">TEXACO 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>16 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="Ask when the student called the ball, and what the needles were doing at that moment." aria-label="Slide 17">
+  
+    <div class="split nomap">
+      <div class="text">
+        <div class="eyebrow">Phase 3 · 19:20</div>
+        <h2>Trap 1</h2>
+        <div class="body"><p>Dirty up at 8 nm, call the ball at three-quarters of a mile, and fly it to the deck. If you
+bolter, you go round: the bolter pattern brings you back to 6 nm.</p></div>
+        
+      </div>
+      
+    </div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>17 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 18">
+  
+    <div class="split nomap">
+      <div class="text">
+        <div class="eyebrow">Phase 4 · 19:35</div>
+        <h2>Trap 2</h2>
+        <div class="body"><p>Launch again, straight ahead to 1,200 ft, then turn downwind and come round for the second
+trap. Tank on TEXACO first if you&#39;re below 6,000 lb.</p></div>
+        
+      </div>
+      
+    </div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>18 / 23</span></div>
+</section>
+
+<section class="slide comms" data-notes="Kneeboard page 2 carries this card in the cockpit." aria-label="Slide 19">
+  
+    <div class="eyebrow">Comms</div>
+    <h2>Frequencies</h2>
+    <div class="rows"><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">255.500 AM</span><span>Ford (det common) <span class="muted mono">· COMM1 · CH 1</span><br><span class="muted" style="font-size:22px">WREN monitors here</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">253.000 AM</span><span>TEXACO 1 (S-3B) <span class="muted mono">· COMM1 · CH 2</span><br><span class="muted" style="font-size:22px">TACAN 60Y</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">127.500 AM</span><span>Mother / Marshal (Stennis) <span class="muted mono">· COMM2 · CH 1</span><br><span class="muted" style="font-size:22px">TACAN 74X, ICLS 1. Answers the ATC menu</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">133.000 AM</span><span>Kobuleti Tower <span class="muted mono">· COMM2 · CH 2</span><br><span class="muted" style="font-size:22px">TACAN 67X. Bingo field</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">127.500 AM</span><span>PADDLES, Marshal, WREN <span class="muted mono">· Manual / listen</span><br><span class="muted" style="font-size:22px">Scripted calls (on-screen text); they don&#39;t answer the radio menu</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>19 / 23</span></div>
+</section>
+
+<section class="slide package" data-notes="" aria-label="Slide 20">
+  
+    <div class="eyebrow">Conditions</div>
+    <h2>Weather &amp; ROE</h2>
+    <div class="rows"><div class="row"><span class="k">Wind</span><span>080° / 10 kt</span></div><div class="row"><span class="k">Clouds</span><span>Broken 3,500 ft, no moon</span></div><div class="row"><span class="k">Visibility</span><span>15 km</span></div><div class="row"><span class="k">Temp / QNH</span><span>5 °C / 30.0 inHg</span></div><div class="row"><span class="k">Range and weapons clearance</span><span>No weapons. Master arm SAFE. Every instruction from Marshal and PADDLES is mandatory.</span></div></div>
+    
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>20 / 23</span></div>
+</section>
+
+<section class="slide grade" data-notes="Students should know the standards before they step. The same sheet drives the debrief." aria-label="Slide 21">
+  
+    <div class="eyebrow">Grade sheet</div>
+    <h2>What a pass looks like</h2>
+    <div class="rows"><div class="row"><span class="k">Night launch and departure</span><span>Cat shot, climb straight ahead to 1,200 ft, then the departure to SPLIT.</span></div><div class="row"><span class="k">Marshal and push</span><span>Arrives at MARSHAL at angels 6, pushes and reaches the 10-mile gate within ±30 s of plan.</span></div><div class="row"><span class="k">Approach</span><span>Platform at 5,000 ft, 1,200 ft at 10 nm, dirty at 8 nm, on ICLS.</span></div><div class="row"><span class="k">Trap 1</span><span>Arrested landing, graded by PADDLES.</span></div><div class="row"><span class="k">Trap 2</span><span>Second arrested landing after a launch. Two traps complete night quals.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>21 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Tell them now what the debrief will focus on, so they fly it with that in mind." aria-label="Slide 22">
+  
+    <div class="eyebrow">Debrief</div>
+    <h2>What we&#39;ll look at afterwards</h2>
+    <ol class="rulelist"><li>ICLS needle tape from 6 nm to the ramp.</li><li>Push timing and what you did to fix it.</li><li>PADDLES&#39; comments on each pass.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>22 / 23</span></div>
+</section>
+
+<section class="slide title" data-notes="End of the pilot brief. Debrief outcomes live in director.html, so they don&#39;t spoil the mission." aria-label="Slide 23">
+  
+    <div class="eyebrow">Training event BLACK DECK</div>
+    <h1>Questions?</h1>
+    <div class="sub">Step 18:45L</div>
+    
+
+  
+  <div class="foot"><span>TRAINING BLACK DECK</span><span>23 / 23</span></div>
+</section>
+
+</div>
+<div id="progress"></div>
+<div id="notes"><span class="k">NOTES</span><span id="notes-text"></span></div>
+<div id="help">← → navigate · N notes · F fullscreen</div>
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+const stage = document.getElementById("stage");
+let cur = 0;
+
+function fit() {
+  const s = Math.min(innerWidth / 1600, innerHeight / 900);
+  stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+}
+function show(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((el, j) => el.classList.toggle("on", j === cur));
+  document.getElementById("progress").style.width = `${(cur + 1) / slides.length * 100}%`;
+  document.getElementById("notes-text").textContent = slides[cur].dataset.notes || "(no notes)";
+  history.replaceState(null, "", `#${cur + 1}`);
+}
+addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(slides.length - 1);
+  else if (e.key.toLowerCase() === "n") document.getElementById("notes").classList.toggle("on");
+  else if (e.key.toLowerCase() === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+});
+addEventListener("click", e => { if (!e.target.closest("a")) show(cur + (e.clientX > innerWidth / 3 ? 1 : -1)); });
+let tx = null;
+addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+addEventListener("touchend", e => { if (tx !== null) { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); tx = null; } });
+addEventListener("resize", fit);
+fit();
+show((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

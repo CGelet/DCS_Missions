@@ -28,6 +28,9 @@ def describe_when(when: dict) -> str:
             "time_since_flag": lambda: f"{v[1]} s have passed since flag {v[0]} was set",
             "player_below_ft": lambda: f"your aircraft is below {v:,} ft (sea level)",
             "player_below_agl_ft": lambda: f"your aircraft is below {v:,} ft above the ground",
+            "player_slower_kts": lambda: f"your aircraft is slower than {v} kt",
+            "player_above_ft": lambda: f"your aircraft is above {v:,} ft (sea level)",
+            "scenery_dead": lambda: f"the map object (bridge or building) in zone {v} is destroyed",
         }[k]())
     return " and ".join(parts) or "mission start"
 
