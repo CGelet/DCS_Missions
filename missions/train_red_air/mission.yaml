@@ -1,0 +1,316 @@
+# Training event RED AIR: intercepts and BFM against aggressors. Source of truth;
+# `python -m dcsmb build` renders hangar/train_red_air/.
+#
+# Training, not combat: the three aggressor sets are briefed exactly (type, start point, route,
+# when each one starts), and nothing is random. Each set starts when the previous one is dead.
+# A hard deck at 5,000 ft over the sea is called by the sim. The working area is over open water
+# west of Kobuleti (every point 25+ km offshore).
+#
+# DCS note: the aggressors fly with live weapons. There's no simulated-kill mode in triggers, so a
+# "kill" means the aggressor is actually shot down, and they can shoot back.
+
+meta:
+  id: train_red_air
+  title: "RED AIR"
+  subtitle: "Intercepts and BFM against Aggressors"
+  category: training
+  theater: caucasus
+  role: "Air-to-air (BFM)"   # mission type: the hangar filters on it
+  date: 2026-02-13
+  start_time: "14:00"
+  weather:
+    temperature_c: 7
+    wind_from_deg: 250
+    wind_kts: 12
+    clouds: "Scattered 3,000 ft over the coast, clear over the working area"
+    visibility: "30+ km over the water"
+    qnh_inhg: 29.98
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Det work-ups, event A/A-3"
+  rules:
+    - "Hard deck 5,000 ft MSL. Going below it is a training kill on yourself; the sim calls a knock-it-off."
+    - "Working area KILO only: west of 41°30'E, north of 41°45'N. Batumi arrivals are below 10,000 ft east of the area."
+    - "One set at a time. Don't commit on a set until MAGIC calls it with 'fight's on'."
+    - "1,000 ft bubble: no closer than 1,000 ft to an aggressor. Guns kills are called, not flown to the bubble."
+    - "G limit 7.5 g. Over-G is a knock-it-off and an inspection on landing."
+    - "Bingo 5,000 lb: knock it off and RTB, whatever set you're on."
+  knock_it_off: |
+    Any player calls "Knock it off" for a safety problem: a hard-deck bust, a bubble violation, lost
+    sight close in, an over-G or a warning light. Everyone stops manoeuvring, climbs wings-level and
+    acknowledges by callsign. "Terminate" ends the current engagement only; MAGIC then sets up the next one.
+  special_subjects:
+    - "MiG-29 versus Hornet in the BVR timeline: where the R-27 outranges you, and how to stay outside it."
+    - "The F-5 below 300 knots: lighter wing loading, and why you don't slow down with it."
+    - "1v2: kill one, but never lose sight of the second. Contracts before shots."
+    - "Hard deck over the sea: no horizon cues in haze, so use the altimeter and the HUD."
+  grade_sheet:
+    - { item: "Set 1: BVR intercept", standard: "Builds the timeline on MAGIC's picture, sorts and shoots before the MiG's R-27 range, and kills Bandit 11 without merging." }
+    - { item: "Set 2: 1v1 BFM", standard: "Kills Bandit 21 (F-5E) from a head-on merge, staying above the hard deck and inside the bubble rules." }
+    - { item: "Set 3: 1v2", standard: "Kills both Bandit 31 F-5Es, or terminates with sight on both and energy to separate." }
+    - { item: "Hard deck", standard: "No hard-deck knock-it-off for the whole event." }
+    - { item: "Comms", standard: "Correct brevity: picture, commit, kill, terminate, knock-it-off." }
+    - { item: "Fuel and recovery", standard: "Knocks it off at bingo or earlier and lands at Kobuleti with at least 3,000 lb." }
+  debrief_focus:
+    - "Set 1: the timeline. When you shot, and where the MiG was relative to its own missile range."
+    - "Set 2: the first turn at the merge. One-circle or two-circle, and why."
+    - "Set 3: how long you had sight on the second F-5 while you killed the first."
+
+narrative:
+  operation: "RED AIR"
+  backstory: |
+    The last work-up event is the one everyone wants. A partner air force has sent an aggressor
+    detachment to Batumi for the exercise: one MiG-29 and a section of F-5Es flown by pilots who do
+    nothing but fight Western fighters. For the Hornet detachment, it's the closest thing to the
+    real thing short of a war.
+
+    RED AIR runs three sets back to back in working area KILO over the sea west of Kobuleti: a
+    beyond-visual-range intercept on the MiG, a one-on-one dogfight with an F-5, then a one-versus-two.
+    MAGIC, the exercise AWACS, controls the sets. WREN grades from the AWACS tapes.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, grading on the det frequency"
+    - name: "MAGIC"
+      role: "Exercise E-3 AWACS: sets each fight up and calls 'fight's on'"
+    - name: "Bandit 11 / 21 / 31"
+      role: "Aggressor detachment at Batumi: one MiG-29S, then the F-5E section"
+    - name: "Enfield 2"
+      role: "You, single-ship F/A-18C"
+  hook: |
+    "They will beat you today. The question is how many times, and whether you'll know why when
+    we watch the tapes." WREN, mass brief
+  outcomes:
+    success: |
+      Complete. All three sets are killed with no hard-deck call. WREN signs off the air-to-air phase,
+      and the aggressor lead buys the first round at Batumi, which almost never happens.
+    partial: |
+      Partial: re-fly items. Sets 1 and 2 are done, but the 1v2 got away from you, or there was a
+      hard-deck call along the way. You'll re-fly the missed sets with the F-5s on Monday.
+    failure: |
+      Incomplete: re-fly the event. Set 1 or 2 isn't finished, or you were shot down. Debrief on the
+      AWACS tapes first: the answer is almost always in the first sixty seconds.
+
+situation: |
+  Single-ship air-to-air training in working area KILO, over the sea 25 to 60 km west of Kobuleti.
+  Climb to CAP at 25,000 ft and check in with MAGIC. Set 1 starts when you reach CAP: Bandit 11, a
+  MiG-29S, starts 60 km northwest at 25,000 ft and flies straight at CAP. When it's dead, go to the
+  BFM point. Set 2 starts when you reach it: Bandit 21, an F-5E, starts 11 km south at 15,000 ft and
+  comes north for a head-on merge. Sixty seconds after Bandit 21 dies, set 3 starts: Bandit 31, two
+  F-5Es, starts 25 km west at 18,000 ft heading east. Hard deck 5,000 ft. MAGIC holds overhead the coast.
+
+objectives:
+  primary: "Kill Bandit 11 (BVR) and Bandit 21 (BFM) with no hard-deck knock-it-off."
+  secondary: "Kill both Bandit 31 F-5Es in the 1v2, or terminate with sight on both and energy to separate."
+  tertiary: "Recover to Kobuleti with at least 3,000 lb."
+
+roe: |
+  Weapons free on the aggressor set MAGIC has called "fight's on", inside working area KILO only.
+  Every other aircraft is friendly. Master arm SAFE outside KILO.
+
+threats:
+  # Training: each aggressor set exactly as it will fly
+  - name: "Set 1: Bandit 11, MiG-29S"
+    kind: air
+    lat: 42.4500
+    lon: 40.5500
+    range_km: 0
+    notes: "Starts when you reach CAP: 60 km NW at 25,000 ft, flying straight at CAP. R-27 and R-73. Shoots back."
+  - name: "Set 2: Bandit 21, F-5E"
+    kind: air
+    lat: 41.8000
+    lon: 41.1000
+    range_km: 0
+    notes: "Starts when you reach the BFM point after set 1: 11 km south at 15,000 ft, heading north for a head-on merge. AIM-9 and guns."
+  - name: "Set 3: Bandit 31, 2× F-5E"
+    kind: air
+    lat: 41.9000
+    lon: 40.8000
+    range_km: 0
+    notes: "Starts 60 s after Bandit 21 dies: 25 km west at 18,000 ft, heading east. 1v2."
+  - name: "Batumi arrivals"
+    kind: hazard
+    lat: 41.6096
+    lon: 41.6002
+    range_km: 15
+    notes: "Civil and exercise traffic below 10,000 ft. Stay west of 41°30'E."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Enfield (det common)", freq: "255.000 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "MAGIC (exercise AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu. Calls each set" }
+  - { name: "Kobuleti Tower", freq: "133.000 AM", radio: 2, channel: 1, notes: "UHF 262.000" }
+  - { name: "WREN, set calls", freq: "255.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Enfield 2"
+    aircraft: FA_18C_hornet
+    count: 1
+    player: true
+    base: Kobuleti
+    start: cold
+    radio1_mhz: 255.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: LAU_115_2_LAU_127_AIM_120C
+      4: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      8: LAU_115_2_LAU_127_AIM_120C
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "6× AIM-120C, 2× AIM-9X, 578 rounds 20 mm, 1× 330 gal tank"
+    bingo_lbs: 5000
+    joker_lbs: 7000
+    waypoints:
+      - { name: "KILO ENTRY", lat: 41.9800, lon: 41.4500, alt_ft: 20000, kts: 350, eta: "14:16", zone_km: 5 }
+      - { name: "CAP",        lat: 42.1000, lon: 41.1500, alt_ft: 25000, kts: 350, eta: "14:19", action: cap, zone_km: 15 }
+      - { name: "BFM",        lat: 41.9000, lon: 41.1000, alt_ft: 15000, kts: 400, eta: "14:28", zone_km: 6 }
+      - { name: "KILO EXIT",  lat: 41.8800, lon: 41.5000, alt_ft: 15000, kts: 350, eta: "14:45", zone_km: 5 }
+    land: Kobuleti
+
+target:
+  name: "Aggressor sets in working area KILO"
+  lat: 42.1000
+  lon: 41.1500
+  groups: ["Bandit 31"]
+  description: "Three sets in order: a MiG-29S (BVR), an F-5E (1v1 BFM), then two F-5Es (1v2). Each starts when the previous one is dead."
+  dmpi: "Set 1: shoot before 20 nm and don't merge. Sets 2 and 3: kill at the merge or in the first turn."
+
+support:
+  - kind: awacs
+    callsign: "MAGIC"
+    aircraft: E_3A
+    coalition: blue
+    lat: 41.7500
+    lon: 41.7000
+    alt_ft: 30000
+    heading: 340
+    leg_nm: 25
+    freq_mhz: 251.0
+  # The aggressors: briefed to the pilot in a training event, so they appear on the briefing map
+  - kind: flight
+    callsign: "Bandit 11"
+    aircraft: MiG_29S
+    coalition: red
+    count: 1
+    task: sweep
+    late_activation: true
+    spawn: { lat: 42.4500, lon: 40.5500, alt_ft: 25000, kts: 450 }
+    route:
+      - { lat: 42.1000, lon: 41.1500 }
+      - { lat: 41.9000, lon: 41.2000 }
+  - kind: flight
+    callsign: "Bandit 21"
+    aircraft: F_5E_3
+    coalition: red
+    count: 1
+    task: sweep
+    late_activation: true
+    spawn: { lat: 41.8000, lon: 41.1000, alt_ft: 15000, kts: 380 }
+    route:
+      - { lat: 41.9500, lon: 41.1000 }
+      - { lat: 42.0500, lon: 41.1000 }
+  - kind: flight
+    callsign: "Bandit 31"
+    aircraft: F_5E_3
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 41.9000, lon: 40.8000, alt_ft: 18000, kts: 400 }
+    route:
+      - { lat: 41.9200, lon: 41.1000 }
+      - { lat: 41.9500, lon: 41.3000 }
+
+storyboard:
+  - phase: "Start and Check-in"
+    time: "14:00"
+    waypoints: ["KILO ENTRY"]
+    brief: |
+      Cold start at Kobuleti, depart west over the water and climb to enter KILO. Check in with MAGIC
+      on 251.0. Fence in at KILO ENTRY: master arm ON, lights off, chaff and flares set.
+    script: "WREN checks in; MAGIC confirms the working area is clear at KILO ENTRY."
+    triggers:
+      - when: { time_after: 10 }
+        message: "WREN: Enfield, Wren on det common. Aggressors are up out of Batumi. Hard deck five thousand, bubble one thousand."
+        seconds: 15
+      - when: { player_in_zone: "KILO ENTRY" }
+        message: "MAGIC: Enfield two, Magic, radar contact. KILO is clear. Proceed to CAP, angels two-five."
+        seconds: 15
+
+  - phase: "Set 1: BVR Intercept"
+    time: "14:19"
+    waypoints: ["CAP"]
+    notes: "Draw the timeline on the board: MiG's R-27 range, your AMRAAM range, and the turn-away point."
+    brief: |
+      At CAP, MAGIC starts set 1: Bandit 11, a MiG-29S, 60 km northwest at 25,000 ft, coming straight
+      at you. Build the timeline, shoot outside its missile range, and don't merge.
+    script: "Reaching CAP activates Bandit 11 and arms the hard-deck watch (flag 30). Bandit 11 dead sets flag 31."
+    triggers:
+      - when: { player_in_zone: "CAP" }
+        activate: ["Bandit 11"]
+        set_flag: 30
+        message: "MAGIC: Enfield two, set one. Single group, three-one-zero, thirty-four miles, angels two-five, hot. Fight's on."
+        seconds: 20
+      - when: { group_dead: "Bandit 11" }
+        set_flag: 31
+        message: "MAGIC: Enfield two, splash Bandit one-one. Set one complete. Proceed to the BFM point for set two."
+        seconds: 20
+      - when: { player_below_ft: 5000, flag: 30, flag_false: 10 }
+        set_flag: 21
+        message: "WREN: Knock it off, knock it off! Enfield two, hard deck. Climb and acknowledge."
+        seconds: 20
+
+  - phase: "Set 2: 1v1 BFM"
+    time: "14:28"
+    waypoints: ["BFM"]
+    brief: |
+      At the BFM point, at 15,000 ft and 400 knots heading south, MAGIC starts set 2: Bandit 21, an
+      F-5E, 11 km south, coming north for a head-on merge. Decide the first turn before the merge.
+      Kill it in the first two turns or terminate.
+    script: "Reaching BFM after set 1 activates Bandit 21 (flag 32). Bandit 21 dead sets flag 33."
+    triggers:
+      - when: { player_in_zone: "BFM", flag: 31 }
+        activate: ["Bandit 21"]
+        set_flag: 32
+        message: "MAGIC: Enfield two, set two. Single F-5, south, six miles, angels one-five, head-on. Fight's on."
+        seconds: 20
+      - when: { group_dead: "Bandit 21" }
+        set_flag: 33
+        message: "WREN: Kill on Bandit two-one. Reset north, set three in sixty seconds. It's a one-versus-two."
+        seconds: 20
+
+  - phase: "Set 3: 1v2"
+    time: "14:33"
+    waypoints: []
+    notes: "Ask: which F-5 do you kill first, and what do you do the moment you lose sight of the other one?"
+    brief: |
+      Sixty seconds after set 2, MAGIC starts set 3: Bandit 31, two F-5Es, 25 km west at 18,000 ft,
+      heading east. Sort them, kill one, and keep sight of the other. If it goes bad, terminate and separate east.
+    script: "60 s after flag 33, Bandit 31 activates (flag 34). Both dead completes the event (flag 10)."
+    triggers:
+      - when: { time_since_flag: [33, 60] }
+        activate: ["Bandit 31"]
+        set_flag: 34
+        message: "MAGIC: Enfield two, set three. Two contacts, west, thirteen miles, angels one-eight, hot. Fight's on."
+        seconds: 20
+      - when: { group_dead: "Bandit 31" }
+        set_flag: 10
+        message: "MAGIC: Splash two F-5s. Enfield two, all sets complete. Knock it off, RTB Kobuleti."
+        seconds: 20
+
+  - phase: "Recovery"
+    time: "14:45"
+    waypoints: ["KILO EXIT"]
+    brief: |
+      Fence out at KILO EXIT: master arm SAFE. Recover to Kobuleti (tower 133.0). Fuel check
+      at KILO EXIT. If you're at bingo during any set, knock it off and come straight here.
+    script: "WREN's call depends on whether all three sets were finished without a hard-deck call."
+    triggers:
+      - when: { player_in_zone: "KILO EXIT", flag: 10, flag_false: 21 }
+        message: "WREN: Enfield, Wren. Three sets, no hard deck. That's the phase. See you at the tapes."
+        seconds: 15
+      - when: { player_in_zone: "KILO EXIT", flag_false: 10 }
+        message: "WREN: Enfield, Wren. We'll pick the rest up on Monday. Tapes at sixteen hundred."
+        seconds: 15

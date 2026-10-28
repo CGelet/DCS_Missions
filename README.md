@@ -12,6 +12,14 @@ A hangar of ready-to-fly DCS World missions, each with a full story, an interact
 | Operation LIFELINE | F/A-18C, alert scramble | Rescue cover: stop the search party before it reaches a downed pilot, then escort the rescue helicopter in and out |
 | Operation GREY HULL | F/A-18C, from the carrier | Deception: two radar contacts, one of them warships. The intel on which one can be wrong; Harpoons from low level |
 
+**Training missions** (`meta.category: training`) are syllabus events, briefed like a real training sortie: training rules, knock-it-off, special subjects, a grade sheet and debrief focus. Nothing is hidden or random. The aggressors and range targets are on the briefing map exactly as they'll fly.
+
+| Event | Aircraft | What's trained |
+| --- | --- | --- |
+| LONG VALLEY | 2× F/A-18C, Kutaisi | Air refuelling, then a timed low-level route (the sim calls each checkpoint EARLY / ON TIME / LATE) |
+| GAREJA RANGE | F/A-18C, Vaziani | Weapons qualification: GBU-12, Mk-82 CCIP and strafe, cleared in order by range control (fouls are called) |
+| RED AIR | F/A-18C, Kobuleti | A BVR intercept on a MiG-29, then 1v1 and 1v2 BFM with F-5Es, with a hard deck the sim calls |
+
 Every briefing and deck now includes an **altitude profile** alongside the map. Dashed legs are flown above ground level, so you can see how differently each mission flies.
 
 ## Two audiences: pilots and the director
@@ -87,15 +95,16 @@ The **Seen by** column says which audience gets each section.
 
 | Section | Seen by | What it controls |
 | --- | --- | --- |
-| `meta` | everyone | Title, map, date, start time, weather, `role` (mission type, e.g. Strike, SEAD, CAS, RESCAP, Anti-ship: the hangar filters on it) |
+| `meta` | everyone | Title, map, date, start time, weather, `category` (`operational` or `training`), `role` (mission type, e.g. Strike, SEAD, CAS, RESCAP, Anti-ship: the hangar filters on it) |
+| `training` | pilots (training events only) | `syllabus`, `rules`, `knock_it_off`, `special_subjects`, `grade_sheet` (list of `{item, standard}`), `debrief_focus`. The briefing, slides and kneeboard page 3 render them. |
 | `narrative` | pilots, except `outcomes` (director) | Backstory, cast, opening quote. The backstory also becomes the in-game briefing text. |
 | `situation`, `objectives`, `roe`, `comms` | pilots | Briefing cards, kneeboard pages, in-game task text |
 | `threats` | pilots | **Intel, not truth.** `intel: confirmed / suspected / possible`, optional `area_km` for position uncertainty. Can be wrong on purpose. |
-| `flights` | pilots | The player flight: aircraft, `base`/`land` (an airfield or a ship group name), loadout by pylon, waypoints (`action: bomb / sead / cas / cap / antiship`; `agl: true` for terrain-following legs). A waypoint with `zone_km` gets a trigger zone. |
+| `flights` | pilots | The player flight: aircraft, `base`/`land` (an airfield or a ship group name), loadout by pylon, waypoints (`action: bomb / sead / cas / cap / antiship`; `agl: true` for terrain-following legs; `timing: {from, seconds, window_s, flag}` for a timed checkpoint that the sim calls early, on time or late and that sets `flag` when on time). A waypoint with `zone_km` gets a trigger zone. |
 | `ships` | friendly: pilots; red: director | Ship groups (first type is the lead, e.g. `Stennis`), `route` and `speed_kts`, `tacan`, `icls`, ATC `freq_mhz`, `late_activation` |
 | `zones` | director | Extra named trigger zones (e.g. a missile launch line). Usable anywhere a waypoint name is. |
 | `target` | pilots (position, description) | `area_km` for an estimated position. What counts as destroyed: `zone_m` (scenery in the zone dies) and/or `groups`, with `kill_pct` (default 100). |
-| `units` | director | **Ground truth.** Ground groups, optional `route` and `speed_kmh` for moving units. `late_activation` groups wait for a trigger or variant. |
+| `units` | director | **Ground truth.** Ground groups, optional `route` and `speed_kmh` for moving units. `late_activation` groups wait for a trigger or variant. `hold_fire: true` for range targets. |
 | `support` | friendly: pilots; red: director | `awacs`, `tanker` (with `tacan`), `cap`, `intercept` (scrambles from an airfield), `flight` (spawns in the air and flies a `route`: raids, sweeps, or a helicopter with `task: transport`; route points take `agl: true` and, for helicopters, `land_s` to set down for that many seconds) |
 | `variants` | director | Random choices rolled at mission start. Each option can `activate` groups, send a `message`, and wait for a `when`. |
 | `storyboard` | `brief` and `notes`: pilots; `script` and `trigger`: director | Ordered phases. `brief` is what pilots are told; `script` is what really happens; `trigger` / `triggers` become DCS trigger rules. |
@@ -107,7 +116,9 @@ A trigger's `when` holds one or more conditions, all of which must be true:
 - `group_dead` (group name)
 - `group_life_below: [group, percent]` (damaged: e.g. 95 means "anything hit")
 - `group_in_zone: [group, zone]`
-- `flag` / `flag_false` (number)
+- `flag` / `flag_false` (a number, or a list that must all be set or all be unset)
+- `time_since_flag: [flag, seconds]`
+- `player_below_ft` / `player_below_agl_ft` (hard decks and minimum altitudes)
 - `target_destroyed`
 - `variant: [name, option]`
 

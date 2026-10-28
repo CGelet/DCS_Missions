@@ -17,6 +17,22 @@ RADIO_NAMES = {"FA_18C_hornet": {1: "COMM1", 2: "COMM2"}, "F_16C_50": {1: "UHF",
                "A_10C_2": {1: "ARC-210", 2: "UHF", 3: "FM"}, "F_14B": {1: "UHF (pilot)", 2: "V/UHF (RIO)"},
                "AV8BNA": {1: "COMM1", 2: "COMM2"}}
 
+# Headings that differ between a combat mission and a training event (same YAML keys underneath)
+LABELS = {
+    "operational": {"eyebrow": "Operation", "story": "The story so far", "story_more": "Why it matters", "cast": "Cast",
+                    "situation": "Situation", "objectives": "Objectives", "roe": "Rules of engagement",
+                    "threats": "Threats", "threats_title": "What's waiting for you", "target": "Target",
+                    "plan": "Storyboard & flight plan", "battlespace": "The battlespace", "nav_story": "Story",
+                    "divider": "How it plays out",
+                    "outcomes": {"success": "Success", "partial": "Partial", "failure": "Failure"}},
+    "training": {"eyebrow": "Training event", "story": "Why we're flying this", "story_more": "Where it fits", "cast": "Instructors and players",
+                 "situation": "Event overview", "objectives": "Learning objectives", "roe": "Range and weapons clearance",
+                 "threats": "Range players and hazards", "threats_title": "Who and what is out there", "target": "Range target",
+                 "plan": "Event flow & flight plan", "battlespace": "The training area", "nav_story": "Overview",
+                 "divider": "Event flow",
+                 "outcomes": {"success": "Complete", "partial": "Partial: re-fly items", "failure": "Incomplete: re-fly"}},
+}
+
 
 def env() -> Environment:
     e = Environment(loader=FileSystemLoader(TEMPLATES), autoescape=select_autoescape(["html", "j2"]))
@@ -104,6 +120,7 @@ def view_model(data: dict, audience: str = "pilot") -> dict:
     (red flights and red ships); the director view keeps everything.
     """
     terrain = Caucasus()
+    training = data["meta"].get("category") == "training"
     ships = {sh["name"]: sh for sh in data.get("ships", [])}
     player = next(f for f in data["flights"] if f.get("player"))
     base = _place(player["base"], terrain, ships)
@@ -111,8 +128,8 @@ def view_model(data: dict, audience: str = "pilot") -> dict:
     airfields = {p["name"]: p for p in (base, land) if not p.get("ship")}
     support = []
     for s in data.get("support", []):
-        if audience == "pilot" and s.get("coalition") == "red":
-            continue
+        if audience == "pilot" and s.get("coalition") == "red" and not training:
+            continue  # training briefs the adversaries; combat missions don't know them
         s = dict(s)
         if "base" in s:
             ap = _place(s["base"], terrain, ships)
@@ -149,7 +166,8 @@ def view_model(data: dict, audience: str = "pilot") -> dict:
                + (f", ICLS {sh['icls']}" if "icls" in sh else "") for sh in ship_list if "tacan" in sh]
     navaids += [f"{s['callsign']} ({s['kind']}): TACAN {s['tacan']['channel']}, {s.get('alt_ft', 0):,} ft, {s.get('kts', '')} kt"
                 for s in support if s["kind"] == "tanker" and "tacan" in s]
-    return {**data, "comms": comms, "player": player, "route": route, "support": support, "target": target,
+    return {**data, "comms": comms, "training": data.get("training", {}), "is_training": training,
+            "T": LABELS["training" if training else "operational"], "player": player, "route": route, "support": support, "target": target,
             "ships": ship_list, "navaids": navaids,
             "aircraft_name": AIRCRAFT_NAMES.get(player["aircraft"], player["aircraft"].replace("_", " ")),
             "profile": profile_svg(route), "map_json": json.dumps(map_data)}

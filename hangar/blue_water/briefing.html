@@ -136,6 +136,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
   .card, .phase-card { box-shadow: none; }
 }
 .tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
 .intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
@@ -151,6 +152,9 @@ svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
 svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
 svg.profile .pwp.agl { stroke: var(--accent); }
 svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
 </style>
 </head>
 <body>
@@ -297,6 +301,7 @@ overhead Mother, carries a small amount for emergencies.</p></div>
       </div>
       <div class="card"><h3>Rules of engagement</h3><p>Weapons free on any aircraft DARKSTAR declares hostile north of 43°10&#39;N. Weapons
 tight on everything else. Civil traffic out of Sochi is possible: VID if in doubt.</p></div>
+      
 
       <div class="card wide"><h3>Threats</h3>
         <div class="table-scroll"><table>
@@ -323,7 +328,7 @@ tight on everything else. Civil traffic out of Sochi is possible: VID if in doub
       </div>
       <div class="card"><h3>Flight &amp; loadout</h3>
         <dl class="kv">
-          <dt>Callsign</dt><dd>Ford 1-1 / -2</dd>
+          <dt>Callsign</dt><dd>Ford 1-1 / Ford 1-2</dd>
           <dt>Start</dt><dd>Cold start, Stennis Group</dd>
           <dt>Loadout</dt><dd>4× AIM-54C Phoenix, 2× AIM-7M, 2× AIM-9M, 2× 300 gal tanks</dd>
           

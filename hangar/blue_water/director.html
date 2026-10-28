@@ -136,6 +136,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
   .card, .phase-card { box-shadow: none; }
 }
 .tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
 .intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
@@ -151,6 +152,9 @@ svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
 svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
 svg.profile .pwp.agl { stroke: var(--accent); }
 svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
 .spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
 .spoiler b { color: var(--red); }
 .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
@@ -427,15 +431,15 @@ your fuel; Texaco can give a little if you need it.</p></div>
     <h2>Debrief outcomes</h2>
     <div class="outcomes">
       
-      <div class="card outcome success"><h3>success</h3><p>Both Backfires go into the sea north of the CAP before they reach launch range.
+      <div class="card outcome success"><h3>Success</h3><p>Both Backfires go into the sea north of the CAP before they reach launch range.
 The strike group never goes to general quarters. You trap on the last of the
 light, and BISHOP is waiting on the flight deck.</p></div>
       
-      <div class="card outcome partial"><h3>partial</h3><p>One Backfire gets its missile off before you reach it. The escorts knock the
+      <div class="card outcome partial"><h3>Partial</h3><p>One Backfire gets its missile off before you reach it. The escorts knock the
 Kh-22 down twelve miles from the boat. Nobody aboard sleeps tonight, and the
 admiral wants a second CAP station by morning.</p></div>
       
-      <div class="card outcome failure"><h3>failure</h3><p>The raid reaches launch range untouched. Two Kh-22s come in at Mach 3, and one
+      <div class="card outcome failure"><h3>Failure</h3><p>The raid reaches launch range untouched. Two Kh-22s come in at Mach 3, and one
 gets through the escorts&#39; defences. The Stennis is still afloat but out of the
 fight, and so is the coalition&#39;s air cover over Sukhumi.</p></div>
       

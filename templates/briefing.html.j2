@@ -15,7 +15,7 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow">Operation {{ narrative.operation }}</div>
+    <div class="eyebrow">{{ T.eyebrow }} {{ narrative.operation }}{% if training.syllabus %} · {{ training.syllabus }}{% endif %}</div>
     <h1>{{ meta.subtitle or meta.title }}</h1>
     <div class="meta-row">
       <span>Date <b class="mono">{{ meta.date }}</b></span>
@@ -30,7 +30,7 @@
 
 <nav class="sections" aria-label="Sections">
   <div class="wrap">
-    <a href="#story">Story</a><a href="#plan">Storyboard &amp; map</a><a href="#brief">Briefing</a>
+    <a href="#story">{{ T.nav_story }}</a><a href="#plan">{{ "Event flow" if is_training else "Storyboard" }} &amp; map</a><a href="#brief">Briefing</a>
     <span class="spacer"></span>
     <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
     <button type="button" onclick="window.print()">Print</button>
@@ -40,11 +40,11 @@
 <main>
 <section id="story">
   <div class="wrap">
-    <h2>The story so far</h2>
+    <h2>{{ T.story }}</h2>
     <div class="story">
       <div>{% for p in narrative.backstory | paras %}<p>{{ p }}</p>{% endfor %}</div>
       <div>
-        <h3>Cast</h3>
+        <h3>{{ T.cast }}</h3>
         <ul class="cast">
           {% for c in narrative.characters %}<li><b>{{ c.name }}</b><span>{{ c.role }}</span></li>{% endfor %}
         </ul>
@@ -55,13 +55,13 @@
 
 <section id="plan">
   <div class="wrap">
-    <h2>Storyboard &amp; flight plan</h2>
+    <h2>{{ T.plan }}</h2>
     <div class="plan">
       <div class="map-wrap">
         <div id="map" role="img" aria-label="Mission map with route, threats and target"></div>
         <div class="legend" id="legend">
           <label><input type="checkbox" data-layer="route" checked> <i style="background:var(--blue)"></i>Route</label>
-          <label><input type="checkbox" data-layer="threats" checked> <i style="background:var(--red)"></i>Threat rings</label>
+          <label><input type="checkbox" data-layer="threats" checked> <i style="background:var(--red)"></i>{{ "Range players" if is_training else "Threat rings" }}</label>
           <label><input type="checkbox" data-layer="support" checked> <i style="background:var(--ok)"></i>Friendly support</label>
           <label><input type="checkbox" data-layer="target" checked> <i style="background:var(--accent)"></i>Target</label>
         </div>
@@ -87,24 +87,36 @@
   <div class="wrap">
     <h2>Briefing</h2>
     <div class="cards">
-      <div class="card"><h3>Situation</h3>{% for p in situation | paras %}<p>{{ p }}</p>{% endfor %}</div>
-      <div class="card"><h3>Objectives</h3>
+      <div class="card"><h3>{{ T.situation }}</h3>{% for p in situation | paras %}<p>{{ p }}</p>{% endfor %}</div>
+      <div class="card"><h3>{{ T.objectives }}</h3>
         <ul class="obj-list">{% for k, v in objectives.items() %}<li><span>{{ k }}</span><div>{{ v }}</div></li>{% endfor %}</ul>
       </div>
-      <div class="card"><h3>Rules of engagement</h3>{% for p in roe | paras %}<p>{{ p }}</p>{% endfor %}</div>
-
-      <div class="card wide"><h3>Threats</h3>
+      <div class="card"><h3>{{ T.roe }}</h3>{% for p in roe | paras %}<p>{{ p }}</p>{% endfor %}</div>
+      {% if is_training %}
+      <div class="card"><h3>Training rules</h3><ol class="rules">{% for r in training.rules %}<li>{{ r }}</li>{% endfor %}</ol></div>
+      {% if training.knock_it_off %}<div class="card kio"><h3>Knock-it-off and terminate</h3>{% for p in training.knock_it_off | paras %}<p>{{ p }}</p>{% endfor %}</div>{% endif %}
+      {% if training.special_subjects %}<div class="card"><h3>Special subjects</h3><ul class="rules">{% for r in training.special_subjects %}<li>{{ r }}</li>{% endfor %}</ul></div>{% endif %}
+      <div class="card wide"><h3>Grade sheet</h3>
         <div class="table-scroll"><table>
-          <thead><tr><th>Type</th><th>System</th><th>Intel</th><th>Range</th><th>Notes</th></tr></thead>
+          <thead><tr><th>#</th><th>Item</th><th>Standard to pass</th></tr></thead>
+          <tbody>{% for g in training.grade_sheet %}<tr><td class="num">{{ loop.index }}</td><td><b>{{ g.item }}</b></td><td>{{ g.standard }}</td></tr>{% endfor %}</tbody>
+        </table></div>
+      </div>
+      {% if training.debrief_focus %}<div class="card"><h3>Debrief focus</h3><ul class="rules">{% for r in training.debrief_focus %}<li>{{ r }}</li>{% endfor %}</ul></div>{% endif %}
+      {% endif %}
+
+      <div class="card wide"><h3>{{ T.threats }}</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Type</th><th>{{ "Player" if is_training else "System" }}</th>{% if not is_training %}<th>Intel</th>{% endif %}<th>Range</th><th>Notes</th></tr></thead>
           <tbody>{% for t in threats %}<tr>
             <td><span class="tag {{ t.kind }}">{{ t.kind }}</span></td><td>{{ t.name }}</td>
-            <td><span class="intel {{ t.intel or 'confirmed' }}">{{ t.intel or "confirmed" }}</span></td>
+            {% if not is_training %}<td><span class="intel {{ t.intel or 'confirmed' }}">{{ t.intel or "confirmed" }}</span></td>{% endif %}
             <td class="num">{% if t.range_km %}{{ t.range_km }} km{% else %}n/a{% endif %}</td><td>{{ t.notes }}</td>
           </tr>{% endfor %}</tbody>
         </table></div>
       </div>
 
-      <div class="card"><h3>Target</h3>
+      <div class="card"><h3>{{ T.target }}</h3>
         <dl class="kv">
           <dt>Name</dt><dd>{{ target.name }}</dd>
           <dt>Coords</dt><dd class="mono">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E{% if target.area_km %}<br><span class="intel suspected">estimate ±{{ target.area_km }} km</span>{% endif %}</dd>
@@ -114,7 +126,7 @@
       </div>
       <div class="card"><h3>Flight &amp; loadout</h3>
         <dl class="kv">
-          <dt>Callsign</dt><dd>{{ player.callsign }}-1 / -2</dd>
+          <dt>Callsign</dt><dd>{% for i in range(player.count | default(1)) %}{{ player.callsign }}-{{ i + 1 }}{% if not loop.last %} / {% endif %}{% endfor %}</dd>
           <dt>Start</dt><dd>{{ player.start | title }} start, {{ route[0].name }}</dd>
           <dt>Loadout</dt><dd>{{ player.loadout_summary }}</dd>
           {% if player.laser_codes %}<dt>Laser</dt><dd class="mono">{{ player.laser_codes | join(" / ") }}</dd>{% endif %}

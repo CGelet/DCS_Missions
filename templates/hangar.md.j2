@@ -9,8 +9,13 @@ Pilots: the briefing, slides and kneeboard only contain what your squadron knows
 
 These files are generated from `missions/<id>/mission.yaml`. Don't edit them by hand; see the main README to change a mission.
 
-{% for m in missions -%}
-## Operation {{ m.operation }}: {{ m.title }}
+{% for cat, heading, blurb in sections %}{% set group = missions | selectattr("category", "equalto", cat) | list %}{% if group %}
+# {{ heading }}
+
+{{ blurb }}
+
+{% for m in group -%}
+## {{ m.eyebrow }}: {{ m.title }}
 
 **{{ m.theater }}** · **{{ m.aircraft }}** · **{{ m.role }}** · {{ m.date }}, step {{ m.start_time }}L{% if m.features %} · {{ m.features | join(", ") }}{% endif %}
 
@@ -26,10 +31,13 @@ These files are generated from `missions/<id>/mission.yaml`. Don't edit them by 
 | Mission | [{{ m.id }}.miz]({{ m.id }}/{{ m.id }}.miz) |
 | Briefing | [briefing.html]({{ m.id }}/briefing.html) |
 | Slide deck | [slides.html]({{ m.id }}/slides.html) |
-| Director's cut | [director.html]({{ m.id }}/director.html): **spoilers**, for whoever runs or debriefs the mission |
+{% if cat == "training" %}| Instructor view | [director.html]({{ m.id }}/director.html): every trigger and how each grade is decided |
+{% else %}| Director's cut | [director.html]({{ m.id }}/director.html): **spoilers**, for whoever runs or debriefs the mission |
+{% endif %}
 | Kneeboard | {% for k in m.kneeboards %}[{{ k }}]({{ m.id }}/kneeboard/{{ k }}){% if not loop.last %} · {% endif %}{% endfor %} |
 
 {% if m.kneeboards %}<p>{% for k in m.kneeboards %}<a href="{{ m.id }}/kneeboard/{{ k }}"><img src="{{ m.id }}/kneeboard/{{ k }}" width="220" alt="{{ k }}"></a> {% endfor %}</p>
 {% endif %}
 {% endfor -%}
+{% endif %}{% endfor %}
 {% endautoescape %}

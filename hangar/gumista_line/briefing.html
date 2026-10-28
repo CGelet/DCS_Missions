@@ -136,6 +136,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
   .card, .phase-card { box-shadow: none; }
 }
 .tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
 .intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
@@ -151,6 +152,9 @@ svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
 svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
 svg.profile .pwp.agl { stroke: var(--accent); }
 svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
 </style>
 </head>
 <body>
@@ -284,6 +288,7 @@ either bridge within 30 minutes of your check-in.</p></div>
       <div class="card"><h3>Rules of engagement</h3><p>Type 2 control: CHISEL must clear every attack. Weapons tight east of the Gumista
 except on CHISEL&#39;s call. Positive ID on all targets: friendly Strykers are on the
 east bank.</p></div>
+      
 
       <div class="card wide"><h3>Threats</h3>
         <div class="table-scroll"><table>
@@ -318,7 +323,7 @@ east bank.</p></div>
       </div>
       <div class="card"><h3>Flight &amp; loadout</h3>
         <dl class="kv">
-          <dt>Callsign</dt><dd>Hawg 1-1 / -2</dd>
+          <dt>Callsign</dt><dd>Hawg 1-1 / Hawg 1-2</dd>
           <dt>Start</dt><dd>Warm start, Sukhumi-Babushara</dd>
           <dt>Loadout</dt><dd>4× AGM-65D, 21× APKWS, 2× CBU-97, 3× GBU-12, LITENING, ALQ-184, 2× AIM-9L</dd>
           <dt>Laser</dt><dd class="mono">1688 / 1688</dd>

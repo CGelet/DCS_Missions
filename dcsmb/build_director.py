@@ -20,11 +20,14 @@ def describe_when(when: dict) -> str:
             "player_in_zone": lambda: f"player flight enters the {v} zone",
             "group_dead": lambda: f"{v} is destroyed",
             "group_life_below": lambda: f"{v[0]} is below {v[1]}% life",
-            "flag": lambda: f"flag {v} is set",
-            "flag_false": lambda: f"flag {v} is not set",
+            "flag": lambda: f"flags {', '.join(map(str, v))} are all set" if isinstance(v, list) else f"flag {v} is set",
+            "flag_false": lambda: f"flags {', '.join(map(str, v))} are all unset" if isinstance(v, list) else f"flag {v} is not set",
             "group_in_zone": lambda: f"{v[0]} enters {v[1]}",
             "target_destroyed": lambda: "the target is destroyed",
             "variant": lambda: f"“{v[0]}” rolled option {v[1]}",
+            "time_since_flag": lambda: f"{v[1]} s have passed since flag {v[0]} was set",
+            "player_below_ft": lambda: f"your aircraft is below {v:,} ft (sea level)",
+            "player_below_agl_ft": lambda: f"your aircraft is below {v:,} ft above the ground",
         }[k]())
     return " and ".join(parts) or "mission start"
 

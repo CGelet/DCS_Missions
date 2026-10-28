@@ -136,6 +136,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
   .card, .phase-card { box-shadow: none; }
 }
 .tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
 .intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
@@ -151,6 +152,9 @@ svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
 svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
 svg.profile .pwp.agl { stroke: var(--accent); }
 svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
 .spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
 .spoiler b { color: var(--red); }
 .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
@@ -413,15 +417,15 @@ emitter has gone cold.</p></div>
     <h2>Debrief outcomes</h2>
     <div class="outcomes">
       
-      <div class="card outcome success"><h3>success</h3><p>Kapanadze&#39;s plot goes cold at the same second your HARM&#39;s timer runs out.
+      <div class="card outcome success"><h3>Success</h3><p>Kapanadze&#39;s plot goes cold at the same second your HARM&#39;s timer runs out.
 Recon the next morning finds a burnt-out 9S18 and two TELARs in an orchard. The
 drones are back over the Gumista by noon, and so is close air support.</p></div>
       
-      <div class="card outcome partial"><h3>partial</h3><p>The battery stopped emitting, but the damage assessment is &#34;possible kill&#34;. Two
+      <div class="card outcome partial"><h3>Partial</h3><p>The battery stopped emitting, but the damage assessment is &#34;possible kill&#34;. Two
 days later a new emitter comes up ten kilometres north. Coalition air still
 treats the Gumista as contested.</p></div>
       
-      <div class="card outcome failure"><h3>failure</h3><p>The SA-11 survives and moves again. Tomorrow&#39;s close air support over the
+      <div class="card outcome failure"><h3>Failure</h3><p>The SA-11 survives and moves again. Tomorrow&#39;s close air support over the
 Gumista will be flown under its envelope, or not at all.</p></div>
       
     </div>

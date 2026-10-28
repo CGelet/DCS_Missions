@@ -18,6 +18,7 @@ from .schema import phase_triggers
 TARGET_FLAG = 99          # set by any target-destroyed helper rule
 CHANCE_FLAG_BASE = 200    # one flag per `chance` trigger, rolled at mission start
 VARIANT_FLAG_BASE = 300   # default flag for variants without an explicit one
+TIMING_FLAG_BASE = 400    # timed checkpoints: start-of-leg and window flags
 DEFAULT_ZONE_KM = 10
 START_TYPES = {"cold": StartType.Cold, "warm": StartType.Warm, "runway": StartType.Runway}
 MAINTASKS = {"bomb": task.GroundAttack, "sead": task.SEAD, "cas": task.CAS, "cap": task.CAP, "intercept": task.Intercept,
@@ -170,6 +171,8 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
         vg = m.vehicle_group_platoon(country, u["name"], [_vehicle(t) for t in u["type"]],
                                      point(terrain, u), heading=u.get("heading", 0))
         vg.late_activation = bool(u.get("late_activation"))
+        if u.get("hold_fire"):  # range targets and other units that mustn't shoot back
+            vg.points[0].tasks.append(task.OptROE(task.OptROE.Values.WeaponHold))
         for p in u.get("route", []):
             vg.add_waypoint(point(terrain, p), PointAction.OnRoad if u.get("on_road", True) else PointAction.OffRoad,
                             u.get("speed_kmh", 25))
@@ -268,6 +271,44 @@ def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.M
             r.add_condition(c)
         r.add_action(action.SetFlag(TARGET_FLAG))
         m.triggerrules.triggers.append(r)
+
+    # --- timed checkpoints (training) -------------------------------------
+    # Arriving at a waypoint with `timing` says early / on time / late against its planned time from an
+    # earlier waypoint. DCS has no "time less than", so window-open and window-closed flags do the comparison.
+    player_f = next(f for f in data["flights"] if f.get("player"))
+    timed = [wp for wp in player_f["waypoints"] if wp.get("timing")]
+    start_flags: dict[str, int] = {}
+    tflag = TIMING_FLAG_BASE
+    for origin in dict.fromkeys(wp["timing"]["from"] for wp in timed):
+        tflag += 1
+        start_flags[origin] = tflag
+        r = triggers.TriggerOnce(comment=f"timing: clock starts at {origin}")
+        r.add_condition(condition.UnitInZone(player_group.units[0].id, zones[origin].id))
+        r.add_action(action.SetFlag(tflag))
+        m.triggerrules.triggers.append(r)
+    for wp in timed:
+        tm, name = wp["timing"], wp["name"]
+        win = tm.get("window_s", 30)
+        start, w_open, w_close, judged = start_flags[tm["from"]], tflag + 1, tflag + 2, tflag + 3
+        tflag += 3
+        for flag, secs in ((w_open, tm["seconds"] - win), (w_close, tm["seconds"] + win)):
+            r = triggers.TriggerOnce(comment=f"timing: {name} window flag")
+            r.add_condition(condition.TimeSinceFlag(start, max(secs, 1)))
+            r.add_action(action.SetFlag(flag))
+            m.triggerrules.triggers.append(r)
+        in_zone = lambda: condition.UnitInZone(player_group.units[0].id, zones[name].id)
+        for verdict, conds, extra in (("EARLY", [condition.FlagIsTrue(start), condition.FlagIsFalse(w_open)], None),
+                                      ("ON TIME", [condition.FlagIsTrue(w_open), condition.FlagIsFalse(w_close)], tm["flag"]),
+                                      ("LATE", [condition.FlagIsTrue(w_close)], None)):
+            r = triggers.TriggerOnce(comment=f"timing: {name} {verdict.lower()}")
+            for c in [in_zone(), *conds, condition.FlagIsFalse(judged)]:  # one verdict per checkpoint
+                r.add_condition(c)
+            r.add_action(action.SetFlag(judged))
+            r.add_action(action.MessageToCoalition(action.Coalition.Blue, m.string(
+                f"TIMING: {name} {verdict} (plan {tm['seconds'] // 60}:{tm['seconds'] % 60:02d} from {tm['from']}, ±{win} s)"), 10))
+            if extra:
+                r.add_action(action.SetFlag(extra))
+            m.triggerrules.triggers.append(r)
 
     # --- storyboard triggers ---------------------------------------------
     chance_flag = CHANCE_FLAG_BASE
@@ -372,12 +413,18 @@ def _when(when: dict, player_group, zones: dict, groups: dict, variant_flags: di
             conds.append(condition.GroupLifeLess(groups[arg[0]].id, arg[1]))
         elif kind == "group_in_zone":
             conds.append(condition.PartOfGroupInZone(groups[arg[0]].id, zones[arg[1]].id))
-        elif kind == "flag":
-            conds.append(condition.FlagIsTrue(arg))
+        elif kind == "flag":  # one flag or a list, all set
+            conds += [condition.FlagIsTrue(f) for f in (arg if isinstance(arg, list) else [arg])]
         elif kind == "flag_false":
-            conds.append(condition.FlagIsFalse(arg))
+            conds += [condition.FlagIsFalse(f) for f in (arg if isinstance(arg, list) else [arg])]
         elif kind == "target_destroyed":
             conds.append(condition.FlagIsTrue(TARGET_FLAG))
+        elif kind == "time_since_flag":
+            conds.append(condition.TimeSinceFlag(arg[0], arg[1]))
+        elif kind == "player_below_ft":
+            conds.append(condition.UnitAltitudeLower(player_group.units[0].id, arg * FT))
+        elif kind == "player_below_agl_ft":
+            conds.append(condition.UnitAltitudeLowerAGL(player_group.units[0].id, arg * FT))
         elif kind == "variant":
             conds.append(condition.FlagEquals(variant_flags[arg[0]], arg[1]))
         else:

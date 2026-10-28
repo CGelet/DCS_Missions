@@ -18,14 +18,14 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
 .sam { color: #a51d16; font-weight: bold; }
 </style></head>
 <body><div class="page">
-  <div class="top"><span>OP {{ narrative.operation }}</span><span>{{ player.callsign | upper }}</span><span>{{ page_no }}/{{ page_count }}</span></div>
+  <div class="top"><span>{{ "TRAINING" if is_training else "OP" }} {{ narrative.operation }}</span><span>{{ player.callsign | upper }}</span><span>{{ page_no }}/{{ page_count }}</span></div>
 
 {% if page == "mission" %}
   <h1>{{ meta.subtitle }}</h1>
-  <div class="box"><h2>SITUATION</h2><p>{{ situation | trim }}</p></div>
-  <div class="box"><h2>OBJECTIVES</h2>
+  <div class="box"><h2>{{ T.situation | upper }}</h2><p>{{ situation | trim }}</p></div>
+  <div class="box"><h2>{{ T.objectives | upper }}</h2>
     {% for k, v in objectives.items() %}<p><b>{{ k | upper }}:</b> {{ v }}</p>{% endfor %}</div>
-  <div class="box"><h2>TARGET</h2>
+  <div class="box"><h2>{{ T.target | upper }}</h2>
     <p><b>{{ target.name }}</b></p>
     <p style="font-family:'DejaVu Sans Mono',monospace">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E{% if target.area_km %} &plusmn;{{ target.area_km }} km (estimate){% endif %}</p>
     <p>{{ target.description }}</p><p><b>DMPI:</b> {{ target.dmpi }}</p></div>
@@ -52,6 +52,13 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
   <div class="box"><h2>ROE</h2><p>{{ roe | trim }}</p></div>
   <div class="box"><h2>LOADOUT</h2><p>{{ player.loadout_summary }}</p></div>
   <div class="box"><h2>WEATHER</h2><p>Wind {{ "%03d"|format(meta.weather.wind_from_deg) }}/{{ meta.weather.wind_kts }} · {{ meta.weather.temperature_c }}°C · QNH {{ meta.weather.qnh_inhg }}<br>{{ meta.weather.clouds }}</p></div>
+{% elif page == "rules" %}
+  <h1>Training Rules &amp; Grade Sheet</h1>
+  <div class="box" style="font-size:16px;line-height:1.3"><h2>TRAINING RULES</h2>{% for r in training.rules %}<p style="margin:0 0 3px">{{ loop.index }}. {{ r }}</p>{% endfor %}</div>
+  {% if training.knock_it_off %}<div class="box" style="border-color:#a01818;font-size:16px;line-height:1.3"><h2>KNOCK-IT-OFF / TERMINATE</h2><p>{{ training.knock_it_off | trim }}</p></div>{% endif %}
+  <table style="font-size:15px"><thead><tr><th>ITEM</th><th>STANDARD</th></tr></thead><tbody>
+    {% for g in training.grade_sheet %}<tr><td style="font-size:15px;padding:4px 6px">{{ g.item }}</td><td style="font-size:13px;font-weight:normal;padding:4px 6px;line-height:1.25">{{ g.standard }}</td></tr>{% endfor %}
+  </tbody></table>
 {% endif %}
 
   <div class="foot"><span>{{ meta.date }} · STEP {{ meta.start_time }}L</span><span>{{ meta.title }}</span></div>

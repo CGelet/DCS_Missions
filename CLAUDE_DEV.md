@@ -32,6 +32,14 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 4. Commit the YAML change and the rebuilt `hangar/` **together**, then push to `origin master` (`CGelet/DCS_Missions`).
 5. Builds must stay **byte-reproducible**. To check, build twice and compare sha1s of `hangar/**`. If something starts diffing on every build, find the randomness (see pydcs gotchas).
 
+## Operational vs training (owner request 2026-10-28)
+
+- The owner asked for the hangar to be split into **operational and training missions**, with training briefs "more like training briefs than 'unknown' operational missions". `meta.category: training` switches the headings (`LABELS` in `build_html.py`) and adds the `training` section: rules, knock-it-off, special subjects, grade sheet, debrief focus. Kneeboard page 3 becomes "Training Rules & Grade Sheet". The director page is labelled "Instructor view" in the hangar.
+- **Training has no fog of war.** No `variants` or `chance`, every threat is a fact (no intel badge), and red support flights *are* shown to pilots (the aggressors' start points and routes). The spoiler test skips red callsigns and late units for training; scripts, trigger messages and outcomes stay instructor-only.
+- The owner first asked for training "in the United States". pydcs has Nevada, but **the owner doesn't own the Nevada map** ("don't do Nevada, I don't own that map"). Everything stays on the Caucasus: the training is a US Navy Hornet detachment on a partner exercise in Georgia, in February 2026 before the campaign. Ask which DCS maps the owner owns before using any other theater.
+- DCS triggers have no "time less than". Timed checkpoints use window-open/window-closed flags set by `TimeSinceFlag`, plus a "judged" flag so each checkpoint gets one verdict.
+- The aggressors in RED AIR fly with live weapons. DCS triggers have no simulated-kill mode, so a training "kill" is a real shoot-down and they shoot back. Say so in the brief.
+
 ## Pilot vs director: the core authoring rule
 
 - `threats` = **intel** (what the squadron is told; may be stale, vague or wrong). `units` = **truth**. Never derive one from the other.
@@ -51,6 +59,7 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 | BLUE WATER (F-14B, carrier) | The threat you can't see, and gas you can't count on | Raid axis variant spawns on reaching CAP; 40% Flanker sweep; 30% the tanker is `deactivate`d before you reach it; `group_in_zone` launch-line failure; recover aboard a moving carrier |
 | DEEP CUT (AV-8B) | The long way round | Tanker, then AGL valley route; target is apron or moving convoy (variant, hint at Pskhu); 50% Tor; 40% MiG scramble; lands at a different field |
 | LIFELINE (F/A-18C) | Someone else's clock (CSAR/RESCAP) | Runway (alert) start; search party road is a variant spawned on arrival, with the survivor's hint; failure if it reaches `PICKUP`; killing it launches the AI rescue helo (`target_destroyed` → `activate`); 50% hidden gun under the helo's route; success = helo reaches PICKUP then SUKHUMI |
+| LONG VALLEY / GAREJA RANGE / RED AIR (F/A-18C, training) | Training: no secrets, graded precision | Timed checkpoints (`timing`); range control clears events in order and calls fouls (`group_dead` + `flag_false`); aggressor sets chained by `group_dead` and `time_since_flag`; hard deck and minimum-altitude calls (`player_below_ft` / `_agl_ft`) |
 | GREY HULL (F/A-18C, carrier) | Deception | Two look-alike contacts; a 3-option variant decides which is warships **and whether the ESM radio call lies** (1 in 3); hitting merchants (`group_life_below`, gated on a flag the variant sets) is a failure; low-level Harpoon run; 50% Flanker sweep |
 
 **Make routes look and fly differently** (owner feedback 2026-10-27: "all of these flight paths seem to be the same"). Vary the base (carrier or other field), the recovery field, refuelling, orbits (CAP or holding), AGL legs, pop-ups and egress direction. The altitude profile (`profile_svg`) makes the difference visible.
@@ -111,6 +120,7 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 - `select_autoescape(["html","j2"])` escapes `.md.j2` too. Wrap Markdown templates in `{% autoescape false %}`.
 - Leaflet tiles: CARTO basemaps now need an API key ("API KEY REQUIRED" watermark). Use Esri `World_Topo_Map` (light) and `Canvas/World_Dark_Gray_Base` (dark), which need no key.
 - Shared page CSS lives in `templates/_base.css`, included by `briefing.html.j2` and `director.html.j2` (`{% include %}`; keep Jinja syntax out of it).
+- **Kneeboard overflow:** long pages used to run off the 1024 px kneeboard unnoticed (BLUE WATER, DEEP CUT and GREY HULL all did). `kneeboard.FIT_JS` zooms the page out in 2% steps until it fits and warns below 60%. To check, compare `.page` `scrollHeight` with `clientHeight`.
 - Slide maps are inline SVG (offline). `Labels` does simple collision avoidance; route labels get first pick. Deduplicate the home base (it's both the first and last route point). Labels for points outside a zoomed phase frame are skipped (they used to be clipped at the edge, e.g. "G-29S pair").
 - The coastline file originally stopped at 43.6N, so BLUE WATER's raid area and anything near Novorossiysk had no coast. It now covers 41.5–45.4N, 36.8–42.0E. Check coverage before placing a mission further out.
 

@@ -64,6 +64,8 @@ svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dash
 svg.map .flighttrack { fill: none; stroke: var(--ok); stroke-width: 2.5; stroke-dasharray: 10 6; }
 svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
 svg.profile { width: 100%; height: auto; }
+.rulelist { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; font-size: 25px; line-height: 1.35; }
+.kio { margin-top: 22px; font-size: 22px; border-left: 5px solid var(--red, #d9534f); padding-left: 16px; }
 svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
 svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
 svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
@@ -85,6 +87,11 @@ svg.map .lbl.sam { fill: var(--red); }
 svg.map .lbl.aaa { fill: var(--amber); }
 svg.map .lbl.air { fill: var(--blue); }
 svg.map .lbl.armor { fill: var(--ink); }
+svg.map .lbl.hazard, svg.map .lbl.hostile { fill: var(--red); }
+svg.map .threat.hazard { fill: none; stroke: var(--red); stroke-width: 3; }
+svg.map .ring.hazard { fill: #ef6b6218; stroke: var(--red); stroke-width: 2; stroke-dasharray: 3 5; }
+svg.map .flighttrack.hostile { stroke: var(--red); }
+svg.map .hostile-dot { fill: var(--red); }
 svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
 
 .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -101,6 +108,7 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
 .tag.aaa { background: #e3a93b22; color: var(--amber); }
 .tag.air { background: #7fb0f022; color: var(--blue); }
 .tag.armor { background: #ffffff14; color: var(--ink); }
+.tag.hazard { color: var(--red); border: 1.5px dashed var(--red); }
 .intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
 .intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
 .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
@@ -171,7 +179,7 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
     <div class="eyebrow">{{ s.eyebrow }}</div>
     <h2>{{ s.title }}</h2>
     <div class="rows">{% for t in s.entries %}<div class="row"><span><span class="tag {{ t.kind }}">{{ t.kind }}</span></span>
-      <span><b>{{ t.name }}</b><span class="intel {{ t.intel or 'confirmed' }}">{{ t.intel or "confirmed" }}</span>{% if t.range_km %} <span class="muted mono">· {{ t.range_km }} km</span>{% endif %}<br><span class="muted">{{ t.notes }}</span></span></div>{% endfor %}</div>
+      <span><b>{{ t.name }}</b>{% if not s.training %}<span class="intel {{ t.intel or 'confirmed' }}">{{ t.intel or "confirmed" }}</span>{% endif %}{% if t.range_km %} <span class="muted mono">· {{ t.range_km }} km</span>{% endif %}<br><span class="muted">{{ t.notes }}</span></span></div>{% endfor %}</div>
 
   {% elif s.kind == "package" %}
     <div class="eyebrow">{{ s.eyebrow }}</div>
@@ -184,13 +192,24 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
     <h2>{{ s.title }}</h2>
     <div class="rows">{% for c in s.entries %}<div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">{{ c.freq }}</span><span>{{ c.name }} <span class="muted mono">· {{ c.preset }}</span>{% if c.notes %}<br><span class="muted" style="font-size:22px">{{ c.notes }}</span>{% endif %}</span></div>{% endfor %}</div>
 
+  {% elif s.kind == "rules" %}
+    <div class="eyebrow">{{ s.eyebrow }}</div>
+    <h2>{{ s.title }}</h2>
+    <ol class="rulelist">{% for r in s.entries %}<li>{{ r }}</li>{% endfor %}</ol>
+    {% if s.kio %}<p class="kio"><b>Knock-it-off / terminate:</b> {{ s.kio }}</p>{% endif %}
+
+  {% elif s.kind == "grade" %}
+    <div class="eyebrow">{{ s.eyebrow }}</div>
+    <h2>{{ s.title }}</h2>
+    <div class="rows">{% for g in s.entries %}<div class="row"><span class="k">{{ g.item }}</span><span>{{ g.standard }}</span></div>{% endfor %}</div>
+
   {% elif s.kind == "outcome" %}
     <div class="band"></div>
     <div class="eyebrow">{{ s.eyebrow }}</div>
     <h2>{{ s.title }}</h2>
     <p class="big">{{ s.text }}</p>
   {% endif %}
-  <div class="foot"><span>OP {{ narrative.operation }}</span><span>{{ loop.index }} / {{ loop.length }}</span></div>
+  <div class="foot"><span>{{ "TRAINING" if meta.category == "training" else "OP" }} {{ narrative.operation }}</span><span>{{ loop.index }} / {{ loop.length }}</span></div>
 </section>
 {% endfor %}
 </div>

@@ -64,6 +64,8 @@ svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dash
 svg.map .flighttrack { fill: none; stroke: var(--ok); stroke-width: 2.5; stroke-dasharray: 10 6; }
 svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
 svg.profile { width: 100%; height: auto; }
+.rulelist { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; font-size: 25px; line-height: 1.35; }
+.kio { margin-top: 22px; font-size: 22px; border-left: 5px solid var(--red, #d9534f); padding-left: 16px; }
 svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
 svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
 svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
@@ -85,6 +87,11 @@ svg.map .lbl.sam { fill: var(--red); }
 svg.map .lbl.aaa { fill: var(--amber); }
 svg.map .lbl.air { fill: var(--blue); }
 svg.map .lbl.armor { fill: var(--ink); }
+svg.map .lbl.hazard, svg.map .lbl.hostile { fill: var(--red); }
+svg.map .threat.hazard { fill: none; stroke: var(--red); stroke-width: 3; }
+svg.map .ring.hazard { fill: #ef6b6218; stroke: var(--red); stroke-width: 2; stroke-dasharray: 3 5; }
+svg.map .flighttrack.hostile { stroke: var(--red); }
+svg.map .hostile-dot { fill: var(--red); }
 svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
 
 .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -101,6 +108,7 @@ svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent)
 .tag.aaa { background: #e3a93b22; color: var(--amber); }
 .tag.air { background: #7fb0f022; color: var(--blue); }
 .tag.armor { background: #ffffff14; color: var(--ink); }
+.tag.hazard { color: var(--red); border: 1.5px dashed var(--red); }
 .intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
 .intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
 .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
@@ -165,7 +173,7 @@ and Brenner can hear them but can&#39;t see them yet.</p>
 
 <section class="slide cast" data-notes="These are the voices pilots will hear on the radio during the mission." aria-label="Slide 4">
   
-    <div class="eyebrow">Who&#39;s who</div>
+    <div class="eyebrow">Cast</div>
     <h2>The voices you'll hear</h2>
     <div class="cards"><div class="card"><b>Capt. Ilya Brenner, call sign CHISEL</b><span>JTAC with the company holding the Gumista bridges. Your eyes on the ground.</span></div><div class="card"><b>Lt Col Dana &#34;HATCH&#34; Moreno</b><span>Mission commander, launching you from the Babushara ops tent</span></div><div class="card"><b>OVERLORD</b><span>E-3 Sentry AWACS</span></div><div class="card"><b>Hawg 1-1 / 1-2</b><span>You and your wingman, A-10C IIs on alert</span></div></div>
 

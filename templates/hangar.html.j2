@@ -23,7 +23,11 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
 .grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding-bottom: 48px; }
 @media (min-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1140px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.m[hidden] { display: none; }
+.m[hidden], .cat[hidden] { display: none; }
+.cat-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 8px auto 16px; }
+.cat-head h2 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
+.cat-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.cat-count { font: 600 14px/1 "IBM Plex Mono", monospace; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; vertical-align: middle; }
 .filters { display: grid; gap: 12px; margin-bottom: 24px; }
 .filters input { width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; }
 .filters input:focus-visible, .fchip:focus-visible, .fstatus button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -67,11 +71,15 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
     <div class="fstatus"><span id="count" aria-live="polite">{{ missions | length }} missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
   </section>
 </div>
-<main class="wrap grid">
-{% for m in missions %}
+<main>
+{% for cat, heading, blurb in sections %}{% set group = missions | selectattr("category", "equalto", cat) | list %}{% if group %}
+<section class="cat" data-cat="{{ cat }}" aria-labelledby="h-{{ cat }}">
+  <div class="wrap cat-head"><h2 id="h-{{ cat }}">{{ heading }} <span class="cat-count" data-total="{{ group | length }}">{{ group | length }}</span></h2><p>{{ blurb }}</p></div>
+  <div class="wrap grid">
+{% for m in group %}
   <article class="m" data-aircraft="{{ m.aircraft_type }}" data-role="{{ m.role }}" data-features="{{ m.features | join('|') }}"
            data-text="{{ [m.operation, m.title, m.theater, m.aircraft, m.role, m.hook, m.teaser, m.objective] | join(' ') | lower }}">
-    <div class="eyebrow">Operation {{ m.operation }}</div>
+    <div class="eyebrow">{{ m.eyebrow }}</div>
     <h2>{{ m.title }}</h2>
     <div class="meta"><span class="chip role">{{ m.role }}</span><span class="chip">{{ m.theater }}</span><span class="chip">{{ m.aircraft }}</span><span class="chip">{{ m.date }} · {{ m.start_time }}L</span>{% for f in m.features %}<span class="chip">{{ f }}</span>{% endfor %}</div>
     {% if m.hook %}<p class="hook">{{ m.hook }}</p>{% endif %}
@@ -81,11 +89,15 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
     <div class="actions">
       <a class="primary" href="{{ m.id }}/briefing.html">Open briefing</a>
       <a href="{{ m.id }}/slides.html">Slide deck</a>
-      <a href="{{ m.id }}/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>
+      {% if cat == "training" %}<a href="{{ m.id }}/director.html" title="Every trigger, radio call and how each grade is decided">Instructor view</a>
+      {% else %}<a href="{{ m.id }}/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>{% endif %}
       <a href="{{ m.id }}/{{ m.id }}.miz" download>Download .miz</a>
     </div>
   </article>
 {% endfor %}
+  </div>
+</section>
+{% endif %}{% endfor %}
 </main>
 <p class="wrap empty" id="empty" hidden>No missions match. Try removing a filter.</p>
 <script>
@@ -105,6 +117,11 @@ function apply() {
       && (!text || text.split(/\s+/).every(w => c.dataset.text.includes(w)));
     c.hidden = !ok;
     if (ok) n++;
+  });
+  document.querySelectorAll(".cat").forEach(sec => {
+    const shown = sec.querySelectorAll(".m:not([hidden])").length, badge = sec.querySelector(".cat-count");
+    sec.hidden = shown === 0;
+    badge.textContent = shown == badge.dataset.total ? shown : `${shown} of ${badge.dataset.total}`;
   });
   count.textContent = n === cards.length ? `${n} missions` : `${n} of ${cards.length} missions`;
   clear.hidden = !(text || Object.values(sel).some(s => s.size));

@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long Valley Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Presenter deck. Dark only: it's built for a projector or a shared screen in a dim room. */
+:root {
+  --bg: #0d1012; --slide: #13171a; --ink: #ece8df; --muted: #9aa1a6; --line: #2a3136; --accent: #e07a3c;
+  --blue: #7fb0f0; --red: #ef6b62; --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #08100b; --radio-ink: #a6efbc;
+  --sea: #10202b; --coast: #8aa3b3;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; overflow: hidden; }
+.mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+#stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; background: var(--slide); padding: 80px 96px; display: none; flex-direction: column; overflow: hidden; }
+.slide.on { display: flex; }
+.slide::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--accent); }
+.eyebrow { font: 600 22px/1 "IBM Plex Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+h1 { font-size: 92px; line-height: 1.02; margin: 0; letter-spacing: -.025em; max-width: 1300px; }
+h2 { font-size: 60px; line-height: 1.06; margin: 0 0 32px; letter-spacing: -.02em; }
+p { margin: 0 0 22px; }
+.big { font-size: 42px; line-height: 1.38; max-width: 1280px; }
+.body { font-size: 28px; line-height: 1.45; color: var(--ink); }
+.muted { color: var(--muted); }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 36px; display: flex; justify-content: space-between; font: 18px "IBM Plex Mono", monospace; color: var(--muted); }
+
+.title { justify-content: center; }
+.title .sub { margin-top: 30px; font: 26px "IBM Plex Mono", monospace; color: var(--muted); }
+.title blockquote { margin: 56px 0 0; padding: 0 0 0 28px; border-left: 4px solid var(--accent); font-size: 34px; line-height: 1.4; max-width: 1150px; font-style: italic; }
+.story { justify-content: center; }
+.divider { justify-content: center; }
+.divider h1 { font-size: 120px; }
+
+.split { display: grid; grid-template-columns: 560px 1fr; gap: 56px; flex: 1; min-height: 0; align-items: center; }
+.split.nomap { grid-template-columns: 1fr; max-width: 1200px; }
+.split .text { align-self: center; }
+.radio { margin-top: 26px; background: var(--radio-bg); color: var(--radio-ink); font: 23px/1.5 "IBM Plex Mono", monospace; padding: 20px 24px; border-radius: 10px; border: 1px solid #1d3326; }
+.radio .lbl { display: block; font-size: 15px; letter-spacing: .16em; opacity: .7; margin-bottom: 6px; }
+
+svg.map { width: 100%; height: 100%; max-height: 680px; border-radius: 14px; border: 1px solid var(--line); }
+svg.map .sea { fill: var(--sea); }
+svg.map .grid { stroke: #ffffff10; stroke-width: 1; }
+svg.map .gridlbl { fill: #ffffff40; font: 12px "IBM Plex Mono", monospace; }
+svg.map .coast { fill: none; stroke: var(--coast); stroke-width: 2; stroke-linejoin: round; }
+svg.map .ring { fill-opacity: .1; stroke-width: 2; }
+svg.map .ring.suspected { stroke-dasharray: 10 6; }
+svg.map .ring.possible { stroke-dasharray: 3 7; fill-opacity: .04; opacity: .6; }
+svg.map .area { fill: none; stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+svg.map .area.sam { stroke: var(--red); } svg.map .area.aaa { stroke: var(--amber); } svg.map .area.air { stroke: var(--blue); } svg.map .area.armor { stroke: var(--muted); }
+svg.map .threat.armor, svg.map .ring.armor { fill: var(--muted); stroke: var(--muted); }
+svg.map .threat.suspected, svg.map .threat.possible { fill: var(--slide) !important; stroke-width: 3; }
+svg.map .threat.suspected.sam, svg.map .threat.possible.sam { stroke: var(--red); }
+svg.map .threat.suspected.aaa, svg.map .threat.possible.aaa { stroke: var(--amber); }
+svg.map .threat.suspected.air, svg.map .threat.possible.air { stroke: var(--blue); }
+svg.map .threat.suspected.armor, svg.map .threat.possible.armor { stroke: var(--muted); }
+svg.map .ship { fill: var(--slide); stroke: var(--ok); stroke-width: 4; }
+svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+svg.map .flighttrack { fill: none; stroke: var(--ok); stroke-width: 2.5; stroke-dasharray: 10 6; }
+svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
+svg.profile { width: 100%; height: auto; }
+.rulelist { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; font-size: 25px; line-height: 1.35; }
+.kio { margin-top: 22px; font-size: 22px; border-left: 5px solid var(--red, #d9534f); padding-left: 16px; }
+svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
+svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 14px "IBM Plex Mono", monospace; }
+svg.map .search { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 8; }
+svg.map .ring.sam, svg.map .threat.sam { fill: var(--red); stroke: var(--red); }
+svg.map .ring.aaa, svg.map .threat.aaa { fill: var(--amber); stroke: var(--amber); }
+svg.map .threat.air { fill: var(--blue); }
+svg.map .route { fill: none; stroke: var(--blue); stroke-width: 4; stroke-linejoin: round; }
+svg.map .route.dim { opacity: .35; }
+svg.map .route.hl { stroke: var(--accent); stroke-width: 7; }
+svg.map .cap { stroke: var(--ok); stroke-width: 4; stroke-dasharray: 3 9; stroke-linecap: round; }
+svg.map .friendly-dot { fill: var(--ok); }
+svg.map .wp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; }
+svg.map .wp.on { stroke: var(--accent); fill: var(--accent); }
+svg.map .lbl { fill: var(--ink); font: 600 17px "IBM Plex Mono", monospace; paint-order: stroke; stroke: var(--sea); stroke-width: 5px; }
+svg.map .lbl.friendly { fill: var(--ok); }
+svg.map .lbl.sam { fill: var(--red); }
+svg.map .lbl.aaa { fill: var(--amber); }
+svg.map .lbl.air { fill: var(--blue); }
+svg.map .lbl.armor { fill: var(--ink); }
+svg.map .lbl.hazard, svg.map .lbl.hostile { fill: var(--red); }
+svg.map .threat.hazard { fill: none; stroke: var(--red); stroke-width: 3; }
+svg.map .ring.hazard { fill: #ef6b6218; stroke: var(--red); stroke-width: 2; stroke-dasharray: 3 5; }
+svg.map .flighttrack.hostile { stroke: var(--red); }
+svg.map .hostile-dot { fill: var(--red); }
+svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
+
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.card { background: #ffffff08; border: 1px solid var(--line); border-radius: 14px; padding: 26px 30px; }
+.card b { display: block; font-size: 30px; margin-bottom: 6px; }
+.card span { font-size: 23px; color: var(--muted); }
+
+.rows { display: grid; gap: 0; max-width: 1350px; }
+.row { display: grid; grid-template-columns: 260px 1fr; gap: 28px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 28px; line-height: 1.4; }
+.row:last-child { border-bottom: 0; }
+.row .k { font: 600 18px/1.9 "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.tag { display: inline-block; font: 600 16px/1 "IBM Plex Mono", monospace; padding: 7px 10px; border-radius: 6px; text-transform: uppercase; }
+.tag.sam { background: #ef6b6222; color: var(--red); }
+.tag.aaa { background: #e3a93b22; color: var(--amber); }
+.tag.air { background: #7fb0f022; color: var(--blue); }
+.tag.armor { background: #ffffff14; color: var(--ink); }
+.tag.hazard { color: var(--red); border: 1.5px dashed var(--red); }
+.intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
+.intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.chip { font: 20px "IBM Plex Mono", monospace; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ok); }
+
+.outcome .band { height: 10px; width: 220px; border-radius: 5px; margin-bottom: 36px; }
+.outcome.success .band { background: var(--ok); }
+.outcome.partial .band { background: var(--amber); }
+.outcome.failure .band { background: var(--red); }
+
+#progress { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); transition: width .2s; z-index: 5; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; background: #000000e6; color: #ddd; font: 18px/1.5 "IBM Plex Sans", sans-serif; padding: 16px 24px 20px; display: none; z-index: 4; border-top: 1px solid var(--line); }
+#notes.on { display: block; }
+#notes .k { font: 600 13px "IBM Plex Mono", monospace; letter-spacing: .14em; color: var(--accent); margin-right: 12px; }
+#help { position: fixed; right: 16px; top: 12px; font: 13px "IBM Plex Mono", monospace; color: #ffffff55; z-index: 5; }
+
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; background: var(--slide); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #stage { position: static; transform: none !important; width: 1600px; height: auto; }
+  .slide { position: relative; display: flex !important; width: 1600px; height: 900px; page-break-after: always; break-after: page; }
+  #progress, #notes, #help { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<section class="slide title" data-notes="Set the tone. Read the quote out loud, then go straight into the story." aria-label="Slide 1">
+  
+    <div class="eyebrow">Training event LONG VALLEY · Det work-ups, event AR/LL-1</div>
+    <h1>Air Refuelling and Low-Level Navigation</h1>
+    <div class="sub">2026-02-09 · Step 09:00L · Colt 1 · 2× F/A-18C Hornet</div>
+    <blockquote>&#34;Plugging the basket is a skill. Hitting a checkpoint to the second is a habit. Today I&#39;m
+grading habits.&#34; WREN, mass brief</blockquote>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>1 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 2">
+  
+    <div class="eyebrow">Why we&#39;re flying this</div>
+    <p class="big">A month before the deployment turns hot, the Hornet detachment is in Georgia for the partner
+exercise, flying from Kutaisi. The detachment&#39;s training officer wants every pilot current on
+the two skills that get people killed when they&#39;re rusty: plugging a tanker basket, and flying
+low and fast through terrain that doesn&#39;t forgive mistakes.</p>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>2 / 23</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 3">
+  
+    <div class="eyebrow">Where it fits</div>
+    <p class="big">LONG VALLEY puts both in one sortie. You&#39;ll take gas from the exercise tanker over Imereti,
+then run a timed low-level route up the Dzirula valley, over the Surami ridge and down the Borjomi
+gorge to a simulated attack outside Akhaltsikhe. Nothing on this sortie is hidden. What&#39;s graded is
+how precisely you fly it.</p>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>3 / 23</span></div>
+</section>
+
+<section class="slide cast" data-notes="These are the voices pilots will hear on the radio during the mission." aria-label="Slide 4">
+  
+    <div class="eyebrow">Instructors and players</div>
+    <h2>The voices you'll hear</h2>
+    <div class="cards"><div class="card"><b>LCDR Ana &#34;WREN&#34; Castellano</b><span>Detachment training officer: your instructor, monitoring from the det frequency</span></div><div class="card"><b>ARCO 1</b><span>KC-135 (drogue) exercise tanker on the track north of Kutaisi</span></div><div class="card"><b>Kutaisi Tower</b><span>Departure and recovery</span></div><div class="card"><b>Colt 1-1 / 1-2</b><span>You (the graded pilot) and your wingman, F/A-18C Hornets</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>4 / 23</span></div>
+</section>
+
+<section class="slide map" data-notes="Walk the route from base to target and back. Point out the threat rings." aria-label="Slide 5">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Event overview</div>
+        <h2>The training area</h2>
+        <div class="body"><p>Two-ship training sortie from Kutaisi. After departure, join ARCO 1 on the refuelling track north of
+the field at 20,000 ft and take 6,000 lb each. Then descend to enter the low-level route at Zestaponi:
+500 ft AGL, 420 knots, four timed checkpoints, ending with a simulated attack (TOT, no weapons
+released) on a marked truck west of Akhaltsikhe. Climb out to the northwest and return to Kutaisi.
+The route is clear of other traffic. All times on the route run from crossing ZESTAPONI.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="721.4" y2="721.4"/><text class="gridlbl" x="6" y="717.4">41.5N</text><line class="grid" x1="0" x2="900" y1="320.8" y2="320.8"/><text class="gridlbl" x="6" y="316.8">42.0N</text><line class="grid" y1="0" y2="640" x1="-103.6" x2="-103.6"/><text class="gridlbl" x="-99.6" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="194.0" x2="194.0"/><text class="gridlbl" x="198.0" y="632">42.5E</text><line class="grid" y1="0" y2="640" x1="491.7" x2="491.7"/><text class="gridlbl" x="495.7" y="632">43.0E</text><line class="grid" y1="0" y2="640" x1="789.3" x2="789.3"/><text class="gridlbl" x="793.3" y="632">43.5E</text><polyline class="coast" points="-2862.7,-2352.8 -2862.7,-2352.8"/><polyline class="coast" points="-2862.9,-2353.2 -2862.9,-2353.2"/><polyline class="coast" points="-2744.8,-2404.8 -2768.0,-2384.4 -2808.2,-2361.6 -2813.3,-2360.0 -2825.5,-2361.5 -2828.5,-2360.4 -2832.4,-2365.2 -2847.8,-2364.0 -2850.9,-2360.6 -2845.1,-2352.8 -2851.4,-2353.6 -2850.1,-2354.6 -2852.3,-2355.5 -2859.1,-2350.4 -2862.1,-2350.7 -2856.2,-2344.6 -2853.6,-2345.9 -2853.3,-2349.6 -2844.0,-2347.1 -2850.8,-2346.9 -2855.4,-2344.0 -2854.8,-2342.2 -2852.1,-2343.7 -2850.5,-2342.3 -2852.7,-2340.5 -2850.7,-2338.7 -2852.3,-2336.2 -2853.6,-2339.7 -2856.0,-2340.6 -2858.0,-2337.6 -2855.6,-2335.8 -2859.8,-2338.7 -2856.2,-2342.3 -2865.3,-2352.4 -2879.1,-2347.5 -2898.4,-2346.5 -2948.5,-2349.2 -2978.3,-2356.4 -3048.9,-2380.3 -3073.7,-2392.2 -3098.2,-2407.5"/><polyline class="coast" points="-2861.7,-2352.9 -2861.7,-2352.9"/><polyline class="coast" points="-3224.8,-2174.3 -3198.4,-2177.7 -3187.0,-2177.5 -3164.6,-2174.0 -3138.1,-2166.5 -3085.4,-2144.3 -3055.3,-2134.3 -3010.7,-2115.8 -2970.6,-2094.1 -2936.2,-2071.6 -2908.6,-2046.0 -2893.0,-2022.6 -2890.2,-2012.9 -2891.1,-2004.7 -2894.0,-2000.3 -2897.6,-2000.7 -2897.6,-2002.8 -2897.7,-2001.3 -2902.1,-1999.6 -2903.2,-1994.6 -2878.9,-1964.0 -2876.4,-1957.2 -2876.1,-1943.5 -2852.1,-1908.5 -2850.5,-1895.2 -2848.3,-1894.7 -2850.7,-1894.4 -2849.9,-1891.8 -2853.2,-1887.7 -2850.8,-1889.2 -2842.1,-1885.1 -2837.2,-1878.4 -2836.5,-1874.2 -2821.4,-1864.2 -2815.2,-1855.3 -2809.1,-1850.4 -2808.9,-1847.3 -2805.1,-1848.3 -2798.5,-1845.4 -2792.3,-1837.7 -2785.8,-1838.0 -2754.1,-1823.4 -2745.5,-1824.8 -2737.1,-1819.6 -2714.8,-1815.0 -2702.4,-1818.4 -2691.9,-1817.6 -2690.5,-1816.1 -2689.0,-1816.3 -2690.7,-1817.2 -2688.5,-1817.2 -2668.0,-1807.9 -2663.6,-1804.0 -2659.4,-1805.2 -2648.5,-1801.7 -2641.5,-1801.9 -2637.4,-1804.0 -2625.7,-1805.4 -2624.6,-1807.3 -2607.4,-1813.5 -2601.7,-1818.8 -2603.0,-1818.6 -2603.9,-1823.1 -2598.3,-1824.7 -2609.9,-1840.8 -2610.1,-1849.7 -2612.4,-1851.3 -2611.7,-1855.2 -2613.8,-1858.2 -2611.7,-1860.3 -2615.8,-1858.8 -2617.6,-1861.3 -2616.0,-1861.6 -2619.3,-1864.0 -2618.9,-1865.3 -2615.2,-1862.6 -2616.7,-1864.3 -2614.4,-1864.1 -2615.1,-1866.5 -2613.5,-1865.0 -2614.3,-1867.2 -2611.8,-1865.1 -2613.1,-1868.3 -2609.8,-1865.0 -2608.4,-1866.1 -2610.6,-1868.8 -2608.6,-1870.0 -2605.8,-1865.4 -2604.3,-1866.3 -2605.8,-1869.5 -2602.7,-1868.7 -2602.0,-1864.8 -2599.8,-1867.6 -2600.2,-1863.3 -2598.7,-1864.0 -2594.1,-1859.6 -2598.8,-1857.4 -2593.4,-1859.7 -2592.0,-1862.5 -2594.0,-1857.8 -2591.8,-1862.3 -2588.6,-1859.8 -2590.9,-1859.7 -2589.3,-1858.7 -2591.7,-1854.8 -2588.5,-1859.5 -2588.7,-1858.1 -2587.1,-1858.6 -2588.1,-1857.6 -2583.9,-1858.2 -2585.1,-1857.1 -2583.3,-1857.0 -2583.8,-1855.1 -2586.0,-1855.4 -2581.2,-1853.3 -2583.6,-1851.7 -2590.1,-1854.1 -2585.4,-1851.3 -2578.3,-1854.0 -2576.8,-1847.6 -2560.2,-1832.7 -2555.8,-1826.2 -2535.7,-1815.2 -2531.7,-1807.8 -2525.6,-1802.0 -2525.3,-1798.9 -2539.2,-1790.8 -2541.0,-1788.4 -2540.0,-1785.1 -2525.9,-1765.6 -2516.5,-1758.7 -2502.0,-1743.6 -2498.9,-1741.6 -2497.2,-1743.5 -2494.4,-1741.8 -2493.8,-1736.6 -2488.7,-1737.1 -2486.3,-1734.4 -2486.1,-1735.7 -2481.8,-1733.3 -2472.8,-1732.6 -2467.9,-1729.6 -2464.9,-1735.2 -2468.1,-1738.9 -2464.6,-1740.4 -2465.8,-1743.0 -2464.7,-1740.5 -2467.4,-1739.3 -2468.3,-1741.4 -2466.2,-1742.3 -2469.5,-1741.9 -2470.5,-1743.2 -2470.7,-1746.7 -2468.5,-1748.9 -2463.3,-1750.5 -2455.2,-1750.1 -2445.8,-1743.4 -2439.1,-1733.7 -2440.0,-1728.2 -2444.3,-1726.3 -2448.5,-1727.4 -2453.5,-1726.0 -2455.7,-1722.6 -2432.3,-1706.6 -2418.7,-1692.9 -2414.9,-1686.5 -2409.3,-1683.7 -2405.5,-1678.5 -2405.4,-1670.8 -2399.6,-1662.9 -2398.7,-1655.5 -2394.2,-1651.6 -2393.6,-1648.2 -2381.7,-1641.4 -2371.1,-1629.9 -2364.2,-1616.9 -2360.8,-1615.2 -2362.6,-1614.0 -2360.6,-1615.2 -2347.7,-1610.4 -2331.6,-1612.7 -2315.2,-1610.1 -2304.5,-1605.3 -2293.3,-1596.0 -2285.3,-1593.1 -2279.5,-1585.9 -2269.7,-1580.2 -2262.1,-1578.1 -2254.7,-1576.7 -2237.8,-1582.1 -2222.5,-1576.8 -2203.0,-1575.5 -2175.1,-1565.7 -2172.1,-1568.0 -2168.8,-1568.1 -2164.6,-1565.3 -2146.1,-1561.3 -2135.2,-1556.4 -2122.7,-1547.0 -2116.9,-1548.2 -2113.0,-1546.3 -2107.1,-1538.9 -2097.8,-1537.1 -2092.7,-1537.8 -2088.2,-1532.8 -2072.4,-1527.2 -2068.9,-1529.8 -2062.5,-1523.4 -2059.0,-1522.2 -2050.0,-1521.4 -2040.5,-1522.9 -2035.7,-1520.3 -2033.0,-1516.5 -2013.7,-1507.0 -2000.0,-1490.5 -1996.4,-1483.5 -1997.3,-1478.7 -1994.6,-1475.1 -1992.9,-1473.2 -1988.2,-1473.7 -1986.0,-1471.3 -1983.9,-1467.8 -1984.6,-1464.8 -1977.8,-1457.0 -1977.7,-1453.6 -1968.7,-1439.4 -1965.1,-1437.2 -1959.3,-1436.8 -1957.5,-1431.5 -1938.4,-1429.9 -1927.1,-1425.2 -1925.9,-1422.7 -1916.2,-1416.7 -1912.3,-1415.3 -1906.5,-1417.5 -1901.6,-1416.6 -1889.5,-1409.9 -1881.7,-1401.7 -1872.0,-1383.8 -1869.6,-1369.9 -1870.7,-1363.1 -1867.4,-1358.7 -1852.2,-1359.7 -1851.1,-1358.6 -1854.3,-1355.4 -1853.5,-1354.5 -1850.0,-1357.8 -1842.9,-1355.8 -1842.0,-1353.0 -1844.6,-1350.6 -1840.1,-1350.4 -1835.4,-1346.2 -1827.7,-1335.4 -1811.5,-1318.0 -1798.1,-1297.8 -1783.7,-1288.2 -1778.6,-1282.5 -1771.6,-1280.2 -1761.3,-1273.3 -1753.9,-1264.8 -1744.9,-1262.1 -1733.2,-1247.4 -1720.8,-1241.0 -1713.6,-1235.1 -1692.5,-1202.0 -1690.1,-1199.6 -1684.7,-1198.9 -1680.8,-1196.3 -1649.9,-1164.7 -1639.9,-1147.2 -1632.1,-1140.7 -1625.1,-1130.8 -1613.6,-1110.9 -1591.1,-1092.1 -1571.0,-1069.9 -1542.3,-1043.0 -1527.8,-1014.7 -1521.8,-1012.5 -1515.5,-1007.1 -1505.5,-1004.2 -1495.0,-998.7 -1479.2,-986.9 -1470.8,-971.2 -1464.8,-948.9 -1464.6,-947.0 -1467.3,-945.0 -1466.0,-939.3 -1463.9,-938.5 -1467.0,-941.9 -1467.0,-944.5 -1465.0,-944.4 -1462.5,-948.0 -1462.5,-944.1 -1453.7,-935.7 -1440.7,-930.4 -1427.1,-919.2 -1398.2,-905.1 -1388.4,-897.7 -1383.8,-890.7 -1377.9,-891.4 -1375.2,-890.0 -1362.9,-875.7 -1349.9,-831.0 -1338.7,-812.1 -1331.2,-807.7 -1324.7,-800.1 -1312.7,-798.1 -1298.6,-788.7 -1284.2,-789.1 -1262.4,-783.2 -1245.4,-782.2 -1224.4,-768.2 -1214.2,-765.1 -1198.8,-753.6 -1168.6,-744.2 -1162.7,-740.0 -1152.7,-737.0 -1148.6,-733.5 -1142.7,-723.2 -1135.5,-694.8 -1130.7,-644.9 -1127.6,-630.4 -1116.0,-619.2 -1109.1,-617.1 -1091.1,-597.9 -1088.2,-597.7 -1086.0,-604.3 -1073.5,-616.2 -1066.8,-619.1 -1057.7,-619.1 -1051.8,-617.1 -1044.5,-609.4 -1039.9,-608.5 -1034.5,-603.8 -1021.0,-600.3 -1014.0,-592.3 -1007.7,-595.5 -1001.5,-593.7 -991.9,-596.0 -985.0,-593.9 -972.7,-584.1 -959.4,-564.0 -951.8,-555.1 -947.6,-553.1 -931.4,-554.0 -910.7,-561.1 -903.0,-559.1 -884.2,-549.8 -864.6,-548.8 -843.0,-550.5 -822.0,-545.8 -815.5,-547.8 -805.1,-546.9 -778.9,-540.5 -768.8,-531.1 -758.0,-514.4 -744.9,-502.8 -736.8,-487.0 -731.4,-483.9 -724.2,-476.3 -718.1,-466.1 -715.1,-464.9 -712.3,-465.9 -702.4,-474.1 -704.8,-474.9 -702.6,-476.3 -688.9,-476.2 -683.5,-479.6 -676.8,-478.4 -667.9,-471.4 -651.6,-439.5 -635.9,-356.1 -619.6,-331.8 -615.2,-329.7 -609.7,-317.8 -592.1,-313.0 -576.2,-321.9 -563.2,-321.1 -545.8,-314.2 -528.6,-310.2 -516.8,-301.6 -510.7,-299.1 -496.0,-297.5 -486.7,-293.3 -467.2,-290.0 -456.7,-283.2 -447.4,-270.4 -447.3,-272.8 -438.0,-272.1 -430.4,-261.4 -417.5,-232.4 -392.4,-150.8 -382.9,-96.3 -376.9,-41.6 -368.2,3.1 -364.1,10.8 -353.3,15.3 -344.6,27.1 -328.3,73.7 -324.2,93.3 -321.4,97.8 -318.6,128.0 -320.7,140.2 -325.2,151.0 -324.2,153.5 -325.7,154.2 -321.7,170.8 -319.0,175.6 -317.0,176.3 -312.6,193.0 -307.4,193.1 -309.8,196.1 -311.1,194.2 -311.7,196.3 -303.3,196.3 -303.3,197.8 -311.0,198.3 -309.2,200.3 -312.6,201.4 -314.8,192.2 -312.9,197.3 -313.6,200.8 -309.0,201.4 -306.0,215.0 -304.0,215.2 -278.2,256.2 -281.4,249.6 -279.9,249.0 -276.1,256.3 -278.5,252.9 -277.7,257.4 -258.9,294.2 -250.5,305.3 -247.2,325.0 -242.1,391.5 -236.1,430.3 -237.3,454.5 -240.9,477.6 -249.6,504.3 -253.5,511.5 -257.1,514.3 -271.4,556.8 -275.7,563.9 -278.1,564.8 -286.9,582.4 -294.3,590.6 -295.2,588.8 -294.8,591.4 -296.9,589.9 -297.7,596.6 -302.7,597.2 -304.3,599.3 -303.2,601.0 -306.0,601.0 -306.7,599.3 -312.7,601.5 -308.7,601.1 -307.6,603.5 -313.9,603.8 -315.4,596.9 -317.5,595.0 -321.4,595.7 -333.9,606.7 -356.7,636.1 -361.0,651.2 -364.6,685.2 -369.8,689.2 -373.7,706.5 -376.0,711.8 -379.2,713.7 -389.3,736.0 -388.6,734.1"/><polyline class="coast" points="-2862.3,-2351.3 -2863.5,-2352.5 -2862.3,-2351.3"/><polyline class="coast" points="-3206.4,-2343.0 -3198.7,-2325.3 -3199.7,-2330.3 -3196.7,-2329.3 -3197.8,-2325.4 -3181.4,-2333.3 -3123.7,-2346.3 -3107.5,-2346.3 -3085.4,-2341.9 -3083.4,-2341.9 -3086.9,-2343.9 -3082.8,-2344.2 -3078.9,-2341.6 -3086.2,-2334.2 -3086.9,-2329.4 -3083.9,-2316.5 -3085.2,-2312.9 -3091.1,-2307.5 -3131.8,-2299.6 -3141.4,-2289.1 -3154.3,-2283.9 -3200.6,-2276.9 -3212.0,-2274.2 -3210.2,-2272.9 -3213.3,-2270.6 -3215.3,-2270.8 -3217.3,-2273.9 -3213.9,-2274.6 -3220.2,-2275.0 -3221.6,-2269.5"/><polyline class="coast" points="-2596.8,-1819.9 -2596.8,-1819.9"/><polyline class="coast" points="-2853.5,-1888.2 -2852.5,-1889.9 -2855.5,-1889.5 -2853.5,-1888.2"/><polyline class="coast" points="-372.4,699.8 -372.4,699.8"/><polyline class="coast" points="-2487.5,-1733.7 -2489.5,-1734.1 -2486.4,-1732.7 -2487.5,-1733.7"/><polyline class="coast" points="-3221.5,-2414.8 -3212.4,-2408.4 -3205.7,-2396.9 -3196.4,-2396.7 -3189.6,-2394.2 -3189.6,-2388.9 -3171.2,-2388.5 -3163.9,-2386.2 -3169.1,-2381.1 -3170.2,-2382.4 -3167.9,-2384.3 -3169.5,-2385.2 -3172.5,-2378.9 -3191.5,-2367.6 -3198.4,-2366.8 -3202.7,-2370.8"/><polyline class="coast" points="-2589.3,-1814.7 -2589.3,-1814.7"/><polyline class="coast" points="-2364.7,-1617.7 -2364.7,-1617.7"/><polyline class="coast" points="-2488.9,-1735.9 -2488.9,-1735.9"/><polyline class="coast" points="-278.7,252.5 -278.7,252.5"/><polyline class="coast" points="-279.6,251.3 -279.6,251.3"/><polyline class="coast" points="-1464.0,-941.8 -1462.9,-942.7 -1464.0,-941.8"/><circle class="ring hazard confirmed" cx="717.9" cy="449.0" r="21.7"/><circle class="threat hazard confirmed" cx="717.9" cy="449.0" r="6"/><circle class="ring hazard confirmed" cx="789.3" cy="304.8" r="21.7"/><circle class="threat hazard confirmed" cx="789.3" cy="304.8" r="6"/><circle class="ring hazard confirmed" cx="586.9" cy="296.8" r="14.4"/><circle class="threat hazard confirmed" cx="586.9" cy="296.8" r="6"/><line class="orbit" x1="15.5" y1="56.4" x2="351.3" y2="56.4"/><circle class="friendly-dot" cx="15.5" cy="56.4" r="6"/><polyline class="route" points="182.9,178.5 75.0,56.4 342.9,56.4 461.9,160.6 539.3,248.7 616.7,312.8 825.0,304.8 717.9,449.0 506.5,583.6 313.1,441.0 182.9,178.5"/><g class="target" transform="translate(506.5,583.6)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="182.9" cy="178.5" r="8"/><circle class="wp" cx="75.0" cy="56.4" r="6"/><circle class="wp" cx="342.9" cy="56.4" r="6"/><circle class="wp" cx="461.9" cy="160.6" r="6"/><circle class="wp" cx="539.3" cy="248.7" r="6"/><circle class="wp" cx="616.7" cy="312.8" r="6"/><circle class="wp" cx="825.0" cy="304.8" r="6"/><circle class="wp" cx="717.9" cy="449.0" r="6"/><circle class="wp" cx="506.5" cy="583.6" r="6"/><circle class="wp" cx="313.1" cy="441.0" r="6"/><text class="lbl" x="194.9" y="183.5">Kutaisi</text><text class="lbl" x="87.0" y="61.4">1 ARCO</text><text class="lbl" x="354.9" y="61.4">2 AR EXIT</text><text class="lbl" x="473.9" y="165.6">3 DESCENT</text><text class="lbl" x="551.3" y="253.7">4 ZESTAPONI</text><text class="lbl" x="628.7" y="317.8">5 KHARAGAULI</text><text class="lbl" x="783.4" y="290.8">6 SURAMI</text><text class="lbl" x="729.9" y="454.0">7 BORJOMI</text><text class="lbl" x="518.5" y="588.6">8 TOT</text><text class="lbl" x="325.1" y="446.0">9 CLIMB</text><text class="lbl hazard" x="705.9" y="454.0" text-anchor="end">Borjomi gorge</text><text class="lbl hazard" x="777.3" y="290.8" text-anchor="end">Surami ridge</text><text class="lbl hazard" x="574.9" y="301.8" text-anchor="end">Power lines in the Dzirula valley</text><text class="lbl friendly" x="27.5" y="42.4">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>5 / 23</span></div>
+</section>
+
+<section class="slide profile" data-notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes." aria-label="Slide 6">
+  
+    <div class="eyebrow">Flight profile</div>
+    <h2>How high, where</h2>
+    <div style="flex:1;display:flex;align-items:center"><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 275 km</text><line class="pleg" x1="56.0" y1="196.0" x2="124.1" y2="92.0"/><line class="pleg" x1="124.1" y1="92.0" x2="235.7" y2="92.0"/><line class="pleg" x1="235.7" y1="92.0" x2="301.7" y2="154.4"/><line class="pleg" x1="301.7" y1="154.4" x2="350.8" y2="193.4"/><line class="pleg agl" x1="350.8" y1="193.4" x2="392.8" y2="193.4"/><line class="pleg agl" x1="392.8" y1="193.4" x2="480.1" y2="193.4"/><line class="pleg agl" x1="480.1" y1="193.4" x2="555.3" y2="193.4"/><line class="pleg agl" x1="555.3" y1="193.4" x2="660.5" y2="193.4"/><line class="pleg" x1="660.5" y1="193.4" x2="761.4" y2="102.4"/><line class="pleg" x1="761.4" y1="102.4" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="81.2" y="186.0" text-anchor="middle">Kutaisi</text><circle class="pwp" cx="124.1" cy="92.0" r="4"/><text class="plbl" x="124.1" y="68.0" text-anchor="middle">1 ARCO</text><text class="psub" x="124.1" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="235.7" cy="92.0" r="4"/><text class="plbl" x="235.7" y="82.0" text-anchor="middle">2 AR EXIT</text><text class="psub" x="235.7" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="301.7" cy="154.4" r="4"/><text class="plbl" x="301.7" y="130.4" text-anchor="middle">3 DESCENT</text><text class="psub" x="301.7" y="220" text-anchor="middle">8k</text><circle class="pwp agl" cx="350.8" cy="193.4" r="4"/><text class="plbl" x="350.8" y="183.4" text-anchor="middle">4 ZESTAPONI</text><text class="psub" x="350.8" y="220" text-anchor="middle">0.5k AGL</text><circle class="pwp agl" cx="392.8" cy="193.4" r="4"/><text class="plbl" x="392.8" y="169.4" text-anchor="middle">5 KHARAGAULI</text><text class="psub" x="392.8" y="232" text-anchor="middle">0.5k AGL</text><circle class="pwp agl" cx="480.1" cy="193.4" r="4"/><text class="plbl" x="480.1" y="183.4" text-anchor="middle">6 SURAMI</text><text class="psub" x="480.1" y="220" text-anchor="middle">0.5k AGL</text><circle class="pwp agl" cx="555.3" cy="193.4" r="4"/><text class="plbl" x="555.3" y="183.4" text-anchor="middle">7 BORJOMI</text><text class="psub" x="555.3" y="220" text-anchor="middle">0.5k AGL</text><circle class="pwp agl" cx="660.5" cy="193.4" r="4"/><text class="plbl" x="660.5" y="183.4" text-anchor="middle">8 TOT</text><text class="psub" x="660.5" y="220" text-anchor="middle">0.5k AGL</text><circle class="pwp" cx="761.4" cy="102.4" r="4"/><text class="plbl" x="761.4" y="92.4" text-anchor="middle">9 CLIMB</text><text class="psub" x="761.4" y="220" text-anchor="middle">18k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="858.8" y="186.0" text-anchor="middle">Kutaisi</text></svg></div>
+    <p class="muted" style="font-size:22px;margin:0">Dashed legs are flown above ground level, following the terrain.</p>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>6 / 23</span></div>
+</section>
+
+<section class="slide objectives" data-notes="Primary is what wins the mission. Everything else is a bonus or a way home." aria-label="Slide 7">
+  
+    <div class="eyebrow">Tasking</div>
+    <h2>Learning objectives</h2>
+    <div class="rows"><div class="row"><span class="k">primary</span><span>Fly the low-level route with at least 3 of 4 checkpoints and the TOT on time (±30 s), with no altitude knock-it-off.</span></div><div class="row"><span class="k">secondary</span><span>Refuel from ARCO 1: rendezvous, stable pre-contact, 6,000 lb on-load.</span></div><div class="row"><span class="k">tertiary</span><span>Recover to Kutaisi as a section with at least the bingo fuel.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>7 / 23</span></div>
+</section>
+
+<section class="slide map" data-notes="41.6720N 43.0250E. Laser code n/a." aria-label="Slide 8">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Range target</div>
+        <h2>TOT marker (simulated attack)</h2>
+        <div class="body"><p>A single truck parked on the farm road west of Akhaltsikhe, marking the time-on-target point. Simulated attack only; no release.</p><p>41.6720N 43.0250E</p><p>DMPI: The truck. Mark it with the ATFLIR and call &#39;Bombs away&#39; at the planned TOT.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="721.4" y2="721.4"/><text class="gridlbl" x="6" y="717.4">41.5N</text><line class="grid" x1="0" x2="900" y1="320.8" y2="320.8"/><text class="gridlbl" x="6" y="316.8">42.0N</text><line class="grid" y1="0" y2="640" x1="-103.6" x2="-103.6"/><text class="gridlbl" x="-99.6" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="194.0" x2="194.0"/><text class="gridlbl" x="198.0" y="632">42.5E</text><line class="grid" y1="0" y2="640" x1="491.7" x2="491.7"/><text class="gridlbl" x="495.7" y="632">43.0E</text><line class="grid" y1="0" y2="640" x1="789.3" x2="789.3"/><text class="gridlbl" x="793.3" y="632">43.5E</text><polyline class="coast" points="-2862.7,-2352.8 -2862.7,-2352.8"/><polyline class="coast" points="-2862.9,-2353.2 -2862.9,-2353.2"/><polyline class="coast" points="-2744.8,-2404.8 -2768.0,-2384.4 -2808.2,-2361.6 -2813.3,-2360.0 -2825.5,-2361.5 -2828.5,-2360.4 -2832.4,-2365.2 -2847.8,-2364.0 -2850.9,-2360.6 -2845.1,-2352.8 -2851.4,-2353.6 -2850.1,-2354.6 -2852.3,-2355.5 -2859.1,-2350.4 -2862.1,-2350.7 -2856.2,-2344.6 -2853.6,-2345.9 -2853.3,-2349.6 -2844.0,-2347.1 -2850.8,-2346.9 -2855.4,-2344.0 -2854.8,-2342.2 -2852.1,-2343.7 -2850.5,-2342.3 -2852.7,-2340.5 -2850.7,-2338.7 -2852.3,-2336.2 -2853.6,-2339.7 -2856.0,-2340.6 -2858.0,-2337.6 -2855.6,-2335.8 -2859.8,-2338.7 -2856.2,-2342.3 -2865.3,-2352.4 -2879.1,-2347.5 -2898.4,-2346.5 -2948.5,-2349.2 -2978.3,-2356.4 -3048.9,-2380.3 -3073.7,-2392.2 -3098.2,-2407.5"/><polyline class="coast" points="-2861.7,-2352.9 -2861.7,-2352.9"/><polyline class="coast" points="-3224.8,-2174.3 -3198.4,-2177.7 -3187.0,-2177.5 -3164.6,-2174.0 -3138.1,-2166.5 -3085.4,-2144.3 -3055.3,-2134.3 -3010.7,-2115.8 -2970.6,-2094.1 -2936.2,-2071.6 -2908.6,-2046.0 -2893.0,-2022.6 -2890.2,-2012.9 -2891.1,-2004.7 -2894.0,-2000.3 -2897.6,-2000.7 -2897.6,-2002.8 -2897.7,-2001.3 -2902.1,-1999.6 -2903.2,-1994.6 -2878.9,-1964.0 -2876.4,-1957.2 -2876.1,-1943.5 -2852.1,-1908.5 -2850.5,-1895.2 -2848.3,-1894.7 -2850.7,-1894.4 -2849.9,-1891.8 -2853.2,-1887.7 -2850.8,-1889.2 -2842.1,-1885.1 -2837.2,-1878.4 -2836.5,-1874.2 -2821.4,-1864.2 -2815.2,-1855.3 -2809.1,-1850.4 -2808.9,-1847.3 -2805.1,-1848.3 -2798.5,-1845.4 -2792.3,-1837.7 -2785.8,-1838.0 -2754.1,-1823.4 -2745.5,-1824.8 -2737.1,-1819.6 -2714.8,-1815.0 -2702.4,-1818.4 -2691.9,-1817.6 -2690.5,-1816.1 -2689.0,-1816.3 -2690.7,-1817.2 -2688.5,-1817.2 -2668.0,-1807.9 -2663.6,-1804.0 -2659.4,-1805.2 -2648.5,-1801.7 -2641.5,-1801.9 -2637.4,-1804.0 -2625.7,-1805.4 -2624.6,-1807.3 -2607.4,-1813.5 -2601.7,-1818.8 -2603.0,-1818.6 -2603.9,-1823.1 -2598.3,-1824.7 -2609.9,-1840.8 -2610.1,-1849.7 -2612.4,-1851.3 -2611.7,-1855.2 -2613.8,-1858.2 -2611.7,-1860.3 -2615.8,-1858.8 -2617.6,-1861.3 -2616.0,-1861.6 -2619.3,-1864.0 -2618.9,-1865.3 -2615.2,-1862.6 -2616.7,-1864.3 -2614.4,-1864.1 -2615.1,-1866.5 -2613.5,-1865.0 -2614.3,-1867.2 -2611.8,-1865.1 -2613.1,-1868.3 -2609.8,-1865.0 -2608.4,-1866.1 -2610.6,-1868.8 -2608.6,-1870.0 -2605.8,-1865.4 -2604.3,-1866.3 -2605.8,-1869.5 -2602.7,-1868.7 -2602.0,-1864.8 -2599.8,-1867.6 -2600.2,-1863.3 -2598.7,-1864.0 -2594.1,-1859.6 -2598.8,-1857.4 -2593.4,-1859.7 -2592.0,-1862.5 -2594.0,-1857.8 -2591.8,-1862.3 -2588.6,-1859.8 -2590.9,-1859.7 -2589.3,-1858.7 -2591.7,-1854.8 -2588.5,-1859.5 -2588.7,-1858.1 -2587.1,-1858.6 -2588.1,-1857.6 -2583.9,-1858.2 -2585.1,-1857.1 -2583.3,-1857.0 -2583.8,-1855.1 -2586.0,-1855.4 -2581.2,-1853.3 -2583.6,-1851.7 -2590.1,-1854.1 -2585.4,-1851.3 -2578.3,-1854.0 -2576.8,-1847.6 -2560.2,-1832.7 -2555.8,-1826.2 -2535.7,-1815.2 -2531.7,-1807.8 -2525.6,-1802.0 -2525.3,-1798.9 -2539.2,-1790.8 -2541.0,-1788.4 -2540.0,-1785.1 -2525.9,-1765.6 -2516.5,-1758.7 -2502.0,-1743.6 -2498.9,-1741.6 -2497.2,-1743.5 -2494.4,-1741.8 -2493.8,-1736.6 -2488.7,-1737.1 -2486.3,-1734.4 -2486.1,-1735.7 -2481.8,-1733.3 -2472.8,-1732.6 -2467.9,-1729.6 -2464.9,-1735.2 -2468.1,-1738.9 -2464.6,-1740.4 -2465.8,-1743.0 -2464.7,-1740.5 -2467.4,-1739.3 -2468.3,-1741.4 -2466.2,-1742.3 -2469.5,-1741.9 -2470.5,-1743.2 -2470.7,-1746.7 -2468.5,-1748.9 -2463.3,-1750.5 -2455.2,-1750.1 -2445.8,-1743.4 -2439.1,-1733.7 -2440.0,-1728.2 -2444.3,-1726.3 -2448.5,-1727.4 -2453.5,-1726.0 -2455.7,-1722.6 -2432.3,-1706.6 -2418.7,-1692.9 -2414.9,-1686.5 -2409.3,-1683.7 -2405.5,-1678.5 -2405.4,-1670.8 -2399.6,-1662.9 -2398.7,-1655.5 -2394.2,-1651.6 -2393.6,-1648.2 -2381.7,-1641.4 -2371.1,-1629.9 -2364.2,-1616.9 -2360.8,-1615.2 -2362.6,-1614.0 -2360.6,-1615.2 -2347.7,-1610.4 -2331.6,-1612.7 -2315.2,-1610.1 -2304.5,-1605.3 -2293.3,-1596.0 -2285.3,-1593.1 -2279.5,-1585.9 -2269.7,-1580.2 -2262.1,-1578.1 -2254.7,-1576.7 -2237.8,-1582.1 -2222.5,-1576.8 -2203.0,-1575.5 -2175.1,-1565.7 -2172.1,-1568.0 -2168.8,-1568.1 -2164.6,-1565.3 -2146.1,-1561.3 -2135.2,-1556.4 -2122.7,-1547.0 -2116.9,-1548.2 -2113.0,-1546.3 -2107.1,-1538.9 -2097.8,-1537.1 -2092.7,-1537.8 -2088.2,-1532.8 -2072.4,-1527.2 -2068.9,-1529.8 -2062.5,-1523.4 -2059.0,-1522.2 -2050.0,-1521.4 -2040.5,-1522.9 -2035.7,-1520.3 -2033.0,-1516.5 -2013.7,-1507.0 -2000.0,-1490.5 -1996.4,-1483.5 -1997.3,-1478.7 -1994.6,-1475.1 -1992.9,-1473.2 -1988.2,-1473.7 -1986.0,-1471.3 -1983.9,-1467.8 -1984.6,-1464.8 -1977.8,-1457.0 -1977.7,-1453.6 -1968.7,-1439.4 -1965.1,-1437.2 -1959.3,-1436.8 -1957.5,-1431.5 -1938.4,-1429.9 -1927.1,-1425.2 -1925.9,-1422.7 -1916.2,-1416.7 -1912.3,-1415.3 -1906.5,-1417.5 -1901.6,-1416.6 -1889.5,-1409.9 -1881.7,-1401.7 -1872.0,-1383.8 -1869.6,-1369.9 -1870.7,-1363.1 -1867.4,-1358.7 -1852.2,-1359.7 -1851.1,-1358.6 -1854.3,-1355.4 -1853.5,-1354.5 -1850.0,-1357.8 -1842.9,-1355.8 -1842.0,-1353.0 -1844.6,-1350.6 -1840.1,-1350.4 -1835.4,-1346.2 -1827.7,-1335.4 -1811.5,-1318.0 -1798.1,-1297.8 -1783.7,-1288.2 -1778.6,-1282.5 -1771.6,-1280.2 -1761.3,-1273.3 -1753.9,-1264.8 -1744.9,-1262.1 -1733.2,-1247.4 -1720.8,-1241.0 -1713.6,-1235.1 -1692.5,-1202.0 -1690.1,-1199.6 -1684.7,-1198.9 -1680.8,-1196.3 -1649.9,-1164.7 -1639.9,-1147.2 -1632.1,-1140.7 -1625.1,-1130.8 -1613.6,-1110.9 -1591.1,-1092.1 -1571.0,-1069.9 -1542.3,-1043.0 -1527.8,-1014.7 -1521.8,-1012.5 -1515.5,-1007.1 -1505.5,-1004.2 -1495.0,-998.7 -1479.2,-986.9 -1470.8,-971.2 -1464.8,-948.9 -1464.6,-947.0 -1467.3,-945.0 -1466.0,-939.3 -1463.9,-938.5 -1467.0,-941.9 -1467.0,-944.5 -1465.0,-944.4 -1462.5,-948.0 -1462.5,-944.1 -1453.7,-935.7 -1440.7,-930.4 -1427.1,-919.2 -1398.2,-905.1 -1388.4,-897.7 -1383.8,-890.7 -1377.9,-891.4 -1375.2,-890.0 -1362.9,-875.7 -1349.9,-831.0 -1338.7,-812.1 -1331.2,-807.7 -1324.7,-800.1 -1312.7,-798.1 -1298.6,-788.7 -1284.2,-789.1 -1262.4,-783.2 -1245.4,-782.2 -1224.4,-768.2 -1214.2,-765.1 -1198.8,-753.6 -1168.6,-744.2 -1162.7,-740.0 -1152.7,-737.0 -1148.6,-733.5 -1142.7,-723.2 -1135.5,-694.8 -1130.7,-644.9 -1127.6,-630.4 -1116.0,-619.2 -1109.1,-617.1 -1091.1,-597.9 -1088.2,-597.7 -1086.0,-604.3 -1073.5,-616.2 -1066.8,-619.1 -1057.7,-619.1 -1051.8,-617.1 -1044.5,-609.4 -1039.9,-608.5 -1034.5,-603.8 -1021.0,-600.3 -1014.0,-592.3 -1007.7,-595.5 -1001.5,-593.7 -991.9,-596.0 -985.0,-593.9 -972.7,-584.1 -959.4,-564.0 -951.8,-555.1 -947.6,-553.1 -931.4,-554.0 -910.7,-561.1 -903.0,-559.1 -884.2,-549.8 -864.6,-548.8 -843.0,-550.5 -822.0,-545.8 -815.5,-547.8 -805.1,-546.9 -778.9,-540.5 -768.8,-531.1 -758.0,-514.4 -744.9,-502.8 -736.8,-487.0 -731.4,-483.9 -724.2,-476.3 -718.1,-466.1 -715.1,-464.9 -712.3,-465.9 -702.4,-474.1 -704.8,-474.9 -702.6,-476.3 -688.9,-476.2 -683.5,-479.6 -676.8,-478.4 -667.9,-471.4 -651.6,-439.5 -635.9,-356.1 -619.6,-331.8 -615.2,-329.7 -609.7,-317.8 -592.1,-313.0 -576.2,-321.9 -563.2,-321.1 -545.8,-314.2 -528.6,-310.2 -516.8,-301.6 -510.7,-299.1 -496.0,-297.5 -486.7,-293.3 -467.2,-290.0 -456.7,-283.2 -447.4,-270.4 -447.3,-272.8 -438.0,-272.1 -430.4,-261.4 -417.5,-232.4 -392.4,-150.8 -382.9,-96.3 -376.9,-41.6 -368.2,3.1 -364.1,10.8 -353.3,15.3 -344.6,27.1 -328.3,73.7 -324.2,93.3 -321.4,97.8 -318.6,128.0 -320.7,140.2 -325.2,151.0 -324.2,153.5 -325.7,154.2 -321.7,170.8 -319.0,175.6 -317.0,176.3 -312.6,193.0 -307.4,193.1 -309.8,196.1 -311.1,194.2 -311.7,196.3 -303.3,196.3 -303.3,197.8 -311.0,198.3 -309.2,200.3 -312.6,201.4 -314.8,192.2 -312.9,197.3 -313.6,200.8 -309.0,201.4 -306.0,215.0 -304.0,215.2 -278.2,256.2 -281.4,249.6 -279.9,249.0 -276.1,256.3 -278.5,252.9 -277.7,257.4 -258.9,294.2 -250.5,305.3 -247.2,325.0 -242.1,391.5 -236.1,430.3 -237.3,454.5 -240.9,477.6 -249.6,504.3 -253.5,511.5 -257.1,514.3 -271.4,556.8 -275.7,563.9 -278.1,564.8 -286.9,582.4 -294.3,590.6 -295.2,588.8 -294.8,591.4 -296.9,589.9 -297.7,596.6 -302.7,597.2 -304.3,599.3 -303.2,601.0 -306.0,601.0 -306.7,599.3 -312.7,601.5 -308.7,601.1 -307.6,603.5 -313.9,603.8 -315.4,596.9 -317.5,595.0 -321.4,595.7 -333.9,606.7 -356.7,636.1 -361.0,651.2 -364.6,685.2 -369.8,689.2 -373.7,706.5 -376.0,711.8 -379.2,713.7 -389.3,736.0 -388.6,734.1"/><polyline class="coast" points="-2862.3,-2351.3 -2863.5,-2352.5 -2862.3,-2351.3"/><polyline class="coast" points="-3206.4,-2343.0 -3198.7,-2325.3 -3199.7,-2330.3 -3196.7,-2329.3 -3197.8,-2325.4 -3181.4,-2333.3 -3123.7,-2346.3 -3107.5,-2346.3 -3085.4,-2341.9 -3083.4,-2341.9 -3086.9,-2343.9 -3082.8,-2344.2 -3078.9,-2341.6 -3086.2,-2334.2 -3086.9,-2329.4 -3083.9,-2316.5 -3085.2,-2312.9 -3091.1,-2307.5 -3131.8,-2299.6 -3141.4,-2289.1 -3154.3,-2283.9 -3200.6,-2276.9 -3212.0,-2274.2 -3210.2,-2272.9 -3213.3,-2270.6 -3215.3,-2270.8 -3217.3,-2273.9 -3213.9,-2274.6 -3220.2,-2275.0 -3221.6,-2269.5"/><polyline class="coast" points="-2596.8,-1819.9 -2596.8,-1819.9"/><polyline class="coast" points="-2853.5,-1888.2 -2852.5,-1889.9 -2855.5,-1889.5 -2853.5,-1888.2"/><polyline class="coast" points="-372.4,699.8 -372.4,699.8"/><polyline class="coast" points="-2487.5,-1733.7 -2489.5,-1734.1 -2486.4,-1732.7 -2487.5,-1733.7"/><polyline class="coast" points="-3221.5,-2414.8 -3212.4,-2408.4 -3205.7,-2396.9 -3196.4,-2396.7 -3189.6,-2394.2 -3189.6,-2388.9 -3171.2,-2388.5 -3163.9,-2386.2 -3169.1,-2381.1 -3170.2,-2382.4 -3167.9,-2384.3 -3169.5,-2385.2 -3172.5,-2378.9 -3191.5,-2367.6 -3198.4,-2366.8 -3202.7,-2370.8"/><polyline class="coast" points="-2589.3,-1814.7 -2589.3,-1814.7"/><polyline class="coast" points="-2364.7,-1617.7 -2364.7,-1617.7"/><polyline class="coast" points="-2488.9,-1735.9 -2488.9,-1735.9"/><polyline class="coast" points="-278.7,252.5 -278.7,252.5"/><polyline class="coast" points="-279.6,251.3 -279.6,251.3"/><polyline class="coast" points="-1464.0,-941.8 -1462.9,-942.7 -1464.0,-941.8"/><circle class="ring hazard confirmed" cx="717.9" cy="449.0" r="21.7"/><circle class="threat hazard confirmed" cx="717.9" cy="449.0" r="6"/><circle class="ring hazard confirmed" cx="789.3" cy="304.8" r="21.7"/><circle class="threat hazard confirmed" cx="789.3" cy="304.8" r="6"/><circle class="ring hazard confirmed" cx="586.9" cy="296.8" r="14.4"/><circle class="threat hazard confirmed" cx="586.9" cy="296.8" r="6"/><line class="orbit" x1="15.5" y1="56.4" x2="351.3" y2="56.4"/><circle class="friendly-dot" cx="15.5" cy="56.4" r="6"/><polyline class="route" points="182.9,178.5 75.0,56.4 342.9,56.4 461.9,160.6 539.3,248.7 616.7,312.8 825.0,304.8 717.9,449.0 506.5,583.6 313.1,441.0 182.9,178.5"/><g class="target" transform="translate(506.5,583.6)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="182.9" cy="178.5" r="8"/><circle class="wp" cx="75.0" cy="56.4" r="6"/><circle class="wp" cx="342.9" cy="56.4" r="6"/><circle class="wp" cx="461.9" cy="160.6" r="6"/><circle class="wp" cx="539.3" cy="248.7" r="6"/><circle class="wp" cx="616.7" cy="312.8" r="6"/><circle class="wp" cx="825.0" cy="304.8" r="6"/><circle class="wp" cx="717.9" cy="449.0" r="6"/><circle class="wp" cx="506.5" cy="583.6" r="6"/><circle class="wp" cx="313.1" cy="441.0" r="6"/><text class="lbl" x="194.9" y="183.5">Kutaisi</text><text class="lbl" x="87.0" y="61.4">1 ARCO</text><text class="lbl" x="354.9" y="61.4">2 AR EXIT</text><text class="lbl" x="473.9" y="165.6">3 DESCENT</text><text class="lbl" x="551.3" y="253.7">4 ZESTAPONI</text><text class="lbl" x="628.7" y="317.8">5 KHARAGAULI</text><text class="lbl" x="783.4" y="290.8">6 SURAMI</text><text class="lbl" x="729.9" y="454.0">7 BORJOMI</text><text class="lbl" x="518.5" y="588.6">8 TOT</text><text class="lbl" x="325.1" y="446.0">9 CLIMB</text><text class="lbl hazard" x="705.9" y="454.0" text-anchor="end">Borjomi gorge</text><text class="lbl hazard" x="777.3" y="290.8" text-anchor="end">Surami ridge</text><text class="lbl hazard" x="574.9" y="301.8" text-anchor="end">Power lines in the Dzirula valley</text><text class="lbl friendly" x="27.5" y="42.4">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>8 / 23</span></div>
+</section>
+
+<section class="slide threats" data-notes="Training: everything here is briefed as it is. Walk each player&#39;s start point and what it will do." aria-label="Slide 9">
+  
+    <div class="eyebrow">Range players and hazards</div>
+    <h2>Who and what is out there</h2>
+    <div class="rows"><div class="row"><span><span class="tag hazard">hazard</span></span>
+      <span><b>Borjomi gorge</b> <span class="muted mono">· 3 km</span><br><span class="muted">Narrow, steep-sided, with a hard right turn at the checkpoint. Climb if you&#39;re not sure of the turn.</span></span></div><div class="row"><span><span class="tag hazard">hazard</span></span>
+      <span><b>Surami ridge</b> <span class="muted mono">· 3 km</span><br><span class="muted">About 950 m (3,100 ft) on the pass. The ground rises faster than it looks heading east.</span></span></div><div class="row"><span><span class="tag hazard">hazard</span></span>
+      <span><b>Power lines in the Dzirula valley</b> <span class="muted mono">· 2 km</span><br><span class="muted">High-tension lines cross the valley between Zestaponi and Kharagauli. Stay at 500 ft AGL or above.</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>9 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Read every rule out loud and get an acknowledgement. Then brief knock-it-off and terminate." aria-label="Slide 10">
+  
+    <div class="eyebrow">Training rules</div>
+    <h2>How we fight safe</h2>
+    <ol class="rulelist"><li>Minimum altitude 500 ft AGL on the low-level route; 1,000 ft AGL over towns. The sim calls a knock-it-off below 200 ft AGL.</li><li>Maximum 450 KIAS below 1,000 ft AGL.</li><li>Pass checkpoints abeam within 1 nm, never overhead below 1,000 ft AGL. Each checkpoint has a 2 km timing gate.</li><li>Tanker: no closer than pre-contact without ARCO&#39;s clearance. One receiver on the boom area at a time.</li><li>Bingo 4,500 lb for an immediate climb and direct return to Kutaisi.</li><li>Weather minimums for the low level: 3,000 ft ceiling and 8 km visibility. Below that, fly the route at 5,000 ft AGL.</li></ol>
+    <p class="kio"><b>Knock-it-off / terminate:</b> Any player calls &#34;Knock it off&#34; for anything unsafe: an altitude bust, lost sight in the gorge,
+a bird strike, or a warning light. Everyone climbs wings-level to 1,000 ft AGL minimum and
+acknowledges by callsign. Call &#34;Terminate&#34; to end one leg and keep the event going.</p>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>10 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Ask questions; don&#39;t lecture. Have the student brief one of these back." aria-label="Slide 11">
+  
+    <div class="eyebrow">Special subjects</div>
+    <h2>Talk it through</h2>
+    <ol class="rulelist"><li>Spatial disorientation in a narrow valley: trust the radar altimeter and the HUD, not the horizon.</li><li>Turning in the Borjomi gorge: start the turn early, and if in doubt, climb and turn.</li><li>Tanker overrun: what you do when you&#39;re closing too fast at pre-contact.</li><li>Lost route: climb to 5,000 ft AGL, call it, and rejoin at the next checkpoint.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>11 / 23</span></div>
+</section>
+
+<section class="slide package" data-notes="Confirm everyone has the loadout before step." aria-label="Slide 12">
+  
+    <div class="eyebrow">Package</div>
+    <h2>Colt 1 flight</h2>
+    <div class="rows"><div class="row"><span class="k">Aircraft</span><span>2× F/A-18C Hornet</span></div><div class="row"><span class="k">Start</span><span>Cold start, Kutaisi</span></div><div class="row"><span class="k">Loadout</span><span>2× AIM-9X (inert for the event), ATFLIR, 2× 330 gal tanks</span></div><div class="row"><span class="k">Joker / Bingo</span><span>6000 / 4500 lb</span></div></div>
+    <div class="chips"><span class="chip">Arco 1: 1× KC-135 (drogue) (TANKER)</span></div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>12 / 23</span></div>
+</section>
+
+<section class="slide divider" data-notes="Training: this is exactly how the event runs." aria-label="Slide 13">
+  
+    <div class="eyebrow">The plan</div>
+    <h1>Event flow</h1>
+    
+    
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>13 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 14">
+  
+    <div class="split nomap">
+      <div class="text">
+        <div class="eyebrow">Phase 1 · 09:00</div>
+        <h2>Start and Departure</h2>
+        <div class="body"><p>Cold start at Kutaisi, check in on 250.5, and depart runway 25 or 07 as a section. Climb
+north to the refuelling track at 20,000 ft. WREN monitors the det frequency for the whole event.</p></div>
+        
+      </div>
+      
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>14 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="Have the student brief the rendezvous: closure speed, where the wingman waits, the pre-contact call." aria-label="Slide 15">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 2 · 09:19</div>
+        <h2>Tanker</h2>
+        <div class="body"><p>Rendezvous with ARCO 1 (TACAN 34Y) on the eastbound track at 20,000 ft and 290 knots. Lead plugs
+first while the wingman waits in left observation, then swap. Take 6,000 lb each. Leave the track
+at AR EXIT.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="723.6" y2="723.6"/><text class="gridlbl" x="6" y="719.6">42.0N</text><line class="grid" y1="0" y2="640" x1="-167.6" x2="-167.6"/><text class="gridlbl" x="-163.6" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="420.6" x2="420.6"/><text class="gridlbl" x="424.6" y="632">42.5E</text><polyline class="coast" points="-5620.9,-4583.0 -5620.9,-4583.0"/><polyline class="coast" points="-5621.3,-4583.8 -5621.3,-4583.8"/><polyline class="coast" points="-5387.9,-4686.4 -5433.9,-4645.8 -5513.3,-4600.5 -5523.4,-4597.5 -5547.5,-4600.4 -5553.3,-4598.1 -5561.1,-4607.7 -5591.5,-4605.5 -5597.6,-4598.6 -5586.1,-4583.2 -5598.6,-4584.8 -5596.1,-4586.7 -5600.5,-4588.4 -5613.9,-4578.4 -5619.9,-4579.1 -5608.1,-4566.8 -5602.9,-4569.5 -5602.4,-4576.8 -5584.0,-4571.7 -5597.5,-4571.4 -5606.5,-4565.7 -5605.3,-4562.1 -5600.1,-4565.1 -5596.9,-4562.2 -5601.2,-4558.7 -5597.3,-4555.1 -5600.5,-4550.3 -5602.9,-4557.1 -5607.6,-4558.9 -5611.6,-4553.0 -5606.9,-4549.5 -5615.2,-4555.1 -5608.1,-4562.2 -5626.1,-4582.2 -5653.4,-4572.7 -5691.5,-4570.6 -5790.6,-4576.0 -5849.5,-4590.2 -5988.9,-4637.7 -6038.0,-4661.3 -6086.4,-4691.8"/><polyline class="coast" points="-5619.1,-4583.4 -5619.1,-4583.4"/><polyline class="coast" points="-6336.7,-4228.9 -6284.5,-4235.6 -6262.0,-4235.1 -6217.8,-4228.3 -6165.3,-4213.3 -6061.2,-4169.3 -6001.6,-4149.4 -5913.4,-4112.7 -5834.2,-4069.6 -5766.4,-4024.9 -5711.6,-3974.2 -5680.8,-3927.8 -5675.3,-3908.5 -5677.1,-3892.3 -5682.9,-3883.4 -5689.9,-3884.4 -5690.0,-3888.5 -5690.2,-3885.5 -5698.9,-3882.1 -5700.9,-3872.1 -5652.9,-3811.4 -5648.0,-3798.0 -5647.5,-3770.8 -5600.1,-3701.2 -5596.8,-3674.9 -5592.5,-3673.8 -5597.2,-3673.2 -5595.6,-3668.1 -5602.1,-3660.0 -5597.4,-3663.0 -5580.4,-3654.7 -5570.6,-3641.5 -5569.2,-3633.1 -5539.3,-3613.4 -5527.1,-3595.6 -5515.1,-3585.9 -5514.7,-3579.8 -5507.2,-3581.8 -5494.0,-3576.0 -5481.9,-3560.8 -5468.9,-3561.4 -5406.4,-3532.3 -5389.3,-3535.2 -5372.7,-3524.8 -5328.6,-3515.8 -5304.1,-3522.4 -5283.4,-3520.9 -5280.6,-3517.8 -5277.8,-3518.3 -5281.1,-3520.1 -5276.6,-3520.1 -5236.2,-3501.6 -5227.5,-3493.8 -5219.2,-3496.2 -5197.6,-3489.4 -5183.8,-3489.7 -5175.8,-3493.8 -5152.5,-3496.5 -5150.4,-3500.3 -5116.4,-3512.7 -5105.1,-3523.2 -5107.6,-3522.8 -5109.5,-3531.7 -5098.5,-3535.0 -5121.4,-3567.0 -5121.6,-3584.6 -5126.4,-3587.8 -5124.8,-3595.4 -5129.1,-3601.5 -5124.8,-3605.6 -5133.1,-3602.6 -5136.6,-3607.5 -5133.3,-3608.2 -5140.0,-3612.9 -5139.1,-3615.5 -5131.8,-3610.1 -5134.7,-3613.6 -5130.2,-3613.1 -5131.6,-3617.9 -5128.5,-3615.0 -5130.1,-3619.3 -5125.1,-3615.1 -5127.6,-3621.5 -5121.2,-3615.0 -5118.4,-3617.1 -5122.7,-3622.5 -5118.7,-3624.8 -5113.3,-3615.8 -5110.2,-3617.5 -5113.2,-3623.9 -5107.2,-3622.3 -5105.8,-3614.5 -5101.4,-3620.1 -5102.2,-3611.5 -5099.3,-3612.9 -5090.1,-3604.2 -5099.4,-3599.9 -5088.7,-3604.3 -5086.0,-3609.9 -5089.9,-3600.7 -5085.6,-3609.6 -5079.3,-3604.7 -5083.8,-3604.5 -5080.7,-3602.4 -5085.4,-3594.6 -5079.1,-3604.0 -5079.4,-3601.3 -5076.2,-3602.3 -5078.2,-3600.2 -5070.0,-3601.5 -5072.4,-3599.2 -5068.7,-3599.1 -5069.8,-3595.3 -5074.1,-3595.9 -5064.7,-3591.8 -5069.3,-3588.4 -5082.1,-3593.2 -5072.9,-3587.8 -5058.8,-3593.0 -5056.0,-3580.3 -5023.2,-3550.8 -5014.4,-3537.9 -4974.7,-3516.1 -4966.8,-3501.3 -4954.7,-3489.9 -4954.1,-3483.8 -4981.6,-3467.6 -4985.1,-3462.8 -4983.2,-3456.3 -4955.3,-3417.7 -4936.7,-3404.0 -4908.1,-3373.9 -4902.0,-3370.0 -4898.6,-3373.8 -4893.1,-3370.4 -4891.9,-3360.1 -4881.9,-3361.1 -4877.1,-3355.6 -4876.6,-3358.2 -4868.2,-3353.6 -4850.4,-3352.1 -4840.7,-3346.3 -4834.8,-3357.2 -4841.1,-3364.6 -4834.1,-3367.6 -4836.5,-3372.8 -4834.4,-3367.7 -4839.6,-3365.3 -4841.5,-3369.6 -4837.3,-3371.4 -4843.9,-3370.6 -4845.8,-3373.1 -4846.1,-3380.1 -4841.8,-3384.4 -4831.5,-3387.6 -4815.5,-3386.8 -4796.9,-3373.6 -4783.8,-3354.4 -4785.5,-3343.4 -4794.0,-3339.6 -4802.2,-3341.8 -4812.2,-3339.0 -4816.5,-3332.3 -4770.4,-3300.5 -4743.4,-3273.3 -4735.9,-3260.6 -4724.8,-3255.0 -4717.4,-3244.7 -4717.1,-3229.4 -4705.6,-3213.8 -4704.0,-3199.0 -4694.9,-3191.4 -4693.9,-3184.6 -4670.4,-3171.0 -4649.4,-3148.3 -4635.8,-3122.4 -4628.9,-3119.2 -4632.6,-3116.8 -4628.6,-3119.0 -4603.1,-3109.7 -4571.3,-3114.1 -4538.9,-3109.0 -4517.6,-3099.5 -4495.6,-3081.0 -4479.8,-3075.2 -4468.2,-3061.0 -4448.9,-3049.7 -4433.9,-3045.4 -4419.3,-3042.7 -4385.9,-3053.4 -4355.6,-3042.9 -4317.2,-3040.3 -4261.9,-3020.8 -4256.1,-3025.4 -4249.5,-3025.7 -4241.2,-3020.1 -4204.7,-3012.0 -4183.1,-3002.3 -4158.4,-2983.7 -4146.9,-2986.1 -4139.3,-2982.3 -4127.5,-2967.7 -4109.2,-2964.0 -4099.2,-2965.4 -4090.1,-2955.6 -4059.1,-2944.4 -4052.1,-2949.5 -4039.4,-2936.8 -4032.6,-2934.4 -4014.7,-2932.8 -3995.9,-2935.9 -3986.4,-2930.8 -3981.2,-2923.1 -3942.9,-2904.4 -3915.9,-2871.6 -3908.8,-2857.8 -3910.6,-2848.2 -3905.3,-2840.9 -3901.8,-2837.3 -3892.5,-2838.2 -3888.2,-2833.5 -3884.0,-2826.5 -3885.5,-2820.6 -3872.0,-2805.2 -3871.8,-2798.3 -3854.0,-2770.2 -3846.9,-2765.9 -3835.5,-2765.1 -3831.9,-2754.4 -3794.1,-2751.3 -3771.8,-2742.0 -3769.4,-2736.9 -3750.4,-2725.2 -3742.5,-2722.3 -3731.1,-2726.8 -3721.4,-2724.9 -3697.5,-2711.7 -3682.0,-2695.3 -3662.8,-2659.8 -3658.2,-2632.3 -3660.4,-2618.8 -3653.8,-2610.1 -3623.8,-2612.0 -3621.6,-2609.7 -3628.0,-2603.5 -3626.2,-2601.6 -3619.4,-2608.1 -3605.4,-2604.2 -3603.5,-2598.8 -3608.8,-2594.0 -3599.9,-2593.5 -3590.6,-2585.2 -3575.4,-2563.8 -3543.3,-2529.3 -3516.8,-2489.0 -3488.4,-2470.1 -3478.4,-2458.8 -3464.5,-2454.2 -3444.1,-2440.5 -3429.5,-2423.7 -3411.6,-2418.3 -3388.5,-2389.0 -3364.0,-2376.3 -3349.8,-2364.7 -3308.1,-2299.0 -3303.4,-2294.3 -3292.7,-2292.8 -3285.1,-2287.6 -3223.9,-2224.9 -3204.1,-2190.1 -3188.8,-2177.2 -3174.9,-2157.7 -3152.2,-2118.2 -3107.6,-2080.9 -3067.9,-2036.8 -3011.2,-1983.4 -2982.6,-1927.3 -2970.8,-1922.8 -2958.4,-1912.2 -2938.6,-1906.4 -2917.8,-1895.5 -2886.6,-1872.1 -2869.9,-1840.9 -2858.1,-1796.6 -2857.8,-1792.7 -2863.1,-1788.9 -2860.4,-1777.6 -2856.4,-1775.9 -2862.5,-1782.7 -2862.5,-1787.8 -2858.5,-1787.7 -2853.5,-1794.8 -2853.5,-1787.0 -2836.2,-1770.3 -2810.5,-1759.8 -2783.6,-1737.7 -2726.5,-1709.6 -2707.1,-1695.0 -2698.0,-1681.1 -2686.4,-1682.4 -2680.9,-1679.7 -2656.6,-1651.4 -2630.9,-1562.7 -2608.9,-1525.0 -2594.0,-1516.4 -2581.2,-1501.3 -2557.5,-1497.3 -2529.5,-1478.5 -2501.1,-1479.3 -2458.1,-1467.7 -2424.5,-1465.7 -2382.9,-1437.8 -2362.8,-1431.8 -2332.4,-1408.9 -2272.7,-1390.3 -2261.1,-1381.9 -2241.2,-1376.0 -2233.1,-1369.1 -2221.4,-1348.6 -2207.2,-1292.3 -2197.8,-1193.1 -2191.6,-1164.5 -2168.7,-1142.2 -2155.1,-1138.1 -2119.5,-1099.9 -2113.8,-1099.5 -2109.4,-1112.7 -2084.7,-1136.2 -2071.4,-1141.9 -2053.5,-1142.1 -2041.9,-1137.9 -2027.3,-1122.7 -2018.4,-1120.9 -2007.5,-1111.5 -1980.8,-1104.7 -1967.1,-1088.8 -1954.7,-1095.2 -1942.5,-1091.5 -1923.4,-1096.1 -1909.8,-1092.0 -1885.5,-1072.4 -1859.2,-1032.7 -1844.1,-1014.9 -1835.8,-1011.1 -1803.9,-1012.8 -1762.8,-1027.0 -1747.8,-1023.0 -1710.5,-1004.4 -1671.9,-1002.5 -1629.1,-1005.8 -1587.6,-996.4 -1574.7,-1000.6 -1554.2,-998.7 -1502.5,-985.9 -1482.5,-967.3 -1461.2,-934.1 -1435.2,-911.2 -1419.2,-879.9 -1408.6,-873.7 -1394.4,-858.6 -1382.2,-838.2 -1376.2,-835.8 -1370.7,-837.9 -1351.2,-854.1 -1356.0,-855.9 -1351.5,-858.6 -1324.6,-858.4 -1313.9,-865.1 -1300.6,-862.7 -1282.9,-848.9 -1250.8,-785.4 -1219.8,-619.9 -1187.5,-571.7 -1178.9,-567.6 -1168.0,-543.9 -1133.2,-534.5 -1101.9,-552.0 -1076.1,-550.4 -1041.8,-536.9 -1007.6,-528.9 -984.5,-511.8 -972.4,-506.8 -943.3,-503.7 -924.8,-495.2 -886.4,-488.9 -865.6,-475.2 -847.2,-449.9 -847.1,-454.7 -828.7,-453.2 -813.6,-431.9 -788.1,-374.4 -738.6,-212.5 -719.8,-104.4 -707.9,4.2 -690.7,92.9 -682.6,108.2 -661.3,117.3 -644.0,140.7 -611.9,233.0 -603.6,272.0 -598.1,280.9 -592.7,340.8 -596.8,365.0 -605.6,386.6 -603.8,391.6 -606.6,392.8 -598.8,425.8 -593.5,435.5 -589.5,436.7 -580.8,470.0 -570.5,470.1 -575.3,476.0 -577.8,472.3 -578.9,476.5 -562.4,476.5 -562.4,479.5 -577.5,480.5 -574.1,484.4 -580.7,486.5 -585.1,468.4 -581.3,478.5 -582.8,485.4 -573.8,486.7 -567.6,513.5 -563.9,514.0 -512.8,595.3 -519.1,582.2 -516.2,581.1 -508.7,595.6 -513.4,588.9 -511.8,597.8 -474.7,670.8 -458.1,692.7 -451.5,731.8 -441.5,863.8 -429.5,940.9 -432.0,989.0 -439.1,1034.8 -456.4,1087.9 -464.0,1102.0 -471.2,1107.6 -499.4,1192.0 -507.8,1206.2 -512.6,1207.9 -530.0,1242.7 -544.7,1259.1 -546.5,1255.5 -545.5,1260.7 -549.8,1257.7 -551.4,1271.0 -561.2,1272.2 -564.4,1276.5 -562.2,1279.8 -567.8,1279.6 -569.2,1276.3 -581.1,1280.7 -573.2,1280.0 -570.8,1284.7 -583.4,1285.2 -586.2,1271.7 -590.5,1267.9 -598.1,1269.3 -622.8,1291.1 -667.9,1349.4 -676.5,1379.3 -683.6,1446.9 -693.9,1454.7 -701.5,1489.2 -706.0,1499.7 -712.5,1503.4 -732.4,1547.7 -730.9,1543.9"/><polyline class="coast" points="-5620.1,-4580.2 -5622.5,-4582.6 -5620.1,-4580.2"/><polyline class="coast" points="-6300.4,-4563.6 -6285.1,-4528.5 -6287.1,-4538.5 -6281.2,-4536.4 -6283.3,-4528.7 -6250.9,-4544.4 -6136.9,-4570.2 -6104.8,-4570.2 -6061.1,-4561.6 -6057.2,-4561.6 -6064.1,-4565.5 -6056.0,-4566.0 -6048.4,-4560.9 -6062.8,-4546.1 -6064.1,-4536.8 -6058.1,-4511.0 -6060.8,-4503.9 -6072.4,-4493.2 -6152.9,-4477.5 -6171.8,-4456.8 -6197.3,-4446.3 -6288.8,-4432.5 -6311.3,-4427.1 -6307.8,-4424.5 -6314.0,-4420.1 -6317.9,-4420.4 -6321.9,-4426.6 -6315.1,-4428.0 -6327.5,-4428.8 -6330.4,-4417.8"/><polyline class="coast" points="-5095.4,-3525.3 -5095.4,-3525.3"/><polyline class="coast" points="-5602.7,-3660.9 -5600.8,-3664.3 -5606.7,-3663.6 -5602.7,-3660.9"/><polyline class="coast" points="-699.1,1475.9 -699.1,1475.9"/><polyline class="coast" points="-4879.4,-3354.4 -4883.4,-3355.2 -4877.3,-3352.3 -4879.4,-3354.4"/><polyline class="coast" points="-6330.1,-4706.1 -6312.2,-4693.6 -6298.8,-4670.7 -6280.6,-4670.2 -6267.2,-4665.2 -6267.2,-4654.8 -6230.8,-4654.0 -6216.4,-4649.5 -6226.6,-4639.3 -6228.8,-4641.9 -6224.2,-4645.7 -6227.3,-4647.4 -6233.3,-4634.9 -6270.8,-4612.5 -6284.5,-4610.9 -6292.9,-4618.8"/><polyline class="coast" points="-5080.6,-3515.1 -5080.6,-3515.1"/><polyline class="coast" points="-4636.7,-3124.0 -4636.7,-3124.0"/><polyline class="coast" points="-4882.2,-3358.7 -4882.2,-3358.7"/><polyline class="coast" points="-513.9,588.1 -513.9,588.1"/><polyline class="coast" points="-515.6,585.6 -515.6,585.6"/><polyline class="coast" points="-2856.5,-1782.4 -2854.2,-1784.3 -2856.5,-1782.4"/><circle class="ring hazard confirmed" cx="1455.9" cy="978.0" r="43.0"/><circle class="threat hazard confirmed" cx="1455.9" cy="978.0" r="6"/><circle class="ring hazard confirmed" cx="1597.1" cy="691.8" r="43.0"/><circle class="threat hazard confirmed" cx="1597.1" cy="691.8" r="6"/><circle class="ring hazard confirmed" cx="1197.1" cy="675.9" r="28.7"/><circle class="threat hazard confirmed" cx="1197.1" cy="675.9" r="6"/><line class="orbit" x1="67.6" y1="198.8" x2="731.4" y2="198.8"/><circle class="friendly-dot" cx="67.6" cy="198.8" r="6"/><polyline class="route dim" points="398.6,441.2 185.3,198.8 714.7,198.8 950.0,405.6 1102.9,580.5 1255.9,707.7 1667.6,691.8 1455.9,978.0 1038.2,1245.1 655.9,962.1 398.6,441.2"/><polyline class="route hl" points="398.6,441.2 185.3,198.8 714.7,198.8"/><g class="target" transform="translate(1038.2,1245.1)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="398.6" cy="441.2" r="8"/><circle class="wp on" cx="185.3" cy="198.8" r="6"/><circle class="wp on" cx="714.7" cy="198.8" r="6"/><text class="lbl" x="410.6" y="446.2">Kutaisi</text><text class="lbl" x="197.3" y="203.8">1 ARCO</text><text class="lbl" x="726.7" y="203.8">2 AR EXIT</text><text class="lbl friendly" x="79.6" y="203.8">Arco 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>15 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="Walk the route on the map: ground rising to Surami, the turn at Borjomi, and where you&#39;d climb out if it goes wrong." aria-label="Slide 16">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 3 · 09:35</div>
+        <h2>Low-Level Route</h2>
+        <div class="body"><p>Descend to enter at ZESTAPONI at 500 ft AGL and 420 knots. The clock starts there. Up the
+Dzirula valley past KHARAGAULI, over the Surami ridge to SURAMI, then hard south down the
+Borjomi gorge. Planned times from ZESTAPONI: KHARAGAULI 1:05, SURAMI 3:20, BORJOMI 5:20, TOT 8:15.
+Each checkpoint is graded ±30 s.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="769.5" y2="769.5"/><text class="gridlbl" x="6" y="765.5">41.5N</text><line class="grid" x1="0" x2="900" y1="385.3" y2="385.3"/><text class="gridlbl" x="6" y="381.3">42.0N</text><line class="grid" x1="0" x2="900" y1="1.2" y2="1.2"/><text class="gridlbl" x="6" y="-2.8">42.5N</text><line class="grid" y1="0" y2="640" x1="-208.6" x2="-208.6"/><text class="gridlbl" x="-204.6" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="76.5" x2="76.5"/><text class="gridlbl" x="80.5" y="632">42.5E</text><line class="grid" y1="0" y2="640" x1="361.6" x2="361.6"/><text class="gridlbl" x="365.6" y="632">43.0E</text><line class="grid" y1="0" y2="640" x1="646.7" x2="646.7"/><text class="gridlbl" x="650.7" y="632">43.5E</text><polyline class="coast" points="-2851.8,-2178.8 -2851.8,-2178.8"/><polyline class="coast" points="-2852.0,-2179.2 -2852.0,-2179.2"/><polyline class="coast" points="-2738.8,-2228.7 -2761.1,-2209.1 -2799.6,-2187.2 -2804.5,-2185.8 -2816.2,-2187.1 -2819.0,-2186.1 -2822.8,-2190.7 -2837.5,-2189.6 -2840.5,-2186.3 -2834.9,-2178.8 -2841.0,-2179.6 -2839.8,-2180.5 -2841.9,-2181.4 -2848.4,-2176.5 -2851.3,-2176.8 -2845.6,-2170.9 -2843.1,-2172.2 -2842.8,-2175.8 -2833.9,-2173.3 -2840.5,-2173.2 -2844.8,-2170.4 -2844.2,-2168.6 -2841.7,-2170.1 -2840.2,-2168.7 -2842.2,-2167.0 -2840.3,-2165.2 -2841.9,-2162.9 -2843.1,-2166.2 -2845.4,-2167.1 -2847.3,-2164.2 -2845.0,-2162.6 -2849.0,-2165.2 -2845.6,-2168.7 -2854.3,-2178.4 -2867.5,-2173.8 -2886.0,-2172.8 -2934.0,-2175.4 -2962.6,-2182.2 -3030.2,-2205.2 -3054.0,-2216.6 -3077.4,-2231.3"/><polyline class="coast" points="-2850.9,-2178.9 -2850.9,-2178.9"/><polyline class="coast" points="-3198.7,-2007.7 -3173.4,-2010.9 -3162.5,-2010.7 -3141.1,-2007.4 -3115.6,-2000.1 -3065.2,-1978.9 -3036.3,-1969.2 -2993.6,-1951.5 -2955.2,-1930.7 -2922.3,-1909.1 -2895.8,-1884.6 -2880.8,-1862.1 -2878.1,-1852.8 -2879.0,-1845.0 -2881.9,-1840.7 -2885.2,-1841.2 -2885.3,-1843.2 -2885.4,-1841.7 -2889.6,-1840.1 -2890.6,-1835.3 -2867.3,-1805.9 -2864.9,-1799.5 -2864.7,-1786.3 -2841.7,-1752.7 -2840.1,-1740.0 -2838.0,-1739.4 -2840.3,-1739.1 -2839.5,-1736.7 -2842.7,-1732.8 -2840.4,-1734.2 -2832.1,-1730.2 -2827.4,-1723.9 -2826.7,-1719.8 -2812.2,-1710.3 -2806.3,-1701.6 -2800.5,-1697.0 -2800.3,-1694.0 -2796.7,-1695.0 -2790.3,-1692.2 -2784.4,-1684.8 -2778.1,-1685.1 -2747.8,-1671.1 -2739.5,-1672.5 -2731.5,-1667.5 -2710.1,-1663.1 -2698.2,-1666.3 -2688.2,-1665.5 -2686.8,-1664.1 -2685.5,-1664.3 -2687.1,-1665.2 -2684.9,-1665.2 -2665.3,-1656.2 -2661.1,-1652.5 -2657.1,-1653.6 -2646.6,-1650.3 -2639.9,-1650.5 -2636.0,-1652.5 -2624.7,-1653.8 -2623.7,-1655.6 -2607.2,-1661.6 -2601.8,-1666.7 -2603.0,-1666.5 -2603.9,-1670.8 -2598.6,-1672.4 -2609.7,-1687.8 -2609.8,-1696.3 -2612.1,-1697.9 -2611.3,-1701.6 -2613.4,-1704.5 -2611.3,-1706.5 -2615.3,-1705.0 -2617.0,-1707.4 -2615.4,-1707.7 -2618.7,-1710.0 -2618.2,-1711.3 -2614.7,-1708.6 -2616.1,-1710.3 -2614.0,-1710.1 -2614.6,-1712.4 -2613.1,-1711.0 -2613.9,-1713.1 -2611.5,-1711.1 -2612.7,-1714.2 -2609.6,-1711.0 -2608.2,-1712.0 -2610.3,-1714.6 -2608.4,-1715.8 -2605.7,-1711.4 -2604.3,-1712.2 -2605.7,-1715.3 -2602.8,-1714.6 -2602.1,-1710.8 -2600.0,-1713.5 -2600.4,-1709.3 -2599.0,-1710.0 -2594.5,-1705.8 -2599.0,-1703.7 -2593.8,-1705.9 -2592.5,-1708.6 -2594.4,-1704.1 -2592.3,-1708.4 -2589.3,-1706.0 -2591.4,-1705.9 -2590.0,-1705.0 -2592.2,-1701.2 -2589.2,-1705.7 -2589.3,-1704.4 -2587.8,-1704.9 -2588.8,-1703.9 -2584.8,-1704.5 -2585.9,-1703.4 -2584.1,-1703.3 -2584.7,-1701.5 -2586.8,-1701.8 -2582.2,-1699.8 -2584.4,-1698.2 -2590.6,-1700.5 -2586.2,-1697.9 -2579.3,-1700.4 -2578.0,-1694.3 -2562.1,-1680.0 -2557.8,-1673.8 -2538.6,-1663.2 -2534.8,-1656.1 -2528.9,-1650.6 -2528.6,-1647.6 -2541.9,-1639.8 -2543.6,-1637.5 -2542.7,-1634.3 -2529.2,-1615.7 -2520.2,-1609.1 -2506.3,-1594.5 -2503.3,-1592.6 -2501.7,-1594.5 -2499.0,-1592.9 -2498.4,-1587.9 -2493.6,-1588.3 -2491.2,-1585.7 -2491.0,-1586.9 -2487.0,-1584.7 -2478.3,-1584.0 -2473.6,-1581.2 -2470.8,-1586.5 -2473.8,-1590.0 -2470.4,-1591.5 -2471.6,-1594.0 -2470.5,-1591.5 -2473.1,-1590.4 -2474.0,-1592.5 -2472.0,-1593.3 -2475.2,-1592.9 -2476.1,-1594.2 -2476.3,-1597.5 -2474.1,-1599.6 -2469.2,-1601.2 -2461.4,-1600.8 -2452.4,-1594.4 -2446.0,-1585.1 -2446.9,-1579.8 -2451.0,-1577.9 -2455.0,-1579.0 -2459.8,-1577.6 -2461.9,-1574.4 -2439.5,-1559.0 -2426.5,-1545.9 -2422.8,-1539.8 -2417.5,-1537.1 -2413.9,-1532.1 -2413.7,-1524.7 -2408.2,-1517.2 -2407.4,-1510.0 -2403.0,-1506.3 -2402.5,-1503.0 -2391.1,-1496.5 -2380.9,-1485.5 -2374.3,-1473.0 -2371.0,-1471.5 -2372.8,-1470.3 -2370.8,-1471.4 -2358.4,-1466.9 -2343.0,-1469.0 -2327.4,-1466.5 -2317.0,-1461.9 -2306.4,-1453.0 -2298.7,-1450.2 -2293.1,-1443.3 -2283.7,-1437.9 -2276.4,-1435.8 -2269.4,-1434.5 -2253.2,-1439.7 -2238.5,-1434.6 -2219.9,-1433.4 -2193.1,-1423.9 -2190.3,-1426.1 -2187.1,-1426.3 -2183.0,-1423.6 -2165.4,-1419.7 -2154.9,-1415.0 -2142.9,-1406.0 -2137.4,-1407.2 -2133.7,-1405.3 -2128.0,-1398.2 -2119.1,-1396.5 -2114.2,-1397.2 -2109.8,-1392.4 -2094.8,-1387.0 -2091.4,-1389.5 -2085.2,-1383.3 -2081.9,-1382.2 -2073.3,-1381.4 -2064.1,-1382.9 -2059.5,-1380.4 -2057.0,-1376.7 -2038.5,-1367.7 -2025.4,-1351.8 -2021.9,-1345.2 -2022.8,-1340.5 -2020.2,-1337.0 -2018.5,-1335.2 -2014.0,-1335.7 -2012.0,-1333.4 -2009.9,-1330.0 -2010.7,-1327.2 -2004.1,-1319.7 -2004.0,-1316.4 -1995.4,-1302.8 -1992.0,-1300.7 -1986.4,-1300.4 -1984.7,-1295.2 -1966.4,-1293.7 -1955.5,-1289.2 -1954.4,-1286.8 -1945.1,-1281.1 -1941.3,-1279.7 -1935.8,-1281.8 -1931.1,-1280.9 -1919.5,-1274.5 -1912.0,-1266.6 -1902.7,-1249.5 -1900.5,-1236.2 -1901.5,-1229.7 -1898.3,-1225.5 -1883.8,-1226.4 -1882.8,-1225.3 -1885.8,-1222.3 -1885.0,-1221.4 -1881.7,-1224.5 -1874.9,-1222.6 -1874.0,-1220.0 -1876.5,-1217.7 -1872.2,-1217.5 -1867.7,-1213.5 -1860.3,-1203.1 -1844.8,-1186.4 -1831.9,-1167.0 -1818.1,-1157.8 -1813.3,-1152.4 -1806.6,-1150.2 -1796.7,-1143.5 -1789.6,-1135.4 -1781.0,-1132.8 -1769.7,-1118.7 -1757.9,-1112.5 -1751.0,-1106.9 -1730.8,-1075.2 -1728.5,-1072.9 -1723.3,-1072.2 -1719.6,-1069.6 -1690.0,-1039.4 -1680.4,-1022.5 -1673.0,-1016.3 -1666.2,-1006.9 -1655.2,-987.8 -1633.6,-969.8 -1614.3,-948.5 -1586.9,-922.7 -1573.0,-895.5 -1567.3,-893.4 -1561.3,-888.2 -1551.7,-885.5 -1541.6,-880.2 -1526.5,-868.9 -1518.4,-853.8 -1512.7,-832.4 -1512.5,-830.5 -1515.1,-828.7 -1513.8,-823.2 -1511.8,-822.4 -1514.8,-825.7 -1514.8,-828.2 -1512.8,-828.1 -1510.5,-831.5 -1510.5,-827.8 -1502.1,-819.7 -1489.6,-814.6 -1476.6,-804.0 -1448.9,-790.4 -1439.5,-783.3 -1435.1,-776.6 -1429.4,-777.2 -1426.8,-775.9 -1415.0,-762.2 -1402.6,-719.4 -1391.9,-701.2 -1384.7,-697.0 -1378.4,-689.7 -1367.0,-687.8 -1353.4,-678.7 -1339.6,-679.1 -1318.8,-673.5 -1302.5,-672.5 -1282.4,-659.1 -1272.6,-656.1 -1257.8,-645.1 -1228.9,-636.1 -1223.3,-632.0 -1213.6,-629.2 -1209.7,-625.9 -1204.1,-616.0 -1197.2,-588.8 -1192.6,-540.8 -1189.6,-527.0 -1178.5,-516.2 -1171.9,-514.2 -1154.7,-495.8 -1151.9,-495.6 -1149.8,-501.9 -1137.8,-513.3 -1131.4,-516.1 -1122.7,-516.1 -1117.0,-514.2 -1110.0,-506.8 -1105.6,-505.9 -1100.4,-501.4 -1087.5,-498.1 -1080.8,-490.4 -1074.8,-493.5 -1068.9,-491.7 -1059.6,-493.9 -1053.0,-491.9 -1041.3,-482.5 -1028.5,-463.3 -1021.2,-454.7 -1017.1,-452.8 -1001.7,-453.7 -981.8,-460.5 -974.5,-458.6 -956.4,-449.6 -937.7,-448.7 -917.0,-450.3 -896.9,-445.8 -890.6,-447.8 -880.7,-446.8 -855.6,-440.7 -845.9,-431.7 -835.6,-415.7 -823.0,-404.6 -815.2,-389.5 -810.1,-386.5 -803.2,-379.2 -797.3,-369.3 -794.4,-368.2 -791.7,-369.2 -782.3,-377.0 -784.6,-377.9 -782.4,-379.2 -769.4,-379.1 -764.2,-382.3 -757.7,-381.2 -749.2,-374.5 -733.6,-343.8 -718.6,-263.8 -702.9,-240.6 -698.8,-238.6 -693.5,-227.1 -676.6,-222.6 -661.4,-231.0 -648.9,-230.3 -632.3,-223.7 -615.8,-219.9 -604.5,-211.6 -598.7,-209.2 -584.6,-207.7 -575.6,-203.6 -557.0,-200.5 -546.9,-193.9 -538.0,-181.7 -537.9,-184.0 -529.0,-183.3 -521.7,-173.0 -509.4,-145.2 -485.3,-67.0 -476.2,-14.8 -470.5,37.7 -462.1,80.6 -458.2,88.0 -447.9,92.4 -439.5,103.6 -423.9,148.3 -419.9,167.1 -417.3,171.4 -414.6,200.4 -416.6,212.1 -420.9,222.5 -420.0,224.9 -421.4,225.5 -417.6,241.4 -415.0,246.1 -413.1,246.7 -408.9,262.8 -403.9,262.8 -406.2,265.7 -407.4,263.9 -408.0,265.9 -399.9,265.9 -399.9,267.4 -407.3,267.8 -405.6,269.8 -408.8,270.8 -410.9,262.0 -409.1,266.9 -409.9,270.2 -405.5,270.8 -402.5,283.8 -400.7,284.0 -375.9,323.3 -378.9,317.0 -377.6,316.5 -373.9,323.5 -376.2,320.2 -375.4,324.5 -357.4,359.8 -349.4,370.4 -346.2,389.3 -341.4,453.1 -335.5,490.3 -336.7,513.5 -340.2,535.7 -348.6,561.3 -352.3,568.2 -355.7,570.9 -369.4,611.6 -373.5,618.5 -375.8,619.3 -384.2,636.2 -391.4,644.1 -392.2,642.3 -391.8,644.8 -393.8,643.4 -394.6,649.8 -399.4,650.4 -400.9,652.4 -399.9,654.1 -402.6,654.0 -403.2,652.4 -409.0,654.5 -405.2,654.1 -404.0,656.4 -410.1,656.7 -411.5,650.1 -413.6,648.3 -417.3,649.0 -429.2,659.5 -451.1,687.7 -455.2,702.2 -458.7,734.8 -463.7,738.6 -467.4,755.2 -469.6,760.3 -472.7,762.1 -482.3,783.5 -481.6,781.7"/><polyline class="coast" points="-2851.4,-2177.4 -2852.5,-2178.5 -2851.4,-2177.4"/><polyline class="coast" points="-3181.1,-2169.4 -3173.7,-2152.4 -3174.7,-2157.3 -3171.8,-2156.3 -3172.8,-2152.5 -3157.2,-2160.1 -3101.9,-2172.5 -3086.3,-2172.5 -3065.1,-2168.4 -3063.2,-2168.4 -3066.6,-2170.3 -3062.7,-2170.5 -3059.0,-2168.1 -3066.0,-2160.9 -3066.6,-2156.4 -3063.7,-2144.0 -3065.0,-2140.5 -3070.6,-2135.4 -3109.7,-2127.8 -3118.8,-2117.8 -3131.2,-2112.7 -3175.5,-2106.0 -3186.4,-2103.4 -3184.7,-2102.2 -3187.7,-2100.0 -3189.6,-2100.2 -3191.5,-2103.2 -3188.2,-2103.9 -3194.3,-2104.2 -3195.7,-2098.9"/><polyline class="coast" points="-2597.1,-1667.7 -2597.1,-1667.7"/><polyline class="coast" points="-2843.0,-1733.2 -2842.1,-1734.8 -2844.9,-1734.5 -2843.0,-1733.2"/><polyline class="coast" points="-466.2,748.8 -466.2,748.8"/><polyline class="coast" points="-2492.4,-1585.1 -2494.3,-1585.5 -2491.4,-1584.1 -2492.4,-1585.1"/><polyline class="coast" points="-3195.5,-2238.2 -3186.9,-2232.2 -3180.4,-2221.1 -3171.5,-2220.9 -3165.0,-2218.5 -3165.0,-2213.4 -3147.4,-2213.0 -3140.4,-2210.9 -3145.4,-2206.0 -3146.4,-2207.2 -3144.2,-2209.0 -3145.7,-2209.9 -3148.6,-2203.8 -3166.8,-2193.0 -3173.4,-2192.2 -3177.5,-2196.1"/><polyline class="coast" points="-2589.9,-1662.8 -2589.9,-1662.8"/><polyline class="coast" points="-2374.7,-1473.8 -2374.7,-1473.8"/><polyline class="coast" points="-2493.8,-1587.2 -2493.8,-1587.2"/><polyline class="coast" points="-376.4,319.8 -376.4,319.8"/><polyline class="coast" points="-377.3,318.6 -377.3,318.6"/><polyline class="coast" points="-1511.9,-825.5 -1510.8,-826.5 -1511.9,-825.5"/><circle class="ring hazard confirmed" cx="578.3" cy="508.2" r="20.8"/><circle class="threat hazard confirmed" cx="578.3" cy="508.2" r="6"/><circle class="ring hazard confirmed" cx="646.7" cy="369.9" r="20.8"/><circle class="threat hazard confirmed" cx="646.7" cy="369.9" r="6"/><circle class="ring hazard confirmed" cx="452.9" cy="362.3" r="13.8"/><circle class="threat hazard confirmed" cx="452.9" cy="362.3" r="6"/><line class="orbit" x1="-94.6" y1="131.8" x2="227.2" y2="131.8"/><circle class="friendly-dot" cx="-94.6" cy="131.8" r="6"/><polyline class="route dim" points="65.8,248.8 -37.5,131.8 219.1,131.8 333.1,231.6 407.2,316.2 481.4,377.6 680.9,369.9 578.3,508.2 375.9,637.3 190.5,500.6 65.8,248.8"/><polyline class="route hl" points="219.1,131.8 333.1,231.6 407.2,316.2 481.4,377.6 680.9,369.9 578.3,508.2"/><g class="target" transform="translate(375.9,637.3)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="65.8" cy="248.8" r="8"/><circle class="wp" cx="-37.5" cy="131.8" r="6"/><circle class="wp" cx="219.1" cy="131.8" r="6"/><circle class="wp on" cx="333.1" cy="231.6" r="6"/><circle class="wp on" cx="407.2" cy="316.2" r="6"/><circle class="wp on" cx="481.4" cy="377.6" r="6"/><circle class="wp on" cx="680.9" cy="369.9" r="6"/><circle class="wp on" cx="578.3" cy="508.2" r="6"/><circle class="wp" cx="375.9" cy="637.3" r="6"/><circle class="wp" cx="190.5" cy="500.6" r="6"/><text class="lbl" x="77.8" y="253.8">Kutaisi</text><text class="lbl" x="231.1" y="136.8">2 AR EXIT</text><text class="lbl" x="345.1" y="236.6">3 DESCENT</text><text class="lbl" x="419.2" y="321.2">4 ZESTAPONI</text><text class="lbl" x="493.4" y="382.6">5 KHARAGAULI</text><text class="lbl" x="692.9" y="374.9">6 SURAMI</text><text class="lbl" x="590.3" y="513.2">7 BORJOMI</text><text class="lbl" x="349.9" y="623.3">8 TOT</text><text class="lbl" x="202.5" y="505.6">9 CLIMB</text><text class="lbl hazard" x="566.3" y="513.2" text-anchor="end">Borjomi gorge</text><text class="lbl hazard" x="584.3" y="355.9">Surami ridge</text><text class="lbl hazard" x="440.9" y="367.3" text-anchor="end">Power lines in the Dzirula valley</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>16 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 17">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 4 · 09:43</div>
+        <h2>TOT and Climb-Out</h2>
+        <div class="body"><p>Run in on the TOT marker, mark it with the ATFLIR, and call &#34;Bombs away&#34; at 8:15 from ZESTAPONI.
+Then turn northwest and climb out to 18,000 ft at CLIMB. That&#39;s the end of the graded route.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1114.6" y2="1114.6"/><text class="gridlbl" x="6" y="1110.6">41.0N</text><line class="grid" x1="0" x2="900" y1="592.5" y2="592.5"/><text class="gridlbl" x="6" y="588.5">41.5N</text><line class="grid" x1="0" x2="900" y1="70.4" y2="70.4"/><text class="gridlbl" x="6" y="66.4">42.0N</text><line class="grid" y1="0" y2="640" x1="-359.7" x2="-359.7"/><text class="gridlbl" x="-355.7" y="632">42.0E</text><line class="grid" y1="0" y2="640" x1="29.6" x2="29.6"/><text class="gridlbl" x="33.6" y="632">42.5E</text><line class="grid" y1="0" y2="640" x1="418.9" x2="418.9"/><text class="gridlbl" x="422.9" y="632">43.0E</text><line class="grid" y1="0" y2="640" x1="808.1" x2="808.1"/><text class="gridlbl" x="812.1" y="632">43.5E</text><polyline class="coast" points="-3968.5,-3414.2 -3968.5,-3414.2"/><polyline class="coast" points="-3968.7,-3414.7 -3968.7,-3414.7"/><polyline class="coast" points="-3814.3,-3482.1 -3844.7,-3455.5 -3897.2,-3425.7 -3903.9,-3423.7 -3919.9,-3425.6 -3923.7,-3424.1 -3928.9,-3430.4 -3949.0,-3428.9 -3953.1,-3424.4 -3945.4,-3414.3 -3953.7,-3415.4 -3952.1,-3416.6 -3954.9,-3417.8 -3963.8,-3411.2 -3967.8,-3411.6 -3960.0,-3403.6 -3956.6,-3405.3 -3956.2,-3410.1 -3944.0,-3406.8 -3953.0,-3406.6 -3958.9,-3402.8 -3958.1,-3400.4 -3954.7,-3402.4 -3952.6,-3400.5 -3955.4,-3398.2 -3952.8,-3395.8 -3954.9,-3392.7 -3956.6,-3397.2 -3959.7,-3398.3 -3962.3,-3394.5 -3959.2,-3392.2 -3964.7,-3395.8 -3960.0,-3400.5 -3971.9,-3413.7 -3990.0,-3407.4 -4015.2,-3406.1 -4080.8,-3409.6 -4119.8,-3418.9 -4212.0,-3450.1 -4244.5,-3465.6 -4276.5,-3485.6"/><polyline class="coast" points="-3967.2,-3414.4 -3967.2,-3414.4"/><polyline class="coast" points="-4442.2,-3181.7 -4407.6,-3186.1 -4392.7,-3185.8 -4363.4,-3181.3 -4328.7,-3171.4 -4259.8,-3142.5 -4220.4,-3129.5 -4162.0,-3105.4 -4109.6,-3077.1 -4064.7,-3047.7 -4028.5,-3014.4 -4008.1,-2983.9 -4004.5,-2971.3 -4005.6,-2960.6 -4009.5,-2954.8 -4014.1,-2955.4 -4014.2,-2958.1 -4014.3,-2956.1 -4020.1,-2953.9 -4021.4,-2947.4 -3989.7,-2907.5 -3986.4,-2898.7 -3986.1,-2880.9 -3954.7,-2835.1 -3952.5,-2817.9 -3949.6,-2817.2 -3952.8,-2816.7 -3951.7,-2813.4 -3956.0,-2808.1 -3952.9,-2810.1 -3941.6,-2804.6 -3935.2,-2796.0 -3934.2,-2790.4 -3914.5,-2777.5 -3906.4,-2765.8 -3898.4,-2759.4 -3898.2,-2755.5 -3893.2,-2756.7 -3884.5,-2752.9 -3876.5,-2742.9 -3867.9,-2743.3 -3826.5,-2724.2 -3815.2,-2726.1 -3804.2,-2719.3 -3775.0,-2713.4 -3758.8,-2717.8 -3745.1,-2716.7 -3743.3,-2714.7 -3741.4,-2715.0 -3743.6,-2716.2 -3740.6,-2716.2 -3713.9,-2704.1 -3708.1,-2699.0 -3702.6,-2700.5 -3688.4,-2696.0 -3679.2,-2696.3 -3673.9,-2699.0 -3658.5,-2700.7 -3657.1,-2703.2 -3634.6,-2711.4 -3627.1,-2718.3 -3628.8,-2718.0 -3630.1,-2723.8 -3622.7,-2726.0 -3637.9,-2747.0 -3638.1,-2758.6 -3641.2,-2760.7 -3640.2,-2765.7 -3643.0,-2769.7 -3640.2,-2772.4 -3645.6,-2770.4 -3648.0,-2773.6 -3645.8,-2774.0 -3650.2,-2777.2 -3649.6,-2778.8 -3644.8,-2775.3 -3646.7,-2777.6 -3643.8,-2777.3 -3644.7,-2780.4 -3642.6,-2778.5 -3643.7,-2781.4 -3640.3,-2778.6 -3642.0,-2782.8 -3637.8,-2778.5 -3635.9,-2779.9 -3638.8,-2783.4 -3636.1,-2785.0 -3632.5,-2779.1 -3630.5,-2780.2 -3632.5,-2784.4 -3628.5,-2783.3 -3627.6,-2778.2 -3624.7,-2781.9 -3625.2,-2776.2 -3623.3,-2777.2 -3617.2,-2771.4 -3623.4,-2768.6 -3616.3,-2771.5 -3614.5,-2775.2 -3617.1,-2769.1 -3614.2,-2775.0 -3610.0,-2771.7 -3613.0,-2771.6 -3611.0,-2770.3 -3614.1,-2765.2 -3609.9,-2771.3 -3610.1,-2769.6 -3608.0,-2770.2 -3609.3,-2768.8 -3603.9,-2769.7 -3605.4,-2768.2 -3603.0,-2768.1 -3603.7,-2765.6 -3606.6,-2766.0 -3600.4,-2763.3 -3603.4,-2761.1 -3611.9,-2764.2 -3605.8,-2760.7 -3596.5,-2764.1 -3594.6,-2755.8 -3572.9,-2736.3 -3567.1,-2727.9 -3540.8,-2713.6 -3535.6,-2703.9 -3527.6,-2696.4 -3527.2,-2692.4 -3545.4,-2681.7 -3547.7,-2678.6 -3546.4,-2674.3 -3528.0,-2649.0 -3515.7,-2640.0 -3496.8,-2620.2 -3492.7,-2617.6 -3490.5,-2620.1 -3486.8,-2617.9 -3486.0,-2611.2 -3479.4,-2611.8 -3476.2,-2608.2 -3475.9,-2609.9 -3470.4,-2606.9 -3458.5,-2605.9 -3452.2,-2602.1 -3448.3,-2609.3 -3452.4,-2614.1 -3447.8,-2616.1 -3449.4,-2619.5 -3447.9,-2616.2 -3451.5,-2614.6 -3452.7,-2617.4 -3449.9,-2618.6 -3454.3,-2618.0 -3455.5,-2619.7 -3455.7,-2624.3 -3452.9,-2627.1 -3446.1,-2629.2 -3435.5,-2628.7 -3423.2,-2620.0 -3414.5,-2607.4 -3415.6,-2600.2 -3421.2,-2597.7 -3426.7,-2599.1 -3433.3,-2597.3 -3436.1,-2592.9 -3405.6,-2572.0 -3387.8,-2554.1 -3382.8,-2545.8 -3375.5,-2542.1 -3370.6,-2535.3 -3370.3,-2525.3 -3362.8,-2515.1 -3361.7,-2505.4 -3355.7,-2500.4 -3355.0,-2495.9 -3339.4,-2487.0 -3325.6,-2472.1 -3316.5,-2455.1 -3312.0,-2453.0 -3314.4,-2451.4 -3311.8,-2452.9 -3294.9,-2446.7 -3273.9,-2449.6 -3252.5,-2446.3 -3238.4,-2440.0 -3223.8,-2427.9 -3213.3,-2424.0 -3205.7,-2414.7 -3192.9,-2407.3 -3182.9,-2404.5 -3173.3,-2402.7 -3151.2,-2409.7 -3131.2,-2402.8 -3105.7,-2401.2 -3069.1,-2388.3 -3065.3,-2391.4 -3060.9,-2391.6 -3055.4,-2387.9 -3031.3,-2382.6 -3016.9,-2376.2 -3000.6,-2364.0 -2993.0,-2365.6 -2988.0,-2363.1 -2980.2,-2353.5 -2968.1,-2351.1 -2961.4,-2352.0 -2955.4,-2345.5 -2934.9,-2338.2 -2930.3,-2341.6 -2921.9,-2333.2 -2917.4,-2331.6 -2905.5,-2330.6 -2893.1,-2332.6 -2886.8,-2329.2 -2883.3,-2324.2 -2858.0,-2311.9 -2840.1,-2290.4 -2835.5,-2281.3 -2836.6,-2275.0 -2833.1,-2270.2 -2830.8,-2267.8 -2824.6,-2268.5 -2821.8,-2265.3 -2819.0,-2260.7 -2820.1,-2256.9 -2811.1,-2246.7 -2810.9,-2242.3 -2799.2,-2223.8 -2794.5,-2221.0 -2787.0,-2220.4 -2784.6,-2213.4 -2759.6,-2211.3 -2744.8,-2205.3 -2743.2,-2201.9 -2730.6,-2194.2 -2725.4,-2192.3 -2717.8,-2195.3 -2711.4,-2194.0 -2695.6,-2185.3 -2685.4,-2174.6 -2672.7,-2151.3 -2669.6,-2133.2 -2671.0,-2124.4 -2666.7,-2118.6 -2646.8,-2119.9 -2645.4,-2118.4 -2649.6,-2114.3 -2648.5,-2113.1 -2643.9,-2117.4 -2634.7,-2114.8 -2633.4,-2111.2 -2636.9,-2108.1 -2631.0,-2107.8 -2624.9,-2102.3 -2614.8,-2088.2 -2593.6,-2065.6 -2576.1,-2039.2 -2557.2,-2026.7 -2550.6,-2019.3 -2541.4,-2016.3 -2527.9,-2007.3 -2518.3,-1996.3 -2506.5,-1992.7 -2491.1,-1973.5 -2474.9,-1965.1 -2465.5,-1957.5 -2437.9,-1914.4 -2434.8,-1911.3 -2427.7,-1910.3 -2422.7,-1906.9 -2382.2,-1865.7 -2369.1,-1842.9 -2359.0,-1834.4 -2349.8,-1821.6 -2334.8,-1795.7 -2305.3,-1771.1 -2279.0,-1742.2 -2241.4,-1707.1 -2222.5,-1670.3 -2214.7,-1667.3 -2206.5,-1660.3 -2193.4,-1656.6 -2179.6,-1649.4 -2159.0,-1634.0 -2147.9,-1613.6 -2140.1,-1584.4 -2139.9,-1581.9 -2143.4,-1579.4 -2141.6,-1572.0 -2139.0,-1570.9 -2143.0,-1575.4 -2143.0,-1578.7 -2140.4,-1578.6 -2137.1,-1583.3 -2137.1,-1578.2 -2125.7,-1567.2 -2108.6,-1560.3 -2090.9,-1545.8 -2053.0,-1527.3 -2040.2,-1517.7 -2034.2,-1508.6 -2026.5,-1509.5 -2022.9,-1507.7 -2006.8,-1489.1 -1989.8,-1430.8 -1975.3,-1406.1 -1965.4,-1400.5 -1956.9,-1390.5 -1941.2,-1387.9 -1922.7,-1375.6 -1903.9,-1376.1 -1875.4,-1368.5 -1853.2,-1367.1 -1825.7,-1348.9 -1812.4,-1344.9 -1792.2,-1329.9 -1752.7,-1317.7 -1745.0,-1312.1 -1731.9,-1308.3 -1726.5,-1303.8 -1718.8,-1290.3 -1709.4,-1253.3 -1703.1,-1188.2 -1699.1,-1169.4 -1683.9,-1154.8 -1674.9,-1152.1 -1651.4,-1127.0 -1647.6,-1126.7 -1644.7,-1135.3 -1628.3,-1150.8 -1619.5,-1154.6 -1607.7,-1154.7 -1600.0,-1151.9 -1590.3,-1141.9 -1584.4,-1140.8 -1577.3,-1134.6 -1559.6,-1130.1 -1550.5,-1119.7 -1542.3,-1123.9 -1534.2,-1121.5 -1521.6,-1124.5 -1512.6,-1121.8 -1496.5,-1108.9 -1479.1,-1082.8 -1469.1,-1071.1 -1463.6,-1068.6 -1442.5,-1069.8 -1415.3,-1079.1 -1405.4,-1076.5 -1380.7,-1064.2 -1355.1,-1063.0 -1326.8,-1065.2 -1299.4,-1059.0 -1290.8,-1061.7 -1277.3,-1060.5 -1243.0,-1052.1 -1229.8,-1039.9 -1215.7,-1018.1 -1198.5,-1003.0 -1187.9,-982.5 -1180.9,-978.4 -1171.5,-968.5 -1163.5,-955.1 -1159.5,-953.6 -1155.8,-954.9 -1142.9,-965.6 -1146.1,-966.7 -1143.1,-968.5 -1125.3,-968.4 -1118.2,-972.8 -1109.4,-971.2 -1097.8,-962.1 -1076.5,-920.5 -1055.9,-811.8 -1034.6,-780.1 -1028.9,-777.4 -1021.7,-761.8 -998.6,-755.7 -977.9,-767.2 -960.9,-766.1 -938.1,-757.3 -915.6,-752.0 -900.2,-740.8 -892.2,-737.5 -873.0,-735.4 -860.8,-729.9 -835.3,-725.7 -821.6,-716.7 -809.4,-700.1 -809.3,-703.3 -797.2,-702.3 -787.2,-688.3 -770.3,-650.5 -737.5,-544.2 -725.1,-473.2 -717.2,-401.9 -705.8,-343.7 -700.5,-333.6 -686.4,-327.7 -674.9,-312.3 -653.7,-251.7 -648.2,-226.1 -644.6,-220.2 -641.0,-180.9 -643.7,-165.0 -649.5,-150.8 -648.3,-147.6 -650.2,-146.7 -645.0,-125.1 -641.5,-118.8 -638.9,-117.9 -633.1,-96.1 -626.3,-96.0 -629.5,-92.1 -631.1,-94.5 -631.9,-91.8 -620.9,-91.8 -620.9,-89.8 -630.9,-89.2 -628.7,-86.6 -633.0,-85.2 -635.9,-97.1 -633.4,-90.5 -634.4,-86.0 -628.4,-85.1 -624.4,-67.5 -621.9,-67.2 -588.1,-13.8 -592.2,-22.4 -590.4,-23.1 -585.4,-13.6 -588.5,-18.0 -587.4,-12.1 -562.9,35.8 -551.9,50.2 -547.6,75.9 -540.9,162.5 -533.0,213.2 -534.6,244.7 -539.3,274.8 -550.7,309.7 -555.8,319.0 -560.6,322.6 -579.2,378.1 -584.8,387.3 -588.0,388.5 -599.5,411.4 -609.2,422.1 -610.4,419.7 -609.8,423.2 -612.6,421.2 -613.7,429.9 -620.1,430.7 -622.2,433.5 -620.8,435.7 -624.5,435.6 -625.4,433.4 -633.3,436.3 -628.1,435.8 -626.5,438.9 -634.8,439.2 -636.7,430.4 -639.5,427.9 -644.6,428.8 -660.9,443.1 -690.7,481.4 -696.4,501.1 -701.2,545.4 -707.9,550.5 -713.0,573.2 -716.0,580.1 -720.2,582.5 -733.4,611.6 -732.5,609.1"/><polyline class="coast" points="-3967.9,-3412.3 -3969.5,-3413.9 -3967.9,-3412.3"/><polyline class="coast" points="-4418.1,-3401.5 -4408.0,-3378.4 -4409.3,-3385.0 -4405.4,-3383.6 -4406.8,-3378.5 -4385.4,-3388.8 -4310.0,-3405.8 -4288.7,-3405.8 -4259.7,-3400.1 -4257.2,-3400.1 -4261.8,-3402.7 -4256.4,-3403.0 -4251.3,-3399.7 -4260.9,-3390.0 -4261.8,-3383.8 -4257.8,-3366.9 -4259.6,-3362.2 -4267.2,-3355.2 -4320.5,-3344.9 -4333.0,-3331.3 -4349.9,-3324.4 -4410.5,-3315.3 -4425.3,-3311.8 -4423.0,-3310.1 -4427.1,-3307.2 -4429.7,-3307.4 -4432.3,-3311.5 -4427.8,-3312.4 -4436.1,-3312.9 -4437.9,-3305.7"/><polyline class="coast" points="-3620.7,-2719.6 -3620.7,-2719.6"/><polyline class="coast" points="-3956.4,-2808.7 -3955.2,-2810.9 -3959.1,-2810.5 -3956.4,-2808.7"/><polyline class="coast" points="-711.4,564.4 -711.4,564.4"/><polyline class="coast" points="-3477.8,-2607.4 -3480.4,-2607.9 -3476.4,-2606.0 -3477.8,-2607.4"/><polyline class="coast" points="-4437.8,-3495.0 -4426.0,-3486.8 -4417.1,-3471.7 -4405.0,-3471.4 -4396.1,-3468.2 -4396.1,-3461.3 -4372.1,-3460.8 -4362.5,-3457.9 -4369.3,-3451.2 -4370.8,-3452.8 -4367.7,-3455.4 -4369.7,-3456.5 -4373.7,-3448.3 -4398.6,-3433.5 -4407.6,-3432.5 -4413.2,-3437.7"/><polyline class="coast" points="-3610.9,-2713.0 -3610.9,-2713.0"/><polyline class="coast" points="-3317.2,-2456.1 -3317.2,-2456.1"/><polyline class="coast" points="-3479.6,-2610.2 -3479.6,-2610.2"/><polyline class="coast" points="-588.8,-18.5 -588.8,-18.5"/><polyline class="coast" points="-590.0,-20.2 -590.0,-20.2"/><polyline class="coast" points="-2139.1,-1575.1 -2137.6,-1576.4 -2139.1,-1575.1"/><circle class="ring hazard confirmed" cx="714.7" cy="237.5" r="28.2"/><circle class="threat hazard confirmed" cx="714.7" cy="237.5" r="6"/><circle class="ring hazard confirmed" cx="808.1" cy="49.6" r="28.2"/><circle class="threat hazard confirmed" cx="808.1" cy="49.6" r="6"/><circle class="ring hazard confirmed" cx="543.4" cy="39.1" r="18.8"/><circle class="threat hazard confirmed" cx="543.4" cy="39.1" r="6"/><line class="orbit" x1="-204.0" y1="-274.1" x2="235.3" y2="-274.1"/><circle class="friendly-dot" cx="-204.0" cy="-274.1" r="6"/><polyline class="route dim" points="15.0,-115.0 -126.1,-274.1 224.2,-274.1 379.9,-138.4 481.1,-23.5 582.4,60.0 854.8,49.6 714.7,237.5 438.3,412.9 185.3,227.1 15.0,-115.0"/><polyline class="route hl" points="714.7,237.5 438.3,412.9 185.3,227.1"/><g class="target" transform="translate(438.3,412.9)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="481.1" cy="-23.5" r="6"/><circle class="wp" cx="582.4" cy="60.0" r="6"/><circle class="wp" cx="854.8" cy="49.6" r="6"/><circle class="wp" cx="714.7" cy="237.5" r="6"/><circle class="wp on" cx="438.3" cy="412.9" r="6"/><circle class="wp on" cx="185.3" cy="227.1" r="6"/><text class="lbl" x="594.4" y="65.0">5 KHARAGAULI</text><text class="lbl" x="842.8" y="54.6" text-anchor="end">6 SURAMI</text><text class="lbl" x="726.7" y="242.5">7 BORJOMI</text><text class="lbl" x="450.3" y="417.9">8 TOT</text><text class="lbl" x="197.3" y="232.1">9 CLIMB</text><text class="lbl hazard" x="702.7" y="242.5" text-anchor="end">Borjomi gorge</text><text class="lbl hazard" x="745.7" y="35.6">Surami ridge</text><text class="lbl hazard" x="531.4" y="44.1" text-anchor="end">Power lines in the Dzirula valley</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>17 / 23</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 18">
+  
+    <div class="split nomap">
+      <div class="text">
+        <div class="eyebrow">Phase 5 · 09:52</div>
+        <h2>Recovery</h2>
+        <div class="body"><p>Rejoin as a section and recover to Kutaisi (tower 134.0). Fuel check at CLIMB: you should have
+at least 6,000 lb. If you&#39;re under the bingo, go direct.</p></div>
+        
+      </div>
+      
+    </div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>18 / 23</span></div>
+</section>
+
+<section class="slide comms" data-notes="Kneeboard page 2 carries this card in the cockpit." aria-label="Slide 19">
+  
+    <div class="eyebrow">Comms</div>
+    <h2>Frequencies</h2>
+    <div class="rows"><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">250.500 AM</span><span>Colt (inter-flight / det) <span class="muted mono">· COMM1 · CH 1</span><br><span class="muted" style="font-size:22px">WREN monitors here</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">252.000 AM</span><span>ARCO 1 (KC-135 drogue) <span class="muted mono">· COMM1 · CH 2</span><br><span class="muted" style="font-size:22px">TACAN 34Y</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">134.000 AM</span><span>Kutaisi Tower <span class="muted mono">· COMM2 · CH 1</span><br><span class="muted" style="font-size:22px">UHF 263.000</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">250.500 AM</span><span>WREN, timing calls <span class="muted mono">· Manual / listen</span><br><span class="muted" style="font-size:22px">Scripted calls (on-screen text); they don&#39;t answer the radio menu</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>19 / 23</span></div>
+</section>
+
+<section class="slide package" data-notes="" aria-label="Slide 20">
+  
+    <div class="eyebrow">Conditions</div>
+    <h2>Weather &amp; ROE</h2>
+    <div class="rows"><div class="row"><span class="k">Wind</span><span>270° / 10 kt</span></div><div class="row"><span class="k">Clouds</span><span>Few 8,000 ft, clear below. Valley haze clears by 0930</span></div><div class="row"><span class="k">Visibility</span><span>20+ km</span></div><div class="row"><span class="k">Temp / QNH</span><span>4 °C / 30.02 inHg</span></div><div class="row"><span class="k">Range and weapons clearance</span><span>No live ordnance is carried. The TOT is a simulated attack: run in, mark the target with the
+ATFLIR, and call &#34;Bombs away&#34; on the det frequency. Air-to-air missiles are carried for weight
+and balance only. Master arm stays SAFE.</span></div></div>
+    
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>20 / 23</span></div>
+</section>
+
+<section class="slide grade" data-notes="Students should know the standards before they step. The same sheet drives the debrief." aria-label="Slide 21">
+  
+    <div class="eyebrow">Grade sheet</div>
+    <h2>What a pass looks like</h2>
+    <div class="rows"><div class="row"><span class="k">Rendezvous</span><span>Joins on ARCO 1 without overshooting; stable in pre-contact inside 4 minutes of visual.</span></div><div class="row"><span class="k">Plug and transfer</span><span>Takes fuel to the planned on-load (6,000 lb) in no more than three attempts.</span></div><div class="row"><span class="k">Route entry</span><span>Crosses ZESTAPONI at 500 ft AGL and 420 KIAS, on the planned heading.</span></div><div class="row"><span class="k">Checkpoint timing</span><span>At least 3 of 4 checkpoints ON TIME (±30 s). TOT must be on time.</span></div><div class="row"><span class="k">Altitude discipline</span><span>No knock-it-off for altitude. Holds 500 ft AGL ±100 ft on straight legs.</span></div><div class="row"><span class="k">Recovery</span><span>Climbs out at the planned point, rejoins as a section, lands with at least the bingo fuel.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>21 / 23</span></div>
+</section>
+
+<section class="slide rules" data-notes="Tell them now what the debrief will focus on, so they fly it with that in mind." aria-label="Slide 22">
+  
+    <div class="eyebrow">Debrief</div>
+    <h2>What we&#39;ll look at afterwards</h2>
+    <ol class="rulelist"><li>The timing card: where you lost or made up time, and why.</li><li>How you corrected timing: a speed change, or cutting or extending a turn.</li><li>Tanker video: closure rate at pre-contact.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>22 / 23</span></div>
+</section>
+
+<section class="slide title" data-notes="End of the pilot brief. Debrief outcomes live in director.html, so they don&#39;t spoil the mission." aria-label="Slide 23">
+  
+    <div class="eyebrow">Training event LONG VALLEY</div>
+    <h1>Questions?</h1>
+    <div class="sub">Step 09:00L</div>
+    
+
+  
+  <div class="foot"><span>TRAINING LONG VALLEY</span><span>23 / 23</span></div>
+</section>
+
+</div>
+<div id="progress"></div>
+<div id="notes"><span class="k">NOTES</span><span id="notes-text"></span></div>
+<div id="help">← → navigate · N notes · F fullscreen</div>
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+const stage = document.getElementById("stage");
+let cur = 0;
+
+function fit() {
+  const s = Math.min(innerWidth / 1600, innerHeight / 900);
+  stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+}
+function show(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((el, j) => el.classList.toggle("on", j === cur));
+  document.getElementById("progress").style.width = `${(cur + 1) / slides.length * 100}%`;
+  document.getElementById("notes-text").textContent = slides[cur].dataset.notes || "(no notes)";
+  history.replaceState(null, "", `#${cur + 1}`);
+}
+addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(slides.length - 1);
+  else if (e.key.toLowerCase() === "n") document.getElementById("notes").classList.toggle("on");
+  else if (e.key.toLowerCase() === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+});
+addEventListener("click", e => { if (!e.target.closest("a")) show(cur + (e.clientX > innerWidth / 3 ? 1 : -1)); });
+let tx = null;
+addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+addEventListener("touchend", e => { if (tx !== null) { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); tx = null; } });
+addEventListener("resize", fit);
+fit();
+show((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

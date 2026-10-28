@@ -1,0 +1,278 @@
+# Training event LONG VALLEY: air refuelling, then a timed low-level route. Source of truth;
+# `python -m dcsmb build` renders hangar/train_tanker_lowlevel/.
+#
+# Training, not combat: nothing is hidden and nothing is random. The sim times each low-level
+# checkpoint against the plan (EARLY / ON TIME / LATE, ±30 s) and calls a safety knock-it-off below
+# 200 ft AGL. Checkpoints are real town features along the Dzirula valley, the Surami ridge and the
+# Borjomi gorge (positions checked with Nominatim reverse geocoding).
+
+meta:
+  id: train_tanker_lowlevel
+  title: "LONG VALLEY"
+  subtitle: "Air Refuelling and Low-Level Navigation"
+  category: training
+  theater: caucasus
+  role: "AAR & low level"   # mission type: the hangar filters on it
+  date: 2026-02-09
+  start_time: "09:00"
+  weather:
+    temperature_c: 4
+    wind_from_deg: 270
+    wind_kts: 10
+    clouds: "Few 8,000 ft, clear below. Valley haze clears by 0930"
+    visibility: "20+ km"
+    qnh_inhg: 30.02
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Det work-ups, event AR/LL-1"
+  rules:
+    - "Minimum altitude 500 ft AGL on the low-level route; 1,000 ft AGL over towns. The sim calls a knock-it-off below 200 ft AGL."
+    - "Maximum 450 KIAS below 1,000 ft AGL."
+    - "Pass checkpoints abeam within 1 nm, never overhead below 1,000 ft AGL. Each checkpoint has a 2 km timing gate."
+    - "Tanker: no closer than pre-contact without ARCO's clearance. One receiver on the boom area at a time."
+    - "Bingo 4,500 lb for an immediate climb and direct return to Kutaisi."
+    - "Weather minimums for the low level: 3,000 ft ceiling and 8 km visibility. Below that, fly the route at 5,000 ft AGL."
+  knock_it_off: |
+    Any player calls "Knock it off" for anything unsafe: an altitude bust, lost sight in the gorge,
+    a bird strike, or a warning light. Everyone climbs wings-level to 1,000 ft AGL minimum and
+    acknowledges by callsign. Call "Terminate" to end one leg and keep the event going.
+  special_subjects:
+    - "Spatial disorientation in a narrow valley: trust the radar altimeter and the HUD, not the horizon."
+    - "Turning in the Borjomi gorge: start the turn early, and if in doubt, climb and turn."
+    - "Tanker overrun: what you do when you're closing too fast at pre-contact."
+    - "Lost route: climb to 5,000 ft AGL, call it, and rejoin at the next checkpoint."
+  grade_sheet:
+    - { item: "Rendezvous", standard: "Joins on ARCO 1 without overshooting; stable in pre-contact inside 4 minutes of visual." }
+    - { item: "Plug and transfer", standard: "Takes fuel to the planned on-load (6,000 lb) in no more than three attempts." }
+    - { item: "Route entry", standard: "Crosses ZESTAPONI at 500 ft AGL and 420 KIAS, on the planned heading." }
+    - { item: "Checkpoint timing", standard: "At least 3 of 4 checkpoints ON TIME (±30 s). TOT must be on time." }
+    - { item: "Altitude discipline", standard: "No knock-it-off for altitude. Holds 500 ft AGL ±100 ft on straight legs." }
+    - { item: "Recovery", standard: "Climbs out at the planned point, rejoins as a section, lands with at least the bingo fuel." }
+  debrief_focus:
+    - "The timing card: where you lost or made up time, and why."
+    - "How you corrected timing: a speed change, or cutting or extending a turn."
+    - "Tanker video: closure rate at pre-contact."
+
+narrative:
+  operation: "LONG VALLEY"
+  backstory: |
+    A month before the deployment turns hot, the Hornet detachment is in Georgia for the partner
+    exercise, flying from Kutaisi. The detachment's training officer wants every pilot current on
+    the two skills that get people killed when they're rusty: plugging a tanker basket, and flying
+    low and fast through terrain that doesn't forgive mistakes.
+
+    LONG VALLEY puts both in one sortie. You'll take gas from the exercise tanker over Imereti,
+    then run a timed low-level route up the Dzirula valley, over the Surami ridge and down the Borjomi
+    gorge to a simulated attack outside Akhaltsikhe. Nothing on this sortie is hidden. What's graded is
+    how precisely you fly it.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer: your instructor, monitoring from the det frequency"
+    - name: "ARCO 1"
+      role: "KC-135 (drogue) exercise tanker on the track north of Kutaisi"
+    - name: "Kutaisi Tower"
+      role: "Departure and recovery"
+    - name: "Colt 1-1 / 1-2"
+      role: "You (the graded pilot) and your wingman, F/A-18C Hornets"
+  hook: |
+    "Plugging the basket is a skill. Hitting a checkpoint to the second is a habit. Today I'm
+    grading habits." WREN, mass brief
+  outcomes:
+    success: |
+      Complete. The tanker rendezvous and transfer are clean, at least three checkpoints and the TOT
+      are on time, and there's no altitude knock-it-off. You're signed off for low-level work in the
+      exercise and on the schedule for the range next.
+    partial: |
+      Partial: re-fly the low level. The tanker items pass, but the timing card has two or more
+      checkpoints EARLY or LATE, or the TOT missed. WREN schedules a second route on Wednesday.
+    failure: |
+      Incomplete: re-fly the event. Either the transfer didn't happen (no gas, no low level) or there
+      was an altitude knock-it-off in the gorge. Debrief with the tapes before you fly again.
+
+situation: |
+  Two-ship training sortie from Kutaisi. After departure, join ARCO 1 on the refuelling track north of
+  the field at 20,000 ft and take 6,000 lb each. Then descend to enter the low-level route at Zestaponi:
+  500 ft AGL, 420 knots, four timed checkpoints, ending with a simulated attack (TOT, no weapons
+  released) on a marked truck west of Akhaltsikhe. Climb out to the northwest and return to Kutaisi.
+  The route is clear of other traffic. All times on the route run from crossing ZESTAPONI.
+
+objectives:
+  primary: "Fly the low-level route with at least 3 of 4 checkpoints and the TOT on time (±30 s), with no altitude knock-it-off."
+  secondary: "Refuel from ARCO 1: rendezvous, stable pre-contact, 6,000 lb on-load."
+  tertiary: "Recover to Kutaisi as a section with at least the bingo fuel."
+
+roe: |
+  No live ordnance is carried. The TOT is a simulated attack: run in, mark the target with the
+  ATFLIR, and call "Bombs away" on the det frequency. Air-to-air missiles are carried for weight
+  and balance only. Master arm stays SAFE.
+
+threats:
+  # Training: everything here is briefed as it is
+  - name: "Borjomi gorge"
+    kind: hazard
+    lat: 41.8400
+    lon: 43.3800
+    range_km: 3
+    notes: "Narrow, steep-sided, with a hard right turn at the checkpoint. Climb if you're not sure of the turn."
+  - name: "Surami ridge"
+    kind: hazard
+    lat: 42.0200
+    lon: 43.5000
+    range_km: 3
+    notes: "About 950 m (3,100 ft) on the pass. The ground rises faster than it looks heading east."
+  - name: "Power lines in the Dzirula valley"
+    kind: hazard
+    lat: 42.0300
+    lon: 43.1600
+    range_km: 2
+    notes: "High-tension lines cross the valley between Zestaponi and Kharagauli. Stay at 500 ft AGL or above."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Colt (inter-flight / det)", freq: "250.500 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "ARCO 1 (KC-135 drogue)", freq: "252.000 AM", radio: 1, channel: 2, notes: "TACAN 34Y" }
+  - { name: "Kutaisi Tower", freq: "134.000 AM", radio: 2, channel: 1, notes: "UHF 263.000" }
+  - { name: "WREN, timing calls", freq: "250.500 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Colt 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Kutaisi
+    start: cold
+    radio1_mhz: 250.5
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      3: FPU_8A_Fuel_Tank_330_gallons
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      7: FPU_8A_Fuel_Tank_330_gallons
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× AIM-9X (inert for the event), ATFLIR, 2× 330 gal tanks"
+    bingo_lbs: 4500
+    joker_lbs: 6000
+    waypoints:
+      - { name: "ARCO",      lat: 42.3300, lon: 42.3000, alt_ft: 20000, kts: 300, eta: "09:19", zone_km: 15 }
+      - { name: "AR EXIT",   lat: 42.3300, lon: 42.7500, alt_ft: 20000, kts: 300, eta: "09:30" }
+      - { name: "DESCENT",   lat: 42.2000, lon: 42.9500, alt_ft: 8000,  kts: 400, eta: "09:33" }
+      - { name: "ZESTAPONI", lat: 42.0900, lon: 43.0800, alt_ft: 500, agl: true, kts: 420, eta: "09:35:00", zone_km: 2 }
+      - { name: "KHARAGAULI", lat: 42.0100, lon: 43.2100, alt_ft: 500, agl: true, kts: 420, eta: "09:36:05", zone_km: 2,
+          timing: { from: "ZESTAPONI", seconds: 65, window_s: 30, flag: 61 } }
+      - { name: "SURAMI",    lat: 42.0200, lon: 43.5600, alt_ft: 500, agl: true, kts: 420, eta: "09:38:20", zone_km: 2,
+          timing: { from: "ZESTAPONI", seconds: 200, window_s: 30, flag: 62 } }
+      - { name: "BORJOMI",   lat: 41.8400, lon: 43.3800, alt_ft: 500, agl: true, kts: 420, eta: "09:40:20", zone_km: 2,
+          timing: { from: "ZESTAPONI", seconds: 320, window_s: 30, flag: 63 } }
+      - { name: "TOT",       lat: 41.6720, lon: 43.0250, alt_ft: 500, agl: true, kts: 420, eta: "09:43:15", zone_km: 2,
+          timing: { from: "ZESTAPONI", seconds: 495, window_s: 30, flag: 64 } }
+      - { name: "CLIMB",     lat: 41.8500, lon: 42.7000, alt_ft: 18000, kts: 380, eta: "09:47", zone_km: 10 }
+    land: Kutaisi
+
+target:
+  name: "TOT marker (simulated attack)"
+  lat: 41.6720
+  lon: 43.0250
+  groups: ["TOT Marker"]
+  description: "A single truck parked on the farm road west of Akhaltsikhe, marking the time-on-target point. Simulated attack only; no release."
+  dmpi: "The truck. Mark it with the ATFLIR and call 'Bombs away' at the planned TOT."
+
+units:
+  - name: "TOT Marker"
+    coalition: blue
+    type: [Ural_375]
+    lat: 41.6720
+    lon: 43.0250
+    heading: 90
+    hold_fire: true
+
+support:
+  - kind: tanker
+    callsign: "Arco 1"
+    aircraft: KC135MPRS
+    coalition: blue
+    lat: 42.3300
+    lon: 42.2000
+    alt_ft: 20000
+    kts: 290
+    heading: 90
+    leg_nm: 25
+    freq_mhz: 252.0
+    tacan: { channel: "34Y", callsign: "ARC" }
+
+storyboard:
+  - phase: "Start and Departure"
+    time: "09:00"
+    waypoints: []
+    brief: |
+      Cold start at Kutaisi, check in on 250.5, and depart runway 25 or 07 as a section. Climb
+      north to the refuelling track at 20,000 ft. WREN monitors the det frequency for the whole event.
+    script: "WREN checks the flight in. No other traffic."
+    trigger:
+      when: { time_after: 10 }
+      message: "WREN: Colt, Wren on det common. Arco's on station, track's good, low-level weather's in limits. Have a good one."
+      seconds: 15
+
+  - phase: "Tanker"
+    time: "09:19"
+    waypoints: ["ARCO", "AR EXIT"]
+    notes: "Have the student brief the rendezvous: closure speed, where the wingman waits, the pre-contact call."
+    brief: |
+      Rendezvous with ARCO 1 (TACAN 34Y) on the eastbound track at 20,000 ft and 290 knots. Lead plugs
+      first while the wingman waits in left observation, then swap. Take 6,000 lb each. Leave the track
+      at AR EXIT.
+    script: "ARCO clears the flight to pre-contact when the lead reaches the ARCO zone."
+    trigger:
+      when: { player_in_zone: "ARCO" }
+      message: "ARCO 1: Colt, Arco, you're cleared to pre-contact, lead first. Wingman, left observation."
+      seconds: 15
+
+  - phase: "Low-Level Route"
+    time: "09:35"
+    waypoints: ["DESCENT", "ZESTAPONI", "KHARAGAULI", "SURAMI", "BORJOMI"]
+    notes: "Walk the route on the map: ground rising to Surami, the turn at Borjomi, and where you'd climb out if it goes wrong."
+    brief: |
+      Descend to enter at ZESTAPONI at 500 ft AGL and 420 knots. The clock starts there. Up the
+      Dzirula valley past KHARAGAULI, over the Surami ridge to SURAMI, then hard south down the
+      Borjomi gorge. Planned times from ZESTAPONI: KHARAGAULI 1:05, SURAMI 3:20, BORJOMI 5:20, TOT 8:15.
+      Each checkpoint is graded ±30 s.
+    script: |
+      Crossing ZESTAPONI starts the clock (flag 401). Each checkpoint reports EARLY, ON TIME or LATE
+      from window flags (timed checkpoints in build_miz). Below 200 ft AGL on the route: knock-it-off.
+    triggers:
+      - when: { player_in_zone: "ZESTAPONI" }
+        set_flag: 50
+        message: "WREN: Colt, clock's running from Zestaponi. Five hundred feet, four-twenty. Eyes out."
+        seconds: 12
+      - when: { player_below_agl_ft: 200, flag: 50, flag_false: 59 }
+        set_flag: 21
+        message: "WREN: Knock it off, knock it off! Colt one, you're below two hundred feet. Climb to one thousand and acknowledge."
+        seconds: 20
+
+  - phase: "TOT and Climb-Out"
+    time: "09:43"
+    waypoints: ["TOT", "CLIMB"]
+    brief: |
+      Run in on the TOT marker, mark it with the ATFLIR, and call "Bombs away" at 8:15 from ZESTAPONI.
+      Then turn northwest and climb out to 18,000 ft at CLIMB. That's the end of the graded route.
+    script: "Reaching TOT ends the low-level safety watch. At CLIMB, WREN calls the pass if all four timing flags (61 to 64) are set and there was no knock-it-off."
+    triggers:
+      - when: { player_in_zone: "TOT" }
+        set_flag: 59
+        message: "WREN: Colt, off target. Climb out northwest, route's complete."
+        seconds: 12
+      - when: { player_in_zone: "CLIMB", flag: [61, 62, 63, 64], flag_false: 21 }
+        set_flag: 10
+        message: "WREN: Colt, Wren. Four for four on time and no altitude calls. That's a pass on the route. RTB."
+        seconds: 15
+      - when: { player_in_zone: "CLIMB" }
+        message: "WREN: Colt, route complete. Timing card's in the debrief. RTB Kutaisi."
+        seconds: 12
+
+  - phase: "Recovery"
+    time: "09:52"
+    waypoints: []
+    brief: |
+      Rejoin as a section and recover to Kutaisi (tower 134.0). Fuel check at CLIMB: you should have
+      at least 6,000 lb. If you're under the bingo, go direct.
+    script: "No triggers: the grade comes from the timing calls and flags 10 (route pass) and 21 (altitude knock-it-off)."

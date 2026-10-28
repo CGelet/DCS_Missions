@@ -18,7 +18,8 @@ class MissionError(ValueError):
 
 REQUIRED_TOP = ["meta", "narrative", "situation", "objectives", "flights", "target", "storyboard"]
 TRIGGER_WHEN = {"time_after", "player_in_zone", "group_dead", "group_life_below", "group_in_zone", "flag", "flag_false",
-                "target_destroyed", "variant"}
+                "target_destroyed", "variant", "time_since_flag", "player_below_ft", "player_below_agl_ft"}
+CATEGORIES = {"operational", "training"}
 SUPPORT_KINDS = {"awacs", "tanker", "cap", "intercept", "flight"}
 AI_TASKS = {"antiship", "sweep", "cap", "strike", "transport"}
 INTEL = {"confirmed", "suspected", "possible"}
@@ -62,6 +63,10 @@ def _check_when(when, where: str, wp_names: set, group_names: set, variants: dic
         g = when["group_life_below"]
         if not (isinstance(g, list) and len(g) == 2 and g[0] in group_names and 0 < g[1] <= 100):
             errs.append(f"{where}: group_life_below must be [known group, percent of life left], got {g!r}")
+    if "time_since_flag" in when:
+        t = when["time_since_flag"]
+        if not (isinstance(t, list) and len(t) == 2 and all(isinstance(x, int) for x in t)):
+            errs.append(f"{where}: time_since_flag must be [flag, seconds], got {t!r}")
     if "group_dead" in when and when["group_dead"] not in group_names:
         errs.append(f"{where}: group_dead references unknown group '{when['group_dead']}'")
     if "variant" in when:
@@ -99,6 +104,15 @@ def validate(data) -> None:
     for k in ("id", "title", "theater", "date", "start_time"):
         if k not in meta:
             errs.append(f"meta: missing '{k}'")
+    if meta.get("category", "operational") not in CATEGORIES:
+        errs.append(f"meta.category must be one of {sorted(CATEGORIES)}")
+    if meta.get("category") == "training":
+        tr = data.get("training") or {}
+        if not tr.get("rules") or not tr.get("grade_sheet"):
+            errs.append("training: a training event needs 'rules' and a 'grade_sheet' (list of {item, standard})")
+        for i, g in enumerate(tr.get("grade_sheet", [])):
+            if not (isinstance(g, dict) and g.get("item") and g.get("standard")):
+                errs.append(f"training.grade_sheet[{i}]: needs 'item' and 'standard'")
     if meta.get("theater") != "caucasus":
         errs.append(f"meta.theater: only 'caucasus' is supported so far, got {meta.get('theater')!r}")
 
@@ -112,10 +126,15 @@ def validate(data) -> None:
         for k in ("callsign", "aircraft", "base", "waypoints"):
             if k not in f:
                 errs.append(f"{where}: missing '{k}'")
+        seen = []
         for j, wp in enumerate(f.get("waypoints", [])):
             _latlon(wp, f"{where}.waypoints[{j}]", errs)
             if "name" not in wp:
                 errs.append(f"{where}.waypoints[{j}]: missing 'name'")
+            tm = wp.get("timing")
+            if tm and not (tm.get("from") in seen and isinstance(tm.get("seconds"), int) and isinstance(tm.get("flag"), int)):
+                errs.append(f"{where}.waypoints[{j}].timing: needs 'from' (an earlier waypoint), 'seconds' and 'flag'")
+            seen.append(wp.get("name"))
             wp_names.add(wp.get("name"))
 
     # Named zones can be used anywhere a waypoint name is accepted in a trigger

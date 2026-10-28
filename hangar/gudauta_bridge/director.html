@@ -136,6 +136,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
   .card, .phase-card { box-shadow: none; }
 }
 .tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
 .intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
 .intel.confirmed { color: var(--ok); }
 .intel.suspected { color: var(--amber); }
@@ -151,6 +152,9 @@ svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
 svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
 svg.profile .pwp.agl { stroke: var(--accent); }
 svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
 .spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
 .spoiler b { color: var(--red); }
 .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
@@ -391,15 +395,15 @@ status from the ground team on your way out.</p></div>
     <h2>Debrief outcomes</h2>
     <div class="outcomes">
       
-      <div class="card outcome success"><h3>success</h3><p>The bridge is down. Recon from a coalition drone at 0815 shows the brigade&#39;s lead
+      <div class="card outcome success"><h3>Success</h3><p>The bridge is down. Recon from a coalition drone at 0815 shows the brigade&#39;s lead
 elements backed up along the M-27 north of Bzyb, with engineers already
 surveying the riverbank. Brenner&#39;s men on the Gumista get the week they needed.</p></div>
       
-      <div class="card outcome partial"><h3>partial</h3><p>The bridge is damaged but still standing. Light vehicles are getting across.
+      <div class="card outcome partial"><h3>Partial</h3><p>The bridge is damaged but still standing. Light vehicles are getting across.
 HATCH is already writing a re-attack tasking for this afternoon, and the SA-6
 crews now know you&#39;re coming.</p></div>
       
-      <div class="card outcome failure"><h3>failure</h3><p>The bridge stands. By nightfall the first T-72s are across the Bzyb, and the
+      <div class="card outcome failure"><h3>Failure</h3><p>The bridge stands. By nightfall the first T-72s are across the Bzyb, and the
 Gumista line is bracing for contact at dawn.</p></div>
       
     </div>

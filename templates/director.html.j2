@@ -148,7 +148,7 @@
     <h2>Debrief outcomes</h2>
     <div class="outcomes">
       {% for k in ["success", "partial", "failure"] if narrative.outcomes[k] %}
-      <div class="card outcome {{ k }}"><h3>{{ k }}</h3>{% for p in narrative.outcomes[k] | paras %}<p>{{ p }}</p>{% endfor %}</div>
+      <div class="card outcome {{ k }}"><h3>{{ T.outcomes[k] }}</h3>{% for p in narrative.outcomes[k] | paras %}<p>{{ p }}</p>{% endfor %}</div>
       {% endfor %}
     </div>
   </div>

@@ -9,7 +9,7 @@ AIRCRAFT_NAMES = {"FA_18C_hornet": "F/A-18C Hornet", "F_16C_50": "F-16C Viper", 
                   "F_14B": "F-14B Tomcat", "AV8BNA": "AV-8B Harrier",
                   "MiG_29S": "MiG-29S", "Su_27": "Su-27", "Tu_22M3": "Tu-22M3", "E_3A": "E-3A", "E_2C": "E-2C",
                   "KC135MPRS": "KC-135 (drogue)", "KC130": "KC-130", "S_3B_Tanker": "S-3B tanker",
-                  "UH_60A": "UH-60A Black Hawk"}
+                  "UH_60A": "UH-60A Black Hawk", "F_5E_3": "F-5E Tiger II"}
 
 
 def features(data: dict) -> list[str]:
@@ -36,6 +36,9 @@ def card(data: dict, hangar: Path) -> dict:
     return {
         "id": meta["id"],
         "operation": data["narrative"].get("operation", meta["title"]),
+        "category": meta.get("category", "operational"),
+        "eyebrow": (f"Training · {data['training']['syllabus']}" if meta.get("category") == "training" and data.get("training", {}).get("syllabus")
+                    else "Training event" if meta.get("category") == "training" else f"Operation {data['narrative'].get('operation', meta['title'])}"),
         "title": meta.get("subtitle") or meta["title"],
         "theater": meta["theater"].title(),
         "aircraft": f"{player.get('count', 1)}× {AIRCRAFT_NAMES.get(player['aircraft'], player['aircraft'])}",
@@ -60,6 +63,8 @@ def build(missions: list[dict], hangar: Path) -> list[Path]:
     out = []
     for name in ("index.html", "README.md"):
         path = hangar / name
-        path.write_text(env().get_template(f"hangar.{name.split('.')[1]}.j2").render(missions=cards, filters=filters))
+        path.write_text(env().get_template(f"hangar.{name.split('.')[1]}.j2").render(missions=cards, filters=filters, sections=[
+            ("operational", "Operational missions", "A campaign over the Black Sea coast. Briefings carry only what the squadron knows, and the sim decides the rest."),
+            ("training", "Training missions", "Syllabus events. Everything is briefed as it is: training rules, grade sheet, range players.")]))
         out.append(path)
     return out

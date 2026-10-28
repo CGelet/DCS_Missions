@@ -23,7 +23,11 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
 .grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding-bottom: 48px; }
 @media (min-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1140px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.m[hidden] { display: none; }
+.m[hidden], .cat[hidden] { display: none; }
+.cat-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 8px auto 16px; }
+.cat-head h2 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
+.cat-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.cat-count { font: 600 14px/1 "IBM Plex Mono", monospace; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; vertical-align: middle; }
 .filters { display: grid; gap: 12px; margin-bottom: 24px; }
 .filters input { width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; }
 .filters input:focus-visible, .fchip:focus-visible, .fstatus button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -65,15 +69,19 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
       <button type="button" class="fchip" aria-pressed="false" data-value="A-10C II">A-10C II</button><button type="button" class="fchip" aria-pressed="false" data-value="AV-8B Harrier">AV-8B Harrier</button><button type="button" class="fchip" aria-pressed="false" data-value="F-14B Tomcat">F-14B Tomcat</button><button type="button" class="fchip" aria-pressed="false" data-value="F-16C Viper">F-16C Viper</button><button type="button" class="fchip" aria-pressed="false" data-value="F/A-18C Hornet">F/A-18C Hornet</button>
     </div>
     <div class="fgroup" data-group="role"><span class="flabel">Mission type</span>
-      <button type="button" class="fchip" aria-pressed="false" data-value="Anti-ship">Anti-ship</button><button type="button" class="fchip" aria-pressed="false" data-value="CAS">CAS</button><button type="button" class="fchip" aria-pressed="false" data-value="Fleet defense">Fleet defense</button><button type="button" class="fchip" aria-pressed="false" data-value="RESCAP">RESCAP</button><button type="button" class="fchip" aria-pressed="false" data-value="SEAD">SEAD</button><button type="button" class="fchip" aria-pressed="false" data-value="Strike">Strike</button>
+      <button type="button" class="fchip" aria-pressed="false" data-value="AAR &amp; low level">AAR &amp; low level</button><button type="button" class="fchip" aria-pressed="false" data-value="Air-to-air (BFM)">Air-to-air (BFM)</button><button type="button" class="fchip" aria-pressed="false" data-value="Air-to-ground range">Air-to-ground range</button><button type="button" class="fchip" aria-pressed="false" data-value="Anti-ship">Anti-ship</button><button type="button" class="fchip" aria-pressed="false" data-value="CAS">CAS</button><button type="button" class="fchip" aria-pressed="false" data-value="Fleet defense">Fleet defense</button><button type="button" class="fchip" aria-pressed="false" data-value="RESCAP">RESCAP</button><button type="button" class="fchip" aria-pressed="false" data-value="SEAD">SEAD</button><button type="button" class="fchip" aria-pressed="false" data-value="Strike">Strike</button>
     </div>
     <div class="fgroup" data-group="features"><span class="flabel">Features</span>
       <button type="button" class="fchip" aria-pressed="false" data-value="Air refuelling">Air refuelling</button><button type="button" class="fchip" aria-pressed="false" data-value="Carrier">Carrier</button><button type="button" class="fchip" aria-pressed="false" data-value="Different recovery field">Different recovery field</button><button type="button" class="fchip" aria-pressed="false" data-value="Hot start">Hot start</button><button type="button" class="fchip" aria-pressed="false" data-value="Low level">Low level</button>
     </div>
-    <div class="fstatus"><span id="count" aria-live="polite">7 missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
+    <div class="fstatus"><span id="count" aria-live="polite">10 missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
   </section>
 </div>
-<main class="wrap grid">
+<main>
+
+<section class="cat" data-cat="operational" aria-labelledby="h-operational">
+  <div class="wrap cat-head"><h2 id="h-operational">Operational missions <span class="cat-count" data-total="7">7</span></h2><p>A campaign over the Black Sea coast. Briefings carry only what the squadron knows, and the sim decides the rest.</p></div>
+  <div class="wrap grid">
 
   <article class="m" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features=""
            data-text="broken span strike on the bzyb river bridge caucasus 2× f/a-18c hornet strike &#34;gentlemen, there&#39;s one bridge between that brigade and sukhumi. by breakfast
@@ -204,6 +212,76 @@ Darkstar&#39;s going to tell you instead, and you&#39;re going to check.&#34; PR
     </div>
   </article>
 
+  </div>
+</section>
+
+<section class="cat" data-cat="training" aria-labelledby="h-training">
+  <div class="wrap cat-head"><h2 id="h-training">Training missions <span class="cat-count" data-total="3">3</span></h2><p>Syllabus events. Everything is briefed as it is: training rules, grade sheet, range players.</p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-aircraft="F/A-18C Hornet" data-role="AAR &amp; low level" data-features="Air refuelling|Low level"
+           data-text="long valley air refuelling and low-level navigation caucasus 2× f/a-18c hornet aar &amp; low level &#34;plugging the basket is a skill. hitting a checkpoint to the second is a habit. today i&#39;m
+grading habits.&#34; wren, mass brief a month before the deployment turns hot, the hornet detachment is in georgia for the partner exercise, flying from kutaisi. the detachment&#39;s training officer wants every pilot current on the two skills that get people killed when they&#39;re rusty: plugging a tanker basket, and flying low and fast through terrain that doesn&#39;t forgive mistakes. fly the low-level route with at least 3 of 4 checkpoints and the tot on time (±30 s), with no altitude knock-it-off.">
+    <div class="eyebrow">Training · Det work-ups, event AR/LL-1</div>
+    <h2>Air Refuelling and Low-Level Navigation</h2>
+    <div class="meta"><span class="chip role">AAR &amp; low level</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2026-02-09 · 09:00L</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
+    <p class="hook">&#34;Plugging the basket is a skill. Hitting a checkpoint to the second is a habit. Today I&#39;m
+grading habits.&#34; WREN, mass brief</p>
+    <p>A month before the deployment turns hot, the Hornet detachment is in Georgia for the partner exercise, flying from Kutaisi. The detachment&#39;s training officer wants every pilot current on the two skills that get people killed when they&#39;re rusty: plugging a tanker basket, and flying low and fast through terrain that doesn&#39;t forgive mistakes.</p>
+    <p class="obj"><b>Primary:</b> Fly the low-level route with at least 3 of 4 checkpoints and the TOT on time (±30 s), with no altitude knock-it-off.</p>
+    <div class="kb"><a href="train_tanker_lowlevel/kneeboard/01_mission.png"><img src="train_tanker_lowlevel/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="train_tanker_lowlevel/kneeboard/02_nav.png"><img src="train_tanker_lowlevel/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="train_tanker_lowlevel/kneeboard/03_rules.png"><img src="train_tanker_lowlevel/kneeboard/03_rules.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="train_tanker_lowlevel/briefing.html">Open briefing</a>
+      <a href="train_tanker_lowlevel/slides.html">Slide deck</a>
+      <a href="train_tanker_lowlevel/director.html" title="Every trigger, radio call and how each grade is decided">Instructor view</a>
+      
+      <a href="train_tanker_lowlevel/train_tanker_lowlevel.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-aircraft="F/A-18C Hornet" data-role="Air-to-ground range" data-features=""
+           data-text="gareja range air-to-ground weapons qualification caucasus 1× f/a-18c hornet air-to-ground range &#34;three events, three targets, one pattern. i don&#39;t care how fast you go. i care that every
+bomb lands where you said it would.&#34; wren, range brief two days after long valley, the detachment moves its weapons work east. the georgian land forces have lent the exercise a tactical range on the steppe near udabno: open, flat and empty, with hulks and old trucks laid out as targets. it&#39;s the best range the detachment has flown on in a year. destroy t-1, t-2 and t-3 in order, each with its briefed weapon, with no range fouls.">
+    <div class="eyebrow">Training · Det work-ups, event SW-2</div>
+    <h2>Air-to-Ground Weapons Qualification</h2>
+    <div class="meta"><span class="chip role">Air-to-ground range</span><span class="chip">Caucasus</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2026-02-11 · 10:30L</span></div>
+    <p class="hook">&#34;Three events, three targets, one pattern. I don&#39;t care how fast you go. I care that every
+bomb lands where you said it would.&#34; WREN, range brief</p>
+    <p>Two days after LONG VALLEY, the detachment moves its weapons work east. The Georgian Land Forces have lent the exercise a tactical range on the steppe near Udabno: open, flat and empty, with hulks and old trucks laid out as targets. It&#39;s the best range the detachment has flown on in a year.</p>
+    <p class="obj"><b>Primary:</b> Destroy T-1, T-2 and T-3 in order, each with its briefed weapon, with no range fouls.</p>
+    <div class="kb"><a href="train_range_day/kneeboard/01_mission.png"><img src="train_range_day/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="train_range_day/kneeboard/02_nav.png"><img src="train_range_day/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="train_range_day/kneeboard/03_rules.png"><img src="train_range_day/kneeboard/03_rules.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="train_range_day/briefing.html">Open briefing</a>
+      <a href="train_range_day/slides.html">Slide deck</a>
+      <a href="train_range_day/director.html" title="Every trigger, radio call and how each grade is decided">Instructor view</a>
+      
+      <a href="train_range_day/train_range_day.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-aircraft="F/A-18C Hornet" data-role="Air-to-air (BFM)" data-features=""
+           data-text="red air intercepts and bfm against aggressors caucasus 1× f/a-18c hornet air-to-air (bfm) &#34;they will beat you today. the question is how many times, and whether you&#39;ll know why when
+we watch the tapes.&#34; wren, mass brief the last work-up event is the one everyone wants. a partner air force has sent an aggressor detachment to batumi for the exercise: one mig-29 and a section of f-5es flown by pilots who do nothing but fight western fighters. for the hornet detachment, it&#39;s the closest thing to the real thing short of a war. kill bandit 11 (bvr) and bandit 21 (bfm) with no hard-deck knock-it-off.">
+    <div class="eyebrow">Training · Det work-ups, event A/A-3</div>
+    <h2>Intercepts and BFM against Aggressors</h2>
+    <div class="meta"><span class="chip role">Air-to-air (BFM)</span><span class="chip">Caucasus</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2026-02-13 · 14:00L</span></div>
+    <p class="hook">&#34;They will beat you today. The question is how many times, and whether you&#39;ll know why when
+we watch the tapes.&#34; WREN, mass brief</p>
+    <p>The last work-up event is the one everyone wants. A partner air force has sent an aggressor detachment to Batumi for the exercise: one MiG-29 and a section of F-5Es flown by pilots who do nothing but fight Western fighters. For the Hornet detachment, it&#39;s the closest thing to the real thing short of a war.</p>
+    <p class="obj"><b>Primary:</b> Kill Bandit 11 (BVR) and Bandit 21 (BFM) with no hard-deck knock-it-off.</p>
+    <div class="kb"><a href="train_red_air/kneeboard/01_mission.png"><img src="train_red_air/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="train_red_air/kneeboard/02_nav.png"><img src="train_red_air/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="train_red_air/kneeboard/03_rules.png"><img src="train_red_air/kneeboard/03_rules.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="train_red_air/briefing.html">Open briefing</a>
+      <a href="train_red_air/slides.html">Slide deck</a>
+      <a href="train_red_air/director.html" title="Every trigger, radio call and how each grade is decided">Instructor view</a>
+      
+      <a href="train_red_air/train_red_air.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
+
 </main>
 <p class="wrap empty" id="empty" hidden>No missions match. Try removing a filter.</p>
 <script>
@@ -223,6 +301,11 @@ function apply() {
       && (!text || text.split(/\s+/).every(w => c.dataset.text.includes(w)));
     c.hidden = !ok;
     if (ok) n++;
+  });
+  document.querySelectorAll(".cat").forEach(sec => {
+    const shown = sec.querySelectorAll(".m:not([hidden])").length, badge = sec.querySelector(".cat-count");
+    sec.hidden = shown === 0;
+    badge.textContent = shown == badge.dataset.total ? shown : `${shown} of ${badge.dataset.total}`;
   });
   count.textContent = n === cards.length ? `${n} missions` : `${n} of ${cards.length} missions`;
   clear.hidden = !(text || Object.values(sel).some(s => s.size));

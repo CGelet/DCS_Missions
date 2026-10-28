@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long Valley Director's Cut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
+.spoiler b { color: var(--red); }
+.vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.lbl-col { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.truth { border-left: 3px solid var(--red); }
+.phase-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.phase-row:last-child { border-bottom: 0; }
+.phase-row .when { font: 600 14px "IBM Plex Mono", monospace; color: var(--accent); }
+.phase-row h3 { margin-bottom: 4px; }
+.trig { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+.trig .cond { font: 13px "IBM Plex Mono", monospace; color: var(--muted); margin-bottom: 8px; }
+.trig .cond b { color: var(--ink); }
+.odds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.bar { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; display: flex; margin-top: 8px; }
+.bar span { display: block; height: 100%; }
+.bar span:nth-child(1) { background: var(--accent); } .bar span:nth-child(2) { background: var(--blue); } .bar span:nth-child(3) { background: var(--ok); }
+.hidden-tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+#dmap { height: min(70vh, 620px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+@media (max-width: 900px) {
+  .vs { grid-template-columns: minmax(0, 1fr); }
+  .phase-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Operation LONG VALLEY · Director's cut</div>
+    <h1>Air Refuelling and Low-Level Navigation</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2026-02-09</b></span>
+      <span>Step <b class="mono">09:00L</b></span>
+      <span>Flight <b>Colt 1</b></span>
+      <span>Random rolls <b class="mono">0</b></span>
+    </div>
+    <div class="spoiler"><b>Spoilers.</b> This page shows what's really in the mission: hidden units, random rolls, every trigger and radio call, and the debrief outcomes. It's for whoever builds, runs or debriefs the mission. Pilots should use <code>briefing.html</code> and <code>slides.html</code>.</div>
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#truth">Intel vs truth</a><a href="#rolls">Random rolls</a><a href="#script">Script</a><a href="#map-sec">Map</a><a href="#debrief">Debrief</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+  </div>
+</nav>
+
+<main>
+<section id="truth">
+  <div class="wrap">
+    <h2>What the pilots were told vs what's there</h2>
+    <div class="vs">
+      <div class="card"><p class="lbl-col">Briefed intel</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>System</th><th>Intel</th><th>Position</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag hazard">hazard</span> Borjomi gorge</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">41.840N 43.380E</td>
+          </tr><tr>
+            <td><span class="tag hazard">hazard</span> Surami ridge</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">42.020N 43.500E</td>
+          </tr><tr>
+            <td><span class="tag hazard">hazard</span> Power lines in the Dzirula valley</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">42.030N 43.160E</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+      <div class="card truth"><p class="lbl-col">Ground truth</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Group</th><th>How it appears</th></tr></thead>
+          <tbody><tr>
+            <td><b>TOT Marker</b> <span class="muted">(blue)</span><br><span style="font-size:13px;color:var(--muted)">1× Ural 375 · 41.672N 43.025E</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr>
+          <tr>
+            <td><b>Arco 1</b> <span class="muted">(blue tanker)</span><br><span style="font-size:13px;color:var(--muted)">1× KC135MPRS</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rolls">
+  <div class="wrap">
+    <h2>Random rolls (decided at mission start)</h2>
+    <p>Nothing random: this mission plays the same every time.</p>
+  </div>
+</section>
+
+<section id="script">
+  <div class="wrap">
+    <h2>The script</h2>
+    
+    <div class="phase-row">
+      <div><div class="when">09:00</div><h3>Start and Departure</h3></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Cold start at Kutaisi, check in on 250.5, and depart runway 25 or 07 as a section. Climb
+north to the refuelling track at 20,000 ft. WREN monitors the det frequency for the whole event.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">WREN checks the flight in. No other traffic.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>10 s after mission start</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Colt, Wren on det common. Arco&#39;s on station, track&#39;s good, low-level weather&#39;s in limits. Have a good one.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">09:19</div><h3>Tanker</h3><div class="chips"><span class="chip">ARCO</span><span class="chip">AR EXIT</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Rendezvous with ARCO 1 (TACAN 34Y) on the eastbound track at 20,000 ft and 290 knots. Lead plugs
+first while the wingman waits in left observation, then swap. Take 6,000 lb each. Leave the track
+at AR EXIT.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">ARCO clears the flight to pre-contact when the lead reaches the ARCO zone.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the ARCO zone</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>ARCO 1: Colt, Arco, you&#39;re cleared to pre-contact, lead first. Wingman, left observation.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">09:35</div><h3>Low-Level Route</h3><div class="chips"><span class="chip">DESCENT</span><span class="chip">ZESTAPONI</span><span class="chip">KHARAGAULI</span><span class="chip">SURAMI</span><span class="chip">BORJOMI</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Descend to enter at ZESTAPONI at 500 ft AGL and 420 knots. The clock starts there. Up the
+Dzirula valley past KHARAGAULI, over the Surami ridge to SURAMI, then hard south down the
+Borjomi gorge. Planned times from ZESTAPONI: KHARAGAULI 1:05, SURAMI 3:20, BORJOMI 5:20, TOT 8:15.
+Each checkpoint is graded ±30 s.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">Crossing ZESTAPONI starts the clock (flag 401). Each checkpoint reports EARLY, ON TIME or LATE
+from window flags (timed checkpoints in build_miz). Below 200 ft AGL on the route: knock-it-off.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the ZESTAPONI zone</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Colt, clock&#39;s running from Zestaponi. Five hundred feet, four-twenty. Eyes out.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 50</div>
+        </div>
+        
+        <div class="trig">
+          <div class="cond">When <b>your aircraft is below 200 ft above the ground and flag 50 is set and flag 59 is not set</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Knock it off, knock it off! Colt one, you&#39;re below two hundred feet. Climb to one thousand and acknowledge.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 21</div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">09:43</div><h3>TOT and Climb-Out</h3><div class="chips"><span class="chip">TOT</span><span class="chip">CLIMB</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Run in on the TOT marker, mark it with the ATFLIR, and call &#34;Bombs away&#34; at 8:15 from ZESTAPONI.
+Then turn northwest and climb out to 18,000 ft at CLIMB. That&#39;s the end of the graded route.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">Reaching TOT ends the low-level safety watch. At CLIMB, WREN calls the pass if all four timing flags (61 to 64) are set and there was no knock-it-off.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the TOT zone</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Colt, off target. Climb out northwest, route&#39;s complete.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 59</div>
+        </div>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the CLIMB zone and flags 61, 62, 63, 64 are all set and flag 21 is not set</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Colt, Wren. Four for four on time and no altitude calls. That&#39;s a pass on the route. RTB.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 10</div>
+        </div>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the CLIMB zone</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Colt, route complete. Timing card&#39;s in the debrief. RTB Kutaisi.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">09:52</div><h3>Recovery</h3></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Rejoin as a section and recover to Kutaisi (tower 134.0). Fuel check at CLIMB: you should have
+at least 6,000 lb. If you&#39;re under the bingo, go direct.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">No triggers: the grade comes from the timing calls and flags 10 (route pass) and 21 (altitude knock-it-off).</p>
+        
+      </div>
+    </div>
+    
+    
+  </div>
+</section>
+
+<section id="map-sec">
+  <div class="wrap">
+    <h2>Truth map</h2>
+    <div id="dmap" role="img" aria-label="Map of real unit positions compared with briefed intel"></div>
+    <div class="legend"><span><i style="background:var(--red)"></i>Real red units (hollow = late activation)</span><span><i style="background:var(--ok)"></i>Real blue units</span><span><i style="background:var(--muted)"></i>Briefed intel (faded)</span><span><i style="background:var(--blue)"></i>Player route</span></div>
+  </div>
+</section>
+
+<section id="debrief">
+  <div class="wrap">
+    <h2>Debrief outcomes</h2>
+    <div class="outcomes">
+      
+      <div class="card outcome success"><h3>Complete</h3><p>Complete. The tanker rendezvous and transfer are clean, at least three checkpoints and the TOT
+are on time, and there&#39;s no altitude knock-it-off. You&#39;re signed off for low-level work in the
+exercise and on the schedule for the range next.</p></div>
+      
+      <div class="card outcome partial"><h3>Partial: re-fly items</h3><p>Partial: re-fly the low level. The tanker items pass, but the timing card has two or more
+checkpoints EARLY or LATE, or the TOT missed. WREN schedules a second route on Wednesday.</p></div>
+      
+      <div class="card outcome failure"><h3>Incomplete: re-fly</h3><p>Incomplete: re-fly the event. Either the transfer didn&#39;t happen (no gas, no low level) or there
+was an altitude knock-it-off in the gorge. Debrief with the tapes before you fly again.</p></div>
+      
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/train_tanker_lowlevel/mission.yaml</code>, the same file that builds the .miz, so this script is exactly what the mission does.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const D = {"route": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "ARCO", "lat": 42.33, "lon": 42.3, "alt_ft": 20000, "kts": 300, "eta": "09:19", "zone_km": 15, "kind": "wp", "num": 1}, {"name": "AR EXIT", "lat": 42.33, "lon": 42.75, "alt_ft": 20000, "kts": 300, "eta": "09:30", "kind": "wp", "num": 2}, {"name": "DESCENT", "lat": 42.2, "lon": 42.95, "alt_ft": 8000, "kts": 400, "eta": "09:33", "kind": "wp", "num": 3}, {"name": "ZESTAPONI", "lat": 42.09, "lon": 43.08, "alt_ft": 500, "agl": true, "kts": 420, "eta": "09:35:00", "zone_km": 2, "kind": "wp", "num": 4}, {"name": "KHARAGAULI", "lat": 42.01, "lon": 43.21, "alt_ft": 500, "agl": true, "kts": 420, "eta": "09:36:05", "zone_km": 2, "timing": {"from": "ZESTAPONI", "seconds": 65, "window_s": 30, "flag": 61}, "kind": "wp", "num": 5}, {"name": "SURAMI", "lat": 42.02, "lon": 43.56, "alt_ft": 500, "agl": true, "kts": 420, "eta": "09:38:20", "zone_km": 2, "timing": {"from": "ZESTAPONI", "seconds": 200, "window_s": 30, "flag": 62}, "kind": "wp", "num": 6}, {"name": "BORJOMI", "lat": 41.84, "lon": 43.38, "alt_ft": 500, "agl": true, "kts": 420, "eta": "09:40:20", "zone_km": 2, "timing": {"from": "ZESTAPONI", "seconds": 320, "window_s": 30, "flag": 63}, "kind": "wp", "num": 7}, {"name": "TOT", "lat": 41.672, "lon": 43.025, "alt_ft": 500, "agl": true, "kts": 420, "eta": "09:43:15", "zone_km": 2, "timing": {"from": "ZESTAPONI", "seconds": 495, "window_s": 30, "flag": 64}, "kind": "wp", "num": 8}, {"name": "CLIMB", "lat": 41.85, "lon": 42.7, "alt_ft": 18000, "kts": 380, "eta": "09:47", "zone_km": 10, "kind": "wp", "num": 9}, {"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309, "kind": "base", "alt_ft": 0}], "target": {"name": "TOT marker (simulated attack)", "lat": 41.672, "lon": 43.025, "groups": ["TOT Marker"], "description": "A single truck parked on the farm road west of Akhaltsikhe, marking the time-on-target point. Simulated attack only; no release.", "dmpi": "The truck. Mark it with the ATFLIR and call 'Bombs away' at the planned TOT."}, "threats": [{"name": "Borjomi gorge", "kind": "hazard", "lat": 41.84, "lon": 43.38, "range_km": 3, "notes": "Narrow, steep-sided, with a hard right turn at the checkpoint. Climb if you're not sure of the turn."}, {"name": "Surami ridge", "kind": "hazard", "lat": 42.02, "lon": 43.5, "range_km": 3, "notes": "About 950 m (3,100 ft) on the pass. The ground rises faster than it looks heading east."}, {"name": "Power lines in the Dzirula valley", "kind": "hazard", "lat": 42.03, "lon": 43.16, "range_km": 2, "notes": "High-tension lines cross the valley between Zestaponi and Kharagauli. Stay at 500 ft AGL or above."}], "support": [{"kind": "tanker", "callsign": "Arco 1", "aircraft": "KC135MPRS", "coalition": "blue", "lat": 42.33, "lon": 42.2, "alt_ft": 20000, "kts": 290, "heading": 90, "leg_nm": 25, "freq_mhz": 252.0, "tacan": {"channel": "34Y", "callsign": "ARC"}, "track_to": {"lat": 42.33, "lon": 42.76422181603941}}], "ships": [], "airfields": [{"name": "Kutaisi", "lat": 42.1776158278575, "lon": 42.48129219988309}], "phases": [{"phase": "Start and Departure", "waypoints": []}, {"phase": "Tanker", "waypoints": ["ARCO", "AR EXIT"]}, {"phase": "Low-Level Route", "waypoints": ["DESCENT", "ZESTAPONI", "KHARAGAULI", "SURAMI", "BORJOMI"]}, {"phase": "TOT and Climb-Out", "waypoints": ["TOT", "CLIMB"]}, {"phase": "Recovery", "waypoints": []}], "zones": [], "flights": [], "units": [{"name": "TOT Marker", "lat": 41.672, "lon": 43.025, "coalition": "blue", "route": [], "late": false}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    draw();
+  });
+})();
+
+let map;
+function draw() {
+  if (typeof L === "undefined") { document.getElementById("dmap").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  if (map) map.remove();
+  map = L.map("dmap", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+  const red = css("--red"), ok = css("--ok"), blue = css("--blue"), muted = css("--muted"), accent = css("--accent");
+
+  const route = L.polyline(D.route.map(p => [p.lat, p.lon]), { color: blue, weight: 2.5, opacity: .7 }).addTo(map);
+  D.route.filter(p => p.kind === "wp").forEach(p => L.circleMarker([p.lat, p.lon], { radius: 4, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+    .addTo(map).bindTooltip(`${p.num} ${p.name}`, { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
+
+  // Briefed intel, faded, for comparison with the truth
+  D.threats.forEach(t => {
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: muted, weight: 1, fill: false, dashArray: "1 5" }).addTo(map);
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: muted, weight: 1, opacity: .6, fill: false, dashArray: "6 6" }).addTo(map);
+    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${t.name}<br><i>${t.intel || "confirmed"}</i>`);
+  });
+
+  const all = [route.getBounds()];
+  D.units.forEach(u => {
+    const c = u.coalition === "blue" ? ok : red;
+    if (u.route.length) L.polyline([[u.lat, u.lon], ...u.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "8 6" }).addTo(map);
+    const m = L.circleMarker([u.lat, u.lon], { radius: 7, color: c, weight: 3, fillColor: u.late ? css("--surface") : c, fillOpacity: 1 }).addTo(map)
+      .bindTooltip(u.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+    all.push(m.getLatLng());
+  });
+  D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
+    .addTo(map).bindTooltip(`Zone: ${z.name}`, { permanent: true, direction: "center", className: "wp-label" }));
+  D.ships.forEach(sh => {
+    const c = sh.coalition === "red" ? red : ok;
+    L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.flights.forEach(f => {
+    const c = f.coalition === "blue" ? ok : red;
+    L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${f.name}</div>`, iconSize: null }) }).addTo(map);
+  });
+
+  const tg = D.target;
+  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${tg.name}`);
+  const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
+    .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
+    .concat(D.ships.map(sh => [sh.lat, sh.lon])));
+  map.fitBounds(b.isValid() ? b.pad(0.6) : route.getBounds(), { padding: [24, 24] });
+}
+draw();
+</script>
+</body>
+</html>

@@ -57,7 +57,11 @@ def _expected_rules(data) -> int:
     # one helper per target group, or one per variant option that spawns it
     spawns = lambda g: sum(g in o.get("activate", []) for v in data.get("variants", []) for o in v["options"]) or 1
     helpers = (1 if tgt.get("zone_m") else 0) + sum(spawns(g) for g in tgt.get("groups", []))
-    return len(trigs) + chance_rolls + variants + helpers
+    # timed checkpoints: one clock-start rule per origin, then 2 window flags + 3 verdicts per checkpoint
+    player = next(f for f in data["flights"] if f.get("player"))
+    timed = [w for w in player["waypoints"] if w.get("timing")]
+    timing = len({w["timing"]["from"] for w in timed}) + 5 * len(timed)
+    return len(trigs) + chance_rolls + variants + helpers + timing
 
 
 def test_miz_round_trip(data, tmp_path):
@@ -99,8 +103,9 @@ def _spoilers(data) -> list[str]:
         out += [t["message"] for t in phase_triggers(ph) if t.get("message")]
     for v in data.get("variants", []):
         out += [o["label"] for o in v["options"]] + [o["message"] for o in v["options"] if o.get("message")]
-    out += [u["name"] for u in data.get("units", []) if u.get("late_activation")]
-    out += [s["callsign"] for s in data.get("support", []) if s.get("coalition") == "red"]
+    if data["meta"].get("category") != "training":  # training briefs the adversaries and range targets openly
+        out += [u["name"] for u in data.get("units", []) if u.get("late_activation")]
+        out += [s["callsign"] for s in data.get("support", []) if s.get("coalition") == "red"]
     out += [o.strip().split("\n")[0] for o in data["narrative"].get("outcomes", {}).values()]
     return [s for s in out if s]
 
