@@ -1,4 +1,5 @@
 import copy
+import json
 import re
 import zipfile
 from pathlib import Path
@@ -210,3 +211,36 @@ def test_campaign_builds(cdir, everything, tmp_path):
         assert f"Chapter {d['campaign']['chapter']} of" in pilot
         if d["campaign"]["previously"]:
             assert re.sub(r"\s+", " ", d["campaign"]["previously"]) in pilot
+
+
+EVIL = '</script><img src=x onerror="alert(1)"><!--'
+
+
+def test_yaml_text_cannot_inject_html(bridge, tmp_path):
+    """Names and notes from mission.yaml are text on every page, never markup or script."""
+    bad = copy.deepcopy(bridge)
+    bad["threats"][0]["name"] = bad["threats"][0]["notes"] = EVIL
+    bad["target"]["name"] = bad["target"]["description"] = EVIL
+    bad["situation"] = EVIL
+    for build, name in ((build_html.build, "b.html"), (build_director.build, "d.html"), (build_slides.build, "s.html")):
+        page = build(bad, tmp_path / name).read_text()
+        assert "<img src=x" not in page and "</script><img" not in page
+        m = re.search(r"const D = (.*);\n", page)
+        if m:  # the map data still parses back to the original text
+            assert json.loads(m.group(1))["target"]["name"] == EVIL
+            assert "const esc = " in page
+
+
+def test_mission_id_must_be_a_plain_folder_name(bridge):
+    bad = copy.deepcopy(bridge)
+    bad["meta"]["id"] = "../../outside"
+    with pytest.raises(schema.MissionError, match="meta.id"):
+        schema.validate(bad)
+
+
+def test_pages_lock_down_scripts():
+    for t in ("briefing", "director", "slides", "home", "missions", "campaign"):
+        src = (Path(__file__).resolve().parent.parent / "templates" / f"{t}.html.j2").read_text()
+        assert '{% include "_security.html" %}' in src, t
+        for tag in re.findall(r"<(?:script|link)[^>]*cdnjs[^>]*>", src):
+            assert "integrity=" in tag, (t, tag)

@@ -28,7 +28,7 @@ def _lua(v, indent: int = 0) -> str:
         return "true" if v else "false"
     if isinstance(v, (int, float)):
         return str(v)
-    s = str(v).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+    s = str(v).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r")
     return f'"{s}"'
 
 

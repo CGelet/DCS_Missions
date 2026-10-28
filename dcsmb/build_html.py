@@ -37,7 +37,15 @@ LABELS = {
 def env() -> Environment:
     e = Environment(loader=FileSystemLoader(TEMPLATES), autoescape=select_autoescape(["html", "j2"]))
     e.filters["paras"] = lambda s: [p.strip() for p in str(s or "").split("\n\n") if p.strip()]
+    e.filters["script_json"] = script_json
     return e
+
+
+def script_json(s: str) -> Markup:
+    """JSON text made safe inside <script>: a '</script>' or '<!--' in any YAML string can't end the block."""
+    for ch, esc in (("<", "\\u003c"), (">", "\\u003e"), ("&", "\\u0026"), ("\u2028", "\\u2028"), ("\u2029", "\\u2029")):
+        s = s.replace(ch, esc)
+    return Markup(s)
 
 
 def _ll(airport) -> dict:

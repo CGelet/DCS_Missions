@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' file: data: https://server.arcgisonline.com https://cdnjs.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Black Deck Director's Cut</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <style>
 :root {
   --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
@@ -368,10 +370,11 @@ deck closed. WREN schedules more day passes first.</p></div>
 
 <footer><div class="wrap">Generated from <code>missions/wu_2_cq_night/mission.yaml</code>, the same file that builds the .miz, so this script is exactly what the mission does.</div></footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const D = {"route": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "kind": "base", "alt_ft": 0, "ship": true}, {"name": "SPLIT", "lat": 41.85, "lon": 40.95, "alt_ft": 6000, "kts": 300, "eta": "19:05", "zone_km": 4, "kind": "wp", "num": 1}, {"name": "MARSHAL", "lat": 41.71, "lon": 40.6, "alt_ft": 6000, "kts": 250, "eta": "19:14", "zone_km": 4, "kind": "wp", "num": 2}, {"name": "TEN MILE", "lat": 41.74, "lon": 40.84, "alt_ft": 1200, "kts": 250, "eta": "19:17", "zone_km": 2.5, "timing": {"from": "MARSHAL", "seconds": 180, "window_s": 30, "flag": 61}, "kind": "wp", "num": 3}, {"name": "Stennis Group (recovery)", "lat": 41.79, "lon": 41.24, "kind": "base", "alt_ft": 0}], "target": {"name": "The Stennis landing area, at night", "lat": 41.77, "lon": 41.07, "zone_m": 50, "description": "The angled deck's centreline lights, the drop lights under the ramp, and the ball.", "dmpi": "Target the 3-wire. Fly the needles until the ball is in sight."}, "threats": [{"name": "No horizon", "kind": "hazard", "lat": 41.75, "lon": 40.9, "range_km": 5, "notes": "The moon is above the cloud. Under the layer, over the sea, there is nothing outside but the ship's lights."}], "support": [{"kind": "tanker", "callsign": "TEXACO 1", "aircraft": "S_3B_Tanker", "coalition": "blue", "lat": 41.78, "lon": 41.0, "alt_ft": 6000, "heading": 80, "leg_nm": 10, "kts": 250, "freq_mhz": 253.0, "tacan": {"channel": "60Y", "callsign": "TEX"}, "track_to": {"lat": 41.80897265090443, "lon": 41.22034352879611}}], "ships": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "route": [{"lat": 41.77, "lon": 41.07}, {"lat": 41.79, "lon": 41.24}], "coalition": "blue"}], "airfields": [], "phases": [{"phase": "Night Launch", "waypoints": ["SPLIT"]}, {"phase": "Marshal and Push", "waypoints": ["MARSHAL", "TEN MILE"]}, {"phase": "Trap 1", "waypoints": []}, {"phase": "Trap 2", "waypoints": []}], "zones": [], "flights": [], "units": []};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);  // YAML text into Leaflet's HTML labels
 (function () {
   const root = document.documentElement;
   try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
@@ -397,13 +400,13 @@ function draw() {
 
   const route = L.polyline(D.route.map(p => [p.lat, p.lon]), { color: blue, weight: 2.5, opacity: .7 }).addTo(map);
   D.route.filter(p => p.kind === "wp").forEach(p => L.circleMarker([p.lat, p.lon], { radius: 4, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
-    .addTo(map).bindTooltip(`${p.num} ${p.name}`, { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
+    .addTo(map).bindTooltip(esc(`${p.num} ${p.name}`), { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
 
   // Briefed intel, faded, for comparison with the truth
   D.threats.forEach(t => {
     if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: muted, weight: 1, fill: false, dashArray: "1 5" }).addTo(map);
     if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: muted, weight: 1, opacity: .6, fill: false, dashArray: "6 6" }).addTo(map);
-    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${t.name}<br><i>${t.intel || "confirmed"}</i>`);
+    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${esc(t.name)}<br><i>${esc(t.intel || "confirmed")}</i>`);
   });
 
   const all = [route.getBounds()];
@@ -411,25 +414,25 @@ function draw() {
     const c = u.coalition === "blue" ? ok : red;
     if (u.route.length) L.polyline([[u.lat, u.lon], ...u.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "8 6" }).addTo(map);
     const m = L.circleMarker([u.lat, u.lon], { radius: 7, color: c, weight: 3, fillColor: u.late ? css("--surface") : c, fillOpacity: 1 }).addTo(map)
-      .bindTooltip(u.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+      .bindTooltip(esc(u.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
     all.push(m.getLatLng());
   });
   D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
-    .addTo(map).bindTooltip(`Zone: ${z.name}`, { permanent: true, direction: "center", className: "wp-label" }));
+    .addTo(map).bindTooltip(`Zone: ${esc(z.name)}`, { permanent: true, direction: "center", className: "wp-label" }));
   D.ships.forEach(sh => {
     const c = sh.coalition === "red" ? red : ok;
     L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
     L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
-      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+      .bindTooltip(esc(sh.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
   });
   D.flights.forEach(f => {
     const c = f.coalition === "blue" ? ok : red;
     L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
-    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${f.name}</div>`, iconSize: null }) }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${esc(f.name)}</div>`, iconSize: null }) }).addTo(map);
   });
 
   const tg = D.target;
-  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${tg.name}`);
+  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${esc(tg.name)}`);
   const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
     .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
     .concat(D.ships.map(sh => [sh.lat, sh.lon])));

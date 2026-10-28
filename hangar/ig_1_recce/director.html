@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' file: data: https://server.arcgisonline.com https://cdnjs.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Iron Gate Director's Cut</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <style>
 :root {
   --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
@@ -401,10 +403,11 @@ and the first anyone sees of it is on Georgian television.</p></div>
 
 <footer><div class="wrap">Generated from <code>missions/ig_1_recce/mission.yaml</code>, the same file that builds the .miz, so this script is exactly what the mission does.</div></footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const D = {"route": [{"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "MTSKHETA", "lat": 41.85, "lon": 44.7, "alt_ft": 18000, "kts": 420, "eta": "06:42", "zone_km": 4, "kind": "wp", "num": 1}, {"name": "GORI", "lat": 42.0, "lon": 44.12, "alt_ft": 18000, "kts": 380, "eta": "06:47", "zone_km": 6, "kind": "wp", "num": 2}, {"name": "TSKHINVALI", "lat": 42.25, "lon": 43.96, "alt_ft": 16000, "kts": 330, "eta": "06:51", "action": "cas", "zone_km": 8, "kind": "wp", "num": 3}, {"name": "JAVA", "lat": 42.4, "lon": 43.93, "alt_ft": 17000, "kts": 330, "eta": "06:55", "zone_km": 8, "kind": "wp", "num": 4}, {"name": "EXIT", "lat": 42.0, "lon": 44.45, "alt_ft": 22000, "kts": 420, "eta": "07:20", "zone_km": 5, "kind": "wp", "num": 5}, {"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328, "kind": "base", "alt_ft": 0}], "target": {"name": "The column's vanguard", "lat": 42.33, "lon": 43.935, "area_km": 10, "groups": ["Vanguard Gorge", "Vanguard Gupta", "Vanguard Tskhinvali"], "description": "The lead armoured vehicles of a southbound column on the Transcam road. Position unknown: start at Tskhinvali and work north.", "dmpi": "The lead vehicle first, to block the road, then the rest. Mavericks on armour, GBU-12s on anything bunched up."}, "threats": [{"name": "The column", "kind": "armor", "intel": "suspected", "lat": 42.4, "lon": 43.94, "area_km": 18, "range_km": 0, "notes": "Tracks heard in the gorge overnight. Somewhere between the tunnel and Tskhinvali."}, {"name": "Mobile short-range SAMs with the column", "kind": "sam", "intel": "possible", "lat": 42.35, "lon": 43.94, "area_km": 18, "range_km": 5, "notes": "A brigade on the move usually brings Strela-10s or Osas. Nobody has seen any."}, {"name": "MANPADS", "kind": "aaa", "intel": "possible", "lat": 42.35, "lon": 43.94, "area_km": 18, "range_km": 5, "notes": "Assume every vehicle has one. Stay above 10,000 ft AGL unless you need to come down."}], "support": [{"kind": "awacs", "callsign": "WIZARD", "aircraft": "E_3A", "coalition": "blue", "lat": 41.5, "lon": 44.6, "alt_ft": 30000, "heading": 90, "leg_nm": 30, "freq_mhz": 251.0, "track_to": {"lat": 41.5, "lon": 45.268317934754855}}], "ships": [], "airfields": [{"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328}], "phases": [{"phase": "Launch", "waypoints": ["MTSKHETA"]}, {"phase": "Into the Valley", "waypoints": ["GORI", "TSKHINVALI"]}, {"phase": "Find the Front", "waypoints": ["JAVA"]}, {"phase": "Home", "waypoints": ["EXIT"]}], "zones": [], "flights": [], "units": [{"name": "Vanguard Gorge", "lat": 42.415, "lon": 43.935, "coalition": "red", "route": [{"lat": 42.3904, "lon": 43.923}, {"lat": 42.33, "lon": 43.935}], "late": true}, {"name": "Vanguard Gupta", "lat": 42.33, "lon": 43.935, "coalition": "red", "route": [{"lat": 42.28, "lon": 43.95}, {"lat": 42.255, "lon": 43.96}], "late": true}, {"name": "Vanguard Tskhinvali", "lat": 42.26, "lon": 43.958, "coalition": "red", "route": [], "late": true}, {"name": "Column Main Body", "lat": 42.45, "lon": 43.96, "coalition": "red", "route": [], "late": false}, {"name": "Vanguard Strela", "lat": 42.332, "lon": 43.936, "coalition": "red", "route": [], "late": true}]};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);  // YAML text into Leaflet's HTML labels
 (function () {
   const root = document.documentElement;
   try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
@@ -430,13 +433,13 @@ function draw() {
 
   const route = L.polyline(D.route.map(p => [p.lat, p.lon]), { color: blue, weight: 2.5, opacity: .7 }).addTo(map);
   D.route.filter(p => p.kind === "wp").forEach(p => L.circleMarker([p.lat, p.lon], { radius: 4, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
-    .addTo(map).bindTooltip(`${p.num} ${p.name}`, { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
+    .addTo(map).bindTooltip(esc(`${p.num} ${p.name}`), { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
 
   // Briefed intel, faded, for comparison with the truth
   D.threats.forEach(t => {
     if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: muted, weight: 1, fill: false, dashArray: "1 5" }).addTo(map);
     if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: muted, weight: 1, opacity: .6, fill: false, dashArray: "6 6" }).addTo(map);
-    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${t.name}<br><i>${t.intel || "confirmed"}</i>`);
+    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${esc(t.name)}<br><i>${esc(t.intel || "confirmed")}</i>`);
   });
 
   const all = [route.getBounds()];
@@ -444,25 +447,25 @@ function draw() {
     const c = u.coalition === "blue" ? ok : red;
     if (u.route.length) L.polyline([[u.lat, u.lon], ...u.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "8 6" }).addTo(map);
     const m = L.circleMarker([u.lat, u.lon], { radius: 7, color: c, weight: 3, fillColor: u.late ? css("--surface") : c, fillOpacity: 1 }).addTo(map)
-      .bindTooltip(u.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+      .bindTooltip(esc(u.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
     all.push(m.getLatLng());
   });
   D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
-    .addTo(map).bindTooltip(`Zone: ${z.name}`, { permanent: true, direction: "center", className: "wp-label" }));
+    .addTo(map).bindTooltip(`Zone: ${esc(z.name)}`, { permanent: true, direction: "center", className: "wp-label" }));
   D.ships.forEach(sh => {
     const c = sh.coalition === "red" ? red : ok;
     L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
     L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
-      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+      .bindTooltip(esc(sh.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
   });
   D.flights.forEach(f => {
     const c = f.coalition === "blue" ? ok : red;
     L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
-    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${f.name}</div>`, iconSize: null }) }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${esc(f.name)}</div>`, iconSize: null }) }).addTo(map);
   });
 
   const tg = D.target;
-  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${tg.name}`);
+  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${esc(tg.name)}`);
   const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
     .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
     .concat(D.ships.map(sh => [sh.lat, sh.lon])));

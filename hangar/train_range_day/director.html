@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' file: data: https://server.arcgisonline.com https://cdnjs.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gareja Range Director's Cut</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <style>
 :root {
   --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
@@ -422,10 +424,11 @@ was infringed. The re-fly comes with a sit-down with WREN and the range officer 
 
 <footer><div class="wrap">Generated from <code>missions/train_range_day/mission.yaml</code>, the same file that builds the .miz, so this script is exactly what the mission does.</div></footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const D = {"route": [{"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "GAREJA IP", "lat": 41.6, "lon": 45.2, "alt_ft": 15000, "kts": 400, "eta": "10:52", "zone_km": 3, "kind": "wp", "num": 1}, {"name": "T-1", "lat": 41.54, "lon": 45.305, "alt_ft": 15000, "kts": 420, "eta": "10:54", "action": "bomb", "zone_km": 2, "kind": "wp", "num": 2}, {"name": "HOLD", "lat": 41.575, "lon": 45.4, "alt_ft": 15000, "kts": 350, "eta": "10:56", "zone_km": 4, "kind": "wp", "num": 3}, {"name": "EXIT", "lat": 41.66, "lon": 45.15, "alt_ft": 12000, "kts": 380, "eta": "11:20", "zone_km": 3, "kind": "wp", "num": 4}, {"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328, "kind": "base", "alt_ft": 0}], "target": {"name": "T-1: two tank hulks", "lat": 41.54, "lon": 45.305, "groups": ["T-1 Armor"], "description": "Two T-55 hulks on open steppe, the first event of the qualification. T-2 and T-3 are 1.3 and 1.4 km to the southeast and east.", "dmpi": "Each hulk's turret ring. One GBU-12 per hulk, self-lased on code 1688."}, "threats": [{"name": "T-1: two tank hulks (Event 1, GBU-12)", "kind": "armor", "lat": 41.54, "lon": 45.305, "range_km": 0, "notes": "Two T-55 hulks side by side, facing east. Laser code 1688."}, {"name": "T-2: three trucks (Event 2, Mk-82 CCIP)", "kind": "armor", "lat": 41.533, "lon": 45.318, "range_km": 0, "notes": "Three Ural trucks in a line, 1.3 km southeast of T-1."}, {"name": "T-3: two light vehicles (Event 3, strafe)", "kind": "armor", "lat": 41.546, "lon": 45.322, "range_km": 0, "notes": "Two UAZ jeeps, 1.4 km east-northeast of T-1. Strafe only."}, {"name": "David Gareja monastery: no-fly", "kind": "hazard", "lat": 41.4472, "lon": 45.3766, "range_km": 5, "notes": "Cultural heritage site. No overflight at any altitude within 5 km."}], "support": [], "ships": [], "airfields": [{"name": "Vaziani", "lat": 41.629025903682106, "lon": 45.02723084928328}], "phases": [{"phase": "Start and Transit", "waypoints": []}, {"phase": "Event 1: GBU-12", "waypoints": ["GAREJA IP", "T-1"]}, {"phase": "Event 2: Mk-82 CCIP", "waypoints": ["HOLD"]}, {"phase": "Event 3: Strafe", "waypoints": []}, {"phase": "Recovery", "waypoints": ["EXIT"]}], "zones": [], "flights": [], "units": [{"name": "T-1 Armor", "lat": 41.54, "lon": 45.305, "coalition": "red", "route": [], "late": false}, {"name": "T-2 Trucks", "lat": 41.533, "lon": 45.318, "coalition": "red", "route": [], "late": false}, {"name": "T-3 Strafe", "lat": 41.546, "lon": 45.322, "coalition": "red", "route": [], "late": false}]};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);  // YAML text into Leaflet's HTML labels
 (function () {
   const root = document.documentElement;
   try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
@@ -451,13 +454,13 @@ function draw() {
 
   const route = L.polyline(D.route.map(p => [p.lat, p.lon]), { color: blue, weight: 2.5, opacity: .7 }).addTo(map);
   D.route.filter(p => p.kind === "wp").forEach(p => L.circleMarker([p.lat, p.lon], { radius: 4, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
-    .addTo(map).bindTooltip(`${p.num} ${p.name}`, { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
+    .addTo(map).bindTooltip(esc(`${p.num} ${p.name}`), { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
 
   // Briefed intel, faded, for comparison with the truth
   D.threats.forEach(t => {
     if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: muted, weight: 1, fill: false, dashArray: "1 5" }).addTo(map);
     if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: muted, weight: 1, opacity: .6, fill: false, dashArray: "6 6" }).addTo(map);
-    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${t.name}<br><i>${t.intel || "confirmed"}</i>`);
+    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${esc(t.name)}<br><i>${esc(t.intel || "confirmed")}</i>`);
   });
 
   const all = [route.getBounds()];
@@ -465,25 +468,25 @@ function draw() {
     const c = u.coalition === "blue" ? ok : red;
     if (u.route.length) L.polyline([[u.lat, u.lon], ...u.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "8 6" }).addTo(map);
     const m = L.circleMarker([u.lat, u.lon], { radius: 7, color: c, weight: 3, fillColor: u.late ? css("--surface") : c, fillOpacity: 1 }).addTo(map)
-      .bindTooltip(u.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+      .bindTooltip(esc(u.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
     all.push(m.getLatLng());
   });
   D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
-    .addTo(map).bindTooltip(`Zone: ${z.name}`, { permanent: true, direction: "center", className: "wp-label" }));
+    .addTo(map).bindTooltip(`Zone: ${esc(z.name)}`, { permanent: true, direction: "center", className: "wp-label" }));
   D.ships.forEach(sh => {
     const c = sh.coalition === "red" ? red : ok;
     L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
     L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
-      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+      .bindTooltip(esc(sh.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
   });
   D.flights.forEach(f => {
     const c = f.coalition === "blue" ? ok : red;
     L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
-    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${f.name}</div>`, iconSize: null }) }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${esc(f.name)}</div>`, iconSize: null }) }).addTo(map);
   });
 
   const tg = D.target;
-  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${tg.name}`);
+  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${esc(tg.name)}`);
   const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
     .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
     .concat(D.ships.map(sh => [sh.lat, sh.lon])));

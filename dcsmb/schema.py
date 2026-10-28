@@ -7,6 +7,7 @@ Two audiences live in one file:
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import yaml
@@ -32,6 +33,8 @@ def load(mission_dir: Path) -> dict:
         raise MissionError(f"{path} not found")
     data = yaml.safe_load(path.read_text())
     validate(data)
+    if data["meta"]["id"] != path.parent.name:
+        raise MissionError(f"meta.id '{data['meta']['id']}' must match its folder name '{path.parent.name}'")
     return data
 
 
@@ -107,6 +110,8 @@ def validate(data) -> None:
     for k in ("id", "title", "theater", "date", "start_time"):
         if k not in meta:
             errs.append(f"meta: missing '{k}'")
+    if "id" in meta and not re.fullmatch(r"[a-z0-9][a-z0-9_]*", str(meta["id"])):
+        errs.append("meta.id: lowercase letters, digits and underscores only (it becomes a folder name in hangar/)")
     if meta.get("category", "operational") not in CATEGORIES:
         errs.append(f"meta.category must be one of {sorted(CATEGORIES)}")
     if meta.get("category") == "training":

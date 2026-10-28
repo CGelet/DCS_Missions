@@ -32,6 +32,20 @@ Open an issue describing a mission, and Claude builds it and opens a pull reques
 - A scheduled cloud agent (`/schedule`) that checks issues, say, daily. It works without the owner's machine, but has a delay and isn't tied to issue events.
 - `/loop` in a local Claude Code session, which only watches while the terminal is open.
 
+### Variant the owner prefers (discussed 2026-10-28)
+
+A **daily scheduled** Action instead of an instant one. The owner's choices: open a PR rather than push, and pay with the Claude subscription.
+- **Trigger:** `.github/workflows/claude-issues.yml` with `schedule: cron "0 6 * * *"` plus `workflow_dispatch`, and `concurrency` so runs never overlap.
+- **Auth:** `anthropics/claude-code-action@v1` with `claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}`. The token comes from running `claude setup-token` locally.
+- **Which issues:** it picks up to 3 open issues labelled `claude` that have no open `claude/issue-<n>` PR. Only people with triage access can add labels, so the label is the gate; a scheduled run doesn't check who opened the issue.
+- **What Claude does for each issue:**
+  - Branch, make the change, rebuild everything and run the tests.
+  - Restore kneeboard PNGs for missions the issue didn't touch, because runner fonts differ from local ones.
+  - Run `gh pr create` with "Closes #n" and comment the link on the issue.
+  - If the issue is unclear or breaks a repo rule, ask in a comment instead of guessing.
+- **Repo settings:** allow Actions to create PRs, install the Claude GitHub app, and create the `claude` and `claude-working` labels.
+- **Doc changes:** in CLAUDE_DEV.md, note that the "push to master" rule is for local sessions only; CI opens PRs.
+
 ### First test
 
 Once it's set up, run one real mission request end to end and check the PR's renders against a local build.

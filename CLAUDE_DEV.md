@@ -135,6 +135,17 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 - Slide maps are inline SVG (offline). `Labels` does simple collision avoidance; route labels get first pick. Deduplicate the home base (it's both the first and last route point). Labels for points outside a zoomed phase frame are skipped (they used to be clipped at the edge, e.g. "G-29S pair").
 - The coastline file originally stopped at 43.6N, so BLUE WATER's raid area and anything near Novorossiysk had no coast. It now covers 41.5–45.4N, 36.8–42.0E. Check coverage before placing a mission further out.
 
+## Page security (owner request 2026-10-28: "Making sure the HTML isn't executing anything weird")
+
+YAML text is data, never markup. The pages are static and public, and mission text may one day come from GitHub issues (see FUTURE_FEATURES.md).
+- Jinja autoescape covers the templates. The only `Markup` producers are the SVG builders (`profile_svg`, `svg_map`), and they `escape()` every label. Don't add `| safe`.
+- Map data goes into `<script>` with `| script_json` (it escapes `<`, `>`, `&`, U+2028 and U+2029), never `| safe`, so a `</script>` in a name can't end the block.
+- Leaflet renders tooltip, popup and `divIcon` strings as HTML. Wrap every YAML value in the page's `esc()`.
+- Every page includes `_security.html`, which sets a CSP (scripts only inline or from cdnjs; no fetch, forms, frames or plugins) and `no-referrer`. A new external host must be added there, or it's blocked silently.
+- CDN tags carry `integrity` (SRI). Upgrading Leaflet means recomputing the hashes: `curl -s URL | openssl dgst -sha512 -binary | base64 -w0`.
+- `meta.id` must be `[a-z0-9_]` and match its folder, because it becomes a path that the build writes into and `rmtree`s. `.cmp` strings go through `build_campaign._lua()`, which escapes `\`, `"`, `\n` and `\r`, because DCS runs the `.cmp` as Lua.
+- `tests/test_build.py` covers this: `test_yaml_text_cannot_inject_html`, `test_mission_id_must_be_a_plain_folder_name` and `test_pages_lock_down_scripts`.
+
 ## Geography: verify, don't guess
 
 - **My first target coordinates were wrong** (put the "Bzyb bridge" near Gagra). Real-terrain map tiles exposed it. Always look up real-world features in OpenStreetMap before placing targets:
