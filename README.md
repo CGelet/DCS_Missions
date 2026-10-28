@@ -20,6 +20,19 @@ A hangar of ready-to-fly DCS World missions, each with a full story, an interact
 | GAREJA RANGE | F/A-18C, Vaziani | Weapons qualification: GBU-12, Mk-82 CCIP and strafe, cleared in order by range control (fouls are called) |
 | RED AIR | F/A-18C, Kobuleti | A BVR intercept on a MiG-29, then 1v1 and 1v2 BFM with F-5Es, with a hard deck the sim calls |
 
+## Campaigns
+
+Four campaigns, 20 F/A-18C missions, each a story flown in order. Every campaign has a page in the hangar and installs into DCS as a real campaign: copy `hangar/campaigns/<id>/` (the `.cmp` and its numbered `.miz` files) into `Saved Games/DCS/Missions/Campaigns/`, pick it from the **Campaign** menu, and pass a chapter to unlock the next one.
+
+| Campaign | Chapters | Setting | Arc |
+| --- | --- | --- | --- |
+| WORK-UPS (training) | 5 | Jan 2038, Kutaisi, Vaziani, Senaki and the Stennis | Day and night carrier quals, SEAD against live emitters, CAS with a JTAC, and a graduation checkride |
+| IRON GATE | 5 | Apr 2038, Liakhvi valley | An armoured brigade comes through the Roki tunnel: armed recce, the Transcam bridges, the SA-11, holding Gori, and the supply dump at Java |
+| HIGH TIDE | 5 | May 2038, from the Stennis | A landing force at Ochamchire: photo recce, night minelayers off Poti, blinding an SA-10 with decoys, the back-door strike, and stopping the landing |
+| DARK HORSE | 5 | Jun 2038, night and weather | Mobile Scuds firing at Kutaisi: the hunt, the depot under a low ceiling, the radar on the ridge, JDAMs on coordinates passed in flight, and the headquarters |
+
+The whole timeline is set in 2038: training in January and February, the Black Sea missions in March, then IRON GATE, HIGH TIDE and DARK HORSE.
+
 Every briefing and deck now includes an **altitude profile** alongside the map. Dashed legs are flown above ground level, so you can see how differently each mission flies.
 
 ## Two audiences: pilots and the director
@@ -118,13 +131,21 @@ A trigger's `when` holds one or more conditions, all of which must be true:
 - `group_in_zone: [group, zone]`
 - `flag` / `flag_false` (a number, or a list that must all be set or all be unset)
 - `time_since_flag: [flag, seconds]`
-- `player_below_ft` / `player_below_agl_ft` (hard decks and minimum altitudes)
+- `player_below_ft` / `player_below_agl_ft` (hard decks and minimum altitudes), `player_above_ft`
+- `player_slower_kts` (with `player_below_ft` over the sea: you're on a carrier deck, which is how carrier quals count traps)
+- `scenery_dead` (zone name: a map object such as a bridge inside it is destroyed)
 - `target_destroyed`
 - `variant: [name, option]`
 
 `comms` entries take `radio` and `channel` to land on a cockpit preset. Radio 1 channel 1 is always the flight frequency. Leave them off for scripted-only voices, which appear as on-screen text and don't answer the radio menu.
 
 Add `chance: 1-99` to roll the trigger once at mission start; if the roll misses, the trigger never fires. Actions are `activate`, `deactivate`, `message` (+ `seconds`) and `set_flag`.
+
+Every mission must set **flag 10** on success: the mission's DCS goal scores 100 on it, and campaigns advance on that score.
+
+`meta.weather` can set real DCS weather: `cloud_preset` (a name from `dcs.cloud_presets.Clouds`, e.g. `OvercastAndRain1`) with `cloud_base_ft` inside that preset's range, and `fog_visibility_m`. Without them, `clouds` and `visibility` are briefing text only.
+
+**Campaigns** live in `campaigns/<id>/campaign.yaml`: `id` (the folder name), `title`, `subtitle`, `category`, `setting`, `premise`, `backstory`, `cast`, and `chapters`, a list of `{mission, previously}`. Chapter order is set only here. `previously` is the recap shown on that chapter's brief and deck; it must only repeat what pilots were told, never director-side truth. A campaign mission's `.miz` is built into the campaign folder as `NN_<id>.miz`.
 
 Unit and weapon names are pydcs names. Weapons are the attribute names on `dcs.planes.<Aircraft>.Pylon<N>`, e.g. `dcs.planes.FA_18C_hornet.Pylon2`. The build stops with a clear message if a name, waypoint, or group reference is wrong.
 

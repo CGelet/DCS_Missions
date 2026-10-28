@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dark Horse Director's Cut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+.spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
+.spoiler b { color: var(--red); }
+.vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.lbl-col { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.truth { border-left: 3px solid var(--red); }
+.phase-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.phase-row:last-child { border-bottom: 0; }
+.phase-row .when { font: 600 14px "IBM Plex Mono", monospace; color: var(--accent); }
+.phase-row h3 { margin-bottom: 4px; }
+.trig { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+.trig .cond { font: 13px "IBM Plex Mono", monospace; color: var(--muted); margin-bottom: 8px; }
+.trig .cond b { color: var(--ink); }
+.odds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.bar { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; display: flex; margin-top: 8px; }
+.bar span { display: block; height: 100%; }
+.bar span:nth-child(1) { background: var(--accent); } .bar span:nth-child(2) { background: var(--blue); } .bar span:nth-child(3) { background: var(--ok); }
+.hidden-tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+#dmap { height: min(70vh, 620px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+@media (max-width: 900px) {
+  .vs { grid-template-columns: minmax(0, 1fr); }
+  .phase-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Operation DARK HORSE · Director's cut</div>
+    <h1>The Brigade&#39;s Last Night</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2038-06-12</b></span>
+      <span>Step <b class="mono">22:40L</b></span>
+      <span>Flight <b>Pontiac 1</b></span>
+      <span>Random rolls <b class="mono">2</b></span>
+    </div>
+    <div class="spoiler"><b>Spoilers.</b> This page shows what's really in the mission: hidden units, random rolls, every trigger and radio call, and the debrief outcomes. It's for whoever builds, runs or debriefs the mission. Pilots should use <code>briefing.html</code> and <code>slides.html</code>.</div>
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#truth">Intel vs truth</a><a href="#rolls">Random rolls</a><a href="#script">Script</a><a href="#map-sec">Map</a><a href="#debrief">Debrief</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+  </div>
+</nav>
+
+<main>
+<section id="truth">
+  <div class="wrap">
+    <h2>What the pilots were told vs what's there</h2>
+    <div class="vs">
+      <div class="card"><p class="lbl-col">Briefed intel</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>System</th><th>Intel</th><th>Position</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag sam">sam</span> Command post SA-8</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">42.862N 41.710E</td>
+          </tr><tr>
+            <td><span class="tag aaa">aaa</span> Guns at the command post</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">42.860N 41.705E</td>
+          </tr><tr>
+            <td><span class="tag air">air</span> Su-27s (Gudauta)</td>
+            <td><span class="intel possible">possible</span></td>
+            <td class="num">43.114N 40.570E</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+      <div class="card truth"><p class="lbl-col">Ground truth</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Group</th><th>How it appears</th></tr></thead>
+          <tbody><tr>
+            <td><b>Command Post</b> <span class="muted">(red)</span><br><span style="font-size:13px;color:var(--muted)">2× Ural 375 PBU, 1× SKP 11, 1× ZiL 131 APA 80, 2× Ural 375 · 42.860N 41.705E</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>CP Osa</b> <span class="muted">(red)</span><br><span style="font-size:13px;color:var(--muted)">1× Osa 9A33 ln · 42.862N 41.710E</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>CP Guns</b> <span class="muted">(red)</span><br><span style="font-size:13px;color:var(--muted)">1× ZSU 23 4 Shilka, 1× ZU 23 Emplacement · 42.858N 41.703E</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>Last TEL at Home</b> <span class="muted">(red)</span><br><span style="font-size:13px;color:var(--muted)">1× Scud B · 42.861N 41.707E</span></td>
+            <td><div style="font-size:14px">50%: variant “Where the last launcher is” option 1 (Parked at the command post), once 5 s after mission start</div></td>
+          </tr><tr>
+            <td><b>Last TEL on the Road</b> <span class="muted">(red)</span><br><span style="font-size:13px;color:var(--muted)">1× Scud B, 1× Ural 375 · 42.840N 41.730E · moves</span></td>
+            <td><div style="font-size:14px">50%: variant “Where the last launcher is” option 2 (On the road to a launch point), once player flight enters the IP zone</div></td>
+          </tr>
+          <tr>
+            <td><b>OVERLORD</b> <span class="muted">(blue awacs)</span><br><span style="font-size:13px;color:var(--muted)">1× E 3A</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>Uzi 1</b> <span class="muted">(blue flight)</span><br><span style="font-size:13px;color:var(--muted)">2× FA 18C hornet</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>Gudauta Night Pair</b> <span class="muted">(red flight)</span><br><span style="font-size:13px;color:var(--muted)">2× Su 27</span></td>
+            <td><div style="font-size:14px">50%: when player flight enters the IP zone (Push)</div></td>
+          </tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rolls">
+  <div class="wrap">
+    <h2>Random rolls (decided at mission start)</h2>
+    
+    <div class="cards">
+      
+      <div class="card"><h3>Variant “Where the last launcher is”</h3>
+        <div style="display:flex;justify-content:space-between;gap:12px"><span>Parked at the command post</span><b class="mono">50%</b></div><div style="display:flex;justify-content:space-between;gap:12px"><span>On the road to a launch point</span><b class="mono">50%</b></div>
+        <div class="bar"><span style="width:50%"></span><span style="width:50%"></span></div>
+      </div>
+      
+      <div class="card"><h3>Push: Gudauta Night Pair</h3>
+        <div style="display:flex;justify-content:space-between;gap:12px"><span>Happens</span><b class="mono">50%</b></div><div style="display:flex;justify-content:space-between;gap:12px"><span>Never happens</span><b class="mono">50%</b></div>
+        <div class="bar"><span style="width:50%"></span><span style="width:50%"></span></div>
+      </div>
+      
+    </div>
+    
+  </div>
+</section>
+
+<section id="script">
+  <div class="wrap">
+    <h2>The script</h2>
+    
+    <div class="phase-row">
+      <div><div class="when">22:40</div><h3>Launch and Join</h3><div class="chips"><span class="chip">JOIN</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Cold start at Senaki. Join Uzi on package common at JOIN, 22,000 ft. The moon is up: the pods
+will be good tonight, and so will their gunners&#39; eyes.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">Where the last launcher is gets rolled at start. ANVIL checks in.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>10 s after mission start</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>ANVIL: Pontiac, Anvil. Uzi&#39;s airborne. Last one. Make it count.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">23:04</div><h3>Push</h3><div class="chips"><span class="chip">IP</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Push from the IP northwest toward Tkvarcheli. Uzi sweeps ahead toward Gudauta. Capt. Lomidze will
+call if the launcher moves.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">50%: Gudauta&#39;s Su-27s come south when you reach the IP (Uzi should meet them).</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the IP zone</b> · <b>50% chance</b></div>
+          <div class="chips" style="margin:0 0 8px"><span class="chip act">Activates Gudauta Night Pair</span></div>
+          <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Package, Overlord. Two contacts, Gudauta, heading southeast, fast. Uzi, commit.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">23:06</div><h3>The Command Post</h3><div class="chips"><span class="chip">CP</span><span class="chip">ROAD</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">SA-8 first with the Maverick, then the GBU-31 on the courtyard and GBU-12s on the radio trucks.
+If the launcher is on the road, it&#39;s the priority: find it on ROAD before it reaches open ground.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">Command post 70% destroyed: flag 11. The launcher is handled (flag 12) if it was parked at the CP, or once it dies on the road; reaching LAUNCH POINT first means it fires (flag 20). Flags 11 and 12 with no launch: success (flag 10).</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>the target is destroyed</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>CAPT. LOMIDZE: Pontiac, Lomidze. Their command net just went silent. All of it.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 11</div>
+        </div>
+        
+        <div class="trig">
+          <div class="cond">When <b>Last TEL on the Road enters LAUNCH POINT</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Pontiac, Overlord. Launch, launch! Ballistic missile, from the hills, heading east.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 20</div>
+        </div>
+        
+        <div class="trig">
+          <div class="cond">When <b>Last TEL on the Road is destroyed</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>OVERLORD: Pontiac, Overlord. The launcher on the road is burning. It didn&#39;t fire.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 12</div>
+        </div>
+        
+        <div class="trig">
+          <div class="cond">When <b>flags 11, 12 are all set and flag 20 is not set</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>ANVIL: Pontiac, Anvil. That&#39;s the brigade. Come home.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 10</div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">23:15</div><h3>Home</h3><div class="chips"><span class="chip">FEET WET</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">West to the coast and south to Kobuleti. Uzi will follow you out.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">ANVIL closes DARK HORSE.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the FEET WET zone and flag 10 is set</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>ANVIL: Pontiac, Anvil. Kutaisi&#39;s runway reopens tomorrow. Thank you.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    
+    <h3 style="margin-top:28px">Variant radio calls: Where the last launcher is</h3>
+    <div class="trig"><div class="cond">If <b>On the road to a launch point</b> · when <b>player flight enters the IP zone</b></div><div class="radio"><span class="lbl">RADIO</span>CAPT. LOMIDZE: Pontiac, Lomidze. Intercept: they&#39;re moving the launcher. South on the road from the mine toward the coast road. They&#39;ll fire from the open ground. Fifteen minutes.</div></div>
+    
+  </div>
+</section>
+
+<section id="map-sec">
+  <div class="wrap">
+    <h2>Truth map</h2>
+    <div id="dmap" role="img" aria-label="Map of real unit positions compared with briefed intel"></div>
+    <div class="legend"><span><i style="background:var(--red)"></i>Real red units (hollow = late activation)</span><span><i style="background:var(--ok)"></i>Real blue units</span><span><i style="background:var(--muted)"></i>Briefed intel (faded)</span><span><i style="background:var(--blue)"></i>Player route</span></div>
+  </div>
+</section>
+
+<section id="debrief">
+  <div class="wrap">
+    <h2>Debrief outcomes</h2>
+    <div class="outcomes">
+      
+      <div class="card outcome success"><h3>Success</h3><p>The command post burns and the last launcher burns with it, or on the road where it stopped. The
+missile brigade stops being a brigade. DARK HORSE is over, and Kutaisi&#39;s runway reopens the next day.</p></div>
+      
+      <div class="card outcome partial"><h3>Partial</h3><p>The command post is hit but the last launcher fires before it&#39;s found. The missile falls short
+of Kutaisi in a field. It&#39;s the last one, but nobody knew that at the time.</p></div>
+      
+      <div class="card outcome failure"><h3>Failure</h3><p>The command post survives and the last launcher fires at Kutaisi. It hits the detachment&#39;s old
+hangar. Nobody is hurt, because nobody&#39;s been there for a week.</p></div>
+      
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/dh_5_command/mission.yaml</code>, the same file that builds the .miz, so this script is exactly what the mission does.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const D = {"route": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "JOIN", "lat": 42.45, "lon": 42.1, "alt_ft": 22000, "kts": 400, "eta": "23:00", "zone_km": 6, "kind": "wp", "num": 1}, {"name": "IP", "lat": 42.75, "lon": 41.9, "alt_ft": 22000, "kts": 450, "eta": "23:04", "zone_km": 4, "kind": "wp", "num": 2}, {"name": "CP", "lat": 42.86, "lon": 41.705, "alt_ft": 20000, "kts": 450, "eta": "23:06", "action": "bomb", "zone_km": 4, "kind": "wp", "num": 3}, {"name": "ROAD", "lat": 42.78, "lon": 41.8, "alt_ft": 16000, "kts": 420, "eta": "23:08", "zone_km": 8, "kind": "wp", "num": 4}, {"name": "FEET WET", "lat": 42.4, "lon": 41.4, "alt_ft": 22000, "kts": 450, "eta": "23:15", "zone_km": 6, "kind": "wp", "num": 5}, {"name": "Kobuleti", "lat": 41.92991907051348, "lon": 41.86327450631784, "kind": "base", "alt_ft": 0}], "target": {"name": "Missile brigade command post", "lat": 42.86, "lon": 41.705, "groups": ["Command Post"], "kill_pct": 70, "description": "Command vehicles and radio trucks in and around the old mine buildings on the road east of Tkvarcheli.", "dmpi": "GBU-31 on the main building's courtyard where the command vehicles are, GBU-12s on the radio trucks. Maverick for the SA-8."}, "threats": [{"name": "Command post SA-8", "kind": "sam", "intel": "confirmed", "lat": 42.862, "lon": 41.71, "range_km": 10, "notes": "Seen by SHADOW yesterday. Covers the mine buildings."}, {"name": "Guns at the command post", "kind": "aaa", "intel": "confirmed", "lat": 42.86, "lon": 41.705, "range_km": 3, "notes": "Shilkas or ZU-23s around the buildings."}, {"name": "Su-27s (Gudauta)", "kind": "air", "intel": "possible", "lat": 43.1143, "lon": 40.5697, "range_km": 0, "notes": "Uzi's problem first."}], "support": [{"kind": "awacs", "callsign": "OVERLORD", "aircraft": "E_3A", "coalition": "blue", "lat": 42.1, "lon": 41.6, "alt_ft": 30000, "heading": 330, "leg_nm": 25, "freq_mhz": 251.0, "track_to": {"lat": 42.461234019776754, "lon": 41.318914623575445}}, {"kind": "flight", "callsign": "Uzi 1", "aircraft": "FA_18C_hornet", "coalition": "blue", "count": 2, "task": "sweep", "spawn": {"lat": 42.45, "lon": 42.0, "alt_ft": 26000, "kts": 420}, "route": [{"lat": 42.85, "lon": 41.4, "alt_ft": 26000}, {"lat": 42.95, "lon": 41.2, "alt_ft": 26000}, {"lat": 42.6, "lon": 41.4, "alt_ft": 26000}]}, {"kind": "flight", "callsign": "Gudauta Night Pair", "aircraft": "Su_27", "coalition": "red", "count": 2, "task": "sweep", "late_activation": true, "spawn": {"lat": 43.1, "lon": 40.6, "alt_ft": 24000, "kts": 480}, "route": [{"lat": 42.85, "lon": 41.6}]}], "ships": [], "airfields": [{"name": "Senaki-Kolkhi", "lat": 42.24084895478284, "lon": 42.048014241545644}, {"name": "Kobuleti", "lat": 41.92991907051348, "lon": 41.86327450631784}], "phases": [{"phase": "Launch and Join", "waypoints": ["JOIN"]}, {"phase": "Push", "waypoints": ["IP"]}, {"phase": "The Command Post", "waypoints": ["CP", "ROAD"]}, {"phase": "Home", "waypoints": ["FEET WET"]}], "zones": [{"name": "LAUNCH POINT", "lat": 42.78, "lon": 41.8, "radius_km": 3}], "flights": [{"name": "Uzi 1", "spawn": {"lat": 42.45, "lon": 42.0, "alt_ft": 26000, "kts": 420}, "route": [{"lat": 42.85, "lon": 41.4, "alt_ft": 26000}, {"lat": 42.95, "lon": 41.2, "alt_ft": 26000}, {"lat": 42.6, "lon": 41.4, "alt_ft": 26000}], "coalition": "blue"}, {"name": "Gudauta Night Pair", "spawn": {"lat": 43.1, "lon": 40.6, "alt_ft": 24000, "kts": 480}, "route": [{"lat": 42.85, "lon": 41.6}], "coalition": "red"}], "units": [{"name": "Command Post", "lat": 42.86, "lon": 41.705, "coalition": "red", "route": [], "late": false}, {"name": "CP Osa", "lat": 42.862, "lon": 41.71, "coalition": "red", "route": [], "late": false}, {"name": "CP Guns", "lat": 42.858, "lon": 41.703, "coalition": "red", "route": [], "late": false}, {"name": "Last TEL at Home", "lat": 42.861, "lon": 41.707, "coalition": "red", "route": [], "late": true}, {"name": "Last TEL on the Road", "lat": 42.84, "lon": 41.73, "coalition": "red", "route": [{"lat": 42.81, "lon": 41.77}, {"lat": 42.78, "lon": 41.8}], "late": true}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    draw();
+  });
+})();
+
+let map;
+function draw() {
+  if (typeof L === "undefined") { document.getElementById("dmap").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  if (map) map.remove();
+  map = L.map("dmap", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+  const red = css("--red"), ok = css("--ok"), blue = css("--blue"), muted = css("--muted"), accent = css("--accent");
+
+  const route = L.polyline(D.route.map(p => [p.lat, p.lon]), { color: blue, weight: 2.5, opacity: .7 }).addTo(map);
+  D.route.filter(p => p.kind === "wp").forEach(p => L.circleMarker([p.lat, p.lon], { radius: 4, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+    .addTo(map).bindTooltip(`${p.num} ${p.name}`, { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
+
+  // Briefed intel, faded, for comparison with the truth
+  D.threats.forEach(t => {
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: muted, weight: 1, fill: false, dashArray: "1 5" }).addTo(map);
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: muted, weight: 1, opacity: .6, fill: false, dashArray: "6 6" }).addTo(map);
+    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${t.name}<br><i>${t.intel || "confirmed"}</i>`);
+  });
+
+  const all = [route.getBounds()];
+  D.units.forEach(u => {
+    const c = u.coalition === "blue" ? ok : red;
+    if (u.route.length) L.polyline([[u.lat, u.lon], ...u.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "8 6" }).addTo(map);
+    const m = L.circleMarker([u.lat, u.lon], { radius: 7, color: c, weight: 3, fillColor: u.late ? css("--surface") : c, fillOpacity: 1 }).addTo(map)
+      .bindTooltip(u.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+    all.push(m.getLatLng());
+  });
+  D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
+    .addTo(map).bindTooltip(`Zone: ${z.name}`, { permanent: true, direction: "center", className: "wp-label" }));
+  D.ships.forEach(sh => {
+    const c = sh.coalition === "red" ? red : ok;
+    L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
+      .bindTooltip(sh.name, { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.flights.forEach(f => {
+    const c = f.coalition === "blue" ? ok : red;
+    L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${f.name}</div>`, iconSize: null }) }).addTo(map);
+  });
+
+  const tg = D.target;
+  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${tg.name}`);
+  const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
+    .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
+    .concat(D.ships.map(sh => [sh.lat, sh.lon])));
+  map.fitBounds(b.isValid() ? b.pad(0.6) : route.getBounds(), { padding: [24, 24] });
+}
+draw();
+</script>
+</body>
+</html>

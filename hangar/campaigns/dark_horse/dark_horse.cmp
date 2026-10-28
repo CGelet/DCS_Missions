@@ -1,0 +1,79 @@
+campaign = 
+{
+    ["name"] = "DARK HORSE",
+    ["name_EN"] = "DARK HORSE",
+    ["description"] = "Ten nights hunting Scuds, June 2038\n\nMobile Scud launchers in the hills of Abkhazia are firing at Kutaisi. Pontiac flight hunts them at night, under low cloud and through rain: the launchers, the depot that feeds them, the radar that warns them, and finally the headquarters that sends them.",
+    ["description_EN"] = "Ten nights hunting Scuds, June 2038\n\nMobile Scud launchers in the hills of Abkhazia are firing at Kutaisi. Pontiac flight hunts them at night, under low cloud and through rain: the launchers, the depot that feeds them, the radar that warns them, and finally the headquarters that sends them.",
+    ["necessaryUnits"] = {
+        ["FA-18C_hornet"] = "FA-18C_hornet",
+    },
+    ["version"] = 1,
+    ["startStage"] = 1,
+    ["stages"] = {
+        [1] = {
+            ["name"] = "Chapter 1: Scud Hunt in the Dark",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "01_dh_1_scud_hunt.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [2] = {
+            ["name"] = "Chapter 2: Under the Deck",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "02_dh_2_depot.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [3] = {
+            ["name"] = "Chapter 3: The Eye on the Ridge",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "03_dh_3_ewr.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [4] = {
+            ["name"] = "Chapter 4: Coordinates in the Rain",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "04_dh_4_jdam.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [5] = {
+            ["name"] = "Chapter 5: The Brigade's Last Night",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "05_dh_5_command.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+    },
+} -- end of campaign

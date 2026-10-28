@@ -1,0 +1,247 @@
+# DARK HORSE chapter 3: put out the eye on the ridge. Source of truth; `python -m dcsmb build` renders hangar/dh_3_ewr/.
+#
+# Story device: a night valley run. An early-warning radar on one of two peaks above Tkvarcheli
+# (2,000-2,500 m) sees every coalition jet that lifts off from Senaki and warns the launchers. The route
+# runs up the Inguri valley at 2,000 ft AGL in the dark (new moon plus four days, set by 2300), pops
+# over the ridge and hits the radar from the east. The sim rolls the peak and 50% a Strela with it.
+# Peaks: elevation from Open-Meteo (2,495 m and 2,022 m), both in Tkvarcheli district.
+
+meta:
+  id: dh_3_ewr
+  title: "Operation DARK HORSE"
+  subtitle: "The Eye on the Ridge"
+  theater: caucasus
+  role: "Strike"
+  date: 2038-06-06
+  start_time: "01:40"
+  weather:
+    temperature_c: 12
+    wind_from_deg: 40
+    wind_kts: 15
+    clouds: "Clear, no moon"
+    visibility: "30 km"
+    qnh_inhg: 30.02
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "DARK HORSE"
+  backstory: |
+    The depot burned, and the launchers went quiet. Then, two nights ago, they started moving again,
+    and always just before Pontiac's jets arrived. Capt. Lomidze found out why: a long-range early
+    warning radar has been set up on a peak above Tkvarcheli, 2,000 metres up. It sees everything that
+    lifts off from Senaki and passes the warning down the valley.
+
+    It's on one of two peaks; ELINT can't separate them. It can see anything high from 200 km away.
+    It can't see into the Inguri valley. So that's how Pontiac is going in: up the valley in the dark,
+    under its horizon, and over the ridge at the last minute.
+  characters:
+    - name: "CDR Kofi \"ANVIL\" Mensah"
+      role: "Detachment commander at Senaki-Kolkhi"
+    - name: "Capt. Tamar Lomidze"
+      role: "Georgian Air Force intelligence liaison"
+    - name: "OVERLORD"
+      role: "E-3 AWACS"
+    - name: "Pontiac 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets"
+  hook: |
+    "Every time we take off, it tells them. Go up the valley where it can't see, and put it out."
+    Capt. Lomidze, 0100 brief
+  outcomes:
+    success: |
+      The radar on the ridge goes dark and stays dark. The next night, Pontiac catches a launcher on
+      the road with its missile up, because nobody told it they were coming.
+    partial: |
+      The radar's antenna is hit but its crew gets it back on the air in two days. Two quiet nights
+      for the launchers, then the old game again.
+    failure: |
+      The radar is untouched, and it watched Pontiac coming all the way up the valley. The launchers
+      keep their warning.
+
+situation: |
+  An early-warning radar is on one of two peaks above Tkvarcheli, at 2,000 to 2,500 m. It can't be
+  separated by ELINT. It sees anything high from Senaki, but not into the Inguri valley. Fly north up
+  the Inguri past Jvari at 2,000 ft AGL in the dark, climb over the ridge west of Khaishi, and attack the
+  radar from the east with JSOWs or laser bombs. Expect guns and possibly a short-range SAM at the site.
+
+objectives:
+  primary: "Destroy the early-warning radar."
+  secondary: "Stay under the radar's horizon until the pop: never above 6,000 ft MSL in the valley."
+  tertiary: "Recover both aircraft to Senaki-Kolkhi."
+
+roe: |
+  Weapons free on the radar and its defences. The Inguri dam and Jvari town are on your route: no
+  weapons south of the ridge.
+
+threats:
+  - name: "Early-warning radar (one of two peaks)"
+    kind: sam
+    intel: suspected
+    lat: 42.9450
+    lon: 41.8650
+    area_km: 6
+    range_km: 0
+    notes: "A 55G6 long-range surveillance radar. It doesn't shoot. It sees you above about 6,000 ft anywhere south of the ridge."
+  - name: "Site defence"
+    kind: aaa
+    intel: suspected
+    lat: 42.9450
+    lon: 41.8650
+    area_km: 6
+    range_km: 4
+    notes: "Guns at least. Possibly a Strela."
+  - name: "Terrain"
+    kind: hazard
+    lat: 42.8300
+    lon: 42.1000
+    area_km: 15
+    range_km: 0
+    notes: "The Inguri valley walls go to 2,500 m either side. Radar altimeter and FLIR on, and fly the AGL legs."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Pontiac (inter-flight)", freq: "255.000 AM", radio: 1, channel: 1 }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Senaki Tower", freq: "132.000 AM", radio: 2, channel: 1, notes: "TACAN 31X" }
+  - { name: "ANVIL, Capt. Lomidze", freq: "255.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Pontiac 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Senaki-Kolkhi
+    start: cold
+    radio1_mhz: 255.0
+    laser_codes: [1688]
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: AGM_154C___JSOW_Unitary_BROACH
+      3: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      8: AGM_154C___JSOW_Unitary_BROACH
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× AGM-154C JSOW, 4× GBU-12, 2× AIM-9X, 1× AIM-120C, ATFLIR, 1× 330 gal tank"
+    bingo_lbs: 4000
+    joker_lbs: 6000
+    waypoints:
+      - { name: "ZUGDIDI",  lat: 42.5100, lon: 41.9200, alt_ft: 2000,  kts: 420, eta: "01:58", agl: true, zone_km: 4 }
+      - { name: "JVARI",    lat: 42.7176, lon: 42.0496, alt_ft: 2000,  kts: 420, eta: "02:00", agl: true, zone_km: 4 }
+      - { name: "KHAISHI",  lat: 42.9444, lon: 42.1838, alt_ft: 2000,  kts: 420, eta: "02:03", agl: true, zone_km: 4 }
+      - { name: "POP",      lat: 42.9800, lon: 42.0500, alt_ft: 12000, kts: 400, eta: "02:05", zone_km: 4 }
+      - { name: "RIDGE",    lat: 42.9450, lon: 41.8650, alt_ft: 12000, kts: 420, eta: "02:07", action: bomb, zone_km: 6 }
+      - { name: "HOME",     lat: 42.4500, lon: 42.0000, alt_ft: 20000, kts: 450, eta: "02:15", zone_km: 5 }
+    land: Senaki-Kolkhi
+
+target:
+  name: "Early-warning radar"
+  lat: 42.9450
+  lon: 41.8650
+  area_km: 6
+  groups: ["EWR West Peak", "EWR East Peak"]
+  description: "A 55G6 radar on its trailer, with a generator and a command cab, on a bare peak. One of two peaks, 6 km apart."
+  dmpi: "The antenna trailer. JSOW-C on the antenna from POP if you've found it on the pod; GBU-12s on the cab and generator."
+
+units:
+  # Ground truth. Pilots never see this section. One peak is occupied.
+  - name: "EWR West Peak"
+    coalition: red
+    type: [X_55G6_EWR, ZiL_131_APA_80, ZU_23_Emplacement]
+    lat: 42.9600
+    lon: 41.8300
+    heading: 180
+    late_activation: true
+  - name: "EWR East Peak"
+    coalition: red
+    type: [X_55G6_EWR, ZiL_131_APA_80, ZU_23_Emplacement]
+    lat: 42.9300
+    lon: 41.9000
+    heading: 180
+    late_activation: true
+  - name: "Peak Strela"
+    coalition: red
+    type: [Strela_10M3]
+    lat: 42.9450
+    lon: 41.8650
+    heading: 90
+    late_activation: true
+
+zones:
+  - { name: "VALLEY", lat: 42.7800, lon: 42.0800, radius_km: 20 }
+
+support:
+  - kind: awacs
+    callsign: "OVERLORD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.0000
+    lon: 41.8000
+    alt_ft: 30000
+    heading: 90
+    leg_nm: 25
+    freq_mhz: 251.0
+
+variants:
+  - name: "Which peak"
+    options:
+      - label: "The west peak, 2,495 m"
+        activate: ["EWR West Peak"]
+      - label: "The east peak, 2,022 m"
+        activate: ["EWR East Peak"]
+
+storyboard:
+  - phase: "Night Launch"
+    time: "01:40"
+    waypoints: ["ZUGDIDI"]
+    brief: |
+      Cold start at Senaki. Stay low from takeoff: 2,000 ft AGL northwest to Zugdidi. The radar sees
+      anything high over Senaki, so don't climb.
+    script: "The peak is rolled at start. 50%: a Strela sits between the peaks."
+    triggers:
+      - when: { time_after: 10 }
+        message: "ANVIL: Pontiac, Anvil. Low from the wheels up. If it sees you, they'll know."
+        seconds: 15
+      - when: { time_after: 5 }
+        chance: 50
+        activate: ["Peak Strela"]
+
+  - phase: "Up the Inguri"
+    time: "02:00"
+    waypoints: ["JVARI", "KHAISHI"]
+    brief: |
+      Up the Inguri valley past Jvari and the dam to Khaishi, 2,000 ft AGL, 420 kt. The valley walls are
+      higher than you. Never above 6,000 ft MSL here.
+    script: "Above 6,000 ft MSL in the VALLEY zone: the radar sees you and the warning goes out (flag 21)."
+    trigger:
+      when: { player_in_zone: "VALLEY", player_above_ft: 6000 }
+      set_flag: 21
+      message: "CAPT. LOMIDZE: Pontiac, Lomidze. We're hearing radio traffic on their net. I think they saw you."
+      seconds: 20
+
+  - phase: "Over the Ridge"
+    time: "02:05"
+    waypoints: ["POP", "RIDGE"]
+    notes: "Ask the room: you pop and the first peak is bare. How much time do you spend finding the second?"
+    brief: |
+      Pop to 12,000 ft at POP, west of Khaishi, and look at both peaks on the pod. The radar trailer is
+      the one with the big antenna. JSOWs first, then GBU-12s on whatever's left.
+    script: "Radar group destroyed: success (flag 10)."
+    trigger:
+      when: { target_destroyed: true }
+      set_flag: 10
+      message: "CAPT. LOMIDZE: Pontiac, Lomidze. The radar's off the air. Their net just went very busy and then very quiet."
+      seconds: 20
+
+  - phase: "Home"
+    time: "02:15"
+    waypoints: ["HOME"]
+    brief: |
+      South over the ridge, climbing now, and home to Senaki.
+    script: "ANVIL's closing call."
+    trigger:
+      when: { player_in_zone: "HOME" }
+      message: "ANVIL: Pontiac, Anvil. Copy outbound. Climb all you like now."
+      seconds: 15

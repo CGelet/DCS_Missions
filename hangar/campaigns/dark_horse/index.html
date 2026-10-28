@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dark Horse Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+.chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.chap { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); }
+.chap .n { font: 600 34px/1 "IBM Plex Mono", monospace; color: var(--accent); }
+.chap h3 { font-size: 20px; margin: 4px 0 6px; }
+.chap .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chap p { margin: 0 0 10px; }
+.chap .hook { font-style: italic; border-left: 3px solid var(--accent); padding-left: 12px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
+.links a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.install ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+@media (max-width: 640px) { .chap { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><a href="../../index.html" style="text-decoration:none">Hangar</a> · Campaign · 5 chapters</div>
+    <h1>DARK HORSE</h1>
+    <div class="meta-row"><span><b>Ten nights hunting Scuds, June 2038</b></span><span>2038-06-02 → 2038-06-12</span><span>Senaki-Kolkhi, Kobuleti and Batumi</span></div>
+    <blockquote class="hook">Mobile Scud launchers in the hills of Abkhazia are firing at Kutaisi. Pontiac flight hunts them at
+night, under low cloud and through rain: the launchers, the depot that feeds them, the radar that warns
+them, and finally the headquarters that sends them.</blockquote>
+  </div>
+</header>
+<main>
+<section id="story"><div class="wrap">
+  <h2>The story</h2>
+  <div class="story">
+    <div><p>After HIGH TIDE failed, the war changed shape again. On the night of 2 June a ballistic missile came
+down on the edge of Kutaisi airfield, and Georgian radar traced it back to the hills north of
+Ochamchire. The coalition detachment pulled its Hornets back to Senaki and Kobuleti and started
+looking for something that only moves in the dark.</p><p>Over ten nights, Pontiac flight learns how the missile brigade works and takes it apart one piece at
+a time. Most of it is flown at night or in weather nobody would choose. None of the targets want to
+be found.</p></div>
+    <div><h3>Cast</h3>
+      <ul class="cast"><li><b>CDR Kofi &#34;ANVIL&#34; Mensah</b><span>Detachment commander, at Senaki-Kolkhi</span></li><li><b>Capt. Tamar Lomidze</b><span>Georgian Air Force intelligence liaison</span></li><li><b>SHADOW</b><span>Georgian special forces team in the hills</span></li><li><b>OVERLORD</b><span>E-3 AWACS</span></li><li><b>Pontiac 1-1 / 1-2</b><span>You and your wingman</span></li></ul></div>
+  </div>
+</div></section>
+<section id="chapters"><div class="wrap">
+  <h2>Chapters</h2>
+  <ol class="chapters">
+  
+    <li class="chap"><div class="n">01</div><div>
+      <div class="eyebrow">Operation DARK HORSE</div>
+      <h3>Scud Hunt in the Dark</h3>
+      <div class="meta"><span class="chip">Armed recce</span><span class="chip">2038-06-02 · 23:20L</span><span class="chip">2× F/A-18C Hornet</span></div>
+      <p class="hook">&#34;It fired once. It&#39;ll fire again before dawn unless someone finds it first. It&#39;s a truck in a
+forest at night. Find the truck.&#34; ANVIL, 2300 brief</p>
+      <p>At 2204 a missile came down on the edge of Kutaisi airfield. It missed the runway by 400 metres and took out a fuel farm. Georgian radar at Senaki tracked it all the way: a ballistic missile, a Scud, launched from the hills north of Ochamchire. By the time anyone looked, the launcher had gone.</p>
+      <div class="links">
+        <a class="primary" href="../../dh_1_scud_hunt/briefing.html">Briefing</a>
+        <a href="../../dh_1_scud_hunt/slides.html">Slide deck</a>
+        <a href="../../dh_1_scud_hunt/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="01_dh_1_scud_hunt.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">02</div><div>
+      <div class="eyebrow">Operation DARK HORSE</div>
+      <h3>Under the Deck</h3>
+      <div class="meta"><span class="chip">Strike</span><span class="chip">2038-06-04 · 20:05L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Low level</span></div>
+      <p class="hook">&#34;Under the cloud, in the rain, at dusk, with guns. I wouldn&#39;t ask if it didn&#39;t matter. It matters.&#34;
+ANVIL, 1930 brief</p>
+      <p>The launcher in the hills is gone, and Capt. Lomidze has an answer to her question: there are more. A captured driver says the brigade has four launchers and one place they all go back to for fuel and missiles, a depot in the orchards west of Gali. Kill the depot and the launchers run dry.</p>
+      <div class="links">
+        <a class="primary" href="../../dh_2_depot/briefing.html">Briefing</a>
+        <a href="../../dh_2_depot/slides.html">Slide deck</a>
+        <a href="../../dh_2_depot/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="02_dh_2_depot.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">03</div><div>
+      <div class="eyebrow">Operation DARK HORSE</div>
+      <h3>The Eye on the Ridge</h3>
+      <div class="meta"><span class="chip">Strike</span><span class="chip">2038-06-06 · 01:40L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Low level</span></div>
+      <p class="hook">&#34;Every time we take off, it tells them. Go up the valley where it can&#39;t see, and put it out.&#34;
+Capt. Lomidze, 0100 brief</p>
+      <p>The depot burned, and the launchers went quiet. Then, two nights ago, they started moving again, and always just before Pontiac&#39;s jets arrived. Capt. Lomidze found out why: a long-range early warning radar has been set up on a peak above Tkvarcheli, 2,000 metres up. It sees everything that lifts off from Senaki and passes the warning down the valley.</p>
+      <div class="links">
+        <a class="primary" href="../../dh_3_ewr/briefing.html">Briefing</a>
+        <a href="../../dh_3_ewr/slides.html">Slide deck</a>
+        <a href="../../dh_3_ewr/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="03_dh_3_ewr.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">04</div><div>
+      <div class="eyebrow">Operation DARK HORSE</div>
+      <h3>Coordinates in the Rain</h3>
+      <div class="meta"><span class="chip">Strike</span><span class="chip">2038-06-09 · 13:10L</span><span class="chip">2× F/A-18C Hornet</span></div>
+      <p class="hook">&#34;You&#39;ll never see it. You&#39;ll never see the bombs hit. You&#39;ll just have to believe the man in the
+forest, and type carefully.&#34; ANVIL, 1230 brief</p>
+      <p>With the radar gone, the launchers lost their warning and lost one of their number on the first night. The brigade adapted: now they only move in bad weather, when nothing can see them from above. Today the weather is terrible, and three of them have moved.</p>
+      <div class="links">
+        <a class="primary" href="../../dh_4_jdam/briefing.html">Briefing</a>
+        <a href="../../dh_4_jdam/slides.html">Slide deck</a>
+        <a href="../../dh_4_jdam/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="04_dh_4_jdam.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">05</div><div>
+      <div class="eyebrow">Operation DARK HORSE</div>
+      <h3>The Brigade&#39;s Last Night</h3>
+      <div class="meta"><span class="chip">Strike</span><span class="chip">2038-06-12 · 22:40L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Different recovery field</span></div>
+      <p class="hook">&#34;One launcher, one headquarters, one night. After tonight, Kutaisi sleeps.&#34; ANVIL, 2200 brief</p>
+      <p>SHADOW&#39;s launcher was the third. The brigade has one left, and Capt. Lomidze&#39;s interceptors say the brigade&#39;s commander has pulled it back to his headquarters: the old mine buildings outside Tkvarcheli, with his air defence, his radios and his last missile all in one place.</p>
+      <div class="links">
+        <a class="primary" href="../../dh_5_command/briefing.html">Briefing</a>
+        <a href="../../dh_5_command/slides.html">Slide deck</a>
+        <a href="../../dh_5_command/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="05_dh_5_command.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+  </ol>
+</div></section>
+<section id="install" class="install"><div class="wrap">
+  <h2>Fly it as a DCS campaign</h2>
+  <ol>
+    <li>Copy this whole folder (<code>dark_horse.cmp</code> and the numbered <code>.miz</code> files) into <code>Saved Games/DCS/Missions/Campaigns/</code>.</li>
+    <li>In DCS, open <b>Campaign</b> and pick <b>DARK HORSE</b>.</li>
+    <li>Pass a chapter to unlock the next one. Fail it and DCS gives you the same chapter again.</li>
+  </ol>
+  <p>Each chapter also works on its own: open the <code>.miz</code> from the Mission menu.</p>
+</div></section>
+</main>
+<footer><div class="wrap">Generated from <code>campaigns/dark_horse/campaign.yaml</code> and each chapter's <code>mission.yaml</code>.</div></footer>
+</body>
+</html>

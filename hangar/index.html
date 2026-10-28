@@ -71,6 +71,14 @@ header p { color: var(--muted); margin: 0; max-width: 64ch; }
 <section class="wrap camps" aria-labelledby="h-camps">
   <div class="cat-head"><h2 id="h-camps">Campaigns</h2><p>Story arcs flown in order. Each one installs into DCS as a campaign that unlocks the next chapter when you pass the last.</p></div>
   <div class="grid">
+    <a class="camp" href="campaigns/dark_horse/index.html">
+      <span class="eyebrow">Campaign · 5 chapters</span>
+      <b>DARK HORSE</b><span class="sub">Ten nights hunting Scuds, June 2038</span>
+      <span class="prem">Mobile Scud launchers in the hills of Abkhazia are firing at Kutaisi. Pontiac flight hunts them at
+night, under low cloud and through rain: the launchers, the depot that feeds them, the radar that warns
+them, and finally the headquarters that sends them.</span>
+      <span class="dates">2038-06-02 → 2038-06-12 · Senaki-Kolkhi, Kobuleti and Batumi</span>
+    </a>
     <a class="camp" href="campaigns/high_tide/index.html">
       <span class="eyebrow">Campaign · 5 chapters</span>
       <b>HIGH TIDE</b><span class="sub">Ten days off the Abkhaz coast, May 2038</span>
@@ -102,7 +110,7 @@ and a graduation checkride.</span>
     <input type="search" id="q" placeholder="Search by operation, place, story…" aria-label="Search missions">
     
     <div class="fgroup" data-group="campaign"><span class="flabel">Campaign</span>
-      <button type="button" class="fchip" aria-pressed="false" data-value="HIGH TIDE">HIGH TIDE</button><button type="button" class="fchip" aria-pressed="false" data-value="IRON GATE">IRON GATE</button><button type="button" class="fchip" aria-pressed="false" data-value="WORK-UPS">WORK-UPS</button><button type="button" class="fchip" aria-pressed="false" data-value="Standalone">Standalone</button>
+      <button type="button" class="fchip" aria-pressed="false" data-value="DARK HORSE">DARK HORSE</button><button type="button" class="fchip" aria-pressed="false" data-value="HIGH TIDE">HIGH TIDE</button><button type="button" class="fchip" aria-pressed="false" data-value="IRON GATE">IRON GATE</button><button type="button" class="fchip" aria-pressed="false" data-value="WORK-UPS">WORK-UPS</button><button type="button" class="fchip" aria-pressed="false" data-value="Standalone">Standalone</button>
     </div>
     <div class="fgroup" data-group="aircraft"><span class="flabel">Aircraft</span>
       <button type="button" class="fchip" aria-pressed="false" data-value="A-10C II">A-10C II</button><button type="button" class="fchip" aria-pressed="false" data-value="AV-8B Harrier">AV-8B Harrier</button><button type="button" class="fchip" aria-pressed="false" data-value="F-14B Tomcat">F-14B Tomcat</button><button type="button" class="fchip" aria-pressed="false" data-value="F-16C Viper">F-16C Viper</button><button type="button" class="fchip" aria-pressed="false" data-value="F/A-18C Hornet">F/A-18C Hornet</button>
@@ -113,10 +121,110 @@ and a graduation checkride.</span>
     <div class="fgroup" data-group="features"><span class="flabel">Features</span>
       <button type="button" class="fchip" aria-pressed="false" data-value="Air refuelling">Air refuelling</button><button type="button" class="fchip" aria-pressed="false" data-value="Carrier">Carrier</button><button type="button" class="fchip" aria-pressed="false" data-value="Different recovery field">Different recovery field</button><button type="button" class="fchip" aria-pressed="false" data-value="Hot start">Hot start</button><button type="button" class="fchip" aria-pressed="false" data-value="Low level">Low level</button>
     </div>
-    <div class="fstatus"><span id="count" aria-live="polite">25 missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
+    <div class="fstatus"><span id="count" aria-live="polite">30 missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
   </section>
 </div>
 <main>
+
+<section class="cat" data-cat="c-dark_horse" aria-labelledby="h-c-dark_horse">
+  <div class="wrap cat-head"><h2 id="h-c-dark_horse">DARK HORSE campaign <span class="cat-count" data-total="5">5</span></h2><p>Ten nights hunting Scuds, June 2038 5 chapters, 2038-06-02 to 2038-06-12. <a href="campaigns/dark_horse/index.html">Campaign page</a></p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Armed recce" data-features=""
+           data-text="dark horse dark horse scud hunt in the dark caucasus 2× f/a-18c hornet armed recce &#34;it fired once. it&#39;ll fire again before dawn unless someone finds it first. it&#39;s a truck in a
+forest at night. find the truck.&#34; anvil, 2300 brief at 2204 a missile came down on the edge of kutaisi airfield. it missed the runway by 400 metres and took out a fuel farm. georgian radar at senaki tracked it all the way: a ballistic missile, a scud, launched from the hills north of ochamchire. by the time anyone looked, the launcher had gone. find and destroy the scud launcher before it fires again.">
+    <div class="eyebrow">DARK HORSE · 1/5 · Operation DARK HORSE</div>
+    <h2>Scud Hunt in the Dark</h2>
+    <div class="meta"><span class="chip role">Armed recce</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-02 · 23:20L</span></div>
+    <p class="hook">&#34;It fired once. It&#39;ll fire again before dawn unless someone finds it first. It&#39;s a truck in a
+forest at night. Find the truck.&#34; ANVIL, 2300 brief</p>
+    <p>At 2204 a missile came down on the edge of Kutaisi airfield. It missed the runway by 400 metres and took out a fuel farm. Georgian radar at Senaki tracked it all the way: a ballistic missile, a Scud, launched from the hills north of Ochamchire. By the time anyone looked, the launcher had gone.</p>
+    <p class="obj"><b>Primary:</b> Find and destroy the Scud launcher before it fires again.</p>
+    <div class="kb"><a href="dh_1_scud_hunt/kneeboard/01_mission.png"><img src="dh_1_scud_hunt/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="dh_1_scud_hunt/kneeboard/02_nav.png"><img src="dh_1_scud_hunt/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="dh_1_scud_hunt/kneeboard/03_threats.png"><img src="dh_1_scud_hunt/kneeboard/03_threats.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="dh_1_scud_hunt/briefing.html">Open briefing</a>
+      <a href="dh_1_scud_hunt/slides.html">Slide deck</a>
+      <a href="dh_1_scud_hunt/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>
+      <a href="campaigns/dark_horse/01_dh_1_scud_hunt.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Low level"
+           data-text="dark horse dark horse under the deck caucasus 2× f/a-18c hornet strike &#34;under the cloud, in the rain, at dusk, with guns. i wouldn&#39;t ask if it didn&#39;t matter. it matters.&#34;
+anvil, 1930 brief the launcher in the hills is gone, and capt. lomidze has an answer to her question: there are more. a captured driver says the brigade has four launchers and one place they all go back to for fuel and missiles, a depot in the orchards west of gali. kill the depot and the launchers run dry. destroy the depot&#39;s fuel and missile vehicles.">
+    <div class="eyebrow">DARK HORSE · 2/5 · Operation DARK HORSE</div>
+    <h2>Under the Deck</h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-04 · 20:05L</span><span class="chip">Low level</span></div>
+    <p class="hook">&#34;Under the cloud, in the rain, at dusk, with guns. I wouldn&#39;t ask if it didn&#39;t matter. It matters.&#34;
+ANVIL, 1930 brief</p>
+    <p>The launcher in the hills is gone, and Capt. Lomidze has an answer to her question: there are more. A captured driver says the brigade has four launchers and one place they all go back to for fuel and missiles, a depot in the orchards west of Gali. Kill the depot and the launchers run dry.</p>
+    <p class="obj"><b>Primary:</b> Destroy the depot&#39;s fuel and missile vehicles.</p>
+    <div class="kb"><a href="dh_2_depot/kneeboard/01_mission.png"><img src="dh_2_depot/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="dh_2_depot/kneeboard/02_nav.png"><img src="dh_2_depot/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="dh_2_depot/kneeboard/03_threats.png"><img src="dh_2_depot/kneeboard/03_threats.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="dh_2_depot/briefing.html">Open briefing</a>
+      <a href="dh_2_depot/slides.html">Slide deck</a>
+      <a href="dh_2_depot/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>
+      <a href="campaigns/dark_horse/02_dh_2_depot.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Low level"
+           data-text="dark horse dark horse the eye on the ridge caucasus 2× f/a-18c hornet strike &#34;every time we take off, it tells them. go up the valley where it can&#39;t see, and put it out.&#34;
+capt. lomidze, 0100 brief the depot burned, and the launchers went quiet. then, two nights ago, they started moving again, and always just before pontiac&#39;s jets arrived. capt. lomidze found out why: a long-range early warning radar has been set up on a peak above tkvarcheli, 2,000 metres up. it sees everything that lifts off from senaki and passes the warning down the valley. destroy the early-warning radar.">
+    <div class="eyebrow">DARK HORSE · 3/5 · Operation DARK HORSE</div>
+    <h2>The Eye on the Ridge</h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-06 · 01:40L</span><span class="chip">Low level</span></div>
+    <p class="hook">&#34;Every time we take off, it tells them. Go up the valley where it can&#39;t see, and put it out.&#34;
+Capt. Lomidze, 0100 brief</p>
+    <p>The depot burned, and the launchers went quiet. Then, two nights ago, they started moving again, and always just before Pontiac&#39;s jets arrived. Capt. Lomidze found out why: a long-range early warning radar has been set up on a peak above Tkvarcheli, 2,000 metres up. It sees everything that lifts off from Senaki and passes the warning down the valley.</p>
+    <p class="obj"><b>Primary:</b> Destroy the early-warning radar.</p>
+    <div class="kb"><a href="dh_3_ewr/kneeboard/01_mission.png"><img src="dh_3_ewr/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="dh_3_ewr/kneeboard/02_nav.png"><img src="dh_3_ewr/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="dh_3_ewr/kneeboard/03_threats.png"><img src="dh_3_ewr/kneeboard/03_threats.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="dh_3_ewr/briefing.html">Open briefing</a>
+      <a href="dh_3_ewr/slides.html">Slide deck</a>
+      <a href="dh_3_ewr/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>
+      <a href="campaigns/dark_horse/03_dh_3_ewr.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features=""
+           data-text="dark horse dark horse coordinates in the rain caucasus 2× f/a-18c hornet strike &#34;you&#39;ll never see it. you&#39;ll never see the bombs hit. you&#39;ll just have to believe the man in the
+forest, and type carefully.&#34; anvil, 1230 brief with the radar gone, the launchers lost their warning and lost one of their number on the first night. the brigade adapted: now they only move in bad weather, when nothing can see them from above. today the weather is terrible, and three of them have moved. destroy the launcher at the coordinates shadow passes.">
+    <div class="eyebrow">DARK HORSE · 4/5 · Operation DARK HORSE</div>
+    <h2>Coordinates in the Rain</h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-09 · 13:10L</span></div>
+    <p class="hook">&#34;You&#39;ll never see it. You&#39;ll never see the bombs hit. You&#39;ll just have to believe the man in the
+forest, and type carefully.&#34; ANVIL, 1230 brief</p>
+    <p>With the radar gone, the launchers lost their warning and lost one of their number on the first night. The brigade adapted: now they only move in bad weather, when nothing can see them from above. Today the weather is terrible, and three of them have moved.</p>
+    <p class="obj"><b>Primary:</b> Destroy the launcher at the coordinates SHADOW passes.</p>
+    <div class="kb"><a href="dh_4_jdam/kneeboard/01_mission.png"><img src="dh_4_jdam/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="dh_4_jdam/kneeboard/02_nav.png"><img src="dh_4_jdam/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="dh_4_jdam/kneeboard/03_threats.png"><img src="dh_4_jdam/kneeboard/03_threats.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="dh_4_jdam/briefing.html">Open briefing</a>
+      <a href="dh_4_jdam/slides.html">Slide deck</a>
+      <a href="dh_4_jdam/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>
+      <a href="campaigns/dark_horse/04_dh_4_jdam.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Different recovery field"
+           data-text="dark horse dark horse the brigade&#39;s last night caucasus 2× f/a-18c hornet strike &#34;one launcher, one headquarters, one night. after tonight, kutaisi sleeps.&#34; anvil, 2200 brief shadow&#39;s launcher was the third. the brigade has one left, and capt. lomidze&#39;s interceptors say the brigade&#39;s commander has pulled it back to his headquarters: the old mine buildings outside tkvarcheli, with his air defence, his radios and his last missile all in one place. destroy the brigade&#39;s command post.">
+    <div class="eyebrow">DARK HORSE · 5/5 · Operation DARK HORSE</div>
+    <h2>The Brigade&#39;s Last Night</h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">Caucasus</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-12 · 22:40L</span><span class="chip">Different recovery field</span></div>
+    <p class="hook">&#34;One launcher, one headquarters, one night. After tonight, Kutaisi sleeps.&#34; ANVIL, 2200 brief</p>
+    <p>SHADOW&#39;s launcher was the third. The brigade has one left, and Capt. Lomidze&#39;s interceptors say the brigade&#39;s commander has pulled it back to his headquarters: the old mine buildings outside Tkvarcheli, with his air defence, his radios and his last missile all in one place.</p>
+    <p class="obj"><b>Primary:</b> Destroy the brigade&#39;s command post.</p>
+    <div class="kb"><a href="dh_5_command/kneeboard/01_mission.png"><img src="dh_5_command/kneeboard/01_mission.png" alt="Kneeboard page 1"></a><a href="dh_5_command/kneeboard/02_nav.png"><img src="dh_5_command/kneeboard/02_nav.png" alt="Kneeboard page 2"></a><a href="dh_5_command/kneeboard/03_threats.png"><img src="dh_5_command/kneeboard/03_threats.png" alt="Kneeboard page 3"></a></div>
+    <div class="actions">
+      <a class="primary" href="dh_5_command/briefing.html">Open briefing</a>
+      <a href="dh_5_command/slides.html">Slide deck</a>
+      <a href="dh_5_command/director.html" title="Hidden units, random rolls, triggers and outcomes">Director's cut (spoilers)</a>
+      <a href="campaigns/dark_horse/05_dh_5_command.miz" download>Download .miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
 
 <section class="cat" data-cat="c-high_tide" aria-labelledby="h-c-high_tide">
   <div class="wrap cat-head"><h2 id="h-c-high_tide">HIGH TIDE campaign <span class="cat-count" data-total="5">5</span></h2><p>Ten days off the Abkhaz coast, May 2038 5 chapters, 2038-05-11 to 2038-05-20. <a href="campaigns/high_tide/index.html">Campaign page</a></p></div>

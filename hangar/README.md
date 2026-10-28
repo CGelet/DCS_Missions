@@ -15,10 +15,121 @@ Story arcs flown in order. Each campaign folder under `campaigns/` installs into
 
 | Campaign | Chapters | Dates | Premise |
 | --- | --- | --- | --- |
+| [DARK HORSE](campaigns/dark_horse/README.md): Ten nights hunting Scuds, June 2038 | 5 | 2038-06-02 → 2038-06-12 | Mobile Scud launchers in the hills of Abkhazia are firing at Kutaisi. Pontiac flight hunts them at night, under low cloud and through rain: the launchers, the depot that feeds them, the radar that warns them, and finally the headquarters that sends them. |
 | [HIGH TIDE](campaigns/high_tide/README.md): Ten days off the Abkhaz coast, May 2038 | 5 | 2038-05-11 → 2038-05-20 | Landing ships are gathering at Ochamchire, forty minutes from the flat Georgian beaches between Anaklia and Poti. From the Stennis, Springfield flight counts them, clears the approaches, blinds the battery that guards them, hits them alongside the quay, and stops what sails. |
 | [IRON GATE](campaigns/iron_gate/README.md): Ten days in the Liakhvi valley, April 2038 | 5 | 2038-04-06 → 2038-04-16 | An armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it. |
 | [WORK-UPS](campaigns/workups/README.md): Hornet detachment syllabus, January 2038 | 5 | 2038-01-15 → 2038-01-30 | Ten Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride. |
 
+
+
+# DARK HORSE campaign
+
+Ten nights hunting Scuds, June 2038 5 chapters, 2038-06-02 to 2038-06-12. [Campaign page](campaigns/dark_horse/README.md)
+
+## DARK HORSE · 1/5 · Operation DARK HORSE: Scud Hunt in the Dark
+
+**Caucasus** · **2× F/A-18C Hornet** · **Armed recce** · 2038-06-02, step 23:20L
+
+> "It fired once. It'll fire again before dawn unless someone finds it first. It's a truck in a forest at night. Find the truck." ANVIL, 2300 brief
+
+At 2204 a missile came down on the edge of Kutaisi airfield. It missed the runway by 400 metres and took out a fuel farm. Georgian radar at Senaki tracked it all the way: a ballistic missile, a Scud, launched from the hills north of Ochamchire. By the time anyone looked, the launcher had gone.
+
+**Primary objective:** Find and destroy the Scud launcher before it fires again.
+
+| Download | |
+| --- | --- |
+| Mission | [01_dh_1_scud_hunt.miz](campaigns/dark_horse/01_dh_1_scud_hunt.miz) |
+| Briefing | [briefing.html](dh_1_scud_hunt/briefing.html) |
+| Slide deck | [slides.html](dh_1_scud_hunt/slides.html) |
+| Director's cut | [director.html](dh_1_scud_hunt/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](dh_1_scud_hunt/kneeboard/01_mission.png) · [02_nav.png](dh_1_scud_hunt/kneeboard/02_nav.png) · [03_threats.png](dh_1_scud_hunt/kneeboard/03_threats.png) |
+
+<p><a href="dh_1_scud_hunt/kneeboard/01_mission.png"><img src="dh_1_scud_hunt/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="dh_1_scud_hunt/kneeboard/02_nav.png"><img src="dh_1_scud_hunt/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="dh_1_scud_hunt/kneeboard/03_threats.png"><img src="dh_1_scud_hunt/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## DARK HORSE · 2/5 · Operation DARK HORSE: Under the Deck
+
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2038-06-04, step 20:05L · Low level
+
+> "Under the cloud, in the rain, at dusk, with guns. I wouldn't ask if it didn't matter. It matters." ANVIL, 1930 brief
+
+The launcher in the hills is gone, and Capt. Lomidze has an answer to her question: there are more. A captured driver says the brigade has four launchers and one place they all go back to for fuel and missiles, a depot in the orchards west of Gali. Kill the depot and the launchers run dry.
+
+**Primary objective:** Destroy the depot's fuel and missile vehicles.
+
+| Download | |
+| --- | --- |
+| Mission | [02_dh_2_depot.miz](campaigns/dark_horse/02_dh_2_depot.miz) |
+| Briefing | [briefing.html](dh_2_depot/briefing.html) |
+| Slide deck | [slides.html](dh_2_depot/slides.html) |
+| Director's cut | [director.html](dh_2_depot/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](dh_2_depot/kneeboard/01_mission.png) · [02_nav.png](dh_2_depot/kneeboard/02_nav.png) · [03_threats.png](dh_2_depot/kneeboard/03_threats.png) |
+
+<p><a href="dh_2_depot/kneeboard/01_mission.png"><img src="dh_2_depot/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="dh_2_depot/kneeboard/02_nav.png"><img src="dh_2_depot/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="dh_2_depot/kneeboard/03_threats.png"><img src="dh_2_depot/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## DARK HORSE · 3/5 · Operation DARK HORSE: The Eye on the Ridge
+
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2038-06-06, step 01:40L · Low level
+
+> "Every time we take off, it tells them. Go up the valley where it can't see, and put it out." Capt. Lomidze, 0100 brief
+
+The depot burned, and the launchers went quiet. Then, two nights ago, they started moving again, and always just before Pontiac's jets arrived. Capt. Lomidze found out why: a long-range early warning radar has been set up on a peak above Tkvarcheli, 2,000 metres up. It sees everything that lifts off from Senaki and passes the warning down the valley.
+
+**Primary objective:** Destroy the early-warning radar.
+
+| Download | |
+| --- | --- |
+| Mission | [03_dh_3_ewr.miz](campaigns/dark_horse/03_dh_3_ewr.miz) |
+| Briefing | [briefing.html](dh_3_ewr/briefing.html) |
+| Slide deck | [slides.html](dh_3_ewr/slides.html) |
+| Director's cut | [director.html](dh_3_ewr/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](dh_3_ewr/kneeboard/01_mission.png) · [02_nav.png](dh_3_ewr/kneeboard/02_nav.png) · [03_threats.png](dh_3_ewr/kneeboard/03_threats.png) |
+
+<p><a href="dh_3_ewr/kneeboard/01_mission.png"><img src="dh_3_ewr/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="dh_3_ewr/kneeboard/02_nav.png"><img src="dh_3_ewr/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="dh_3_ewr/kneeboard/03_threats.png"><img src="dh_3_ewr/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## DARK HORSE · 4/5 · Operation DARK HORSE: Coordinates in the Rain
+
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2038-06-09, step 13:10L
+
+> "You'll never see it. You'll never see the bombs hit. You'll just have to believe the man in the forest, and type carefully." ANVIL, 1230 brief
+
+With the radar gone, the launchers lost their warning and lost one of their number on the first night. The brigade adapted: now they only move in bad weather, when nothing can see them from above. Today the weather is terrible, and three of them have moved.
+
+**Primary objective:** Destroy the launcher at the coordinates SHADOW passes.
+
+| Download | |
+| --- | --- |
+| Mission | [04_dh_4_jdam.miz](campaigns/dark_horse/04_dh_4_jdam.miz) |
+| Briefing | [briefing.html](dh_4_jdam/briefing.html) |
+| Slide deck | [slides.html](dh_4_jdam/slides.html) |
+| Director's cut | [director.html](dh_4_jdam/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](dh_4_jdam/kneeboard/01_mission.png) · [02_nav.png](dh_4_jdam/kneeboard/02_nav.png) · [03_threats.png](dh_4_jdam/kneeboard/03_threats.png) |
+
+<p><a href="dh_4_jdam/kneeboard/01_mission.png"><img src="dh_4_jdam/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="dh_4_jdam/kneeboard/02_nav.png"><img src="dh_4_jdam/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="dh_4_jdam/kneeboard/03_threats.png"><img src="dh_4_jdam/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## DARK HORSE · 5/5 · Operation DARK HORSE: The Brigade's Last Night
+
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2038-06-12, step 22:40L · Different recovery field
+
+> "One launcher, one headquarters, one night. After tonight, Kutaisi sleeps." ANVIL, 2200 brief
+
+SHADOW's launcher was the third. The brigade has one left, and Capt. Lomidze's interceptors say the brigade's commander has pulled it back to his headquarters: the old mine buildings outside Tkvarcheli, with his air defence, his radios and his last missile all in one place.
+
+**Primary objective:** Destroy the brigade's command post.
+
+| Download | |
+| --- | --- |
+| Mission | [05_dh_5_command.miz](campaigns/dark_horse/05_dh_5_command.miz) |
+| Briefing | [briefing.html](dh_5_command/briefing.html) |
+| Slide deck | [slides.html](dh_5_command/slides.html) |
+| Director's cut | [director.html](dh_5_command/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](dh_5_command/kneeboard/01_mission.png) · [02_nav.png](dh_5_command/kneeboard/02_nav.png) · [03_threats.png](dh_5_command/kneeboard/03_threats.png) |
+
+<p><a href="dh_5_command/kneeboard/01_mission.png"><img src="dh_5_command/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="dh_5_command/kneeboard/02_nav.png"><img src="dh_5_command/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="dh_5_command/kneeboard/03_threats.png"><img src="dh_5_command/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
 
 
 # HIGH TIDE campaign

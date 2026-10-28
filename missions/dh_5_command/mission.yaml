@@ -1,0 +1,299 @@
+# DARK HORSE chapter 5: the brigade's command post. Source of truth; `python -m dcsmb build` renders hangar/dh_5_command/.
+#
+# Story device: the last launcher is at home. A night strike on the missile brigade's command post in the
+# old mine buildings outside Tkvarcheli, where the last Scud is parked. Uzi 1 escorts (AI). The sim rolls
+# whether Gudauta sends Su-27s or nobody, and whether the last launcher is at the CP or out on the road
+# toward Kutaisi with its missile up (then it's the priority: it will fire in 15 minutes).
+# CP on the road east of Tkvarcheli (OSM).
+
+meta:
+  id: dh_5_command
+  title: "Operation DARK HORSE"
+  subtitle: "The Brigade's Last Night"
+  theater: caucasus
+  role: "Strike"
+  date: 2038-06-12
+  start_time: "22:40"
+  weather:
+    temperature_c: 18
+    wind_from_deg: 90
+    wind_kts: 6
+    clouds: "Few at 10,000 ft, a bright moon"
+    visibility: "25 km"
+    qnh_inhg: 30.00
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "DARK HORSE"
+  backstory: |
+    SHADOW's launcher was the third. The brigade has one left, and Capt. Lomidze's interceptors say the
+    brigade's commander has pulled it back to his headquarters: the old mine buildings outside
+    Tkvarcheli, with his air defence, his radios and his last missile all in one place.
+
+    He's either hiding it or getting ready to use it. The moon is up tonight, which helps the pods and
+    helps his gunners just as much. Pontiac flight gets an escort for the first time in DARK HORSE:
+    Uzi flight's Hornets, to keep Gudauta off your back.
+  characters:
+    - name: "CDR Kofi \"ANVIL\" Mensah"
+      role: "Detachment commander at Senaki-Kolkhi"
+    - name: "Capt. Tamar Lomidze"
+      role: "Georgian Air Force intelligence liaison"
+    - name: "Uzi 1"
+      role: "Two F/A-18Cs, escort (AI)"
+    - name: "OVERLORD"
+      role: "E-3 AWACS"
+    - name: "Pontiac 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets"
+  hook: |
+    "One launcher, one headquarters, one night. After tonight, Kutaisi sleeps." ANVIL, 2200 brief
+  outcomes:
+    success: |
+      The command post burns and the last launcher burns with it, or on the road where it stopped. The
+      missile brigade stops being a brigade. DARK HORSE is over, and Kutaisi's runway reopens the next day.
+    partial: |
+      The command post is hit but the last launcher fires before it's found. The missile falls short
+      of Kutaisi in a field. It's the last one, but nobody knew that at the time.
+    failure: |
+      The command post survives and the last launcher fires at Kutaisi. It hits the detachment's old
+      hangar. Nobody is hurt, because nobody's been there for a week.
+
+situation: |
+  The Scud brigade's command post is in the old mine buildings on the road east of Tkvarcheli: command
+  vehicles, radio trucks and its last launcher, defended by an SA-8 and guns. Moon up, few clouds. Uzi 1
+  escorts and will handle anything from Gudauta. Strike the command post; if the launcher isn't there,
+  it may be on the road with a missile up, and it becomes the priority.
+
+objectives:
+  primary: "Destroy the brigade's command post."
+  secondary: "Destroy the last launcher wherever it is, before it fires."
+  tertiary: "Recover both aircraft to Kobuleti."
+
+roe: |
+  Weapons free on the command post and military vehicles on the roads around Tkvarcheli. Tkvarcheli
+  town is weapons tight. Air-to-air on Overlord's call.
+
+threats:
+  - name: "Command post SA-8"
+    kind: sam
+    intel: confirmed
+    lat: 42.8620
+    lon: 41.7100
+    range_km: 10
+    notes: "Seen by SHADOW yesterday. Covers the mine buildings."
+  - name: "Guns at the command post"
+    kind: aaa
+    intel: confirmed
+    lat: 42.8600
+    lon: 41.7050
+    range_km: 3
+    notes: "Shilkas or ZU-23s around the buildings."
+  - name: "Su-27s (Gudauta)"
+    kind: air
+    intel: possible
+    lat: 43.1143
+    lon: 40.5697
+    range_km: 0
+    notes: "Uzi's problem first."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Pontiac (inter-flight)", freq: "255.000 AM", radio: 1, channel: 1 }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Package common", freq: "262.000 AM", radio: 1, channel: 3, notes: "Uzi checks in here" }
+  - { name: "Senaki Tower", freq: "132.000 AM", radio: 2, channel: 1, notes: "TACAN 31X. Base" }
+  - { name: "Kobuleti Tower", freq: "133.000 AM", radio: 2, channel: 2, notes: "TACAN 67X. Recovery" }
+  - { name: "ANVIL, Capt. Lomidze, Uzi", freq: "262.000 AM", notes: "Scripted calls (on-screen text)" }
+
+flights:
+  - callsign: "Pontiac 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Senaki-Kolkhi
+    start: cold
+    radio1_mhz: 255.0
+    laser_codes: [1688]
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb
+      3: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb
+      8: LAU_117_AGM_65F
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "1× GBU-31, 4× GBU-12, 1× AGM-65F, 2× AIM-9X, 1× AIM-120C, ATFLIR, 1× 330 gal tank"
+    bingo_lbs: 4000
+    joker_lbs: 6000
+    waypoints:
+      - { name: "JOIN",   lat: 42.4500, lon: 42.1000, alt_ft: 22000, kts: 400, eta: "23:00", zone_km: 6 }
+      - { name: "IP",     lat: 42.7500, lon: 41.9000, alt_ft: 22000, kts: 450, eta: "23:04", zone_km: 4 }
+      - { name: "CP",     lat: 42.8600, lon: 41.7050, alt_ft: 20000, kts: 450, eta: "23:06", action: bomb, zone_km: 4 }
+      - { name: "ROAD",   lat: 42.7800, lon: 41.8000, alt_ft: 16000, kts: 420, eta: "23:08", zone_km: 8 }
+      - { name: "FEET WET", lat: 42.4000, lon: 41.4000, alt_ft: 22000, kts: 450, eta: "23:15", zone_km: 6 }
+    land: Kobuleti
+
+target:
+  name: "Missile brigade command post"
+  lat: 42.8600
+  lon: 41.7050
+  groups: ["Command Post"]
+  kill_pct: 70
+  description: "Command vehicles and radio trucks in and around the old mine buildings on the road east of Tkvarcheli."
+  dmpi: "GBU-31 on the main building's courtyard where the command vehicles are, GBU-12s on the radio trucks. Maverick for the SA-8."
+
+zones:
+  - { name: "LAUNCH POINT", lat: 42.7800, lon: 41.8000, radius_km: 3 }
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "Command Post"
+    coalition: red
+    type: [Ural_375_PBU, Ural_375_PBU, SKP_11, ZiL_131_APA_80, Ural_375, Ural_375]
+    lat: 42.8600
+    lon: 41.7050
+    heading: 90
+  - name: "CP Osa"
+    coalition: red
+    type: [Osa_9A33_ln]
+    lat: 42.8620
+    lon: 41.7100
+    heading: 180
+  - name: "CP Guns"
+    coalition: red
+    type: [ZSU_23_4_Shilka, ZU_23_Emplacement]
+    lat: 42.8580
+    lon: 41.7030
+    heading: 180
+  - name: "Last TEL at Home"
+    coalition: red
+    type: [Scud_B]
+    lat: 42.8610
+    lon: 41.7070
+    heading: 90
+    late_activation: true
+  - name: "Last TEL on the Road"
+    coalition: red
+    # Driving south toward a launch point facing Kutaisi
+    type: [Scud_B, Ural_375]
+    lat: 42.8400
+    lon: 41.7300
+    heading: 150
+    late_activation: true
+    speed_kmh: 20
+    route:
+      - { lat: 42.8100, lon: 41.7700 }
+      - { lat: 42.7800, lon: 41.8000 }
+
+support:
+  - kind: awacs
+    callsign: "OVERLORD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.1000
+    lon: 41.6000
+    alt_ft: 30000
+    heading: 330
+    leg_nm: 25
+    freq_mhz: 251.0
+  - kind: flight
+    callsign: "Uzi 1"
+    aircraft: FA_18C_hornet
+    coalition: blue
+    count: 2
+    task: sweep
+    spawn: { lat: 42.4500, lon: 42.0000, alt_ft: 26000, kts: 420 }
+    route:
+      - { lat: 42.8500, lon: 41.4000, alt_ft: 26000 }
+      - { lat: 42.9500, lon: 41.2000, alt_ft: 26000 }
+      - { lat: 42.6000, lon: 41.4000, alt_ft: 26000 }
+  # Red: director only
+  - kind: flight
+    callsign: "Gudauta Night Pair"
+    aircraft: Su_27
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 43.1000, lon: 40.6000, alt_ft: 24000, kts: 480 }
+    route:
+      - { lat: 42.8500, lon: 41.6000 }
+
+variants:
+  - name: "Where the last launcher is"
+    options:
+      - label: "Parked at the command post"
+        activate: ["Last TEL at Home"]
+        when: { time_after: 5 }
+        set_flag: 12
+      - label: "On the road to a launch point"
+        activate: ["Last TEL on the Road"]
+        when: { player_in_zone: "IP" }
+        message: "CAPT. LOMIDZE: Pontiac, Lomidze. Intercept: they're moving the launcher. South on the road from the mine toward the coast road. They'll fire from the open ground. Fifteen minutes."
+        seconds: 25
+
+storyboard:
+  - phase: "Launch and Join"
+    time: "22:40"
+    waypoints: ["JOIN"]
+    brief: |
+      Cold start at Senaki. Join Uzi on package common at JOIN, 22,000 ft. The moon is up: the pods
+      will be good tonight, and so will their gunners' eyes.
+    script: "Where the last launcher is gets rolled at start. ANVIL checks in."
+    trigger:
+      when: { time_after: 10 }
+      message: "ANVIL: Pontiac, Anvil. Uzi's airborne. Last one. Make it count."
+      seconds: 15
+
+  - phase: "Push"
+    time: "23:04"
+    waypoints: ["IP"]
+    brief: |
+      Push from the IP northwest toward Tkvarcheli. Uzi sweeps ahead toward Gudauta. Capt. Lomidze will
+      call if the launcher moves.
+    script: "50%: Gudauta's Su-27s come south when you reach the IP (Uzi should meet them)."
+    trigger:
+      when: { player_in_zone: "IP" }
+      chance: 50
+      activate: ["Gudauta Night Pair"]
+      message: "OVERLORD: Package, Overlord. Two contacts, Gudauta, heading southeast, fast. Uzi, commit."
+      seconds: 20
+
+  - phase: "The Command Post"
+    time: "23:06"
+    waypoints: ["CP", "ROAD"]
+    notes: "Ask the room: you're two minutes from the CP and Lomidze says the launcher's moving. CP or launcher?"
+    brief: |
+      SA-8 first with the Maverick, then the GBU-31 on the courtyard and GBU-12s on the radio trucks.
+      If the launcher is on the road, it's the priority: find it on ROAD before it reaches open ground.
+    script: "Command post 70% destroyed: flag 11. The launcher is handled (flag 12) if it was parked at the CP, or once it dies on the road; reaching LAUNCH POINT first means it fires (flag 20). Flags 11 and 12 with no launch: success (flag 10)."
+    triggers:
+      - when: { target_destroyed: true }
+        set_flag: 11
+        message: "CAPT. LOMIDZE: Pontiac, Lomidze. Their command net just went silent. All of it."
+        seconds: 20
+      - when: { group_in_zone: ["Last TEL on the Road", "LAUNCH POINT"] }
+        set_flag: 20
+        message: "OVERLORD: Pontiac, Overlord. Launch, launch! Ballistic missile, from the hills, heading east."
+        seconds: 20
+      - when: { group_dead: "Last TEL on the Road" }
+        set_flag: 12
+        message: "OVERLORD: Pontiac, Overlord. The launcher on the road is burning. It didn't fire."
+        seconds: 15
+      - when: { flag: [11, 12], flag_false: 20 }
+        set_flag: 10
+        message: "ANVIL: Pontiac, Anvil. That's the brigade. Come home."
+        seconds: 15
+
+  - phase: "Home"
+    time: "23:15"
+    waypoints: ["FEET WET"]
+    brief: |
+      West to the coast and south to Kobuleti. Uzi will follow you out.
+    script: "ANVIL closes DARK HORSE."
+    trigger:
+      when: { player_in_zone: "FEET WET", flag: 10 }
+      message: "ANVIL: Pontiac, Anvil. Kutaisi's runway reopens tomorrow. Thank you."
+      seconds: 15

@@ -1,0 +1,261 @@
+# DARK HORSE chapter 4: JDAMs through the cloud on coordinates passed in flight. Source of truth;
+# `python -m dcsmb build` renders hangar/dh_4_jdam/.
+#
+# Story device: retasking. You launch with a target area, not a target. A Georgian special forces team
+# on the ground finds the launcher and passes its coordinates when you reach HOLD. The sim rolls which
+# of three hides; the message gives the real coordinates. Solid overcast (Overcast And Rain 2, base
+# 3,000 ft, tops 9,000 ft): GPS bombs from above the weather, never seeing the target. Sites on OSM roads.
+
+meta:
+  id: dh_4_jdam
+  title: "Operation DARK HORSE"
+  subtitle: "Coordinates in the Rain"
+  theater: caucasus
+  role: "Strike"
+  date: 2038-06-09
+  start_time: "13:10"
+  weather:
+    temperature_c: 17
+    wind_from_deg: 250
+    wind_kts: 18
+    clouds: "Overcast 3,000 ft, tops 9,000 ft, rain"
+    visibility: "3 km in rain under the cloud"
+    qnh_inhg: 29.78
+    cloud_preset: OvercastAndRain2
+    cloud_base_ft: 3000
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "DARK HORSE"
+  backstory: |
+    With the radar gone, the launchers lost their warning and lost one of their number on the first
+    night. The brigade adapted: now they only move in bad weather, when nothing can see them from above.
+    Today the weather is terrible, and three of them have moved.
+
+    But the Georgian army has had a team in those hills for a week. They can see what the jets can't,
+    and they have a GPS. The plan is simple and strange: launch with bombs and no target, hold above
+    the cloud, and wait for a voice from the forest to tell you where to drop them.
+  characters:
+    - name: "CDR Kofi \"ANVIL\" Mensah"
+      role: "Detachment commander at Senaki-Kolkhi"
+    - name: "Capt. Tamar Lomidze"
+      role: "Georgian Air Force intelligence liaison"
+    - name: "SHADOW"
+      role: "Georgian special forces team in the hills"
+    - name: "OVERLORD"
+      role: "E-3 AWACS"
+    - name: "Pontiac 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets with GBU-38s"
+  hook: |
+    "You'll never see it. You'll never see the bombs hit. You'll just have to believe the man in the
+    forest, and type carefully." ANVIL, 1230 brief
+  outcomes:
+    success: |
+      SHADOW reports the launcher on its side in the mud and the crew running. The brigade is down to
+      its last launcher, and its last place to hide it is its headquarters.
+    partial: |
+      The bombs land close; the launcher is damaged but towed away. SHADOW has to move before the
+      brigade comes looking for whoever called it in.
+    failure: |
+      The bombs land in the forest, or never leave the jets. SHADOW is spotted on the way out and has
+      to fight its way back to the line.
+
+situation: |
+  Solid overcast from 3,000 to 9,000 ft with rain under it over the hills north of Ochamchire. A Scud
+  launcher has moved to a hide on one of the hill roads. SHADOW, a Georgian special forces team, is
+  watching the roads and will pass the launcher's coordinates by radio when you reach HOLD above the
+  cloud. Type them into the JDAMs and release from above the weather. You will not see the target.
+
+objectives:
+  primary: "Destroy the launcher at the coordinates SHADOW passes."
+  secondary: "Read back the coordinates before release."
+  tertiary: "Recover both aircraft to Batumi."
+
+roe: |
+  Release only on coordinates SHADOW has passed and you've read back. SHADOW's own position is within
+  2 km of the target: nothing within 500 m of the coordinates SHADOW gives for itself.
+
+threats:
+  - name: "The launcher's hide"
+    kind: armor
+    intel: suspected
+    lat: 43.0300
+    lon: 41.5800
+    area_km: 15
+    range_km: 0
+    notes: "A Scud TEL and its support trucks on a hill road. SHADOW has the exact position."
+  - name: "MiG-29s (Gudauta)"
+    kind: air
+    intel: possible
+    lat: 43.1143
+    lon: 40.5697
+    range_km: 0
+    notes: "They can climb above the weather as easily as you can."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Pontiac (inter-flight)", freq: "255.000 AM", radio: 1, channel: 1 }
+  - { name: "OVERLORD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "SHADOW (ground team)", freq: "266.000 AM", radio: 1, channel: 3, notes: "Coordinates and battle damage" }
+  - { name: "Batumi Tower", freq: "131.000 AM", radio: 2, channel: 1, notes: "TACAN 16X, ILS 13 110.30. Base and recovery" }
+  - { name: "SHADOW, ANVIL", freq: "266.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Pontiac 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Batumi
+    start: cold
+    radio1_mhz: 255.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_55_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb
+      3: FPU_8A_Fuel_Tank_330_gallons
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: FPU_8A_Fuel_Tank_330_gallons
+      8: BRU_55_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "4× GBU-38 (500 lb JDAM), 2× AIM-9X, 1× AIM-120C, 3× 330 gal tanks"
+    bingo_lbs: 4500
+    joker_lbs: 6500
+    waypoints:
+      - { name: "ON TOP",  lat: 41.9000, lon: 41.5000, alt_ft: 20000, kts: 400, eta: "13:28", zone_km: 5 }
+      - { name: "HOLD",    lat: 42.7500, lon: 41.4500, alt_ft: 22000, kts: 330, eta: "13:38", zone_km: 8 }
+      - { name: "RELEASE", lat: 42.9300, lon: 41.5200, alt_ft: 22000, kts: 420, eta: "13:45", action: bomb, zone_km: 12 }
+      - { name: "RTB",     lat: 42.2000, lon: 41.3000, alt_ft: 20000, kts: 420, eta: "13:55", zone_km: 6 }
+    land: Batumi
+
+target:
+  name: "Launcher at SHADOW's coordinates"
+  lat: 43.0300
+  lon: 41.5800
+  area_km: 15
+  groups: ["Hide Lata", "Hide Aimara", "Hide Chkhalta"]
+  kill_pct: 50
+  description: "A Scud launcher in a hide on one of the hill roads. SHADOW passes its exact coordinates in flight."
+  dmpi: "Two GBU-38s per jet on SHADOW's coordinates, 10 m apart along the road, so one of them gets the launcher."
+
+units:
+  # Ground truth. Pilots never see this section. One hide is occupied.
+  - name: "Hide Lata"
+    coalition: red
+    type: [Scud_B, Ural_375, Ural_375_PBU]
+    lat: 43.0300
+    lon: 41.4900
+    heading: 60
+    late_activation: true
+  - name: "Hide Aimara"
+    coalition: red
+    type: [Scud_B, Ural_375, Ural_375_PBU]
+    lat: 42.9500
+    lon: 41.5300
+    heading: 20
+    late_activation: true
+  - name: "Hide Chkhalta"
+    coalition: red
+    type: [Scud_B, Ural_375, Ural_375_PBU]
+    lat: 43.1000
+    lon: 41.7000
+    heading: 300
+    late_activation: true
+  - name: "SHADOW"
+    coalition: blue
+    type: [Soldier_M4_GRG, Soldier_M4_GRG]
+    lat: 43.0100
+    lon: 41.5500
+    heading: 0
+
+support:
+  - kind: awacs
+    callsign: "OVERLORD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 42.1000
+    lon: 41.3000
+    alt_ft: 30000
+    heading: 330
+    leg_nm: 25
+    freq_mhz: 251.0
+  # Red: director only
+  - kind: intercept
+    callsign: "Gudauta Weather Pair"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    base: Gudauta
+    late_activation: true
+
+variants:
+  - name: "Where the launcher is"
+    options:
+      - label: "The Lata road"
+        activate: ["Hide Lata"]
+        when: { player_in_zone: "HOLD" }
+        message: "SHADOW: Pontiac, Shadow. Launcher on the Lata road, under the trees. Coordinates: north four-three, zero-one, decimal eight. East four-one, two-nine, decimal four. Elevation one thousand one hundred feet. Read back."
+        seconds: 45
+      - label: "The hill road at Aimara"
+        activate: ["Hide Aimara"]
+        when: { player_in_zone: "HOLD" }
+        message: "SHADOW: Pontiac, Shadow. Launcher on the hill road at Aimara. Coordinates: north four-two, five-seven, decimal zero. East four-one, three-one, decimal eight. Elevation two thousand one hundred feet. Read back."
+        seconds: 45
+      - label: "The Chkhalta road"
+        activate: ["Hide Chkhalta"]
+        when: { player_in_zone: "HOLD" }
+        message: "SHADOW: Pontiac, Shadow. Launcher on the Chkhalta road. Coordinates: north four-three, zero-six, decimal zero. East four-one, four-two, decimal zero. Elevation two thousand feet. Read back."
+        seconds: 45
+
+storyboard:
+  - phase: "Launch"
+    time: "13:10"
+    waypoints: ["ON TOP"]
+    brief: |
+      Cold start at Batumi in the rain. Climb straight through the cloud on instruments to 20,000 ft:
+      tops are 9,000 ft. Set up the JDAMs for pre-planned targets with the coordinates blank.
+    script: "The hide is rolled at start; SHADOW's coordinates for it come at HOLD (see variants)."
+    trigger:
+      when: { time_after: 10 }
+      message: "ANVIL: Pontiac, Anvil. Shadow's on the net and watching. Get on top and wait for him."
+      seconds: 15
+
+  - phase: "Hold on Top"
+    time: "13:38"
+    waypoints: ["HOLD"]
+    notes: "Ask the room: SHADOW's coordinates are passed once, fast, over a bad radio. What's your procedure?"
+    brief: |
+      Hold at 22,000 ft over HOLD, above the weather. SHADOW will pass the launcher's coordinates
+      as degrees, minutes and decimal minutes. Write them down, read them back, and enter them in the
+      JDAMs. Elevation comes too.
+    script: "40%: Gudauta's MiG-29s climb out while you hold."
+    trigger:
+      when: { player_in_zone: "HOLD" }
+      chance: 40
+      activate: ["Gudauta Weather Pair"]
+      message: "OVERLORD: Pontiac, Overlord. Two contacts climbing out of Gudauta through the weather, heading east. Hostile."
+      seconds: 20
+
+  - phase: "Release"
+    time: "13:45"
+    waypoints: ["RELEASE"]
+    brief: |
+      Run in toward the coordinates and release inside the JDAM's range from 22,000 ft. You won't see
+      the target or the impacts. SHADOW will tell you what happened.
+    script: "Launcher group 50% destroyed: success (flag 10)."
+    trigger:
+      when: { target_destroyed: true }
+      set_flag: 10
+      message: "SHADOW: Pontiac, Shadow. Good hits. Launcher's on its side. The crew's running. We're moving out."
+      seconds: 20
+
+  - phase: "Home"
+    time: "13:55"
+    waypoints: ["RTB"]
+    brief: |
+      South above the weather and an ILS to Batumi runway 13. It's raining there too.
+    script: "ANVIL's closing call."
+    trigger:
+      when: { player_in_zone: "RTB" }
+      message: "ANVIL: Pontiac, Anvil. Copy outbound. Batumi's at three hundred feet. Fly the needles."
+      seconds: 15

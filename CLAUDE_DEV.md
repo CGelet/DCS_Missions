@@ -22,6 +22,7 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 - **Story is first-class.** Every mission gets a backstory, cast, hook quote, per-phase beats, in-sim radio calls and success/partial/failure debriefs. The owner loves the HTML briefing; slides were added for presenting the story.
 - This file is to be developed collaboratively and later promoted to `CLAUDE.md`.
 - **Briefings must not give away the mission.** (2026-10-27: the owner flagged "Ten seconds later the RWR lights up with a six" as something pilots couldn't know.) Pilot-facing outputs carry only the plan and intel at brief time. Everything that happens, plus hidden units and outcomes, goes in `director.html`.
+- **Timelines stay away from the current year** (owner request 2026-10-28: "make timelines outside of just current years"). Everything was dated 2026, the year we were building in, so every mission moved to **2038**, keeping month and day so stories stay in order. New missions and campaigns go in 2038 or another year clearly not the present, and never in a year before the jet and its weapons existed (AIM-9X, ATFLIR, JSOW and JDAM are 2000s). When a date changes, recheck moon descriptions in night missions: the moon's age is (days since 2000-01-06 18:14 UTC) mod 29.53.
 - **Use real uncertainty, not just hidden text.** Intel has confidence levels and can be wrong on purpose; DCS-side randomness (`variants`, `chance`) means even the director doesn't know the exact flight.
 
 ## Workflow rules for Claude
@@ -39,6 +40,15 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 - The owner first asked for training "in the United States". pydcs has Nevada, but **the owner doesn't own the Nevada map** ("don't do Nevada, I don't own that map"). Everything stays on the Caucasus: the training is a US Navy Hornet detachment on a partner exercise in Georgia, in February 2038 (in-game) before the campaign. Ask which DCS maps the owner owns before using any other theater.
 - DCS triggers have no "time less than". Timed checkpoints use window-open/window-closed flags set by `TimeSinceFlag`, plus a "judged" flag so each checkpoint gets one verdict.
 - The aggressors in RED AIR fly with live weapons. DCS triggers have no simulated-kill mode, so a training "kill" is a real shoot-down and they shoot back. Say so in the brief.
+
+## Campaigns (owner request 2026-10-28)
+
+- The owner asked for 25 more missions and 4 campaigns made of new missions, F/A-18C only, then cut it to **20**: WORK-UPS (5 training events) and three 5-mission operational campaigns (IRON GATE, HIGH TIDE, DARK HORSE). Dropped mid-build: instruments and sort-and-commit training, and IRON GATE's Tbilisi DCA. When a cut removes a chapter, reread the neighbouring backstories and `previously` texts; they referenced the dropped mission.
+- `campaigns/<id>/campaign.yaml` is the only place chapter order lives; `schema.load_campaigns` tags each mission with `data["campaign"]` (chapter, of, previously). It checks unknown missions, double membership, category match and that dates run forward.
+- DCS campaign file: `.cmp` is Lua `campaign = {...}` with `startStage`, `stages[i].missions[1] = {file, description, interval = {0, 100}}` and `necessaryUnits`. The format comes from a real campaign (Zackin5/DCS-DCE-F14 on GitHub). No absolute `directory`/`fullPath`: DCS should resolve files beside the `.cmp`. **Unverified in DCS**: the install folder and the stage advance rule (we rely on the mission goal scoring over 50).
+- Every mission now has a blue goal: 100 when flag 10 is set (`build_miz`, `SUCCESS_FLAG`). The schema rejects a mission without a trigger that sets flag 10.
+- Each campaign keeps one player callsign and one commander for continuity (Enfield/SABRE, Springfield/MERLIN, Pontiac/ANVIL; WREN for training). Vary the base and recovery field and the route shape chapter to chapter.
+- The build prunes stale renders: `hangar/<id>/` for missions that no longer exist, and campaign `.miz` files that were renumbered.
 
 ## Pilot vs director: the core authoring rule
 
@@ -132,6 +142,9 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
   - Trick that worked: the Bzyb River is the Gagra/Gudauta district boundary, so bridge ends geocoding to different districts confirmed the crossing.
 - Even with OSM coordinates, DCS scenery can be tens of metres off, so always ask the owner to check target zones in the Mission Editor.
 - **Story text must match the map.** I once had an AWACS call say the SA-6 was "northeast" when it was east-southeast. Check directions and distances in radio calls against coordinates.
+- **Nominatim returns the country for territorial waters**, so it can't tell you a ship is at sea. Check ships against `dcsmb/data/coast_caucasus.json` instead: interpolate the coast's longitude at the ship's latitude, and on the Georgian/Abkhaz coast the ship must be west of it. That check found an "anchorage" 15 km inland and a coast guard boat on the beach.
+- For "is this target clear of buildings", count OSM buildings and residential areas within 500 m with Overpass (`way["building"](around:500,lat,lon)`). A COMPEX target I'd described as "river flats" was in a Khashuri suburb.
+- Open-Meteo's elevation API (`https://api.open-meteo.com/v1/elevation?latitude=..&longitude=..`) gives terrain height for peaks and for the elevations read out in coordinate talk-ons.
 - Nominatim reverse geocoding is a good land-or-sea and which-district check for every ground unit position. It was used for all of SILENT ORCHARD and HOLD FAST.
 - Gumista crossings (OSM): coast road bridge 43.0163N 40.9498E, highway bridge 43.0553N 40.9969E.
 - Coastline for slide maps: `scripts/fetch_coastline.py <theater> S W N E` → `dcsmb/data/coast_<theater>.json` (OSM, ODbL). It needs re-running for each new theater.

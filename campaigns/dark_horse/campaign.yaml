@@ -1,0 +1,49 @@
+# DARK HORSE: the Scud hunt. Chapter order lives here and nowhere else.
+# `previously` is shown on that chapter's brief and deck: briefed facts only, never director-side truth.
+id: dark_horse
+title: "DARK HORSE"
+subtitle: "Ten nights hunting Scuds, June 2038"
+category: operational
+setting: "Senaki-Kolkhi, Kobuleti and Batumi"
+premise: |
+  Mobile Scud launchers in the hills of Abkhazia are firing at Kutaisi. Pontiac flight hunts them at
+  night, under low cloud and through rain: the launchers, the depot that feeds them, the radar that warns
+  them, and finally the headquarters that sends them.
+backstory: |
+  After HIGH TIDE failed, the war changed shape again. On the night of 2 June a ballistic missile came
+  down on the edge of Kutaisi airfield, and Georgian radar traced it back to the hills north of
+  Ochamchire. The coalition detachment pulled its Hornets back to Senaki and Kobuleti and started
+  looking for something that only moves in the dark.
+
+  Over ten nights, Pontiac flight learns how the missile brigade works and takes it apart one piece at
+  a time. Most of it is flown at night or in weather nobody would choose. None of the targets want to
+  be found.
+cast:
+  - name: "CDR Kofi \"ANVIL\" Mensah"
+    role: "Detachment commander, at Senaki-Kolkhi"
+  - name: "Capt. Tamar Lomidze"
+    role: "Georgian Air Force intelligence liaison"
+  - name: "SHADOW"
+    role: "Georgian special forces team in the hills"
+  - name: "OVERLORD"
+    role: "E-3 AWACS"
+  - name: "Pontiac 1-1 / 1-2"
+    role: "You and your wingman"
+chapters:
+  - mission: dh_1_scud_hunt
+  - mission: dh_2_depot
+    previously: |
+      Pontiac found the launcher that fired at Kutaisi in its hide on a hill road and burned it. A
+      captured driver says there are more, and one depot they all go back to.
+  - mission: dh_3_ewr
+    previously: |
+      The depot west of Gali burned all night. The launchers went quiet, then started moving again,
+      always just before the jets arrived.
+  - mission: dh_4_jdam
+    previously: |
+      The early-warning radar on the ridge above Tkvarcheli is off the air. Without its warning, the
+      launchers now move only in bad weather.
+  - mission: dh_5_command
+    previously: |
+      SHADOW's coordinates put four JDAMs on the third launcher through the rain. The brigade has one
+      launcher left, and it's gone home to headquarters.
