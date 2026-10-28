@@ -19,13 +19,15 @@
 .links a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
 .links a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .install ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+{% include "_sitebar.css" %}
 @media (max-width: 640px) { .chap { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
 </style>
 </head>
 <body>
+{% set root = "../../" %}{% set active = "campaign" %}{% include "_sitenav.html" %}
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow"><a href="../../index.html" style="text-decoration:none">Hangar</a> · {{ "Training campaign" if c.category == "training" else "Campaign" }} · {{ chapters | length }} chapters</div>
+    <div class="eyebrow">{{ "Training campaign" if c.category == "training" else "Campaign" }} · {{ chapters | length }} chapters</div>
     <h1>{{ c.title }}</h1>
     <div class="meta-row"><span><b>{{ c.subtitle }}</b></span><span>{{ chapters[0].date }} → {{ chapters[-1].date }}</span>{% if c.setting %}<span>{{ c.setting }}</span>{% endif %}</div>
     <blockquote class="hook">{{ c.premise | trim }}</blockquote>

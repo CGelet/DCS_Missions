@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission Hangar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+{% include "_hangar.css" %}
+</style>
+</head>
+<body>
+{% set root = "" %}{% set active = "home" %}{% include "_sitenav.html" %}
+<header><div class="wrap">
+  <div class="eyebrow">DCS Missions · Caucasus · 2038</div>
+  <h1>Mission Hangar</h1>
+  <p>{{ campaigns | length }} campaigns and {{ missions | length }} ready-to-fly missions, each with a briefing, a slide deck and kneeboard pages. Start with a campaign, or pick a single mission below.</p>
+</div></header>
+<main>
+<section class="wrap camps" id="campaigns" aria-labelledby="h-camps">
+  <div class="cat-head"><h2 id="h-camps">Campaigns</h2><p>Story arcs flown in order. Each installs into DCS as a campaign that unlocks the next chapter when you pass the last.</p></div>
+  <div class="grid">{% for c in campaigns %}
+    <a class="camp" href="campaigns/{{ c.id }}/index.html">
+      <span class="eyebrow">{{ "Training campaign" if c.category == "training" else "Campaign" }} · {{ c.count }} chapters</span>
+      <b>{{ c.title }}</b><span class="sub">{{ c.subtitle }}</span>
+      <span class="prem">{{ c.premise }}</span>
+      <span class="dates">{{ c.first }} → {{ c.last }}{% if c.setting %} · {{ c.setting }}{% endif %}</span>
+    </a>{% endfor %}
+  </div>
+</section>
+<section class="wrap" aria-labelledby="h-single">
+  <div class="cat-head"><h2 id="h-single">Single missions</h2><p>Fly these in any order.</p></div>
+  <div class="tiles">
+  {% for t in standalone %}
+    <div class="tile">
+      <span class="eyebrow">{{ t.eyebrow }} · {{ t.missions | length }} missions</span>
+      <h3><a href="missions.html#{{ t.key }}">{{ t.heading }}</a></h3>
+      <p>{{ t.blurb }}</p>
+      <ul>{% for m in t.missions %}<li><a href="{{ m.id }}/briefing.html">{{ m.title }}</a><span>{{ m.role }} · {{ m.aircraft_type }}</span></li>{% endfor %}</ul>
+      <a class="more" href="missions.html#{{ t.key }}">See them with filters →</a>
+    </div>
+  {% endfor %}
+    <div class="tile">
+      <span class="eyebrow">Everything · {{ missions | length }} missions</span>
+      <h3><a href="missions.html">All missions</a></h3>
+      <p>The full library, grouped by campaign, with filters for aircraft, mission type and features, and a search across every story.</p>
+      <a class="more" href="missions.html">Browse all missions →</a>
+    </div>
+  </div>
+</section>
+<section class="wrap howto">
+  <details>
+    <summary>How to fly these</summary>
+    <ol>
+      <li><b>A single mission:</b> download its <code>.miz</code> into <code>Saved Games/DCS/Missions/</code> and open it from the Mission menu.</li>
+      <li><b>A campaign:</b> copy its folder from <code>hangar/campaigns/</code> into <code>Saved Games/DCS/Missions/Campaigns/</code> and pick it from the Campaign menu.</li>
+      <li>Read the briefing or present the slide deck before you fly. Pilots: don't open the director pages, they're spoilers.</li>
+    </ol>
+  </details>
+</section>
+</main>
+</body>
+</html>

@@ -1,53 +1,30 @@
 {% autoescape false -%}
-# Hangar
+# Mission Hangar
 
-Ready-to-fly missions. Download a `.miz`, drop it in `Saved Games/DCS/Missions/`, and open it in DCS.
-To read a briefing or present the slide deck, download `briefing.html` or `slides.html` and open it in a browser (GitHub shows HTML as source code).
-`index.html` in this folder lists every mission the same way.
+{{ campaigns | length }} campaigns and {{ missions | length }} ready-to-fly DCS missions on the Caucasus, set in 2038.
 
-Pilots: the briefing, slides and kneeboard only contain what your squadron knows at brief time. Don't open `director.html` before you fly.
+- **Single mission:** download its `.miz` into `Saved Games/DCS/Missions/` and open it from the Mission menu.
+- **Campaign:** copy its folder from `campaigns/` into `Saved Games/DCS/Missions/Campaigns/` and pick it from the Campaign menu.
+- **Briefings and slide decks** are HTML. GitHub shows them as source code, so download them, or open `index.html` from a local copy of this folder for the full site.
 
-These files are generated from `missions/<id>/mission.yaml`. Don't edit them by hand; see the main README to change a mission.
+Pilots: briefings, decks and kneeboards only contain what your squadron knows at brief time. Don't open `director.html` before you fly.
 
-{% if campaigns %}
-# Campaigns
+These files are generated from `missions/` and `campaigns/`. Don't edit them by hand; see the main README to change a mission.
 
-Story arcs flown in order. Each campaign folder under `campaigns/` installs into DCS as a campaign (see its README).
+## Campaigns
 
 | Campaign | Chapters | Dates | Premise |
 | --- | --- | --- | --- |
 {% for c in campaigns %}| [{{ c.title }}](campaigns/{{ c.id }}/README.md): {{ c.subtitle }} | {{ c.count }} | {{ c.first }} → {{ c.last }} | {{ c.premise | replace("\n", " ") }} |
 {% endfor %}
-{% endif %}
-{% for sec in sections %}{% set group = sec.missions %}{% set cat = sec.category %}
-# {{ sec.heading }}
+{% for sec in sections %}{% set cat = sec.category %}
+## {{ sec.heading }}
 
 {{ sec.blurb }}{% if sec.link %} [Campaign page]({{ sec.link | replace("index.html", "README.md") }}){% endif %}
 
-{% for m in group -%}
-## {% if m.chapter %}{{ m.chapter }} · {% endif %}{{ m.eyebrow }}: {{ m.title }}
-
-**{{ m.theater }}** · **{{ m.aircraft }}** · **{{ m.role }}** · {{ m.date }}, step {{ m.start_time }}L{% if m.features %} · {{ m.features | join(", ") }}{% endif %}
-
-{% if m.hook %}> {{ m.hook | replace("\n", " ") }}
-
-{% endif -%}
-{{ m.teaser }}
-
-**Primary objective:** {{ m.objective }}
-
-| Download | |
-| --- | --- |
-| Mission | [{{ m.miz.split('/')[-1] }}]({{ m.miz }}) |
-| Briefing | [briefing.html]({{ m.id }}/briefing.html) |
-| Slide deck | [slides.html]({{ m.id }}/slides.html) |
-{% if cat == "training" %}| Instructor view | [director.html]({{ m.id }}/director.html): every trigger and how each grade is decided |
-{% else %}| Director's cut | [director.html]({{ m.id }}/director.html): **spoilers**, for whoever runs or debriefs the mission |
-{% endif %}
-| Kneeboard | {% for k in m.kneeboards %}[{{ k }}]({{ m.id }}/kneeboard/{{ k }}){% if not loop.last %} · {% endif %}{% endfor %} |
-
-{% if m.kneeboards %}<p>{% for k in m.kneeboards %}<a href="{{ m.id }}/kneeboard/{{ k }}"><img src="{{ m.id }}/kneeboard/{{ k }}" width="220" alt="{{ k }}"></a> {% endfor %}</p>
-{% endif %}
-{% endfor -%}
+| {% if sec.link %}# | {% endif %}Mission | Type | Aircraft | Date | Files |
+| {% if sec.link %}--- | {% endif %}--- | --- | --- | --- | --- |
+{% for m in sec.missions %}| {% if sec.link %}{{ loop.index }} | {% endif %}**{{ m.title }}** | {{ m.role }} | {{ m.aircraft }} | {{ m.date }} | [.miz]({{ m.miz }}) · [briefing]({{ m.id }}/briefing.html) · [slides]({{ m.id }}/slides.html){% if m.kneeboards %} · [kneeboard]({{ m.id }}/kneeboard/{{ m.kneeboards[0] }}){% endif %} · [{{ "instructor" if cat == "training" else "director (spoilers)" }}]({{ m.id }}/director.html) |
 {% endfor %}
-{% endautoescape %}
+{% endfor %}
+{%- endautoescape %}

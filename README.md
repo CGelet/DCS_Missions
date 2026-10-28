@@ -79,7 +79,10 @@ dcsmb/                       the builder (Python)
 templates/                   briefing, kneeboard and hangar page layouts
 hangar/<id>/                 rendered output: <id>.miz, briefing.html, slides.html, director.html, kneeboard/*.png
 scripts/fetch_coastline.py   one-off: coastline data for the slide maps (re-run for a new theater)
-hangar/index.html, README.md hangar listing, regenerated on every build
+hangar/index.html            home page: campaigns and the single-mission groups
+hangar/missions.html         every mission, grouped by campaign, with filters and search
+hangar/campaigns/<id>/       campaign page, DCS .cmp and its numbered .miz files
+hangar/README.md             the same listing as tables, for GitHub
 ```
 
 The `.miz`, briefing, slide deck, and kneeboard all come from the same `mission.yaml`, so they can't disagree. **Don't edit files in `hangar/` by hand.** They're overwritten on the next build. That includes saving a `.miz` from the DCS Mission Editor: carry the change back into `mission.yaml` instead.

@@ -157,6 +157,9 @@ svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace;
 .previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
 .previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .previously p { margin: 0 0 8px; color: var(--muted); }
+.back { display: inline-block; margin-bottom: 18px; font-size: 14px; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--accent); }
+@media print { .back { display: none; } }
 .chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 .chap { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); }
 .chap .n { font: 600 34px/1 "IBM Plex Mono", monospace; color: var(--accent); }
@@ -168,13 +171,27 @@ svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace;
 .links a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
 .links a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .install ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+/* Site bar shared by the home, library and campaign pages */
+.sitebar { border-bottom: 1px solid var(--line); background: var(--surface); }
+.sitebar .wrap { display: flex; align-items: center; gap: 4px 18px; flex-wrap: wrap; min-height: 52px; }
+.sitebar .brand { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); text-decoration: none; margin-right: auto; }
+.sitebar a.nav { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; padding: 16px 0; border-bottom: 2px solid transparent; }
+.sitebar a.nav:hover { color: var(--ink); }
+@media (max-width: 480px) { .sitebar .brand { display: none; } }
+.sitebar a.nav[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
 @media (max-width: 640px) { .chap { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
 </style>
 </head>
 <body>
+<nav class="sitebar" aria-label="Site"><div class="wrap">
+  <a class="brand" href="../../index.html">Mission Hangar</a>
+  <a class="nav" href="../../index.html">Home</a>
+  <a class="nav" href="../../index.html#campaigns" aria-current="page">Campaigns</a>
+  <a class="nav" href="../../missions.html">All missions</a>
+</div></nav>
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow"><a href="../../index.html" style="text-decoration:none">Hangar</a> · Training campaign · 5 chapters</div>
+    <div class="eyebrow">Training campaign · 5 chapters</div>
     <h1>WORK-UPS</h1>
     <div class="meta-row"><span><b>Hornet detachment syllabus, January 2038</b></span><span>2038-01-15 → 2038-01-30</span><span>Kutaisi, Vaziani, Senaki and the Stennis</span></div>
     <blockquote class="hook">Ten Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in

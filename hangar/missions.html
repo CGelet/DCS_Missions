@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All Missions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #f4f2ec; --surface: #fffdf8; --ink: #1d2124; --muted: #5e646a; --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111416; --surface: #181c1f; --ink: #e6e3dc; --muted: #9aa1a6; --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --shadow: 0 1px 2px rgba(0,0,0,.4); } }
+:root[data-theme="dark"] { --bg: #111416; --surface: #181c1f; --ink: #e6e3dc; --muted: #9aa1a6; --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --shadow: 0 1px 2px rgba(0,0,0,.4); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+header { padding: 48px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 46px); margin: 10px 0 8px; letter-spacing: -.02em; }
+header p { color: var(--muted); margin: 0; max-width: 64ch; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding-bottom: 48px; }
+@media (min-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1140px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.m[hidden], .cat[hidden] { display: none; }
+.cat-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 8px auto 16px; }
+.cat-head h2 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
+.cat-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.cat-head p a { color: var(--accent); font-weight: 600; }
+.cat-count { font: 600 14px/1 "IBM Plex Mono", monospace; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; vertical-align: middle; }
+.filters { display: grid; gap: 12px; margin-bottom: 24px; }
+.filters input { width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; }
+.filters input:focus-visible, .fchip:focus-visible, .fstatus button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.flabel { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); min-width: 120px; }
+@media (max-width: 640px) { .flabel { flex-basis: 100%; } }
+.fchip { font: 13px/1 "IBM Plex Sans", system-ui, sans-serif; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.fchip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.fstatus { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); min-height: 32px; }
+.fstatus button { font: 600 13px/1 "IBM Plex Sans", system-ui, sans-serif; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 6px 0; }
+.empty { color: var(--muted); padding: 32px 0 64px; }
+.chip.role { color: var(--accent); border-color: var(--accent); }
+.m { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
+.m h2 { margin: 0; font-size: 22px; line-height: 1.2; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.m p { margin: 0; }
+.hook { border-left: 3px solid var(--accent); padding-left: 12px; font-style: italic; }
+.obj { font-size: 14px; color: var(--muted); }
+.obj b { color: var(--ink); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.actions a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
+.actions a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.camps { margin-bottom: 40px; }
+.camp { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 12px; padding: 20px 22px; box-shadow: var(--shadow); }
+.camp:hover { border-color: var(--muted); border-top-color: var(--accent); }
+.camp b { font-size: 26px; letter-spacing: -.01em; line-height: 1.1; }
+.camp .sub { font-weight: 600; }
+.camp .prem { color: var(--muted); font-size: 15px; }
+.camp .dates { font: 13px "IBM Plex Mono", monospace; color: var(--muted); margin-top: auto; }
+/* Site bar shared by the home, library and campaign pages */
+.sitebar { border-bottom: 1px solid var(--line); background: var(--surface); }
+.sitebar .wrap { display: flex; align-items: center; gap: 4px 18px; flex-wrap: wrap; min-height: 52px; }
+.sitebar .brand { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); text-decoration: none; margin-right: auto; }
+.sitebar a.nav { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; padding: 16px 0; border-bottom: 2px solid transparent; }
+.sitebar a.nav:hover { color: var(--ink); }
+@media (max-width: 480px) { .sitebar .brand { display: none; } }
+.sitebar a.nav[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+@media (min-width: 760px) { .camps .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Home tiles */
+.tiles { display: grid; grid-template-columns: 1fr; gap: 20px; padding-bottom: 40px; }
+@media (min-width: 760px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile { display: flex; flex-direction: column; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; box-shadow: var(--shadow); }
+.tile h3 { margin: 0; font-size: 22px; }
+.tile h3 a { color: var(--ink); text-decoration: none; }
+.tile h3 a:hover { color: var(--accent); }
+.tile p { margin: 0; color: var(--muted); font-size: 15px; }
+.tile ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14px; }
+.tile li a { color: var(--ink); text-decoration: none; }
+.tile li a:hover { color: var(--accent); text-decoration: underline; }
+.tile li span { color: var(--muted); font: 12px "IBM Plex Mono", monospace; margin-left: 6px; }
+.more { display: inline-block; font-weight: 600; text-decoration: none; color: var(--accent); margin-top: auto; }
+.howto { padding-bottom: 56px; color: var(--muted); }
+.howto summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.howto ol { padding-left: 20px; }
+/* Library: jump bar and compact cards */
+.jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 20px; }
+.jump a { font: 13px/1 "IBM Plex Sans", system-ui, sans-serif; padding: 7px 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; }
+.jump a:hover { border-color: var(--accent); color: var(--accent); }
+.jump a span { color: var(--muted); margin-left: 4px; }
+.cat { scroll-margin-top: 16px; }
+.m { padding: 18px; gap: 10px; }
+.m h2 { font-size: 19px; }
+.m h2 a { color: var(--ink); text-decoration: none; }
+.m h2 a:hover { color: var(--accent); }
+.actions a { padding: 7px 11px; font-size: 13px; }
+</style>
+</head>
+<body>
+<nav class="sitebar" aria-label="Site"><div class="wrap">
+  <a class="brand" href="index.html">Mission Hangar</a>
+  <a class="nav" href="index.html">Home</a>
+  <a class="nav" href="index.html#campaigns">Campaigns</a>
+  <a class="nav" href="missions.html" aria-current="page">All missions</a>
+</div></nav>
+<header><div class="wrap">
+  <div class="eyebrow">Mission library</div>
+  <h1>All missions</h1>
+  <p>Every mission in the hangar, grouped by campaign. Filter by aircraft, mission type or feature, or search the stories.</p>
+</div></header>
+<div class="wrap">
+  <section class="filters" aria-label="Filter missions">
+    <input type="search" id="q" placeholder="Search by operation, place, story…" aria-label="Search missions">
+    
+    <div class="fgroup" data-group="campaign"><span class="flabel">Campaign</span>
+      <button type="button" class="fchip" aria-pressed="false" data-value="WORK-UPS">WORK-UPS</button><button type="button" class="fchip" aria-pressed="false" data-value="IRON GATE">IRON GATE</button><button type="button" class="fchip" aria-pressed="false" data-value="HIGH TIDE">HIGH TIDE</button><button type="button" class="fchip" aria-pressed="false" data-value="DARK HORSE">DARK HORSE</button><button type="button" class="fchip" aria-pressed="false" data-value="Standalone">Standalone</button>
+    </div>
+    <div class="fgroup" data-group="aircraft"><span class="flabel">Aircraft</span>
+      <button type="button" class="fchip" aria-pressed="false" data-value="A-10C II">A-10C II</button><button type="button" class="fchip" aria-pressed="false" data-value="AV-8B Harrier">AV-8B Harrier</button><button type="button" class="fchip" aria-pressed="false" data-value="F-14B Tomcat">F-14B Tomcat</button><button type="button" class="fchip" aria-pressed="false" data-value="F-16C Viper">F-16C Viper</button><button type="button" class="fchip" aria-pressed="false" data-value="F/A-18C Hornet">F/A-18C Hornet</button>
+    </div>
+    <div class="fgroup" data-group="role"><span class="flabel">Mission type</span>
+      <button type="button" class="fchip" aria-pressed="false" data-value="AAR &amp; low level">AAR &amp; low level</button><button type="button" class="fchip" aria-pressed="false" data-value="Air-to-air (BFM)">Air-to-air (BFM)</button><button type="button" class="fchip" aria-pressed="false" data-value="Air-to-ground range">Air-to-ground range</button><button type="button" class="fchip" aria-pressed="false" data-value="Anti-ship">Anti-ship</button><button type="button" class="fchip" aria-pressed="false" data-value="Armed recce">Armed recce</button><button type="button" class="fchip" aria-pressed="false" data-value="CAS">CAS</button><button type="button" class="fchip" aria-pressed="false" data-value="Carrier quals">Carrier quals</button><button type="button" class="fchip" aria-pressed="false" data-value="Fleet defense">Fleet defense</button><button type="button" class="fchip" aria-pressed="false" data-value="RESCAP">RESCAP</button><button type="button" class="fchip" aria-pressed="false" data-value="Reconnaissance">Reconnaissance</button><button type="button" class="fchip" aria-pressed="false" data-value="SEAD">SEAD</button><button type="button" class="fchip" aria-pressed="false" data-value="Strike">Strike</button><button type="button" class="fchip" aria-pressed="false" data-value="Strike (package)">Strike (package)</button>
+    </div>
+    <div class="fgroup" data-group="features"><span class="flabel">Features</span>
+      <button type="button" class="fchip" aria-pressed="false" data-value="Air refuelling">Air refuelling</button><button type="button" class="fchip" aria-pressed="false" data-value="Carrier">Carrier</button><button type="button" class="fchip" aria-pressed="false" data-value="Different recovery field">Different recovery field</button><button type="button" class="fchip" aria-pressed="false" data-value="Hot start">Hot start</button><button type="button" class="fchip" aria-pressed="false" data-value="Low level">Low level</button>
+    </div>
+    <div class="fstatus"><span id="count" aria-live="polite">30 missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
+  </section>
+  <nav class="jump" aria-label="Jump to a section"><a href="#c-workups">WORK-UPS campaign<span>5</span></a><a href="#c-iron_gate">IRON GATE campaign<span>5</span></a><a href="#c-high_tide">HIGH TIDE campaign<span>5</span></a><a href="#c-dark_horse">DARK HORSE campaign<span>5</span></a><a href="#operational">Black Sea operations<span>7</span></a><a href="#training">Training events<span>3</span></a></nav>
+</div>
+<main>
+
+<section class="cat" id="c-workups" data-cat="c-workups" aria-labelledby="h-c-workups">
+  <div class="wrap cat-head"><h2 id="h-c-workups">WORK-UPS campaign <span class="cat-count" data-total="5">5</span></h2><p>Hornet detachment syllabus, January 2038. 5 chapters, flown in order. <a href="campaigns/workups/index.html">Campaign page</a></p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-campaign="WORK-UPS" data-aircraft="F/A-18C Hornet" data-role="Carrier quals" data-features="Carrier|Air refuelling|Low level|Different recovery field"
+           data-text="work-ups paddles day carrier qualification caucasus 1× f/a-18c hornet carrier quals &#34;fly the ball all the way to the deck. if i wave you off, you go around, every time. the
+boat isn&#39;t going anywhere, but it is moving.&#34; paddles, lso brief the detachment landed at kutaisi last week with ten hornets and a february partner exercise to get ready for. the uss john c. stennis is passing through the eastern black sea for a port call, and the strike group has agreed to keep a deck open for the detachment for one afternoon. the hornets are land-based for this deployment, but every pilot has to stay current at the boat, and the february exercise will have carrier play. two arrested landings aboard the stennis, with a catapult launch between them.">
+    <div class="eyebrow">Chapter 1 of 5</div>
+    <h2><a href="wu_1_cq_day/briefing.html">Day Carrier Qualification</a></h2>
+    <div class="meta"><span class="chip role">Carrier quals</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2038-01-15 · 12:30L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span><span class="chip">Low level</span><span class="chip">Different recovery field</span></div>
+    <p class="obj"><b>Primary:</b> Two arrested landings aboard the Stennis, with a catapult launch between them.</p>
+    <div class="actions">
+      <a class="primary" href="wu_1_cq_day/briefing.html">Briefing</a>
+      <a href="wu_1_cq_day/slides.html">Slides</a>
+      <a href="wu_1_cq_day/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="wu_1_cq_day/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="campaigns/workups/01_wu_1_cq_day.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="WORK-UPS" data-aircraft="F/A-18C Hornet" data-role="Carrier quals" data-features="Carrier|Air refuelling"
+           data-text="work-ups black deck night carrier qualification caucasus 1× f/a-18c hornet carrier quals &#34;at night, the deck doesn&#39;t get bigger as you get closer. it just gets darker around it.
+fly the needles.&#34; paddles, night brief the day traps went well enough that the strike group gave the detachment the deck again, after dark. night quals are the hardest landings in naval aviation: no horizon, a small lit rectangle moving at 15 knots, and the knowledge that the only alternate is 60 km away. two night arrested landings aboard the stennis.">
+    <div class="eyebrow">Chapter 2 of 5</div>
+    <h2><a href="wu_2_cq_night/briefing.html">Night Carrier Qualification</a></h2>
+    <div class="meta"><span class="chip role">Carrier quals</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2038-01-16 · 18:45L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+    <p class="obj"><b>Primary:</b> Two night arrested landings aboard the Stennis.</p>
+    <div class="actions">
+      <a class="primary" href="wu_2_cq_night/briefing.html">Briefing</a>
+      <a href="wu_2_cq_night/slides.html">Slides</a>
+      <a href="wu_2_cq_night/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="wu_2_cq_night/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="campaigns/workups/02_wu_2_cq_night.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="WORK-UPS" data-aircraft="F/A-18C Hornet" data-role="SEAD" data-features=""
+           data-text="work-ups loud neighbours sead fundamentals caucasus 1× f/a-18c hornet sead &#34;those radars have been looking at people like you for forty years. today you get to answer
+back. twice. on time.&#34; wren, sead brief the georgian air defence command keeps a captured sa-6 battery and an sa-8 on the steppe east of the gareja range for exactly this: letting allied crews hear a real soviet-era radar on the rwr and shoot it. today they&#39;ve agreed to let the detachment put two live harms into the old radars. the launchers stay; the radars were due to be scrapped anyway. destroy the sa-6 radar and the sa-8 with one harm each.">
+    <div class="eyebrow">Chapter 3 of 5</div>
+    <h2><a href="wu_3_sead/briefing.html">SEAD Fundamentals</a></h2>
+    <div class="meta"><span class="chip role">SEAD</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2038-01-20 · 10:00L</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the SA-6 radar and the SA-8 with one HARM each.</p>
+    <div class="actions">
+      <a class="primary" href="wu_3_sead/briefing.html">Briefing</a>
+      <a href="wu_3_sead/slides.html">Slides</a>
+      <a href="wu_3_sead/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="wu_3_sead/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="campaigns/workups/03_wu_3_sead.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="WORK-UPS" data-aircraft="F/A-18C Hornet" data-role="CAS" data-features=""
+           data-text="work-ups danger close close air support with a jtac caucasus 1× f/a-18c hornet cas &#34;i&#39;ll tell you where to look. i&#39;ll tell you when to shoot. if i say abort, you&#39;re already
+pulling off.&#34; axeman, cas brief the georgian 2nd infantry brigade is on a field exercise south of the gareja range, and they&#39;ve offered their joint terminal attack controllers to the detachment for an afternoon. the rules are simple: they&#39;ll pretend to be in contact, put old vehicles out as the enemy, and talk you onto them the way they would in a real fight. their own platoon will be sitting right next to the targets. destroy both target groups on axeman&#39;s clearance.">
+    <div class="eyebrow">Chapter 4 of 5</div>
+    <h2><a href="wu_4_jtac/briefing.html">Close Air Support with a JTAC</a></h2>
+    <div class="meta"><span class="chip role">CAS</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2038-01-22 · 13:15L</span></div>
+    <p class="obj"><b>Primary:</b> Destroy both target groups on AXEMAN&#39;s clearance.</p>
+    <div class="actions">
+      <a class="primary" href="wu_4_jtac/briefing.html">Briefing</a>
+      <a href="wu_4_jtac/slides.html">Slides</a>
+      <a href="wu_4_jtac/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="wu_4_jtac/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="campaigns/workups/04_wu_4_jtac.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="WORK-UPS" data-aircraft="F/A-18C Hornet" data-role="Strike (package)" data-features=""
+           data-text="work-ups checkride graduation composite exercise caucasus 2× f/a-18c hornet strike (package) &#34;i&#39;m not grading the bombs. i&#39;m grading whether the bombs land when you said they would,
+with everyone still alive.&#34; wren, checkride brief this is the last event of work-ups and the one wren signs the whole card on. it puts everything from the last three weeks into one sortie: a package that has to arrive together, an emitter that has to be suppressed, aggressors that want to break it up, and a target that has to be hit on time. destroy the target set with jdams inside the tot window.">
+    <div class="eyebrow">Chapter 5 of 5</div>
+    <h2><a href="wu_5_compex/briefing.html">Graduation Composite Exercise</a></h2>
+    <div class="meta"><span class="chip role">Strike (package)</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-01-30 · 09:30L</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the target set with JDAMs inside the TOT window.</p>
+    <div class="actions">
+      <a class="primary" href="wu_5_compex/briefing.html">Briefing</a>
+      <a href="wu_5_compex/slides.html">Slides</a>
+      <a href="wu_5_compex/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="wu_5_compex/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="campaigns/workups/05_wu_5_compex.miz" download>.miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+<section class="cat" id="c-iron_gate" data-cat="c-iron_gate" aria-labelledby="h-c-iron_gate">
+  <div class="wrap cat-head"><h2 id="h-c-iron_gate">IRON GATE campaign <span class="cat-count" data-total="5">5</span></h2><p>Ten days in the Liakhvi valley, April 2038. 5 chapters, flown in order. <a href="campaigns/iron_gate/index.html">Campaign page</a></p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-campaign="IRON GATE" data-aircraft="F/A-18C Hornet" data-role="Armed recce" data-features=""
+           data-text="iron gate iron gate armed recce, liakhvi valley caucasus 2× f/a-18c hornet armed recce &#34;find the front of it. tell me what it is. if you can stop the first few vehicles, do it.
+everything behind them will have to wait.&#34; col. gelashvili, 0530 phone call at 0200 the roki tunnel border post stopped answering the phone. by 0400, georgian police at tskhinvali&#39;s northern checkpoint were reporting engine noise in the gorge: tracks, a lot of them, coming south. nobody has seen the column yet. the valley is under cloud, and the drones that went up at first light came back with nothing but grey. find the column&#39;s vanguard and destroy it.">
+    <div class="eyebrow">Chapter 1 of 5</div>
+    <h2><a href="ig_1_recce/briefing.html">Armed Recce, Liakhvi Valley</a></h2>
+    <div class="meta"><span class="chip role">Armed recce</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-04-06 · 06:20L</span></div>
+    <p class="obj"><b>Primary:</b> Find the column&#39;s vanguard and destroy it.</p>
+    <div class="actions">
+      <a class="primary" href="ig_1_recce/briefing.html">Briefing</a>
+      <a href="ig_1_recce/slides.html">Slides</a>
+      <a href="ig_1_recce/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ig_1_recce/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/iron_gate/01_ig_1_recce.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="IRON GATE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Low level"
+           data-text="iron gate iron gate drop the bridges caucasus 2× f/a-18c hornet strike &#34;two bridges. four bombs. one brigade on the wrong side of them, if you&#39;re quick.&#34; sabre,
+mass brief yesterday&#39;s tape changed the conversation in tbilisi. it isn&#39;t a raid: it&#39;s a mechanized brigade, and its main body is still in the gorge north of java, waiting for fuel and for the road to clear. between it and tskhinvali, the transcam road crosses the great liakhvi twice on two concrete bridges. destroy both transcam bridges.">
+    <div class="eyebrow">Chapter 2 of 5</div>
+    <h2><a href="ig_2_bridges/briefing.html">Drop the Bridges</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-04-07 · 15:30L</span><span class="chip">Low level</span></div>
+    <p class="obj"><b>Primary:</b> Destroy both Transcam bridges.</p>
+    <div class="actions">
+      <a class="primary" href="ig_2_bridges/briefing.html">Briefing</a>
+      <a href="ig_2_bridges/slides.html">Slides</a>
+      <a href="ig_2_bridges/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ig_2_bridges/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/iron_gate/02_ig_2_bridges.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="IRON GATE" data-aircraft="F/A-18C Hornet" data-role="SEAD" data-features=""
+           data-text="iron gate iron gate hunt the sa-11 caucasus 2× f/a-18c hornet sead &#34;it&#39;s killed one jet already. it&#39;s going to be watching the valley for the next one. don&#39;t be
+the next one. be the one that comes from the side.&#34; sabre, mass brief the bridges slowed the column, but they didn&#39;t stop it. engineers had a crossing in by yesterday afternoon, and something came over it with them. last night a georgian su-25 on a recce run up the valley was shot down at 18,000 ft, far above anything a strela can reach. the pilot&#39;s last call was &#34;big radar, big missile.&#34; destroy the sa-11 battery: radar and launchers.">
+    <div class="eyebrow">Chapter 3 of 5</div>
+    <h2><a href="ig_3_sa11/briefing.html">Hunt the SA-11</a></h2>
+    <div class="meta"><span class="chip role">SEAD</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-04-09 · 13:40L</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the SA-11 battery: radar and launchers.</p>
+    <div class="actions">
+      <a class="primary" href="ig_3_sa11/briefing.html">Briefing</a>
+      <a href="ig_3_sa11/slides.html">Slides</a>
+      <a href="ig_3_sa11/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ig_3_sa11/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/iron_gate/03_ig_3_sa11.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="IRON GATE" data-aircraft="F/A-18C Hornet" data-role="CAS" data-features=""
+           data-text="iron gate iron gate hold gori caucasus 2× f/a-18c hornet cas &#34;my tanks are the same tanks as their tanks. if you&#39;re not sure, ask me. if you&#39;re still not
+sure, don&#39;t.&#34; hammer, on the check-in with the sa-11 gone, the column did what everyone expected: it came south. by last night its lead battalion was through tskhinvali and dug in at ergneti, five kilometres from gori. the georgian 4th brigade holds the northern edge of the town with infantry, a company of t-72s and not much else. stop the attack before it reaches the georgian line.">
+    <div class="eyebrow">Chapter 4 of 5</div>
+    <h2><a href="ig_4_gori_cas/briefing.html">Hold Gori</a></h2>
+    <div class="meta"><span class="chip role">CAS</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-04-11 · 09:40L</span></div>
+    <p class="obj"><b>Primary:</b> Stop the attack before it reaches the Georgian line.</p>
+    <div class="actions">
+      <a class="primary" href="ig_4_gori_cas/briefing.html">Briefing</a>
+      <a href="ig_4_gori_cas/slides.html">Slides</a>
+      <a href="ig_4_gori_cas/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ig_4_gori_cas/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/iron_gate/04_ig_4_gori_cas.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="IRON GATE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Different recovery field"
+           data-text="iron gate iron gate close the gate caucasus 2× f/a-18c hornet strike &#34;everything they have came through that tunnel. everything they need still has to. close it.&#34;
+col. gelashvili, by phone to vaziani gori held, and the northern brigade has run out of ways forward. it still has tanks in tskhinvali and an attack battalion licking its wounds at ergneti, but everything it needs to keep fighting comes through one tunnel and stops at one dump: a field of fuel trucks and ammunition south of java. destroy the supply dump south of java.">
+    <div class="eyebrow">Chapter 5 of 5</div>
+    <h2><a href="ig_5_gate/briefing.html">Close the Gate</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-04-16 · 10:50L</span><span class="chip">Different recovery field</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the supply dump south of Java.</p>
+    <div class="actions">
+      <a class="primary" href="ig_5_gate/briefing.html">Briefing</a>
+      <a href="ig_5_gate/slides.html">Slides</a>
+      <a href="ig_5_gate/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ig_5_gate/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/iron_gate/05_ig_5_gate.miz" download>.miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+<section class="cat" id="c-high_tide" data-cat="c-high_tide" aria-labelledby="h-c-high_tide">
+  <div class="wrap cat-head"><h2 id="h-c-high_tide">HIGH TIDE campaign <span class="cat-count" data-total="5">5</span></h2><p>Ten days off the Abkhaz coast, May 2038. 5 chapters, flown in order. <a href="campaigns/high_tide/index.html">Campaign page</a></p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-campaign="HIGH TIDE" data-aircraft="F/A-18C Hornet" data-role="Reconnaissance" data-features="Carrier|Air refuelling"
+           data-text="high tide high tide eyes on ochamchire caucasus 2× f/a-18c hornet reconnaissance &#34;i don&#39;t need you to sink anything. i need you to count. and then i need you to come back so
+i can see what you counted.&#34; prism, 0430 brief a month after the roki tunnel, the war moved to the coast. fishing boats out of anaklia have been reporting grey ships at ochamchire all week: big ones, with bow doors. ochamchire&#39;s harbour is too small for a navy, but it isn&#39;t too small for landing ships, and the georgian coast from anaklia to poti is flat, sandy and forty minutes away. fly the photo pass over ochamchire harbour below 5,000 ft and bring the tape home.">
+    <div class="eyebrow">Chapter 1 of 5</div>
+    <h2><a href="ht_1_harbour/briefing.html">Eyes on Ochamchire</a></h2>
+    <div class="meta"><span class="chip role">Reconnaissance</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-05-11 · 05:20L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+    <p class="obj"><b>Primary:</b> Fly the photo pass over Ochamchire harbour below 5,000 ft and bring the tape home.</p>
+    <div class="actions">
+      <a class="primary" href="ht_1_harbour/briefing.html">Briefing</a>
+      <a href="ht_1_harbour/slides.html">Slides</a>
+      <a href="ht_1_harbour/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ht_1_harbour/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/high_tide/01_ht_1_harbour.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="HIGH TIDE" data-aircraft="F/A-18C Hornet" data-role="Anti-ship" data-features="Carrier|Air refuelling"
+           data-text="high tide high tide minelayers in the dark caucasus 2× f/a-18c hornet anti-ship &#34;every mine they put in the water tonight is a week of minesweeping we don&#39;t have. get there
+while they&#39;re still laying.&#34; merlin, launch brief springfield&#39;s tape showed landing ships at ochamchire. two nights later, georgian fishermen coming home to poti saw something worse: fast boats with no lights, running slowly in lines across the harbour approaches and dropping things off their sterns. sink the minelaying boats before they finish laying.">
+    <div class="eyebrow">Chapter 2 of 5</div>
+    <h2><a href="ht_2_minelayers/briefing.html">Minelayers in the Dark</a></h2>
+    <div class="meta"><span class="chip role">Anti-ship</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-05-13 · 22:10L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+    <p class="obj"><b>Primary:</b> Sink the minelaying boats before they finish laying.</p>
+    <div class="actions">
+      <a class="primary" href="ht_2_minelayers/briefing.html">Briefing</a>
+      <a href="ht_2_minelayers/slides.html">Slides</a>
+      <a href="ht_2_minelayers/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ht_2_minelayers/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/high_tide/02_ht_2_minelayers.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="HIGH TIDE" data-aircraft="F/A-18C Hornet" data-role="SEAD" data-features="Carrier|Air refuelling|Low level"
+           data-text="high tide high tide blind the sa-10 caucasus 2× f/a-18c hornet sead &#34;it sees everything. that&#39;s the problem and the plan. give it six targets that aren&#39;t there and
+watch it light up to find out which ones are.&#34; prism, sead brief poti&#39;s channels are open. the night after the minelayers, a georgian su-25 looking at the coast north of anaklia saw a missile come up from the hills behind ochamchire, from 60 km away. it missed, barely. elint confirmed it within the hour: an sa-10, the long-range s-300, moved in to cover the harbour. destroy the sa-10&#39;s track radar.">
+    <div class="eyebrow">Chapter 3 of 5</div>
+    <h2><a href="ht_3_sa10/briefing.html">Blind the SA-10</a></h2>
+    <div class="meta"><span class="chip role">SEAD</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-05-15 · 10:15L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the SA-10&#39;s track radar.</p>
+    <div class="actions">
+      <a class="primary" href="ht_3_sa10/briefing.html">Briefing</a>
+      <a href="ht_3_sa10/slides.html">Slides</a>
+      <a href="ht_3_sa10/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ht_3_sa10/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/high_tide/03_ht_3_sa10.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="HIGH TIDE" data-aircraft="F/A-18C Hornet" data-role="Anti-ship" data-features="Carrier|Air refuelling|Low level"
+           data-text="high tide high tide ochamchire back door caucasus 2× f/a-18c hornet anti-ship &#34;their guns face the water. so we don&#39;t come from the water.&#34; merlin, strike brief with the sa-10 blind, ochamchire is reachable. prism&#39;s latest picture shows three landing ships alongside the quay now, loading vehicles day and night. fishing boats report the harbour&#39;s guns and sams all point out to sea, because that&#39;s where everything has come from so far. sink or disable the landing ships at the ochamchire quay.">
+    <div class="eyebrow">Chapter 4 of 5</div>
+    <h2><a href="ht_4_staging/briefing.html">Ochamchire Back Door</a></h2>
+    <div class="meta"><span class="chip role">Anti-ship</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-05-17 · 05:40L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
+    <p class="obj"><b>Primary:</b> Sink or disable the landing ships at the Ochamchire quay.</p>
+    <div class="actions">
+      <a class="primary" href="ht_4_staging/briefing.html">Briefing</a>
+      <a href="ht_4_staging/slides.html">Slides</a>
+      <a href="ht_4_staging/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ht_4_staging/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/high_tide/04_ht_4_staging.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="HIGH TIDE" data-aircraft="F/A-18C Hornet" data-role="Anti-ship" data-features="Carrier|Air refuelling"
+           data-text="high tide high tide stop the landing caucasus 2× f/a-18c hornet anti-ship &#34;if they get to the sand, it&#39;s an army&#39;s problem for a month. if they don&#39;t, it&#39;s ours for an
+hour. make it ours.&#34; merlin, 0430 brief at 0300, ochamchire emptied. what was left of the landing force, the ship that survived the strike and one that came up from sochi, sailed south in the dark with a corvette for escort. there&#39;s only one beach worth landing on: the long sand at anaklia, forty kilometres away. at ten knots, they&#39;ll be on it at breakfast. sink both landing ships before they reach the beach at anaklia.">
+    <div class="eyebrow">Chapter 5 of 5</div>
+    <h2><a href="ht_5_beachhead/briefing.html">Stop the Landing</a></h2>
+    <div class="meta"><span class="chip role">Anti-ship</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-05-20 · 04:50L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+    <p class="obj"><b>Primary:</b> Sink both landing ships before they reach the beach at Anaklia.</p>
+    <div class="actions">
+      <a class="primary" href="ht_5_beachhead/briefing.html">Briefing</a>
+      <a href="ht_5_beachhead/slides.html">Slides</a>
+      <a href="ht_5_beachhead/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="ht_5_beachhead/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/high_tide/05_ht_5_beachhead.miz" download>.miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+<section class="cat" id="c-dark_horse" data-cat="c-dark_horse" aria-labelledby="h-c-dark_horse">
+  <div class="wrap cat-head"><h2 id="h-c-dark_horse">DARK HORSE campaign <span class="cat-count" data-total="5">5</span></h2><p>Ten nights hunting Scuds, June 2038. 5 chapters, flown in order. <a href="campaigns/dark_horse/index.html">Campaign page</a></p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Armed recce" data-features=""
+           data-text="dark horse dark horse scud hunt in the dark caucasus 2× f/a-18c hornet armed recce &#34;it fired once. it&#39;ll fire again before dawn unless someone finds it first. it&#39;s a truck in a
+forest at night. find the truck.&#34; anvil, 2300 brief at 2204 a missile came down on the edge of kutaisi airfield. it missed the runway by 400 metres and took out a fuel farm. georgian radar at senaki tracked it all the way: a ballistic missile, a scud, launched from the hills north of ochamchire. by the time anyone looked, the launcher had gone. find and destroy the scud launcher before it fires again.">
+    <div class="eyebrow">Chapter 1 of 5</div>
+    <h2><a href="dh_1_scud_hunt/briefing.html">Scud Hunt in the Dark</a></h2>
+    <div class="meta"><span class="chip role">Armed recce</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-02 · 23:20L</span></div>
+    <p class="obj"><b>Primary:</b> Find and destroy the Scud launcher before it fires again.</p>
+    <div class="actions">
+      <a class="primary" href="dh_1_scud_hunt/briefing.html">Briefing</a>
+      <a href="dh_1_scud_hunt/slides.html">Slides</a>
+      <a href="dh_1_scud_hunt/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="dh_1_scud_hunt/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/dark_horse/01_dh_1_scud_hunt.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Low level"
+           data-text="dark horse dark horse under the deck caucasus 2× f/a-18c hornet strike &#34;under the cloud, in the rain, at dusk, with guns. i wouldn&#39;t ask if it didn&#39;t matter. it matters.&#34;
+anvil, 1930 brief the launcher in the hills is gone, and capt. lomidze has an answer to her question: there are more. a captured driver says the brigade has four launchers and one place they all go back to for fuel and missiles, a depot in the orchards west of gali. kill the depot and the launchers run dry. destroy the depot&#39;s fuel and missile vehicles.">
+    <div class="eyebrow">Chapter 2 of 5</div>
+    <h2><a href="dh_2_depot/briefing.html">Under the Deck</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-04 · 20:05L</span><span class="chip">Low level</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the depot&#39;s fuel and missile vehicles.</p>
+    <div class="actions">
+      <a class="primary" href="dh_2_depot/briefing.html">Briefing</a>
+      <a href="dh_2_depot/slides.html">Slides</a>
+      <a href="dh_2_depot/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="dh_2_depot/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/dark_horse/02_dh_2_depot.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Low level"
+           data-text="dark horse dark horse the eye on the ridge caucasus 2× f/a-18c hornet strike &#34;every time we take off, it tells them. go up the valley where it can&#39;t see, and put it out.&#34;
+capt. lomidze, 0100 brief the depot burned, and the launchers went quiet. then, two nights ago, they started moving again, and always just before pontiac&#39;s jets arrived. capt. lomidze found out why: a long-range early warning radar has been set up on a peak above tkvarcheli, 2,000 metres up. it sees everything that lifts off from senaki and passes the warning down the valley. destroy the early-warning radar.">
+    <div class="eyebrow">Chapter 3 of 5</div>
+    <h2><a href="dh_3_ewr/briefing.html">The Eye on the Ridge</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-06 · 01:40L</span><span class="chip">Low level</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the early-warning radar.</p>
+    <div class="actions">
+      <a class="primary" href="dh_3_ewr/briefing.html">Briefing</a>
+      <a href="dh_3_ewr/slides.html">Slides</a>
+      <a href="dh_3_ewr/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="dh_3_ewr/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/dark_horse/03_dh_3_ewr.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features=""
+           data-text="dark horse dark horse coordinates in the rain caucasus 2× f/a-18c hornet strike &#34;you&#39;ll never see it. you&#39;ll never see the bombs hit. you&#39;ll just have to believe the man in the
+forest, and type carefully.&#34; anvil, 1230 brief with the radar gone, the launchers lost their warning and lost one of their number on the first night. the brigade adapted: now they only move in bad weather, when nothing can see them from above. today the weather is terrible, and three of them have moved. destroy the launcher at the coordinates shadow passes.">
+    <div class="eyebrow">Chapter 4 of 5</div>
+    <h2><a href="dh_4_jdam/briefing.html">Coordinates in the Rain</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-09 · 13:10L</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the launcher at the coordinates SHADOW passes.</p>
+    <div class="actions">
+      <a class="primary" href="dh_4_jdam/briefing.html">Briefing</a>
+      <a href="dh_4_jdam/slides.html">Slides</a>
+      <a href="dh_4_jdam/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="dh_4_jdam/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/dark_horse/04_dh_4_jdam.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="DARK HORSE" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features="Different recovery field"
+           data-text="dark horse dark horse the brigade&#39;s last night caucasus 2× f/a-18c hornet strike &#34;one launcher, one headquarters, one night. after tonight, kutaisi sleeps.&#34; anvil, 2200 brief shadow&#39;s launcher was the third. the brigade has one left, and capt. lomidze&#39;s interceptors say the brigade&#39;s commander has pulled it back to his headquarters: the old mine buildings outside tkvarcheli, with his air defence, his radios and his last missile all in one place. destroy the brigade&#39;s command post.">
+    <div class="eyebrow">Chapter 5 of 5</div>
+    <h2><a href="dh_5_command/briefing.html">The Brigade&#39;s Last Night</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-06-12 · 22:40L</span><span class="chip">Different recovery field</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the brigade&#39;s command post.</p>
+    <div class="actions">
+      <a class="primary" href="dh_5_command/briefing.html">Briefing</a>
+      <a href="dh_5_command/slides.html">Slides</a>
+      <a href="dh_5_command/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="dh_5_command/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="campaigns/dark_horse/05_dh_5_command.miz" download>.miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+<section class="cat" id="operational" data-cat="operational" aria-labelledby="h-operational">
+  <div class="wrap cat-head"><h2 id="h-operational">Black Sea operations <span class="cat-count" data-total="7">7</span></h2><p>March 2038 on the Black Sea coast, in five different aircraft. Briefings carry only what the squadron knows, and the sim decides the rest.</p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F/A-18C Hornet" data-role="Strike" data-features=""
+           data-text="standalone broken span strike on the bzyb river bridge caucasus 2× f/a-18c hornet strike &#34;gentlemen, there&#39;s one bridge between that brigade and sukhumi. by breakfast
+i want it in the river.&#34; hatch moreno, 0500 brief three weeks ago a ceasefire along the inguri line collapsed. separatist forces, re-equipped with modern air defences and backed by russian advisers, have been pushing armour south down the coastal m-27 highway toward sukhumi. the coalition has held them at the gumista, but intelligence shows a fresh mechanised brigade staging near gagra for a push within 36 hours. destroy the bzyb river road bridge.">
+    <div class="eyebrow">Operation BROKEN SPAN</div>
+    <h2><a href="gudauta_bridge/briefing.html">Strike on the Bzyb River Bridge</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-03-14 · 06:40L</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the Bzyb River road bridge.</p>
+    <div class="actions">
+      <a class="primary" href="gudauta_bridge/briefing.html">Briefing</a>
+      <a href="gudauta_bridge/slides.html">Slides</a>
+      <a href="gudauta_bridge/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="gudauta_bridge/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="gudauta_bridge/gudauta_bridge.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F-16C Viper" data-role="SEAD" data-features=""
+           data-text="standalone silent orchard find the sa-11 caucasus 2× f-16c viper sead &#34;it&#39;s out there, it already has one kill, and it&#39;s patient. make it talk, then
+make it stop.&#34; lt kapanadze, 1300 brief two days after the strike on the bzyb bridge, the separatists answered. yesterday at 1410 a coalition mq-9, magpie 3, went silent over the hills above new athos. its last telemetry frame shows a 9s18 search radar locking it up from somewhere in the orchards below. locate and destroy or disable the sa-11 battery (search radar and launchers).">
+    <div class="eyebrow">Operation SILENT ORCHARD</div>
+    <h2><a href="silent_orchard/briefing.html">Find the SA-11</a></h2>
+    <div class="meta"><span class="chip role">SEAD</span><span class="chip">2× F-16C Viper</span><span class="chip">2038-03-16 · 14:20L</span></div>
+    <p class="obj"><b>Primary:</b> Locate and destroy or disable the SA-11 battery (search radar and launchers).</p>
+    <div class="actions">
+      <a class="primary" href="silent_orchard/briefing.html">Briefing</a>
+      <a href="silent_orchard/slides.html">Slides</a>
+      <a href="silent_orchard/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="silent_orchard/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="silent_orchard/silent_orchard.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="A-10C II" data-role="CAS" data-features="Hot start"
+           data-text="standalone hold fast defend the gumista line caucasus 2× a-10c ii cas &#34;i can hear tracks. i can&#39;t see them yet. get here.&#34; chisel, 0531 the brigade the bzyb strike was meant to stall is moving. at 0520 captain brenner&#39;s company on the gumista reported engine noise west of the river. two bridges cross the gumista into sukhumi, the coast road and the highway, and brenner has one company to hold both. destroy the attacking column before it crosses the gumista.">
+    <div class="eyebrow">Operation HOLD FAST</div>
+    <h2><a href="gumista_line/briefing.html">Defend the Gumista Line</a></h2>
+    <div class="meta"><span class="chip role">CAS</span><span class="chip">2× A-10C II</span><span class="chip">2038-03-18 · 05:50L</span><span class="chip">Hot start</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the attacking column before it crosses the Gumista.</p>
+    <div class="actions">
+      <a class="primary" href="gumista_line/briefing.html">Briefing</a>
+      <a href="gumista_line/slides.html">Slides</a>
+      <a href="gumista_line/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="gumista_line/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="gumista_line/gumista_line.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F-14B Tomcat" data-role="Fleet defense" data-features="Carrier|Air refuelling"
+           data-text="standalone blue water hold the line at sea caucasus 2× f-14b tomcat fleet defense &#34;they only have to get lucky once. you have to be lucky every time. tonight, be
+lucky early.&#34; bishop, 1600 brief with the gumista holding, the coalition moved the stennis strike group into the eastern black sea to put fighters over sukhumi around the clock. the answer from the north was always going to come by air. overnight, two tu-22m3 backfires moved forward. each carries a kh-22 that can hit a carrier from 300 km away. destroy the bomber raid before it reaches the kh-22 launch line.">
+    <div class="eyebrow">Operation BLUE WATER</div>
+    <h2><a href="blue_water/briefing.html">Hold the Line at Sea</a></h2>
+    <div class="meta"><span class="chip role">Fleet defense</span><span class="chip">2× F-14B Tomcat</span><span class="chip">2038-03-20 · 16:40L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the bomber raid before it reaches the Kh-22 launch line.</p>
+    <div class="actions">
+      <a class="primary" href="blue_water/briefing.html">Briefing</a>
+      <a href="blue_water/slides.html">Slides</a>
+      <a href="blue_water/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="blue_water/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="blue_water/blue_water.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="AV-8B Harrier" data-role="Strike" data-features="Air refuelling|Low level|Different recovery field"
+           data-text="standalone deep cut through the back door caucasus 2× av-8b harrier strike &#34;nobody flies down that valley. that&#39;s the point.&#34; hatch, 0900 brief the two mig-29s at gudauta have shown up on every mission this month. they don&#39;t fly much because they don&#39;t have much fuel. every night a few tanker trucks come down the coast road from gagra to keep them topped up. destroy the fuel tanker trucks supplying gudauta.">
+    <div class="eyebrow">Operation DEEP CUT</div>
+    <h2><a href="deep_cut/briefing.html">Through the Back Door</a></h2>
+    <div class="meta"><span class="chip role">Strike</span><span class="chip">2× AV-8B Harrier</span><span class="chip">2038-03-22 · 10:30L</span><span class="chip">Air refuelling</span><span class="chip">Low level</span><span class="chip">Different recovery field</span></div>
+    <p class="obj"><b>Primary:</b> Destroy the fuel tanker trucks supplying Gudauta.</p>
+    <div class="actions">
+      <a class="primary" href="deep_cut/briefing.html">Briefing</a>
+      <a href="deep_cut/slides.html">Slides</a>
+      <a href="deep_cut/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="deep_cut/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="deep_cut/deep_cut.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F/A-18C Hornet" data-role="RESCAP" data-features="Different recovery field|Hot start"
+           data-text="standalone lifeline rescap for uzi 2-2 caucasus 2× f/a-18c hornet rescap &#34;she&#39;s got a radio, a pistol and about twenty minutes. you&#39;ve got two hornets. make
+the twenty minutes last.&#34; rawhide, on the scramble line at 0735, uzi 2-2, an f-16 on a road recce north of the gumista, took a missile nobody saw launch. capt. mara &#34;socks&#34; lindqvist ejected over the hills above eshera, four miles behind the line. her beacon is good and she&#39;s checked in twice on guard. the second time she said she could hear engines. stop the search party before it reaches uzi 2-2.">
+    <div class="eyebrow">Operation LIFELINE</div>
+    <h2><a href="lifeline/briefing.html">RESCAP for Uzi 2-2</a></h2>
+    <div class="meta"><span class="chip role">RESCAP</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-03-24 · 09:10L</span><span class="chip">Different recovery field</span><span class="chip">Hot start</span></div>
+    <p class="obj"><b>Primary:</b> Stop the search party before it reaches Uzi 2-2.</p>
+    <div class="actions">
+      <a class="primary" href="lifeline/briefing.html">Briefing</a>
+      <a href="lifeline/slides.html">Slides</a>
+      <a href="lifeline/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="lifeline/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="lifeline/lifeline.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F/A-18C Hornet" data-role="Anti-ship" data-features="Carrier|Air refuelling|Low level"
+           data-text="standalone grey hull harpoon strike off gelendzhik caucasus 2× f/a-18c hornet anti-ship &#34;two contacts, two ships each, and one of them is full of grain. i&#39;d love to tell you which.
+darkstar&#39;s going to tell you instead, and you&#39;re going to check.&#34; prism, 0600 brief after the backfire raid, the black sea fleet stopped sending bombers and started sending ships. last night a surface action group left novorossiysk under cover of the weather: a krivak-class frigate and a grisha corvette, heading southeast to put sa-n-4s and a towed sonar between the stennis and the coast. disable the surface action group (at least half the group&#39;s damage).">
+    <div class="eyebrow">Operation GREY HULL</div>
+    <h2><a href="grey_hull/briefing.html">Harpoon Strike off Gelendzhik</a></h2>
+    <div class="meta"><span class="chip role">Anti-ship</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-03-26 · 06:50L</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
+    <p class="obj"><b>Primary:</b> Disable the surface action group (at least half the group&#39;s damage).</p>
+    <div class="actions">
+      <a class="primary" href="grey_hull/briefing.html">Briefing</a>
+      <a href="grey_hull/slides.html">Slides</a>
+      <a href="grey_hull/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="grey_hull/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>
+      <a href="grey_hull/grey_hull.miz" download>.miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+<section class="cat" id="training" data-cat="training" aria-labelledby="h-training">
+  <div class="wrap cat-head"><h2 id="h-training">Training events <span class="cat-count" data-total="3">3</span></h2><p>The February 2038 partner exercise: tanking and low level, a weapons range, and aggressors. Everything is briefed as it is.</p></div>
+  <div class="wrap grid">
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F/A-18C Hornet" data-role="AAR &amp; low level" data-features="Air refuelling|Low level"
+           data-text="standalone long valley air refuelling and low-level navigation caucasus 2× f/a-18c hornet aar &amp; low level &#34;plugging the basket is a skill. hitting a checkpoint to the second is a habit. today i&#39;m
+grading habits.&#34; wren, mass brief a month before the deployment turns hot, the hornet detachment is in georgia for the partner exercise, flying from kutaisi. the detachment&#39;s training officer wants every pilot current on the two skills that get people killed when they&#39;re rusty: plugging a tanker basket, and flying low and fast through terrain that doesn&#39;t forgive mistakes. fly the low-level route with at least 3 of 4 checkpoints and the tot on time (±30 s), with no altitude knock-it-off.">
+    <div class="eyebrow">Training · Det work-ups, event AR/LL-1</div>
+    <h2><a href="train_tanker_lowlevel/briefing.html">Air Refuelling and Low-Level Navigation</a></h2>
+    <div class="meta"><span class="chip role">AAR &amp; low level</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">2038-02-09 · 09:00L</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
+    <p class="obj"><b>Primary:</b> Fly the low-level route with at least 3 of 4 checkpoints and the TOT on time (±30 s), with no altitude knock-it-off.</p>
+    <div class="actions">
+      <a class="primary" href="train_tanker_lowlevel/briefing.html">Briefing</a>
+      <a href="train_tanker_lowlevel/slides.html">Slides</a>
+      <a href="train_tanker_lowlevel/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="train_tanker_lowlevel/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="train_tanker_lowlevel/train_tanker_lowlevel.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F/A-18C Hornet" data-role="Air-to-ground range" data-features=""
+           data-text="standalone gareja range air-to-ground weapons qualification caucasus 1× f/a-18c hornet air-to-ground range &#34;three events, three targets, one pattern. i don&#39;t care how fast you go. i care that every
+bomb lands where you said it would.&#34; wren, range brief two days after long valley, the detachment moves its weapons work east. the georgian land forces have lent the exercise a tactical range on the steppe near udabno: open, flat and empty, with hulks and old trucks laid out as targets. it&#39;s the best range the detachment has flown on in a year. destroy t-1, t-2 and t-3 in order, each with its briefed weapon, with no range fouls.">
+    <div class="eyebrow">Training · Det work-ups, event SW-2</div>
+    <h2><a href="train_range_day/briefing.html">Air-to-Ground Weapons Qualification</a></h2>
+    <div class="meta"><span class="chip role">Air-to-ground range</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2038-02-11 · 10:30L</span></div>
+    <p class="obj"><b>Primary:</b> Destroy T-1, T-2 and T-3 in order, each with its briefed weapon, with no range fouls.</p>
+    <div class="actions">
+      <a class="primary" href="train_range_day/briefing.html">Briefing</a>
+      <a href="train_range_day/slides.html">Slides</a>
+      <a href="train_range_day/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="train_range_day/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="train_range_day/train_range_day.miz" download>.miz</a>
+    </div>
+  </article>
+
+  <article class="m" data-campaign="Standalone" data-aircraft="F/A-18C Hornet" data-role="Air-to-air (BFM)" data-features=""
+           data-text="standalone red air intercepts and bfm against aggressors caucasus 1× f/a-18c hornet air-to-air (bfm) &#34;they will beat you today. the question is how many times, and whether you&#39;ll know why when
+we watch the tapes.&#34; wren, mass brief the last work-up event is the one everyone wants. a partner air force has sent an aggressor detachment to batumi for the exercise: one mig-29 and a section of f-5es flown by pilots who do nothing but fight western fighters. for the hornet detachment, it&#39;s the closest thing to the real thing short of a war. kill bandit 11 (bvr) and bandit 21 (bfm) with no hard-deck knock-it-off.">
+    <div class="eyebrow">Training · Det work-ups, event A/A-3</div>
+    <h2><a href="train_red_air/briefing.html">Intercepts and BFM against Aggressors</a></h2>
+    <div class="meta"><span class="chip role">Air-to-air (BFM)</span><span class="chip">1× F/A-18C Hornet</span><span class="chip">2038-02-13 · 14:00L</span></div>
+    <p class="obj"><b>Primary:</b> Kill Bandit 11 (BVR) and Bandit 21 (BFM) with no hard-deck knock-it-off.</p>
+    <div class="actions">
+      <a class="primary" href="train_red_air/briefing.html">Briefing</a>
+      <a href="train_red_air/slides.html">Slides</a>
+      <a href="train_red_air/kneeboard/01_mission.png">Kneeboard</a>
+      <a href="train_red_air/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      
+      <a href="train_red_air/train_red_air.miz" download>.miz</a>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+</main>
+<p class="wrap empty" id="empty" hidden>No missions match. Try removing a filter.</p>
+<script>
+// Within Campaign, Aircraft and Mission type, any selected value matches; selected Features must all be present.
+const cards = [...document.querySelectorAll(".m")];
+const q = document.getElementById("q"), count = document.getElementById("count"),
+      clear = document.getElementById("clear"), empty = document.getElementById("empty");
+const sel = { campaign: new Set(), aircraft: new Set(), role: new Set(), features: new Set() };
+function apply() {
+  const text = q.value.trim().toLowerCase();
+  let n = 0;
+  cards.forEach(c => {
+    const has = k => c.dataset[k] ? c.dataset[k].split("|") : [];
+    const ok = (!sel.campaign.size || sel.campaign.has(c.dataset.campaign))
+      && (!sel.aircraft.size || has("aircraft").some(v => sel.aircraft.has(v)))
+      && (!sel.role.size || has("role").some(v => sel.role.has(v)))
+      && [...sel.features].every(v => has("features").includes(v))
+      && (!text || text.split(/\s+/).every(w => c.dataset.text.includes(w)));
+    c.hidden = !ok;
+    if (ok) n++;
+  });
+  document.querySelectorAll(".cat").forEach(sec => {
+    const shown = sec.querySelectorAll(".m:not([hidden])").length, badge = sec.querySelector(".cat-count");
+    sec.hidden = shown === 0;
+    badge.textContent = shown == badge.dataset.total ? shown : `${shown} of ${badge.dataset.total}`;
+  });
+  count.textContent = n === cards.length ? `${n} missions` : `${n} of ${cards.length} missions`;
+  clear.hidden = !(text || Object.values(sel).some(s => s.size));
+  empty.hidden = n > 0;
+}
+document.querySelectorAll(".fgroup").forEach(g => g.addEventListener("click", e => {
+  const b = e.target.closest(".fchip");
+  if (!b) return;
+  const s = sel[g.dataset.group], on = b.getAttribute("aria-pressed") !== "true";
+  b.setAttribute("aria-pressed", on);
+  on ? s.add(b.dataset.value) : s.delete(b.dataset.value);
+  apply();
+}));
+q.addEventListener("input", apply);
+clear.addEventListener("click", () => {
+  q.value = "";
+  Object.values(sel).forEach(s => s.clear());
+  document.querySelectorAll(".fchip").forEach(b => b.setAttribute("aria-pressed", "false"));
+  apply();
+});
+</script>
+</body>
+</html>

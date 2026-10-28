@@ -1,0 +1,6 @@
+<nav class="sitebar" aria-label="Site"><div class="wrap">
+  <a class="brand" href="{{ root }}index.html">Mission Hangar</a>
+  <a class="nav" href="{{ root }}index.html"{% if active == "home" %} aria-current="page"{% endif %}>Home</a>
+  <a class="nav" href="{{ root }}index.html#campaigns"{% if active == "campaign" %} aria-current="page"{% endif %}>Campaigns</a>
+  <a class="nav" href="{{ root }}missions.html"{% if active == "missions" %} aria-current="page"{% endif %}>All missions</a>
+</div></nav>

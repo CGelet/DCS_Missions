@@ -11,7 +11,7 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 - `hangar/<id>/slides.html`: presenter deck that tells the mission as a story
 - `hangar/<id>/director.html`: spoiler view (intel vs truth, random rolls, triggers, outcomes)
 - `hangar/<id>/kneeboard/*.png`: 768×1024 kneeboard pages, also packed into the `.miz`
-- `hangar/index.html`, `hangar/README.md`: the hangar listing
+- `hangar/index.html` (home), `hangar/missions.html` (library), `hangar/campaigns/<id>/` and `hangar/README.md`: the hangar site
 
 ## Owner decisions (don't relitigate)
 
@@ -123,6 +123,7 @@ The missions form a campaign (same world, cast and dates in order). The hangar s
 
 ## Template gotchas
 
+- **Site structure** (owner request 2026-10-28: "It's ALL on one page right now, which is just a lot of content"). `index.html` is a short home page: campaign cards in a 2×2 grid, single-mission tiles (Black Sea operations, Training events, All missions) and a collapsed how-to. `missions.html` is the filterable library with a jump bar and compact cards (no teaser or kneeboard thumbnails). Campaign pages and the hangar share `_sitenav.html` and `_sitebar.css`; briefings and director pages have a "← Mission Hangar" link. Campaigns are listed in story order (first chapter's date), not by folder name. `hangar/README.md` is tables only.
 - **Hangar filters** (owner request 2026-10-27: "3 wide" on desktop, "a filter to narrow down by what we are looking for"). Aircraft and mission type come from the YAML (`meta.role` must be set on every new mission). Features (Carrier, Air refuelling, Low level, Different recovery field, Hot start) are derived in `build_hangar.features()` so they can't go stale. Within a group, aircraft and type match any selected value; features must all match. The grid is 3 columns at ≥1140 px, 2 at ≥760 px, otherwise 1.
 
 - Jinja: never name a dict key `items`, `keys` or `values`. `s.items` resolves to the dict method (this happened with slides; renamed to `entries`).

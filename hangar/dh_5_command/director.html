@@ -158,6 +158,9 @@ svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace;
 .previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
 .previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .previously p { margin: 0 0 8px; color: var(--muted); }
+.back { display: inline-block; margin-bottom: 18px; font-size: 14px; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--accent); }
+@media print { .back { display: none; } }
 .spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
 .spoiler b { color: var(--red); }
 .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
@@ -185,6 +188,7 @@ svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace;
 <body>
 <header class="hero">
   <div class="wrap">
+    <a class="back" href="../index.html">← Mission Hangar</a>
     <div class="eyebrow">Operation DARK HORSE · Director's cut</div>
     <h1>The Brigade&#39;s Last Night</h1>
     <div class="meta-row">

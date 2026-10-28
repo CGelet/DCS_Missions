@@ -55,6 +55,7 @@ def card(data: dict, hangar: Path) -> dict:
         "campaign": camp["title"] if camp else "Standalone",
         "campaign_id": camp["id"] if camp else "",
         "chapter": f"{camp['title']} · {camp['chapter']}/{camp['of']}" if camp else "",
+        "chapter_no": f"Chapter {camp['chapter']} of {camp['of']}" if camp else "",
         "miz": miz_path(data, hangar).relative_to(hangar).as_posix(),
         "kneeboards": sorted(p.name for p in (hangar / meta["id"] / "kneeboard").glob("*.png")),
     }
@@ -72,20 +73,22 @@ def build(missions: list[dict], hangar: Path, campaigns: list[dict] = ()) -> lis
     for c in campaigns:  # one section per campaign, chapters in order
         sm = summary(c, missions)
         sections.append({"key": f"c-{c['id']}", "category": sm["category"], "heading": f"{c['title']} campaign",
-                         "blurb": f"{sm['subtitle']} {sm['count']} chapters, {sm['first']} to {sm['last']}.".strip(),
+                         "blurb": f"{sm['subtitle']}. {sm['count']} chapters, flown in order.",
                          "link": f"campaigns/{c['id']}/index.html", "missions": [by_id[ch["mission"]] for ch in c["chapters"]]})
     for cat, heading, blurb in (
-            ("operational", "Standalone operations", "The Black Sea missions, to fly in any order. Briefings carry only what the squadron knows, and the sim decides the rest."),
-            ("training", "Standalone training", "Syllabus events. Everything is briefed as it is: training rules, grade sheet, range players.")):
+            ("operational", "Black Sea operations", "March 2038 on the Black Sea coast, in five different aircraft. Briefings carry only what the squadron knows, and the sim decides the rest."),
+            ("training", "Training events", "The February 2038 partner exercise: tanking and low level, a weapons range, and aggressors. Everything is briefed as it is.")):
         group = [m for m in cards if m["category"] == cat and not m["campaign_id"]]
         if group:
             sections.append({"key": cat, "category": cat, "heading": heading, "blurb": blurb, "link": "", "missions": group})
     summaries = [summary(c, missions) for c in campaigns]
+    standalone = [dict(sec, eyebrow="Training" if sec["category"] == "training" else "Operations")
+                  for sec in sections if not sec["key"].startswith("c-")]
     hangar.mkdir(parents=True, exist_ok=True)
     out = []
-    for name in ("index.html", "README.md"):
+    for name, template in (("index.html", "home.html.j2"), ("missions.html", "missions.html.j2"), ("README.md", "hangar.md.j2")):
         path = hangar / name
-        path.write_text(env().get_template(f"hangar.{name.split('.')[1]}.j2").render(
-            missions=cards, filters=filters, sections=sections, campaigns=summaries))
+        path.write_text(env().get_template(template).render(
+            missions=cards, filters=filters, sections=sections, campaigns=summaries, standalone=standalone))
         out.append(path)
     return out

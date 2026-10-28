@@ -301,6 +301,7 @@ def load_campaigns(campaigns_dir: Path, missions: list[dict]) -> list[dict]:
         out.append(c)
     if errs:
         raise MissionError("\n".join(errs))
+    out.sort(key=lambda c: str(by_id[c["chapters"][0]["mission"]]["meta"]["date"]))  # story order
     for c in out:
         n = len(c["chapters"])
         for i, ch in enumerate(c["chapters"], 1):

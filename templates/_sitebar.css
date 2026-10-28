@@ -1,0 +1,8 @@
+/* Site bar shared by the home, library and campaign pages */
+.sitebar { border-bottom: 1px solid var(--line); background: var(--surface); }
+.sitebar .wrap { display: flex; align-items: center; gap: 4px 18px; flex-wrap: wrap; min-height: 52px; }
+.sitebar .brand { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); text-decoration: none; margin-right: auto; }
+.sitebar a.nav { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; padding: 16px 0; border-bottom: 2px solid transparent; }
+.sitebar a.nav:hover { color: var(--ink); }
+@media (max-width: 480px) { .sitebar .brand { display: none; } }
+.sitebar a.nav[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }

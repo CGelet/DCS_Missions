@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All Missions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+{% include "_hangar.css" %}
+</style>
+</head>
+<body>
+{% set root = "" %}{% set active = "missions" %}{% include "_sitenav.html" %}
+<header><div class="wrap">
+  <div class="eyebrow">Mission library</div>
+  <h1>All missions</h1>
+  <p>Every mission in the hangar, grouped by campaign. Filter by aircraft, mission type or feature, or search the stories.</p>
+</div></header>
+<div class="wrap">
+  <section class="filters" aria-label="Filter missions">
+    <input type="search" id="q" placeholder="Search by operation, place, story…" aria-label="Search missions">
+    {% for key, label, values in filters %}{% if values %}
+    <div class="fgroup" data-group="{{ key }}"><span class="flabel">{{ label }}</span>
+      {% for v in values %}<button type="button" class="fchip" aria-pressed="false" data-value="{{ v }}">{{ v }}</button>{% endfor %}
+    </div>{% endif %}{% endfor %}
+    <div class="fstatus"><span id="count" aria-live="polite">{{ missions | length }} missions</span><button type="button" id="clear" hidden>Clear filters</button></div>
+  </section>
+  <nav class="jump" aria-label="Jump to a section">{% for sec in sections %}<a href="#{{ sec.key }}">{{ sec.heading }}<span>{{ sec.missions | length }}</span></a>{% endfor %}</nav>
+</div>
+<main>
+{% for sec in sections %}{% set group = sec.missions %}{% set cat = sec.category %}
+<section class="cat" id="{{ sec.key }}" data-cat="{{ sec.key }}" aria-labelledby="h-{{ sec.key }}">
+  <div class="wrap cat-head"><h2 id="h-{{ sec.key }}">{{ sec.heading }} <span class="cat-count" data-total="{{ group | length }}">{{ group | length }}</span></h2><p>{{ sec.blurb }}{% if sec.link %} <a href="{{ sec.link }}">Campaign page</a>{% endif %}</p></div>
+  <div class="wrap grid">
+{% for m in group %}
+  <article class="m" data-campaign="{{ m.campaign }}" data-aircraft="{{ m.aircraft_type }}" data-role="{{ m.role }}" data-features="{{ m.features | join('|') }}"
+           data-text="{{ [m.campaign, m.operation, m.title, m.theater, m.aircraft, m.role, m.hook, m.teaser, m.objective] | join(' ') | lower }}">
+    <div class="eyebrow">{{ m.chapter_no or m.eyebrow }}</div>
+    <h2><a href="{{ m.id }}/briefing.html">{{ m.title }}</a></h2>
+    <div class="meta"><span class="chip role">{{ m.role }}</span><span class="chip">{{ m.aircraft }}</span><span class="chip">{{ m.date }} · {{ m.start_time }}L</span>{% for f in m.features %}<span class="chip">{{ f }}</span>{% endfor %}</div>
+    <p class="obj"><b>Primary:</b> {{ m.objective }}</p>
+    <div class="actions">
+      <a class="primary" href="{{ m.id }}/briefing.html">Briefing</a>
+      <a href="{{ m.id }}/slides.html">Slides</a>
+      {% if m.kneeboards %}<a href="{{ m.id }}/kneeboard/{{ m.kneeboards[0] }}">Kneeboard</a>{% endif %}
+      {% if cat == "training" %}<a href="{{ m.id }}/director.html" title="Every trigger, radio call and how each grade is decided">Instructor</a>
+      {% else %}<a href="{{ m.id }}/director.html" title="Hidden units, random rolls, triggers and outcomes: spoilers">Director (spoilers)</a>{% endif %}
+      <a href="{{ m.miz }}" download>.miz</a>
+    </div>
+  </article>
+{% endfor %}
+  </div>
+</section>
+{% endfor %}
+</main>
+<p class="wrap empty" id="empty" hidden>No missions match. Try removing a filter.</p>
+<script>
+// Within Campaign, Aircraft and Mission type, any selected value matches; selected Features must all be present.
+const cards = [...document.querySelectorAll(".m")];
+const q = document.getElementById("q"), count = document.getElementById("count"),
+      clear = document.getElementById("clear"), empty = document.getElementById("empty");
+const sel = { campaign: new Set(), aircraft: new Set(), role: new Set(), features: new Set() };
+function apply() {
+  const text = q.value.trim().toLowerCase();
+  let n = 0;
+  cards.forEach(c => {
+    const has = k => c.dataset[k] ? c.dataset[k].split("|") : [];
+    const ok = (!sel.campaign.size || sel.campaign.has(c.dataset.campaign))
+      && (!sel.aircraft.size || has("aircraft").some(v => sel.aircraft.has(v)))
+      && (!sel.role.size || has("role").some(v => sel.role.has(v)))
+      && [...sel.features].every(v => has("features").includes(v))
+      && (!text || text.split(/\s+/).every(w => c.dataset.text.includes(w)));
+    c.hidden = !ok;
+    if (ok) n++;
+  });
+  document.querySelectorAll(".cat").forEach(sec => {
+    const shown = sec.querySelectorAll(".m:not([hidden])").length, badge = sec.querySelector(".cat-count");
+    sec.hidden = shown === 0;
+    badge.textContent = shown == badge.dataset.total ? shown : `${shown} of ${badge.dataset.total}`;
+  });
+  count.textContent = n === cards.length ? `${n} missions` : `${n} of ${cards.length} missions`;
+  clear.hidden = !(text || Object.values(sel).some(s => s.size));
+  empty.hidden = n > 0;
+}
+document.querySelectorAll(".fgroup").forEach(g => g.addEventListener("click", e => {
+  const b = e.target.closest(".fchip");
+  if (!b) return;
+  const s = sel[g.dataset.group], on = b.getAttribute("aria-pressed") !== "true";
+  b.setAttribute("aria-pressed", on);
+  on ? s.add(b.dataset.value) : s.delete(b.dataset.value);
+  apply();
+}));
+q.addEventListener("input", apply);
+clear.addEventListener("click", () => {
+  q.value = "";
+  Object.values(sel).forEach(s => s.clear());
+  document.querySelectorAll(".fchip").forEach(b => b.setAttribute("aria-pressed", "false"));
+  apply();
+});
+</script>
+</body>
+</html>
