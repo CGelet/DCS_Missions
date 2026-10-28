@@ -2,8 +2,8 @@ campaign =
 {
     ["name"] = "IRON GATE",
     ["name_EN"] = "IRON GATE",
-    ["description"] = "Ten days in the Liakhvi valley, April 2026\n\nAn armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it.",
-    ["description_EN"] = "Ten days in the Liakhvi valley, April 2026\n\nAn armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it.",
+    ["description"] = "Ten days in the Liakhvi valley, April 2038\n\nAn armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it.",
+    ["description_EN"] = "Ten days in the Liakhvi valley, April 2038\n\nAn armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it.",
     ["necessaryUnits"] = {
         ["FA-18C_hornet"] = "FA-18C_hornet",
     },

@@ -16,7 +16,7 @@ meta:
   category: training
   theater: caucasus
   role: "Air-to-air (BFM)"   # mission type: the hangar filters on it
-  date: 2026-02-13
+  date: 2038-02-13
   start_time: "14:00"
   weather:
     temperature_c: 7

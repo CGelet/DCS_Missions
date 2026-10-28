@@ -15,7 +15,7 @@ meta:
   subtitle: "RESCAP for Uzi 2-2"
   theater: caucasus
   role: "RESCAP"   # mission type: the hangar filters on it
-  date: 2026-03-24
+  date: 2038-03-24
   start_time: "09:10"
   weather:
     temperature_c: 11

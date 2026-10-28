@@ -168,7 +168,7 @@ svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace;
     <div class="eyebrow">Training event BLACK DECK · Det work-ups, event CQ-2</div>
     <h1>Night Carrier Qualification</h1>
     <div class="meta-row">
-      <span>Date <b class="mono">2026-01-16</b></span>
+      <span>Date <b class="mono">2038-01-16</b></span>
       <span>Step <b class="mono">18:45L</b></span>
       <span>Theater <b>Caucasus</b></span>
       <span>Flight <b>Ford 1 · 1× F/A-18C Hornet</b></span>
@@ -274,7 +274,7 @@ trap. Tank on TEXACO first if you&#39;re below 6,000 lb.</p>
   <div class="wrap">
     <h2>Briefing</h2>
     <div class="cards">
-      <div class="card"><h3>Event overview</h3><p>Night, no moon, broken cloud at 3,500 ft. You start cold on the Stennis, 35 km west of Batumi,
+      <div class="card"><h3>Event overview</h3><p>Night, broken cloud at 3,500 ft hiding a bright moon: dark below the layer. You start cold on the Stennis, 35 km west of Batumi,
 steaming east into a 10 kt land breeze at 15 kt (BRC 080). Launch, depart to SPLIT, then fly to
 MARSHAL, 21 nm astern on the 260 radial at 6,000 ft. Push, and fly the Case III approach to two
 traps with a launch between them. TEXACO orbits overhead at 6,000 ft.</p></div>
@@ -287,7 +287,7 @@ traps with a launch between them. TEXACO orbits overhead at 6,000 ft.</p></div>
       <div class="card kio"><h3>Knock-it-off and terminate</h3><p>Vertigo, a bad ICLS, or anything that doesn&#39;t feel right on a dark night: call &#34;Knock it off&#34;,
 climb straight ahead to 2,000 ft, level the wings on the instruments and tell Mother. You&#39;ll be
 sent back to marshal. Nobody gets graded for pressing on.</p></div>
-      <div class="card"><h3>Special subjects</h3><ul class="rules"><li>The black hole: there&#39;s no horizon tonight. The boat&#39;s lights are the only thing outside.</li><li>ICLS needles versus the ball: fly the needles until the ball is in sight, then the ball.</li><li>Night tanking on the S-3B: lights, slow closure, and no stabbing at the basket.</li><li>Fatigue after a bolter: the second pass is where people get low. Fly the numbers again.</li></ul></div>
+      <div class="card"><h3>Special subjects</h3><ul class="rules"><li>The black hole: under the layer there&#39;s no horizon tonight. The boat&#39;s lights are the only thing outside.</li><li>ICLS needles versus the ball: fly the needles until the ball is in sight, then the ball.</li><li>Night tanking on the S-3B: lights, slow closure, and no stabbing at the basket.</li><li>Fatigue after a bolter: the second pass is where people get low. Fly the numbers again.</li></ul></div>
       <div class="card wide"><h3>Grade sheet</h3>
         <div class="table-scroll"><table>
           <thead><tr><th>#</th><th>Item</th><th>Standard to pass</th></tr></thead>
@@ -303,7 +303,7 @@ sent back to marshal. Nobody gets graded for pressing on.</p></div>
           <tbody><tr>
             <td><span class="tag hazard">hazard</span></td><td>No horizon</td>
             
-            <td class="num">5 km</td><td>Moonless and overcast above. Over the sea there is nothing outside but the ship&#39;s lights.</td>
+            <td class="num">5 km</td><td>The moon is above the cloud. Under the layer, over the sea, there is nothing outside but the ship&#39;s lights.</td>
           </tr></tbody>
         </table></div>
       </div>
@@ -330,7 +330,7 @@ sent back to marshal. Nobody gets graded for pressing on.</p></div>
           <dt>Wind</dt><dd class="mono">080° / 10 kt</dd>
           <dt>Temp</dt><dd class="mono">5 °C</dd>
           <dt>QNH</dt><dd class="mono">30.0 inHg</dd>
-          <dt>Clouds</dt><dd>Broken 3,500 ft, no moon</dd>
+          <dt>Clouds</dt><dd>Broken 3,500 ft, a bright moon above the cloud</dd>
           <dt>Visibility</dt><dd>15 km</dd>
         </dl>
       </div>
@@ -374,7 +374,7 @@ sent back to marshal. Nobody gets graded for pressing on.</p></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-const D = {"route": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "kind": "base", "alt_ft": 0, "ship": true}, {"name": "SPLIT", "lat": 41.85, "lon": 40.95, "alt_ft": 6000, "kts": 300, "eta": "19:05", "zone_km": 4, "kind": "wp", "num": 1}, {"name": "MARSHAL", "lat": 41.71, "lon": 40.6, "alt_ft": 6000, "kts": 250, "eta": "19:14", "zone_km": 4, "kind": "wp", "num": 2}, {"name": "TEN MILE", "lat": 41.74, "lon": 40.84, "alt_ft": 1200, "kts": 250, "eta": "19:17", "zone_km": 2.5, "timing": {"from": "MARSHAL", "seconds": 180, "window_s": 30, "flag": 61}, "kind": "wp", "num": 3}, {"name": "Stennis Group (recovery)", "lat": 41.79, "lon": 41.24, "kind": "base", "alt_ft": 0}], "target": {"name": "The Stennis landing area, at night", "lat": 41.77, "lon": 41.07, "description": "The angled deck's centreline lights, the drop lights under the ramp, and the ball.", "dmpi": "Target the 3-wire. Fly the needles until the ball is in sight."}, "threats": [{"name": "No horizon", "kind": "hazard", "lat": 41.75, "lon": 40.9, "range_km": 5, "notes": "Moonless and overcast above. Over the sea there is nothing outside but the ship's lights."}], "support": [{"kind": "tanker", "callsign": "TEXACO 1", "aircraft": "S_3B_Tanker", "coalition": "blue", "lat": 41.78, "lon": 41.0, "alt_ft": 6000, "heading": 80, "leg_nm": 10, "kts": 250, "freq_mhz": 253.0, "tacan": {"channel": "60Y", "callsign": "TEX"}, "track_to": {"lat": 41.80897265090443, "lon": 41.22034352879611}}], "ships": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "route": [{"lat": 41.77, "lon": 41.07}, {"lat": 41.79, "lon": 41.24}], "coalition": "blue"}], "airfields": [], "phases": [{"phase": "Night Launch", "waypoints": ["SPLIT"]}, {"phase": "Marshal and Push", "waypoints": ["MARSHAL", "TEN MILE"]}, {"phase": "Trap 1", "waypoints": []}, {"phase": "Trap 2", "waypoints": []}]};
+const D = {"route": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "kind": "base", "alt_ft": 0, "ship": true}, {"name": "SPLIT", "lat": 41.85, "lon": 40.95, "alt_ft": 6000, "kts": 300, "eta": "19:05", "zone_km": 4, "kind": "wp", "num": 1}, {"name": "MARSHAL", "lat": 41.71, "lon": 40.6, "alt_ft": 6000, "kts": 250, "eta": "19:14", "zone_km": 4, "kind": "wp", "num": 2}, {"name": "TEN MILE", "lat": 41.74, "lon": 40.84, "alt_ft": 1200, "kts": 250, "eta": "19:17", "zone_km": 2.5, "timing": {"from": "MARSHAL", "seconds": 180, "window_s": 30, "flag": 61}, "kind": "wp", "num": 3}, {"name": "Stennis Group (recovery)", "lat": 41.79, "lon": 41.24, "kind": "base", "alt_ft": 0}], "target": {"name": "The Stennis landing area, at night", "lat": 41.77, "lon": 41.07, "description": "The angled deck's centreline lights, the drop lights under the ramp, and the ball.", "dmpi": "Target the 3-wire. Fly the needles until the ball is in sight."}, "threats": [{"name": "No horizon", "kind": "hazard", "lat": 41.75, "lon": 40.9, "range_km": 5, "notes": "The moon is above the cloud. Under the layer, over the sea, there is nothing outside but the ship's lights."}], "support": [{"kind": "tanker", "callsign": "TEXACO 1", "aircraft": "S_3B_Tanker", "coalition": "blue", "lat": 41.78, "lon": 41.0, "alt_ft": 6000, "heading": 80, "leg_nm": 10, "kts": 250, "freq_mhz": 253.0, "tacan": {"channel": "60Y", "callsign": "TEX"}, "track_to": {"lat": 41.80897265090443, "lon": 41.22034352879611}}], "ships": [{"name": "Stennis Group", "lat": 41.75, "lon": 40.9, "route": [{"lat": 41.77, "lon": 41.07}, {"lat": 41.79, "lon": 41.24}], "coalition": "blue"}], "airfields": [], "phases": [{"phase": "Night Launch", "waypoints": ["SPLIT"]}, {"phase": "Marshal and Push", "waypoints": ["MARSHAL", "TEN MILE"]}, {"phase": "Trap 1", "waypoints": []}, {"phase": "Trap 2", "waypoints": []}]};
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 // Theme toggle (remembered per viewer when storage is available)

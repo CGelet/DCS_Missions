@@ -11,7 +11,7 @@ meta:
   subtitle: "Strike on the Bzyb River Bridge"
   theater: caucasus
   role: "Strike"   # mission type: the hangar filters on it
-  date: 2026-03-14
+  date: 2038-03-14
   start_time: "06:40"        # local
   weather:
     temperature_c: 9

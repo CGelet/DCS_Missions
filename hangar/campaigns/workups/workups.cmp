@@ -2,8 +2,8 @@ campaign =
 {
     ["name"] = "WORK-UPS",
     ["name_EN"] = "WORK-UPS",
-    ["description"] = "Hornet detachment syllabus, January 2026\n\nTen Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride.",
-    ["description_EN"] = "Hornet detachment syllabus, January 2026\n\nTen Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride.",
+    ["description"] = "Hornet detachment syllabus, January 2038\n\nTen Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride.",
+    ["description_EN"] = "Hornet detachment syllabus, January 2038\n\nTen Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride.",
     ["necessaryUnits"] = {
         ["FA-18C_hornet"] = "FA-18C_hornet",
     },

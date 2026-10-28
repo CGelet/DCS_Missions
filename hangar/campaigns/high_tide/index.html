@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>High Tide Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+.chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.chap { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); }
+.chap .n { font: 600 34px/1 "IBM Plex Mono", monospace; color: var(--accent); }
+.chap h3 { font-size: 20px; margin: 4px 0 6px; }
+.chap .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chap p { margin: 0 0 10px; }
+.chap .hook { font-style: italic; border-left: 3px solid var(--accent); padding-left: 12px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); }
+.links a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.install ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+@media (max-width: 640px) { .chap { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><a href="../../index.html" style="text-decoration:none">Hangar</a> · Campaign · 5 chapters</div>
+    <h1>HIGH TIDE</h1>
+    <div class="meta-row"><span><b>Ten days off the Abkhaz coast, May 2038</b></span><span>2038-05-11 → 2038-05-20</span><span>USS John C. Stennis, eastern Black Sea</span></div>
+    <blockquote class="hook">Landing ships are gathering at Ochamchire, forty minutes from the flat Georgian beaches between
+Anaklia and Poti. From the Stennis, Springfield flight counts them, clears the approaches, blinds the
+battery that guards them, hits them alongside the quay, and stops what sails.</blockquote>
+  </div>
+</header>
+<main>
+<section id="story"><div class="wrap">
+  <h2>The story</h2>
+  <div class="story">
+    <div><p>A month after the Roki tunnel, the war moved to the coast. The northern brigade had failed to reach
+Gori by land, and somebody decided to try the sea. Through the first week of May, fishermen out of
+Anaklia watched grey ships with bow doors come into Ochamchire&#39;s small harbour and not leave.</p><p>The Stennis came back into the Black Sea on 8 May. Over ten days its air wing does what a carrier
+is for: it finds out what&#39;s there, takes away the defences one at a time, and makes sure that when
+the landing force finally sails, it doesn&#39;t arrive.</p></div>
+    <div><h3>Cast</h3>
+      <ul class="cast"><li><b>CAPT Lena &#34;MERLIN&#34; Ostrowski</b><span>Carrier Air Wing commander (CAG), aboard the Stennis</span></li><li><b>LCDR Sam &#34;PRISM&#34; Haddad</b><span>Strike group intelligence officer</span></li><li><b>CDR Owen Pike</b><span>Captain, USS Ross</span></li><li><b>DARKSTAR</b><span>E-2C Hawkeye from the Stennis</span></li><li><b>Springfield 1-1 / 1-2</b><span>You and your wingman</span></li></ul></div>
+  </div>
+</div></section>
+<section id="chapters"><div class="wrap">
+  <h2>Chapters</h2>
+  <ol class="chapters">
+  
+    <li class="chap"><div class="n">01</div><div>
+      <div class="eyebrow">Operation HIGH TIDE</div>
+      <h3>Eyes on Ochamchire</h3>
+      <div class="meta"><span class="chip">Reconnaissance</span><span class="chip">2038-05-11 · 05:20L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+      <p class="hook">&#34;I don&#39;t need you to sink anything. I need you to count. And then I need you to come back so
+I can see what you counted.&#34; PRISM, 0430 brief</p>
+      <p>A month after the Roki tunnel, the war moved to the coast. Fishing boats out of Anaklia have been reporting grey ships at Ochamchire all week: big ones, with bow doors. Ochamchire&#39;s harbour is too small for a navy, but it isn&#39;t too small for landing ships, and the Georgian coast from Anaklia to Poti is flat, sandy and forty minutes away.</p>
+      <div class="links">
+        <a class="primary" href="../../ht_1_harbour/briefing.html">Briefing</a>
+        <a href="../../ht_1_harbour/slides.html">Slide deck</a>
+        <a href="../../ht_1_harbour/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="01_ht_1_harbour.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">02</div><div>
+      <div class="eyebrow">Operation HIGH TIDE</div>
+      <h3>Minelayers in the Dark</h3>
+      <div class="meta"><span class="chip">Anti-ship</span><span class="chip">2038-05-13 · 22:10L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+      <p class="hook">&#34;Every mine they put in the water tonight is a week of minesweeping we don&#39;t have. Get there
+while they&#39;re still laying.&#34; MERLIN, launch brief</p>
+      <p>Springfield&#39;s tape showed landing ships at Ochamchire. Two nights later, Georgian fishermen coming home to Poti saw something worse: fast boats with no lights, running slowly in lines across the harbour approaches and dropping things off their sterns.</p>
+      <div class="links">
+        <a class="primary" href="../../ht_2_minelayers/briefing.html">Briefing</a>
+        <a href="../../ht_2_minelayers/slides.html">Slide deck</a>
+        <a href="../../ht_2_minelayers/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="02_ht_2_minelayers.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">03</div><div>
+      <div class="eyebrow">Operation HIGH TIDE</div>
+      <h3>Blind the SA-10</h3>
+      <div class="meta"><span class="chip">SEAD</span><span class="chip">2038-05-15 · 10:15L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
+      <p class="hook">&#34;It sees everything. That&#39;s the problem and the plan. Give it six targets that aren&#39;t there and
+watch it light up to find out which ones are.&#34; PRISM, SEAD brief</p>
+      <p>Poti&#39;s channels are open. The night after the minelayers, a Georgian Su-25 looking at the coast north of Anaklia saw a missile come up from the hills behind Ochamchire, from 60 km away. It missed, barely. ELINT confirmed it within the hour: an SA-10, the long-range S-300, moved in to cover the harbour.</p>
+      <div class="links">
+        <a class="primary" href="../../ht_3_sa10/briefing.html">Briefing</a>
+        <a href="../../ht_3_sa10/slides.html">Slide deck</a>
+        <a href="../../ht_3_sa10/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="03_ht_3_sa10.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">04</div><div>
+      <div class="eyebrow">Operation HIGH TIDE</div>
+      <h3>Ochamchire Back Door</h3>
+      <div class="meta"><span class="chip">Anti-ship</span><span class="chip">2038-05-17 · 05:40L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span><span class="chip">Low level</span></div>
+      <p class="hook">&#34;Their guns face the water. So we don&#39;t come from the water.&#34; MERLIN, strike brief</p>
+      <p>With the SA-10 blind, Ochamchire is reachable. PRISM&#39;s latest picture shows three landing ships alongside the quay now, loading vehicles day and night. Fishing boats report the harbour&#39;s guns and SAMs all point out to sea, because that&#39;s where everything has come from so far.</p>
+      <div class="links">
+        <a class="primary" href="../../ht_4_staging/briefing.html">Briefing</a>
+        <a href="../../ht_4_staging/slides.html">Slide deck</a>
+        <a href="../../ht_4_staging/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="04_ht_4_staging.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+    <li class="chap"><div class="n">05</div><div>
+      <div class="eyebrow">Operation HIGH TIDE</div>
+      <h3>Stop the Landing</h3>
+      <div class="meta"><span class="chip">Anti-ship</span><span class="chip">2038-05-20 · 04:50L</span><span class="chip">2× F/A-18C Hornet</span><span class="chip">Carrier</span><span class="chip">Air refuelling</span></div>
+      <p class="hook">&#34;If they get to the sand, it&#39;s an army&#39;s problem for a month. If they don&#39;t, it&#39;s ours for an
+hour. Make it ours.&#34; MERLIN, 0430 brief</p>
+      <p>At 0300, Ochamchire emptied. What was left of the landing force, the ship that survived the strike and one that came up from Sochi, sailed south in the dark with a corvette for escort. There&#39;s only one beach worth landing on: the long sand at Anaklia, forty kilometres away. At ten knots, they&#39;ll be on it at breakfast.</p>
+      <div class="links">
+        <a class="primary" href="../../ht_5_beachhead/briefing.html">Briefing</a>
+        <a href="../../ht_5_beachhead/slides.html">Slide deck</a>
+        <a href="../../ht_5_beachhead/director.html">Director&#39;s cut (spoilers)</a>
+        <a href="05_ht_5_beachhead.miz" download>.miz</a>
+      </div>
+    </div></li>
+  
+  </ol>
+</div></section>
+<section id="install" class="install"><div class="wrap">
+  <h2>Fly it as a DCS campaign</h2>
+  <ol>
+    <li>Copy this whole folder (<code>high_tide.cmp</code> and the numbered <code>.miz</code> files) into <code>Saved Games/DCS/Missions/Campaigns/</code>.</li>
+    <li>In DCS, open <b>Campaign</b> and pick <b>HIGH TIDE</b>.</li>
+    <li>Pass a chapter to unlock the next one. Fail it and DCS gives you the same chapter again.</li>
+  </ol>
+  <p>Each chapter also works on its own: open the <code>.miz</code> from the Mission menu.</p>
+</div></section>
+</main>
+<footer><div class="wrap">Generated from <code>campaigns/high_tide/campaign.yaml</code> and each chapter's <code>mission.yaml</code>.</div></footer>
+</body>
+</html>

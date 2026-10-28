@@ -14,7 +14,7 @@ meta:
   subtitle: "Through the Back Door"
   theater: caucasus
   role: "Strike"   # mission type: the hangar filters on it
-  date: 2026-03-22
+  date: 2038-03-22
   start_time: "10:30"
   weather:
     temperature_c: 8

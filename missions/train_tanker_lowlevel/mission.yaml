@@ -13,7 +13,7 @@ meta:
   category: training
   theater: caucasus
   role: "AAR & low level"   # mission type: the hangar filters on it
-  date: 2026-02-09
+  date: 2038-02-09
   start_time: "09:00"
   weather:
     temperature_c: 4

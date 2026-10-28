@@ -13,7 +13,7 @@ meta:
   subtitle: "Harpoon Strike off Gelendzhik"
   theater: caucasus
   role: "Anti-ship"   # mission type: the hangar filters on it
-  date: 2026-03-26
+  date: 2038-03-26
   start_time: "06:50"
   weather:
     temperature_c: 9

@@ -1,0 +1,299 @@
+# HIGH TIDE chapter 3: blind the SA-10. Source of truth; `python -m dcsmb build` renders hangar/ht_3_sa10/.
+#
+# Story device: make it look. The SA-10 won't radiate for a lone fighter it can see coming, so the
+# plan is decoys: TALDs from 20,000 ft, HARMs into the track radar when it lights up for them. The
+# sim rolls which of two hill sites the battery is using; 50% a Tor guards it. Low over the water,
+# pop at LAUNCH. Success is the 30N6 (Flap Lid) track radar destroyed: the battery is blind without it.
+# Both sites on high ground inland of Ochamchire, clear of the villages (OSM).
+
+meta:
+  id: ht_3_sa10
+  title: "Operation HIGH TIDE"
+  subtitle: "Blind the SA-10"
+  theater: caucasus
+  role: "SEAD"
+  date: 2038-05-15
+  start_time: "10:15"
+  weather:
+    temperature_c: 18
+    wind_from_deg: 240
+    wind_kts: 10
+    clouds: "Scattered 5,000 ft"
+    visibility: "25 km"
+    qnh_inhg: 29.99
+    cloud_preset: LightScattered1
+    cloud_base_ft: 5000
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "HIGH TIDE"
+  backstory: |
+    Poti's channels are open. The night after the minelayers, a Georgian Su-25 looking at the coast
+    north of Anaklia saw a missile come up from the hills behind Ochamchire, from 60 km away. It
+    missed, barely. ELINT confirmed it within the hour: an SA-10, the long-range S-300, moved in to
+    cover the harbour.
+
+    Nothing gets near Ochamchire until it's blind. The S-300 is patient: it won't radiate for a
+    lone jet it can see coming. So today, Springfield brings it something more interesting to look
+    at: a sky full of decoys.
+  characters:
+    - name: "CAPT Lena \"MERLIN\" Ostrowski"
+      role: "CAG, aboard the Stennis"
+    - name: "LCDR Sam \"PRISM\" Haddad"
+      role: "Strike group intelligence officer"
+    - name: "RIVET"
+      role: "Coalition ELINT aircraft"
+    - name: "DARKSTAR"
+      role: "E-2C Hawkeye"
+    - name: "Springfield 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets with TALDs and HARMs"
+  hook: |
+    "It sees everything. That's the problem and the plan. Give it six targets that aren't there and
+    watch it light up to find out which ones are." PRISM, SEAD brief
+  outcomes:
+    success: |
+      The SA-10's track radar takes two HARMs and stops radiating for good. Without it, the battery is
+      a field of very expensive launchers. The air over Ochamchire is open.
+    partial: |
+      The HARMs damage the battery but the track radar survives. It's off the air for a day while they
+      repair it, and the strike group has to move fast.
+    failure: |
+      The battery never takes the bait, or it shoots down the decoys and the HARMs miss. Ochamchire
+      stays out of reach, and the landing force keeps loading.
+
+situation: |
+  An SA-10 (S-300PS) battery is on high ground behind Ochamchire, covering the harbour and the coast
+  out to 75 km. ELINT has it at one of two hill sites. It radiates only briefly. Fly low over the water
+  to LAUNCH, pop to 20,000 ft, launch TALDs toward the harbour, and kill the track radar with HARMs
+  when it lights up for them. Expect point defence at the battery.
+
+objectives:
+  primary: "Destroy the SA-10's track radar."
+  secondary: "Launch the TALDs from LAUNCH so they arrive before you do."
+  tertiary: "Recover both aircraft aboard the Stennis."
+
+roe: |
+  Weapons free on air defence systems in Abkhazia. No release over Ochamchire town. Don't cross the
+  coast: everything is done from over the water.
+
+threats:
+  - name: "SA-10 battery (one of two sites)"
+    kind: sam
+    intel: confirmed
+    lat: 42.7300
+    lon: 41.5800
+    area_km: 8
+    range_km: 75
+    notes: "S-300PS. Search, track radar, launchers. Engages out to 75 km, high and low. It radiates only when it has to."
+  - name: "Point defence"
+    kind: sam
+    intel: possible
+    lat: 42.7300
+    lon: 41.5800
+    area_km: 8
+    range_km: 12
+    notes: "S-300s usually come with a Tor. It can shoot down HARMs."
+  - name: "Quay Osa"
+    kind: sam
+    intel: confirmed
+    lat: 42.7180
+    lon: 41.4720
+    range_km: 10
+    notes: "From Springfield's photo pass."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Springfield (inter-flight)", freq: "256.000 AM", radio: 1, channel: 1 }
+  - { name: "DARKSTAR (E-2C)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "TEXACO 1 (S-3B)", freq: "253.000 AM", radio: 1, channel: 3, notes: "TACAN 60Y" }
+  - { name: "Mother (Stennis)", freq: "127.500 AM", radio: 2, channel: 1, notes: "TACAN 74X, ICLS 1. Answers the ATC menu" }
+  - { name: "RIVET, MERLIN, PRISM", freq: "256.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+ships:
+  - name: "Stennis Group"
+    coalition: blue
+    type: [Stennis, TICONDEROG, USS_Arleigh_Burke_IIa]
+    lat: 42.1000
+    lon: 40.9000
+    heading: 240
+    speed_kts: 18
+    route:
+      - { lat: 42.0500, lon: 40.7500 }
+      - { lat: 42.0000, lon: 40.6000 }
+    tacan: { channel: "74X", callsign: "STN" }
+    icls: 1
+    freq_mhz: 127.5
+
+flights:
+  - callsign: "Springfield 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: "Stennis Group"
+    start: cold
+    radio1_mhz: 256.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_
+      3: BRU_42_with_3_x_ADM_141A_TALD
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: BRU_42_with_3_x_ADM_141A_TALD
+      8: AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× AGM-88C HARM, 6× ADM-141A TALD, 2× AIM-9X, 1× AIM-120C, 1× 330 gal tank"
+    bingo_lbs: 4500
+    joker_lbs: 6500
+    waypoints:
+      - { name: "LOW",      lat: 42.2500, lon: 40.9000, alt_ft: 500,   kts: 450, eta: "10:35", zone_km: 5 }
+      - { name: "LAUNCH",   lat: 42.5000, lon: 40.9500, alt_ft: 20000, kts: 420, eta: "10:40", action: sead, zone_km: 6 }
+      - { name: "SHOOT",    lat: 42.5500, lon: 41.0800, alt_ft: 22000, kts: 450, eta: "10:42", zone_km: 6 }
+      - { name: "OUT",      lat: 42.3000, lon: 40.8000, alt_ft: 20000, kts: 450, eta: "10:48", zone_km: 6 }
+    land: "Stennis Group"
+
+target:
+  name: "SA-10 track radar"
+  lat: 42.7300
+  lon: 41.5800
+  area_km: 8
+  groups: ["Flap Lid North", "Flap Lid East"]
+  description: "The 30N6 (Flap Lid) track-and-engagement radar on its mast, beside the battery's launchers. Without it, nothing fires."
+  dmpi: "HARM in pre-briefed mode against the RIVET position, or self-protect mode when it locks the TALDs."
+
+units:
+  # Ground truth. Pilots never see this section. One site spawns, track radar and battery together.
+  - name: "Flap Lid North"
+    coalition: red
+    # Hill north of Ochamchire on the Tkvarcheli road
+    type: [S_300PS_40B6M_tr]
+    lat: 42.7700
+    lon: 41.5600
+    heading: 240
+    late_activation: true
+  - name: "Battery North"
+    coalition: red
+    type: [S_300PS_64H6E_sr, S_300PS_54K6_cp, S_300PS_5P85C_ln, S_300PS_5P85C_ln]
+    lat: 42.7720
+    lon: 41.5640
+    heading: 240
+    late_activation: true
+  - name: "Flap Lid East"
+    coalition: red
+    # Ridge east of Ochamchire toward Gali
+    type: [S_300PS_40B6M_tr]
+    lat: 42.6900
+    lon: 41.6100
+    heading: 260
+    late_activation: true
+  - name: "Battery East"
+    coalition: red
+    type: [S_300PS_64H6E_sr, S_300PS_54K6_cp, S_300PS_5P85C_ln, S_300PS_5P85C_ln]
+    lat: 42.6920
+    lon: 41.6140
+    heading: 260
+    late_activation: true
+  - name: "Battery Tor"
+    coalition: red
+    type: [Tor_9A331]
+    lat: 42.7300
+    lon: 41.5300
+    heading: 250
+    late_activation: true
+  - name: "Quay Osa"
+    coalition: red
+    type: [Osa_9A33_ln]
+    lat: 42.7180
+    lon: 41.4720
+    heading: 220
+
+support:
+  - kind: awacs
+    callsign: "DARKSTAR"
+    aircraft: E_2C
+    coalition: blue
+    lat: 42.0000
+    lon: 40.7000
+    alt_ft: 25000
+    heading: 240
+    leg_nm: 25
+    freq_mhz: 251.0
+  - kind: tanker
+    callsign: "TEXACO 1"
+    aircraft: S_3B_Tanker
+    coalition: blue
+    lat: 42.0800
+    lon: 40.8500
+    alt_ft: 8000
+    heading: 240
+    leg_nm: 15
+    kts: 260
+    freq_mhz: 253.0
+    tacan: { channel: "60Y", callsign: "TEX" }
+
+variants:
+  - name: "Battery site"
+    options:
+      - label: "North, on the hill above the Tkvarcheli road"
+        activate: ["Flap Lid North", "Battery North"]
+        when: { player_in_zone: "LAUNCH" }
+        message: "RIVET: Springfield, Rivet. Big Bird search radar up, bearing from LAUNCH zero-seven-five. North site. It's looking at your decoys."
+        seconds: 20
+      - label: "East, on the ridge toward Gali"
+        activate: ["Flap Lid East", "Battery East"]
+        when: { player_in_zone: "LAUNCH" }
+        message: "RIVET: Springfield, Rivet. Big Bird search radar up, bearing from LAUNCH zero-eight-five. East site. It's looking at your decoys."
+        seconds: 20
+
+storyboard:
+  - phase: "Launch"
+    time: "10:15"
+    waypoints: ["LOW"]
+    brief: |
+      Cold start on the Stennis. Launch and go straight down to 500 ft over the water heading north.
+      Below the S-300's horizon until you pop.
+    script: "MERLIN checks in. The battery site is chosen at LAUNCH. 50%: a Tor guards it."
+    triggers:
+      - when: { time_after: 10 }
+        message: "MERLIN: Springfield, Merlin. Stay low until LAUNCH. Make it look at the decoys, not at you."
+        seconds: 15
+      - when: { time_after: 5 }
+        chance: 50
+        activate: ["Battery Tor"]
+
+  - phase: "Pop and Decoy"
+    time: "10:40"
+    waypoints: ["LAUNCH"]
+    notes: "Ask the room: the decoys are away and RIVET hasn't called. How long do you wait before the HARMs?"
+    brief: |
+      Pop to 20,000 ft at LAUNCH and release all six TALDs toward the harbour. RIVET will call the
+      search radar the moment it lights up. That tells you which site.
+    script: "The rolled site spawns at LAUNCH with RIVET's call (see variants)."
+    trigger:
+      when: { player_in_zone: "LAUNCH" }
+      message: "DARKSTAR: Springfield, Darkstar. Picture clean. Gudauta's quiet."
+      seconds: 10
+
+  - phase: "Shoot"
+    time: "10:42"
+    waypoints: ["SHOOT"]
+    brief: |
+      Turn toward SHOOT and fire both HARMs at the track radar while it's busy with the decoys. Then
+      turn hard west and dive for the water.
+    script: "Track radar destroyed: success (flag 10)."
+    trigger:
+      when: { target_destroyed: true }
+      set_flag: 10
+      message: "RIVET: Springfield, Rivet. Flap Lid's off the air. It's not coming back. The battery's blind."
+      seconds: 20
+
+  - phase: "Home"
+    time: "10:48"
+    waypoints: ["OUT"]
+    brief: |
+      Out to sea, climb, and recover aboard the Stennis.
+    script: "MERLIN's closing call."
+    trigger:
+      when: { player_in_zone: "OUT" }
+      message: "MERLIN: Springfield, Merlin. Copy feet wet. Come home."
+      seconds: 15

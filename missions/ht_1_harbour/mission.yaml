@@ -1,0 +1,297 @@
+# HIGH TIDE chapter 1: eyes on Ochamchire. Source of truth; `python -m dcsmb build` renders hangar/ht_1_harbour/.
+#
+# Story device: a recce where the answer matters more than the shooting. Fly over the harbour low
+# enough for the pod to count hulls, and get home with the tape. The sim rolls where the landing ships
+# are (alongside in the harbour, or already out at the anchorage off the Kodori mouth), and 40% that
+# Gudauta's MiG-29s come up while you're there. Success is the photo pass plus a trap.
+# Harbour, anchorage and carrier positions checked as open water against OSM (Nominatim).
+
+meta:
+  id: ht_1_harbour
+  title: "Operation HIGH TIDE"
+  subtitle: "Eyes on Ochamchire"
+  theater: caucasus
+  role: "Reconnaissance"
+  date: 2038-05-11
+  start_time: "05:20"
+  weather:
+    temperature_c: 15
+    wind_from_deg: 30
+    wind_kts: 8
+    clouds: "Few at 3,000 ft, haze on the coast"
+    visibility: "12 km at dawn"
+    qnh_inhg: 29.95
+  blue_country: USA
+  red_country: Russia
+
+narrative:
+  operation: "HIGH TIDE"
+  backstory: |
+    A month after the Roki tunnel, the war moved to the coast. Fishing boats out of Anaklia have been
+    reporting grey ships at Ochamchire all week: big ones, with bow doors. Ochamchire's harbour is
+    too small for a navy, but it isn't too small for landing ships, and the Georgian coast from Anaklia
+    to Poti is flat, sandy and forty minutes away.
+
+    The Stennis came back into the Black Sea three days ago. Before anyone plans anything, the
+    strike group needs to know what is in that harbour. Nobody has a picture newer than a week. Today,
+    Springfield flight gets one.
+  characters:
+    - name: "CAPT Lena \"MERLIN\" Ostrowski"
+      role: "Carrier Air Wing commander (CAG), aboard the Stennis"
+    - name: "LCDR Sam \"PRISM\" Haddad"
+      role: "Strike group intelligence officer"
+    - name: "DARKSTAR"
+      role: "E-2C Hawkeye from the Stennis"
+    - name: "Springfield 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets"
+  hook: |
+    "I don't need you to sink anything. I need you to count. And then I need you to come back so
+    I can see what you counted." PRISM, 0430 brief
+  outcomes:
+    success: |
+      Springfield's tape is on PRISM's screen by 0700. Four landing ships, two patrol boats and a
+      lot of trucks on the quay. The strike group stops wondering and starts planning.
+    partial: |
+      The tape comes back, but the pass was high and fast and the haze ate half of it. PRISM counts
+      "at least two" landing ships. The planning starts on a guess.
+    failure: |
+      Nothing usable comes back. The strike group goes into the next week blind, and the landing
+      force gets another week to get ready.
+
+situation: |
+  Ochamchire, in red-held Abkhazia, 120 km north of the carrier. Fishing boats report landing ships in
+  the harbour this week; nobody has seen them from the air. The harbour is small and shallow, with a
+  quay along its north side; the Kodori river mouth and its anchorage are 25 km up the coast to the northwest. Expect point
+  air defence at the harbour and a patrol boat. Gudauta has MiG-29s on alert, 90 km northwest.
+
+objectives:
+  primary: "Fly the photo pass over Ochamchire harbour below 5,000 ft and bring the tape home."
+  secondary: "Get a look at the anchorage off the Kodori mouth on the way out."
+  tertiary: "Recover both aircraft aboard the Stennis."
+
+roe: |
+  Self-defence only. Weapons free on anything that engages you, and on aircraft DARKSTAR declares
+  hostile. No strikes on the harbour today: we're looking, not shooting.
+
+threats:
+  - name: "Harbour air defence"
+    kind: sam
+    intel: suspected
+    lat: 42.7150
+    lon: 41.4700
+    area_km: 3
+    range_km: 10
+    notes: "Something short-range will be guarding the quay. An SA-8 was seen there last year."
+  - name: "Patrol boat"
+    kind: aaa
+    intel: possible
+    lat: 42.7000
+    lon: 41.4300
+    area_km: 5
+    range_km: 4
+    notes: "Grisha-class corvette or smaller. Guns and SA-N-4."
+  - name: "MiG-29s (Gudauta)"
+    kind: air
+    intel: possible
+    lat: 43.1143
+    lon: 40.5697
+    range_km: 0
+    notes: "Alert pair. DARKSTAR will call them if they launch."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Springfield (inter-flight)", freq: "256.000 AM", radio: 1, channel: 1 }
+  - { name: "DARKSTAR (E-2C)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "TEXACO 1 (S-3B)", freq: "253.000 AM", radio: 1, channel: 3, notes: "TACAN 60Y" }
+  - { name: "Mother (Stennis)", freq: "127.500 AM", radio: 2, channel: 1, notes: "TACAN 74X, ICLS 1. Answers the ATC menu" }
+  - { name: "MERLIN, PRISM", freq: "256.000 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+ships:
+  - name: "Stennis Group"
+    coalition: blue
+    type: [Stennis, TICONDEROG, USS_Arleigh_Burke_IIa]
+    lat: 41.8500
+    lon: 41.1000
+    heading: 30
+    speed_kts: 18
+    route:
+      - { lat: 41.9500, lon: 41.1900 }
+      - { lat: 42.0500, lon: 41.2800 }
+    tacan: { channel: "74X", callsign: "STN" }
+    icls: 1
+    freq_mhz: 127.5
+  # Red: director only
+  - name: "Harbour Patrol"
+    coalition: red
+    type: [ALBATROS]
+    lat: 42.7000
+    lon: 41.4200
+    heading: 300
+    speed_kts: 6
+    route:
+      - { lat: 42.7400, lon: 41.3600 }
+      - { lat: 42.7000, lon: 41.4200 }
+  - name: "Landing Ships Alongside"
+    coalition: red
+    type: [BDK_775, BDK_775]
+    lat: 42.7080
+    lon: 41.4520
+    heading: 120
+    late_activation: true
+  - name: "Landing Ships Anchorage"
+    coalition: red
+    type: [BDK_775, BDK_775]
+    lat: 42.7900
+    lon: 41.1200
+    heading: 200
+    late_activation: true
+
+flights:
+  - callsign: "Springfield 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: "Stennis Group"
+    start: cold
+    radio1_mhz: 256.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: LAU_115_2_LAU_127_AIM_120C
+      3: FPU_8A_Fuel_Tank_330_gallons
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: FPU_8A_Fuel_Tank_330_gallons
+      8: LAU_115_2_LAU_127_AIM_120C
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "5× AIM-120C, 2× AIM-9X, ATFLIR, 2× 330 gal tanks, 578 rounds 20 mm"
+    bingo_lbs: 4500
+    joker_lbs: 6500
+    waypoints:
+      - { name: "MARSH",     lat: 42.2000, lon: 41.1500, alt_ft: 20000, kts: 420, eta: "05:42", zone_km: 5 }
+      - { name: "DESCEND",   lat: 42.5500, lon: 41.2000, alt_ft: 3000,  kts: 450, eta: "05:48", zone_km: 5 }
+      - { name: "PHOTO",     lat: 42.7100, lon: 41.4550, alt_ft: 3000,  kts: 480, eta: "05:51", zone_km: 1.5 }
+      - { name: "KODORI",    lat: 42.7900, lon: 41.1200, alt_ft: 4000,  kts: 480, eta: "05:54", zone_km: 2.5 }
+      - { name: "FEET WET",  lat: 42.5500, lon: 40.9500, alt_ft: 20000, kts: 450, eta: "05:58", zone_km: 6 }
+    land: "Stennis Group"
+
+target:
+  name: "Ochamchire harbour"
+  lat: 42.7100
+  lon: 41.4550
+  zone_m: 50
+  description: "A small harbour with a quay along its north side. Count hulls, bow doors, and vehicles on the quay."
+  dmpi: "ATFLIR recording from 6 nm out, wide field of view on the quay, through the overflight."
+
+zones:
+  - { name: "PHOTO LOW", lat: 42.7100, lon: 41.4550, radius_km: 1.5 }
+
+units:
+  # Ground truth. Pilots never see this section.
+  - name: "Quay Osa"
+    coalition: red
+    type: [Osa_9A33_ln]
+    lat: 42.7180
+    lon: 41.4720
+    heading: 220
+  - name: "Quay Guns"
+    coalition: red
+    type: [ZU_23_Emplacement, ZU_23_Emplacement]
+    lat: 42.7130
+    lon: 41.4650
+    heading: 220
+
+support:
+  - kind: awacs
+    callsign: "DARKSTAR"
+    aircraft: E_2C
+    coalition: blue
+    lat: 42.0000
+    lon: 40.9000
+    alt_ft: 25000
+    heading: 30
+    leg_nm: 25
+    freq_mhz: 251.0
+  - kind: tanker
+    callsign: "TEXACO 1"
+    aircraft: S_3B_Tanker
+    coalition: blue
+    lat: 41.9000
+    lon: 41.1200
+    alt_ft: 8000
+    heading: 30
+    leg_nm: 15
+    kts: 260
+    freq_mhz: 253.0
+    tacan: { channel: "60Y", callsign: "TEX" }
+  # Red: director only
+  - kind: intercept
+    callsign: "Gudauta Alert"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    base: Gudauta
+    late_activation: true
+
+variants:
+  - name: "Where the landing ships are"
+    options:
+      - label: "Alongside the quay in the harbour"
+        activate: ["Landing Ships Alongside"]
+        when: { time_after: 5 }
+      - label: "Out at the anchorage off the Kodori mouth"
+        activate: ["Landing Ships Anchorage"]
+        when: { time_after: 5 }
+
+storyboard:
+  - phase: "Launch"
+    time: "05:20"
+    waypoints: ["MARSH"]
+    brief: |
+      Cold start on the Stennis at dawn. Launch, join at MARSH, and climb north to 20,000 ft. ATFLIR
+      recording on before you descend.
+    script: "Where the landing ships are is rolled at start (see variants). MERLIN checks in."
+    trigger:
+      when: { time_after: 10 }
+      message: "MERLIN: Springfield, Merlin. Count everything, shoot nothing unless it shoots first, and come home."
+      seconds: 15
+
+  - phase: "The Run In"
+    time: "05:48"
+    waypoints: ["DESCEND"]
+    brief: |
+      Down to 3,000 ft over the water at DESCEND and accelerate. Approach the harbour from the
+      southwest out of the haze.
+    script: "40%: Gudauta's MiG-29s scramble when you start the descent."
+    trigger:
+      when: { player_in_zone: "DESCEND" }
+      chance: 40
+      activate: ["Gudauta Alert"]
+      message: "DARKSTAR: Springfield, Darkstar. Pop-up group, two contacts, departing Gudauta, northwest five-zero, hostile."
+      seconds: 20
+
+  - phase: "Photo Pass"
+    time: "05:51"
+    waypoints: ["PHOTO", "KODORI"]
+    notes: "Ask the room: the MiGs are up as you start the pass. Abort the photo or finish it?"
+    brief: |
+      One pass over the harbour below 5,000 ft at 480 kt, pod on the quay. Then north along the coast
+      to look at the anchorage off the Kodori mouth, and out to sea.
+    script: "Passing PHOTO LOW below 5,000 ft logs the photo (flag 30)."
+    trigger:
+      when: { player_in_zone: "PHOTO LOW", player_below_ft: 5000 }
+      set_flag: 30
+      message: "PRISM: Springfield, Prism. Copy photo pass complete. Get that tape home."
+      seconds: 15
+
+  - phase: "Home"
+    time: "05:58"
+    waypoints: ["FEET WET"]
+    brief: |
+      Climb out over the water to 20,000 ft and recover aboard the Stennis. TEXACO is overhead if
+      you're short.
+    script: "On deck after the photo pass completes the mission (flag 10)."
+    trigger:
+      when: { player_below_ft: 150, player_slower_kts: 40, flag: 30 }
+      set_flag: 10
+      message: "PRISM: Springfield, Prism. Tape's coming down to the shop. Thank you."
+      seconds: 15

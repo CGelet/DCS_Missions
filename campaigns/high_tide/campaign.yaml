@@ -1,0 +1,48 @@
+# HIGH TIDE: the amphibious threat on the coast. Chapter order lives here and nowhere else.
+# `previously` is shown on that chapter's brief and deck: briefed facts only, never director-side truth.
+id: high_tide
+title: "HIGH TIDE"
+subtitle: "Ten days off the Abkhaz coast, May 2038"
+category: operational
+setting: "USS John C. Stennis, eastern Black Sea"
+premise: |
+  Landing ships are gathering at Ochamchire, forty minutes from the flat Georgian beaches between
+  Anaklia and Poti. From the Stennis, Springfield flight counts them, clears the approaches, blinds the
+  battery that guards them, hits them alongside the quay, and stops what sails.
+backstory: |
+  A month after the Roki tunnel, the war moved to the coast. The northern brigade had failed to reach
+  Gori by land, and somebody decided to try the sea. Through the first week of May, fishermen out of
+  Anaklia watched grey ships with bow doors come into Ochamchire's small harbour and not leave.
+
+  The Stennis came back into the Black Sea on 8 May. Over ten days its air wing does what a carrier
+  is for: it finds out what's there, takes away the defences one at a time, and makes sure that when
+  the landing force finally sails, it doesn't arrive.
+cast:
+  - name: "CAPT Lena \"MERLIN\" Ostrowski"
+    role: "Carrier Air Wing commander (CAG), aboard the Stennis"
+  - name: "LCDR Sam \"PRISM\" Haddad"
+    role: "Strike group intelligence officer"
+  - name: "CDR Owen Pike"
+    role: "Captain, USS Ross"
+  - name: "DARKSTAR"
+    role: "E-2C Hawkeye from the Stennis"
+  - name: "Springfield 1-1 / 1-2"
+    role: "You and your wingman"
+chapters:
+  - mission: ht_1_harbour
+  - mission: ht_2_minelayers
+    previously: |
+      Springfield's photo pass over Ochamchire brought home the count: landing ships and patrol boats in
+      a harbour too small for a navy, and vehicles waiting on the quay.
+  - mission: ht_3_sa10
+    previously: |
+      Three minelayers went down off Poti before they could finish a line. Georgia's biggest port is
+      still open.
+  - mission: ht_4_staging
+    previously: |
+      The SA-10 behind Ochamchire lost its track radar to Springfield's HARMs while it was busy with the
+      decoys. The battery is blind, and the harbour is within reach.
+  - mission: ht_5_beachhead
+    previously: |
+      Two of the three landing ships at the Ochamchire quay burned. What's left of the landing force
+      has to sail soon, or not at all.

@@ -15,18 +15,129 @@ Story arcs flown in order. Each campaign folder under `campaigns/` installs into
 
 | Campaign | Chapters | Dates | Premise |
 | --- | --- | --- | --- |
-| [IRON GATE](campaigns/iron_gate/README.md): Ten days in the Liakhvi valley, April 2026 | 5 | 2026-04-06 → 2026-04-16 | An armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it. |
-| [WORK-UPS](campaigns/workups/README.md): Hornet detachment syllabus, January 2026 | 5 | 2026-01-15 → 2026-01-30 | Ten Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride. |
+| [HIGH TIDE](campaigns/high_tide/README.md): Ten days off the Abkhaz coast, May 2038 | 5 | 2038-05-11 → 2038-05-20 | Landing ships are gathering at Ochamchire, forty minutes from the flat Georgian beaches between Anaklia and Poti. From the Stennis, Springfield flight counts them, clears the approaches, blinds the battery that guards them, hits them alongside the quay, and stops what sails. |
+| [IRON GATE](campaigns/iron_gate/README.md): Ten days in the Liakhvi valley, April 2038 | 5 | 2038-04-06 → 2038-04-16 | An armoured brigade comes south through the Roki tunnel toward Gori. The Hornet detachment at Vaziani was two weeks from going home. Find the column, slow it, clear the sky above it, hold the town, and close the tunnel behind it. |
+| [WORK-UPS](campaigns/workups/README.md): Hornet detachment syllabus, January 2038 | 5 | 2038-01-15 → 2038-01-30 | Ten Hornets, three weeks and one instructor. Before the February partner exercise, every pilot in the detachment flies the same five events: day and night carrier quals, SEAD, CAS with a JTAC, and a graduation checkride. |
 
+
+
+# HIGH TIDE campaign
+
+Ten days off the Abkhaz coast, May 2038 5 chapters, 2038-05-11 to 2038-05-20. [Campaign page](campaigns/high_tide/README.md)
+
+## HIGH TIDE · 1/5 · Operation HIGH TIDE: Eyes on Ochamchire
+
+**Caucasus** · **2× F/A-18C Hornet** · **Reconnaissance** · 2038-05-11, step 05:20L · Carrier, Air refuelling
+
+> "I don't need you to sink anything. I need you to count. And then I need you to come back so I can see what you counted." PRISM, 0430 brief
+
+A month after the Roki tunnel, the war moved to the coast. Fishing boats out of Anaklia have been reporting grey ships at Ochamchire all week: big ones, with bow doors. Ochamchire's harbour is too small for a navy, but it isn't too small for landing ships, and the Georgian coast from Anaklia to Poti is flat, sandy and forty minutes away.
+
+**Primary objective:** Fly the photo pass over Ochamchire harbour below 5,000 ft and bring the tape home.
+
+| Download | |
+| --- | --- |
+| Mission | [01_ht_1_harbour.miz](campaigns/high_tide/01_ht_1_harbour.miz) |
+| Briefing | [briefing.html](ht_1_harbour/briefing.html) |
+| Slide deck | [slides.html](ht_1_harbour/slides.html) |
+| Director's cut | [director.html](ht_1_harbour/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ht_1_harbour/kneeboard/01_mission.png) · [02_nav.png](ht_1_harbour/kneeboard/02_nav.png) · [03_threats.png](ht_1_harbour/kneeboard/03_threats.png) |
+
+<p><a href="ht_1_harbour/kneeboard/01_mission.png"><img src="ht_1_harbour/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ht_1_harbour/kneeboard/02_nav.png"><img src="ht_1_harbour/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ht_1_harbour/kneeboard/03_threats.png"><img src="ht_1_harbour/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## HIGH TIDE · 2/5 · Operation HIGH TIDE: Minelayers in the Dark
+
+**Caucasus** · **2× F/A-18C Hornet** · **Anti-ship** · 2038-05-13, step 22:10L · Carrier, Air refuelling
+
+> "Every mine they put in the water tonight is a week of minesweeping we don't have. Get there while they're still laying." MERLIN, launch brief
+
+Springfield's tape showed landing ships at Ochamchire. Two nights later, Georgian fishermen coming home to Poti saw something worse: fast boats with no lights, running slowly in lines across the harbour approaches and dropping things off their sterns.
+
+**Primary objective:** Sink the minelaying boats before they finish laying.
+
+| Download | |
+| --- | --- |
+| Mission | [02_ht_2_minelayers.miz](campaigns/high_tide/02_ht_2_minelayers.miz) |
+| Briefing | [briefing.html](ht_2_minelayers/briefing.html) |
+| Slide deck | [slides.html](ht_2_minelayers/slides.html) |
+| Director's cut | [director.html](ht_2_minelayers/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ht_2_minelayers/kneeboard/01_mission.png) · [02_nav.png](ht_2_minelayers/kneeboard/02_nav.png) · [03_threats.png](ht_2_minelayers/kneeboard/03_threats.png) |
+
+<p><a href="ht_2_minelayers/kneeboard/01_mission.png"><img src="ht_2_minelayers/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ht_2_minelayers/kneeboard/02_nav.png"><img src="ht_2_minelayers/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ht_2_minelayers/kneeboard/03_threats.png"><img src="ht_2_minelayers/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## HIGH TIDE · 3/5 · Operation HIGH TIDE: Blind the SA-10
+
+**Caucasus** · **2× F/A-18C Hornet** · **SEAD** · 2038-05-15, step 10:15L · Carrier, Air refuelling, Low level
+
+> "It sees everything. That's the problem and the plan. Give it six targets that aren't there and watch it light up to find out which ones are." PRISM, SEAD brief
+
+Poti's channels are open. The night after the minelayers, a Georgian Su-25 looking at the coast north of Anaklia saw a missile come up from the hills behind Ochamchire, from 60 km away. It missed, barely. ELINT confirmed it within the hour: an SA-10, the long-range S-300, moved in to cover the harbour.
+
+**Primary objective:** Destroy the SA-10's track radar.
+
+| Download | |
+| --- | --- |
+| Mission | [03_ht_3_sa10.miz](campaigns/high_tide/03_ht_3_sa10.miz) |
+| Briefing | [briefing.html](ht_3_sa10/briefing.html) |
+| Slide deck | [slides.html](ht_3_sa10/slides.html) |
+| Director's cut | [director.html](ht_3_sa10/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ht_3_sa10/kneeboard/01_mission.png) · [02_nav.png](ht_3_sa10/kneeboard/02_nav.png) · [03_threats.png](ht_3_sa10/kneeboard/03_threats.png) |
+
+<p><a href="ht_3_sa10/kneeboard/01_mission.png"><img src="ht_3_sa10/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ht_3_sa10/kneeboard/02_nav.png"><img src="ht_3_sa10/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ht_3_sa10/kneeboard/03_threats.png"><img src="ht_3_sa10/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## HIGH TIDE · 4/5 · Operation HIGH TIDE: Ochamchire Back Door
+
+**Caucasus** · **2× F/A-18C Hornet** · **Anti-ship** · 2038-05-17, step 05:40L · Carrier, Air refuelling, Low level
+
+> "Their guns face the water. So we don't come from the water." MERLIN, strike brief
+
+With the SA-10 blind, Ochamchire is reachable. PRISM's latest picture shows three landing ships alongside the quay now, loading vehicles day and night. Fishing boats report the harbour's guns and SAMs all point out to sea, because that's where everything has come from so far.
+
+**Primary objective:** Sink or disable the landing ships at the Ochamchire quay.
+
+| Download | |
+| --- | --- |
+| Mission | [04_ht_4_staging.miz](campaigns/high_tide/04_ht_4_staging.miz) |
+| Briefing | [briefing.html](ht_4_staging/briefing.html) |
+| Slide deck | [slides.html](ht_4_staging/slides.html) |
+| Director's cut | [director.html](ht_4_staging/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ht_4_staging/kneeboard/01_mission.png) · [02_nav.png](ht_4_staging/kneeboard/02_nav.png) · [03_threats.png](ht_4_staging/kneeboard/03_threats.png) |
+
+<p><a href="ht_4_staging/kneeboard/01_mission.png"><img src="ht_4_staging/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ht_4_staging/kneeboard/02_nav.png"><img src="ht_4_staging/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ht_4_staging/kneeboard/03_threats.png"><img src="ht_4_staging/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
+
+## HIGH TIDE · 5/5 · Operation HIGH TIDE: Stop the Landing
+
+**Caucasus** · **2× F/A-18C Hornet** · **Anti-ship** · 2038-05-20, step 04:50L · Carrier, Air refuelling
+
+> "If they get to the sand, it's an army's problem for a month. If they don't, it's ours for an hour. Make it ours." MERLIN, 0430 brief
+
+At 0300, Ochamchire emptied. What was left of the landing force, the ship that survived the strike and one that came up from Sochi, sailed south in the dark with a corvette for escort. There's only one beach worth landing on: the long sand at Anaklia, forty kilometres away. At ten knots, they'll be on it at breakfast.
+
+**Primary objective:** Sink both landing ships before they reach the beach at Anaklia.
+
+| Download | |
+| --- | --- |
+| Mission | [05_ht_5_beachhead.miz](campaigns/high_tide/05_ht_5_beachhead.miz) |
+| Briefing | [briefing.html](ht_5_beachhead/briefing.html) |
+| Slide deck | [slides.html](ht_5_beachhead/slides.html) |
+| Director's cut | [director.html](ht_5_beachhead/director.html): **spoilers**, for whoever runs or debriefs the mission |
+
+| Kneeboard | [01_mission.png](ht_5_beachhead/kneeboard/01_mission.png) · [02_nav.png](ht_5_beachhead/kneeboard/02_nav.png) · [03_threats.png](ht_5_beachhead/kneeboard/03_threats.png) |
+
+<p><a href="ht_5_beachhead/kneeboard/01_mission.png"><img src="ht_5_beachhead/kneeboard/01_mission.png" width="220" alt="01_mission.png"></a> <a href="ht_5_beachhead/kneeboard/02_nav.png"><img src="ht_5_beachhead/kneeboard/02_nav.png" width="220" alt="02_nav.png"></a> <a href="ht_5_beachhead/kneeboard/03_threats.png"><img src="ht_5_beachhead/kneeboard/03_threats.png" width="220" alt="03_threats.png"></a> </p>
 
 
 # IRON GATE campaign
 
-Ten days in the Liakhvi valley, April 2026 5 chapters, 2026-04-06 to 2026-04-16. [Campaign page](campaigns/iron_gate/README.md)
+Ten days in the Liakhvi valley, April 2038 5 chapters, 2038-04-06 to 2038-04-16. [Campaign page](campaigns/iron_gate/README.md)
 
 ## IRON GATE · 1/5 · Operation IRON GATE: Armed Recce, Liakhvi Valley
 
-**Caucasus** · **2× F/A-18C Hornet** · **Armed recce** · 2026-04-06, step 06:20L
+**Caucasus** · **2× F/A-18C Hornet** · **Armed recce** · 2038-04-06, step 06:20L
 
 > "Find the front of it. Tell me what it is. If you can stop the first few vehicles, do it. Everything behind them will have to wait." Col. Gelashvili, 0530 phone call
 
@@ -47,7 +158,7 @@ At 0200 the Roki tunnel border post stopped answering the phone. By 0400, Georgi
 
 ## IRON GATE · 2/5 · Operation IRON GATE: Drop the Bridges
 
-**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2026-04-07, step 15:30L · Low level
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2038-04-07, step 15:30L · Low level
 
 > "Two bridges. Four bombs. One brigade on the wrong side of them, if you're quick." SABRE, mass brief
 
@@ -68,7 +179,7 @@ Yesterday's tape changed the conversation in Tbilisi. It isn't a raid: it's a me
 
 ## IRON GATE · 3/5 · Operation IRON GATE: Hunt the SA-11
 
-**Caucasus** · **2× F/A-18C Hornet** · **SEAD** · 2026-04-09, step 13:40L
+**Caucasus** · **2× F/A-18C Hornet** · **SEAD** · 2038-04-09, step 13:40L
 
 > "It's killed one jet already. It's going to be watching the valley for the next one. Don't be the next one. Be the one that comes from the side." SABRE, mass brief
 
@@ -89,7 +200,7 @@ The bridges slowed the column, but they didn't stop it. Engineers had a crossing
 
 ## IRON GATE · 4/5 · Operation IRON GATE: Hold Gori
 
-**Caucasus** · **2× F/A-18C Hornet** · **CAS** · 2026-04-11, step 09:40L
+**Caucasus** · **2× F/A-18C Hornet** · **CAS** · 2038-04-11, step 09:40L
 
 > "My tanks are the same tanks as their tanks. If you're not sure, ask me. If you're still not sure, don't." HAMMER, on the check-in
 
@@ -110,7 +221,7 @@ With the SA-11 gone, the column did what everyone expected: it came south. By la
 
 ## IRON GATE · 5/5 · Operation IRON GATE: Close the Gate
 
-**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2026-04-16, step 10:50L · Different recovery field
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2038-04-16, step 10:50L · Different recovery field
 
 > "Everything they have came through that tunnel. Everything they need still has to. Close it." Col. Gelashvili, by phone to Vaziani
 
@@ -132,11 +243,11 @@ Gori held, and the northern brigade has run out of ways forward. It still has ta
 
 # WORK-UPS campaign
 
-Hornet detachment syllabus, January 2026 5 chapters, 2026-01-15 to 2026-01-30. [Campaign page](campaigns/workups/README.md)
+Hornet detachment syllabus, January 2038 5 chapters, 2038-01-15 to 2038-01-30. [Campaign page](campaigns/workups/README.md)
 
 ## WORK-UPS · 1/5 · Training · Det work-ups, event CQ-1: Day Carrier Qualification
 
-**Caucasus** · **1× F/A-18C Hornet** · **Carrier quals** · 2026-01-15, step 12:30L · Carrier, Air refuelling, Low level, Different recovery field
+**Caucasus** · **1× F/A-18C Hornet** · **Carrier quals** · 2038-01-15, step 12:30L · Carrier, Air refuelling, Low level, Different recovery field
 
 > "Fly the ball all the way to the deck. If I wave you off, you go around, every time. The boat isn't going anywhere, but it is moving." PADDLES, LSO brief
 
@@ -157,7 +268,7 @@ The detachment landed at Kutaisi last week with ten Hornets and a February partn
 
 ## WORK-UPS · 2/5 · Training · Det work-ups, event CQ-2: Night Carrier Qualification
 
-**Caucasus** · **1× F/A-18C Hornet** · **Carrier quals** · 2026-01-16, step 18:45L · Carrier, Air refuelling
+**Caucasus** · **1× F/A-18C Hornet** · **Carrier quals** · 2038-01-16, step 18:45L · Carrier, Air refuelling
 
 > "At night, the deck doesn't get bigger as you get closer. It just gets darker around it. Fly the needles." PADDLES, night brief
 
@@ -178,7 +289,7 @@ The day traps went well enough that the strike group gave the detachment the dec
 
 ## WORK-UPS · 3/5 · Training · Det work-ups, event SEAD-1: SEAD Fundamentals
 
-**Caucasus** · **1× F/A-18C Hornet** · **SEAD** · 2026-01-20, step 10:00L
+**Caucasus** · **1× F/A-18C Hornet** · **SEAD** · 2038-01-20, step 10:00L
 
 > "Those radars have been looking at people like you for forty years. Today you get to answer back. Twice. On time." WREN, SEAD brief
 
@@ -199,7 +310,7 @@ The Georgian Air Defence Command keeps a captured SA-6 battery and an SA-8 on th
 
 ## WORK-UPS · 4/5 · Training · Det work-ups, event CAS-1: Close Air Support with a JTAC
 
-**Caucasus** · **1× F/A-18C Hornet** · **CAS** · 2026-01-22, step 13:15L
+**Caucasus** · **1× F/A-18C Hornet** · **CAS** · 2038-01-22, step 13:15L
 
 > "I'll tell you where to look. I'll tell you when to shoot. If I say abort, you're already pulling off." AXEMAN, CAS brief
 
@@ -220,7 +331,7 @@ The Georgian 2nd Infantry Brigade is on a field exercise south of the Gareja ran
 
 ## WORK-UPS · 5/5 · Training · Det work-ups, event COMPEX-1 (checkride): Graduation Composite Exercise
 
-**Caucasus** · **2× F/A-18C Hornet** · **Strike (package)** · 2026-01-30, step 09:30L
+**Caucasus** · **2× F/A-18C Hornet** · **Strike (package)** · 2038-01-30, step 09:30L
 
 > "I'm not grading the bombs. I'm grading whether the bombs land when you said they would, with everyone still alive." WREN, checkride brief
 
@@ -246,7 +357,7 @@ The Black Sea missions, to fly in any order. Briefings carry only what the squad
 
 ## Operation BROKEN SPAN: Strike on the Bzyb River Bridge
 
-**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2026-03-14, step 06:40L
+**Caucasus** · **2× F/A-18C Hornet** · **Strike** · 2038-03-14, step 06:40L
 
 > "Gentlemen, there's one bridge between that brigade and Sukhumi. By breakfast I want it in the river." HATCH Moreno, 0500 brief
 
@@ -267,7 +378,7 @@ Three weeks ago a ceasefire along the Inguri line collapsed. Separatist forces, 
 
 ## Operation SILENT ORCHARD: Find the SA-11
 
-**Caucasus** · **2× F-16C Viper** · **SEAD** · 2026-03-16, step 14:20L
+**Caucasus** · **2× F-16C Viper** · **SEAD** · 2038-03-16, step 14:20L
 
 > "It's out there, it already has one kill, and it's patient. Make it talk, then make it stop." Lt Kapanadze, 1300 brief
 
@@ -288,7 +399,7 @@ Two days after the strike on the Bzyb bridge, the separatists answered. Yesterda
 
 ## Operation HOLD FAST: Defend the Gumista Line
 
-**Caucasus** · **2× A-10C II** · **CAS** · 2026-03-18, step 05:50L · Hot start
+**Caucasus** · **2× A-10C II** · **CAS** · 2038-03-18, step 05:50L · Hot start
 
 > "I can hear tracks. I can't see them yet. Get here." CHISEL, 0531
 
@@ -309,7 +420,7 @@ The brigade the Bzyb strike was meant to stall is moving. At 0520 Captain Brenne
 
 ## Operation BLUE WATER: Hold the Line at Sea
 
-**Caucasus** · **2× F-14B Tomcat** · **Fleet defense** · 2026-03-20, step 16:40L · Carrier, Air refuelling
+**Caucasus** · **2× F-14B Tomcat** · **Fleet defense** · 2038-03-20, step 16:40L · Carrier, Air refuelling
 
 > "They only have to get lucky once. You have to be lucky every time. Tonight, be lucky early." BISHOP, 1600 brief
 
@@ -330,7 +441,7 @@ With the Gumista holding, the coalition moved the Stennis strike group into the 
 
 ## Operation DEEP CUT: Through the Back Door
 
-**Caucasus** · **2× AV-8B Harrier** · **Strike** · 2026-03-22, step 10:30L · Air refuelling, Low level, Different recovery field
+**Caucasus** · **2× AV-8B Harrier** · **Strike** · 2038-03-22, step 10:30L · Air refuelling, Low level, Different recovery field
 
 > "Nobody flies down that valley. That's the point." HATCH, 0900 brief
 
@@ -351,7 +462,7 @@ The two MiG-29s at Gudauta have shown up on every mission this month. They don't
 
 ## Operation LIFELINE: RESCAP for Uzi 2-2
 
-**Caucasus** · **2× F/A-18C Hornet** · **RESCAP** · 2026-03-24, step 09:10L · Different recovery field, Hot start
+**Caucasus** · **2× F/A-18C Hornet** · **RESCAP** · 2038-03-24, step 09:10L · Different recovery field, Hot start
 
 > "She's got a radio, a pistol and about twenty minutes. You've got two Hornets. Make the twenty minutes last." RAWHIDE, on the scramble line
 
@@ -372,7 +483,7 @@ At 0735, Uzi 2-2, an F-16 on a road recce north of the Gumista, took a missile n
 
 ## Operation GREY HULL: Harpoon Strike off Gelendzhik
 
-**Caucasus** · **2× F/A-18C Hornet** · **Anti-ship** · 2026-03-26, step 06:50L · Carrier, Air refuelling, Low level
+**Caucasus** · **2× F/A-18C Hornet** · **Anti-ship** · 2038-03-26, step 06:50L · Carrier, Air refuelling, Low level
 
 > "Two contacts, two ships each, and one of them is full of grain. I'd love to tell you which. Darkstar's going to tell you instead, and you're going to check." PRISM, 0600 brief
 
@@ -398,7 +509,7 @@ Syllabus events. Everything is briefed as it is: training rules, grade sheet, ra
 
 ## Training · Det work-ups, event AR/LL-1: Air Refuelling and Low-Level Navigation
 
-**Caucasus** · **2× F/A-18C Hornet** · **AAR & low level** · 2026-02-09, step 09:00L · Air refuelling, Low level
+**Caucasus** · **2× F/A-18C Hornet** · **AAR & low level** · 2038-02-09, step 09:00L · Air refuelling, Low level
 
 > "Plugging the basket is a skill. Hitting a checkpoint to the second is a habit. Today I'm grading habits." WREN, mass brief
 
@@ -419,7 +530,7 @@ A month before the deployment turns hot, the Hornet detachment is in Georgia for
 
 ## Training · Det work-ups, event SW-2: Air-to-Ground Weapons Qualification
 
-**Caucasus** · **1× F/A-18C Hornet** · **Air-to-ground range** · 2026-02-11, step 10:30L
+**Caucasus** · **1× F/A-18C Hornet** · **Air-to-ground range** · 2038-02-11, step 10:30L
 
 > "Three events, three targets, one pattern. I don't care how fast you go. I care that every bomb lands where you said it would." WREN, range brief
 
@@ -440,7 +551,7 @@ Two days after LONG VALLEY, the detachment moves its weapons work east. The Geor
 
 ## Training · Det work-ups, event A/A-3: Intercepts and BFM against Aggressors
 
-**Caucasus** · **1× F/A-18C Hornet** · **Air-to-air (BFM)** · 2026-02-13, step 14:00L
+**Caucasus** · **1× F/A-18C Hornet** · **Air-to-air (BFM)** · 2038-02-13, step 14:00L
 
 > "They will beat you today. The question is how many times, and whether you'll know why when we watch the tapes." WREN, mass brief
 

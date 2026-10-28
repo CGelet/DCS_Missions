@@ -13,13 +13,13 @@ meta:
   category: training
   theater: caucasus
   role: "Carrier quals"
-  date: 2026-01-16
+  date: 2038-01-16
   start_time: "18:45"
   weather:
     temperature_c: 5
     wind_from_deg: 80
     wind_kts: 10
-    clouds: "Broken 3,500 ft, no moon"
+    clouds: "Broken 3,500 ft, a bright moon above the cloud"
     visibility: "15 km"
     qnh_inhg: 30.00
     cloud_preset: Broken3
@@ -40,7 +40,7 @@ training:
     climb straight ahead to 2,000 ft, level the wings on the instruments and tell Mother. You'll be
     sent back to marshal. Nobody gets graded for pressing on.
   special_subjects:
-    - "The black hole: there's no horizon tonight. The boat's lights are the only thing outside."
+    - "The black hole: under the layer there's no horizon tonight. The boat's lights are the only thing outside."
     - "ICLS needles versus the ball: fly the needles until the ball is in sight, then the ball."
     - "Night tanking on the S-3B: lights, slow closure, and no stabbing at the basket."
     - "Fatigue after a bolter: the second pass is where people get low. Fly the numbers again."
@@ -90,7 +90,7 @@ narrative:
       deck closed. WREN schedules more day passes first.
 
 situation: |
-  Night, no moon, broken cloud at 3,500 ft. You start cold on the Stennis, 35 km west of Batumi,
+  Night, broken cloud at 3,500 ft hiding a bright moon: dark below the layer. You start cold on the Stennis, 35 km west of Batumi,
   steaming east into a 10 kt land breeze at 15 kt (BRC 080). Launch, depart to SPLIT, then fly to
   MARSHAL, 21 nm astern on the 260 radial at 6,000 ft. Push, and fly the Case III approach to two
   traps with a launch between them. TEXACO orbits overhead at 6,000 ft.
@@ -109,7 +109,7 @@ threats:
     lat: 41.7500
     lon: 40.9000
     range_km: 5
-    notes: "Moonless and overcast above. Over the sea there is nothing outside but the ship's lights."
+    notes: "The moon is above the cloud. Under the layer, over the sea, there is nothing outside but the ship's lights."
 
 comms:
   # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.

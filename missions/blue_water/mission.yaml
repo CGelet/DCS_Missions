@@ -13,7 +13,7 @@ meta:
   subtitle: "Hold the Line at Sea"
   theater: caucasus
   role: "Fleet defense"   # mission type: the hangar filters on it
-  date: 2026-03-20
+  date: 2038-03-20
   start_time: "16:40"
   weather:
     temperature_c: 10

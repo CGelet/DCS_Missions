@@ -14,7 +14,7 @@ meta:
   category: training
   theater: caucasus
   role: "Air-to-ground range"   # mission type: the hangar filters on it
-  date: 2026-02-11
+  date: 2038-02-11
   start_time: "10:30"
   weather:
     temperature_c: 6

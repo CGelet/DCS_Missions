@@ -1,0 +1,79 @@
+campaign = 
+{
+    ["name"] = "HIGH TIDE",
+    ["name_EN"] = "HIGH TIDE",
+    ["description"] = "Ten days off the Abkhaz coast, May 2038\n\nLanding ships are gathering at Ochamchire, forty minutes from the flat Georgian beaches between Anaklia and Poti. From the Stennis, Springfield flight counts them, clears the approaches, blinds the battery that guards them, hits them alongside the quay, and stops what sails.",
+    ["description_EN"] = "Ten days off the Abkhaz coast, May 2038\n\nLanding ships are gathering at Ochamchire, forty minutes from the flat Georgian beaches between Anaklia and Poti. From the Stennis, Springfield flight counts them, clears the approaches, blinds the battery that guards them, hits them alongside the quay, and stops what sails.",
+    ["necessaryUnits"] = {
+        ["FA-18C_hornet"] = "FA-18C_hornet",
+    },
+    ["version"] = 1,
+    ["startStage"] = 1,
+    ["stages"] = {
+        [1] = {
+            ["name"] = "Chapter 1: Eyes on Ochamchire",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "01_ht_1_harbour.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [2] = {
+            ["name"] = "Chapter 2: Minelayers in the Dark",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "02_ht_2_minelayers.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [3] = {
+            ["name"] = "Chapter 3: Blind the SA-10",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "03_ht_3_sa10.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [4] = {
+            ["name"] = "Chapter 4: Ochamchire Back Door",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "04_ht_4_staging.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+        [5] = {
+            ["name"] = "Chapter 5: Stop the Landing",
+            ["missions"] = {
+                [1] = {
+                    ["file"] = "05_ht_5_beachhead.miz",
+                    ["description"] = "",
+                    ["interval"] = {
+                        [1] = 0,
+                        [2] = 100,
+                    },
+                },
+            },
+        },
+    },
+} -- end of campaign
