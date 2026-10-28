@@ -10,7 +10,7 @@ Campaign, 5 chapters, 2038-05-11 to 2038-05-20.
 2. In DCS, open **Campaign** and pick **HIGH TIDE**.
 3. Pass a chapter to unlock the next. Fail it and DCS gives you the same chapter again.
 
-Open `index.html` in a browser for the full campaign page. Pilots: don't open the director pages before you fly.
+For the full campaign page, download the repo and double-click `Mission Hangar.html` in its top folder. Pilots: don't open the director pages before you fly.
 
 ## Chapters
 

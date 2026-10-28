@@ -244,3 +244,10 @@ def test_pages_lock_down_scripts():
         assert '{% include "_security.html" %}' in src, t
         for tag in re.findall(r"<(?:script|link)[^>]*cdnjs[^>]*>", src):
             assert "integrity=" in tag, (t, tag)
+
+
+def test_launcher_opens_the_hangar():
+    root = Path(__file__).resolve().parent.parent
+    src = (root / "Mission Hangar.html").read_text()
+    targets = set(re.findall(r'url=([^"]+)"', src)) | set(re.findall(r'href="([^"]+)"', src))
+    assert targets == {"hangar/index.html"} and (root / "hangar" / "index.html").exists()

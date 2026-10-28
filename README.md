@@ -1,6 +1,21 @@
 # DCS Missions
 
-A hangar of ready-to-fly DCS World missions, each with a full story, an interactive briefing, a slide deck, and kneeboard pages.
+Ready-to-fly DCS World missions and campaigns on the Caucasus map. Each one comes with a full story, an interactive briefing, a slide deck and kneeboard pages.
+
+## Fly the missions
+
+1. Click **Code → Download ZIP** on GitHub (or clone the repo) and unzip it anywhere.
+2. Double-click **`Mission Hangar.html`** in the top folder. It opens the hangar in your browser: every campaign and mission, with its briefing, slide deck, kneeboard and `.miz` download. Maps and fonts load from the internet; everything else works offline.
+3. Install in DCS:
+   - **A single mission:** copy its `.miz` from `hangar/<mission>/` into `Saved Games/DCS/Missions/` and open it from the **Mission** menu.
+   - **A campaign:** copy its whole folder from `hangar/campaigns/` into `Saved Games/DCS/Missions/Campaigns/` and pick it from the **Campaign** menu. Passing a chapter unlocks the next.
+4. The kneeboard pages are already inside each `.miz`.
+
+Pilots: briefings, decks and kneeboards only hold what your squadron knows at brief time. The **director** pages are spoilers, for whoever runs or debriefs the flight.
+
+## What's in the hangar
+
+### Black Sea operations
 
 | Mission | Aircraft | Story device |
 | --- | --- | --- |
@@ -12,7 +27,9 @@ A hangar of ready-to-fly DCS World missions, each with a full story, an interact
 | Operation LIFELINE | F/A-18C, alert scramble | Rescue cover: stop the search party before it reaches a downed pilot, then escort the rescue helicopter in and out |
 | Operation GREY HULL | F/A-18C, from the carrier | Deception: two radar contacts, one of them warships. The intel on which one can be wrong; Harpoons from low level |
 
-**Training missions** (`meta.category: training`) are syllabus events, briefed like a real training sortie: training rules, knock-it-off, special subjects, a grade sheet and debrief focus. Nothing is hidden or random. The aggressors and range targets are on the briefing map exactly as they'll fly.
+### Training events
+
+Training missions are syllabus events, briefed like a real training sortie: training rules, knock-it-off, special subjects, a grade sheet and debrief focus. Nothing is hidden or random. The aggressors and range targets are on the briefing map exactly as they'll fly.
 
 | Event | Aircraft | What's trained |
 | --- | --- | --- |
@@ -20,9 +37,9 @@ A hangar of ready-to-fly DCS World missions, each with a full story, an interact
 | GAREJA RANGE | F/A-18C, Vaziani | Weapons qualification: GBU-12, Mk-82 CCIP and strafe, cleared in order by range control (fouls are called) |
 | RED AIR | F/A-18C, Kobuleti | A BVR intercept on a MiG-29, then 1v1 and 1v2 BFM with F-5Es, with a hard deck the sim calls |
 
-## Campaigns
+### Campaigns
 
-Four campaigns, 20 F/A-18C missions, each a story flown in order. Every campaign has a page in the hangar and installs into DCS as a real campaign: copy `hangar/campaigns/<id>/` (the `.cmp` and its numbered `.miz` files) into `Saved Games/DCS/Missions/Campaigns/`, pick it from the **Campaign** menu, and pass a chapter to unlock the next one.
+Four campaigns, 20 F/A-18C missions, each a story flown in order. Every campaign has a page in the hangar and installs into DCS as a real campaign (a `.cmp` and its numbered `.miz` files).
 
 | Campaign | Chapters | Setting | Arc |
 | --- | --- | --- | --- |
@@ -46,17 +63,6 @@ Missions also use randomness inside DCS, so even the director doesn't know exact
 
 The `.miz` itself necessarily contains the truth. Pilots who want surprises shouldn't open it in the Mission Editor.
 
-## Fly a mission (no install needed)
-
-Everything in [`hangar/`](hangar/) is already rendered:
-
-1. Open [`hangar/README.md`](hangar/README.md) to browse the missions.
-2. Download the mission's `.miz` and put it in `Saved Games/DCS/Missions/`.
-3. Download its `briefing.html` and open it in a browser for the story, the plan on a map, and the briefing cards. GitHub shows HTML files as source code, so download it rather than viewing it on GitHub.
-4. To brief your squadron, download `slides.html` and present it (see below).
-5. The kneeboard pages are already inside the `.miz`. The PNGs are in the repo too, if you want to print them.
-6. After the flight, whoever ran it opens `director.html` to see what was really there and read the matching outcome.
-
 ## Present the slide deck
 
 `slides.html` tells the mission as a story, one idea per slide: the hook, the backstory, the cast, the battlespace, the target and threat intel, then one slide per storyboard phase with the plan and a map of that leg. It ends at "Questions?". Debrief outcomes are in `director.html`, so the deck is safe to share before the flight.
@@ -71,7 +77,11 @@ Everything in [`hangar/`](hangar/) is already rendered:
 
 The maps are drawn offline, so the deck works without internet (fonts fall back if offline). To get a PDF, print from Chrome with "Background graphics" on: each slide becomes one page.
 
-## How the repo works
+## For mission authors
+
+Everything below is for changing or adding missions. You don't need any of it to fly them.
+
+### How the repo works
 
 ```
 missions/<id>/mission.yaml   source of truth: story, units, route, triggers, briefing
@@ -79,6 +89,7 @@ dcsmb/                       the builder (Python)
 templates/                   briefing, kneeboard and hangar page layouts
 hangar/<id>/                 rendered output: <id>.miz, briefing.html, slides.html, director.html, kneeboard/*.png
 scripts/fetch_coastline.py   one-off: coastline data for the slide maps (re-run for a new theater)
+Mission Hangar.html          what players open: a shortcut to hangar/index.html
 hangar/index.html            home page: campaigns and the single-mission groups
 hangar/missions.html         every mission, grouped by campaign, with filters and search
 hangar/campaigns/<id>/       campaign page, DCS .cmp and its numbered .miz files
@@ -89,9 +100,9 @@ The `.miz`, briefing, slide deck, and kneeboard all come from the same `mission.
 
 The hangar is always committed fully rendered. Builds are reproducible: rebuilding an unchanged mission produces byte-identical files, so only missions that actually changed show up in a commit.
 
-## Modify or add a mission
+### Modify or add a mission
 
-### 1. Set up (once)
+#### 1. Set up (once)
 
 You need Python 3.10+ and [uv](https://docs.astral.sh/uv/).
 
@@ -101,7 +112,7 @@ uv pip install --python .venv/bin/python -r requirements.txt
 .venv/bin/python -m playwright install chromium   # renders the kneeboard PNGs
 ```
 
-### 2. Edit
+#### 2. Edit
 
 Change `missions/<id>/mission.yaml`, or copy an existing mission folder to start a new one (change `meta.id` to match the folder name).
 
@@ -152,7 +163,7 @@ Every mission must set **flag 10** on success: the mission's DCS goal scores 100
 
 Unit and weapon names are pydcs names. Weapons are the attribute names on `dcs.planes.<Aircraft>.Pylon<N>`, e.g. `dcs.planes.FA_18C_hornet.Pylon2`. The build stops with a clear message if a name, waypoint, or group reference is wrong.
 
-### 3. Build and commit
+#### 3. Build and commit
 
 ```bash
 .venv/bin/python -m dcsmb build      # rebuilds every mission and the hangar index
@@ -162,7 +173,7 @@ git add missions hangar && git commit
 
 Always commit the YAML change and the rebuilt `hangar/` together. `--no-kneeboard` skips Chromium if you only want a quick check of the `.miz` and briefing, but don't commit a build made that way (it drops the kneeboard pages).
 
-### 4. Check in DCS
+#### 4. Check in DCS
 
 DCS doesn't run on the build machine, so after changing positions or triggers, open the `.miz` in the Mission Editor and fly it once. Check that:
 

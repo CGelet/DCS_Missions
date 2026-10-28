@@ -12,6 +12,7 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 - `hangar/<id>/director.html`: spoiler view (intel vs truth, random rolls, triggers, outcomes)
 - `hangar/<id>/kneeboard/*.png`: 768×1024 kneeboard pages, also packed into the `.miz`
 - `hangar/index.html` (home), `hangar/missions.html` (library), `hangar/campaigns/<id>/` and `hangar/README.md`: the hangar site
+- `Mission Hangar.html` (repo root): hand-written redirect to `hangar/index.html`, the file players double-click. The owner wants the site run locally, never hosted (2026-10-28), and the launcher to have a plain name, not "START HERE". The README opens with player steps; builder docs sit under "For mission authors".
 
 ## Owner decisions (don't relitigate)
 
