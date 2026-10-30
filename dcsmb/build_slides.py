@@ -12,7 +12,7 @@ from pathlib import Path
 from markupsafe import Markup, escape
 
 from .build_hangar import AIRCRAFT_NAMES
-from .build_html import env, view_model
+from .build_html import coord, env, profile_svg, view_model
 
 DATA = Path(__file__).resolve().parent / "data"
 W, H = 900, 640  # map viewBox
@@ -38,6 +38,10 @@ class Projection:
     def km(self, km: float) -> float:
         return km / 111 * self.scale
 
+
+def _hemi(v: float, pos: str, neg: str) -> str:
+    """Grid label: 37.5N, 116.0W."""
+    return f"{abs(v):.1f}{pos if v >= 0 else neg}"
 
 def _coast(theater: str) -> list[list[list[float]]]:
     path = DATA / f"coast_{theater}.json"
@@ -113,13 +117,13 @@ def svg_map(vm: dict, focus: list[str] | None = None, show_rings: bool = True) -
     while g <= lat1:
         y = pr(g, pr.cx)[1]
         out.append(f'<line class="grid" x1="0" x2="{W}" y1="{y:.1f}" y2="{y:.1f}"/>'
-                   f'<text class="gridlbl" x="6" y="{y - 4:.1f}">{g:.1f}N</text>')
+                   f'<text class="gridlbl" x="6" y="{y - 4:.1f}">{_hemi(g, "N", "S")}</text>')
         g += step
     g = math.floor(lon0 / step) * step
     while g <= lon1:
         x = pr(pr.cy, g)[0]
         out.append(f'<line class="grid" y1="0" y2="{H}" x1="{x:.1f}" x2="{x:.1f}"/>'
-                   f'<text class="gridlbl" x="{x + 4:.1f}" y="{H - 8}">{g:.1f}E</text>')
+                   f'<text class="gridlbl" x="{x + 4:.1f}" y="{H - 8}">{_hemi(g, "E", "W")}</text>')
         g += step
 
     for line in _coast(vm["meta"]["theater"]):
@@ -230,13 +234,13 @@ def slides(data: dict) -> list[dict]:
         svg=svg_map(vm), notes="Walk the route from base to target and back. Point out the threat rings.")
 
     add("profile", eyebrow="Flight profile", title="How high, where",
-        svg=vm["profile"], notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes.")
+        svg=profile_svg(vm["route"], font=15), notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes.")
 
     add("objectives", eyebrow="Tasking", title=T["objectives"], entries=list(data["objectives"].items()),
         notes="Primary is what wins the mission. Everything else is a bonus or a way home.")
 
     tgt = data["target"]
-    where = (f"Estimated position ±{tgt['area_km']} km" if tgt.get("area_km") else f"{tgt['lat']:.4f}N {tgt['lon']:.4f}E")
+    where = (f"Estimated position ±{tgt['area_km']} km" if tgt.get("area_km") else coord(tgt))
     tgt_wp = next((w["name"] for w in player["waypoints"] if w.get("action") in ("bomb", "sead", "cas")), None)
     add("map", eyebrow=T["target"], title=tgt["name"],
         text=f"{tgt.get('description', '')}\n\n{where}\n\nDMPI: {tgt.get('dmpi', '')}",

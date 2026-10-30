@@ -123,7 +123,7 @@
       <div class="card"><h3>{{ T.target }}</h3>
         <dl class="kv">
           <dt>Name</dt><dd>{{ target.name }}</dd>
-          <dt>Coords</dt><dd class="mono">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E{% if target.area_km %}<br><span class="intel suspected">estimate ±{{ target.area_km }} km</span>{% endif %}</dd>
+          <dt>Coords</dt><dd class="mono">{{ target | coord }}{% if target.area_km %}<br><span class="intel suspected">estimate ±{{ target.area_km }} km</span>{% endif %}</dd>
           <dt>Description</dt><dd>{{ target.description }}</dd>
           <dt>DMPI</dt><dd>{{ target.dmpi }}</dd>
         </dl>
@@ -152,7 +152,7 @@
           <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Alt</th><th>Speed</th><th>ETA</th><th>Action</th></tr></thead>
           <tbody>{% for wp in player.waypoints %}<tr>
             <td class="num">{{ loop.index }}</td><td><b>{{ wp.name }}</b></td>
-            <td class="num">{{ "%.4f"|format(wp.lat) }}N {{ "%.4f"|format(wp.lon) }}E</td>
+            <td class="num">{{ wp | coord }}</td>
             <td class="num">{{ "{:,}".format(wp.alt_ft) }} ft{% if wp.agl %} AGL{% endif %}</td><td class="num">{{ wp.kts }} kt</td>
             <td class="num">{{ wp.eta }}</td><td>{{ wp.action | default("") | upper }}</td>
           </tr>{% endfor %}</tbody>

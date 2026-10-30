@@ -11,9 +11,8 @@ from dcs import action, condition, task, triggers, weather
 from dcs.goals import Goal
 from dcs.mission import StartType
 from dcs.point import MovingPoint, PointAction, PointProperties
-from dcs.terrain import Caucasus
 
-from .geo import FT, KTS, NM, point
+from .geo import FT, KTS, NM, point, terrain_for
 from .schema import phase_triggers
 
 TARGET_FLAG = 99          # set by any target-destroyed helper rule
@@ -65,7 +64,7 @@ def _vehicle(name: str):
 def build(data: dict, out_path: Path, kneeboard_pages: list[Path] = ()) -> dcs.Mission:
     meta = data["meta"]
     random.seed(meta["id"])  # pydcs randomises tail numbers; keep rebuilds byte-identical
-    terrain = Caucasus()
+    terrain = terrain_for(meta)
     m = dcs.Mission(terrain)
     blue = m.country(meta.get("blue_country", "USA"))
     red = m.country(meta.get("red_country", "Russia"))

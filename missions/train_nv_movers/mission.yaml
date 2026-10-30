@@ -1,0 +1,310 @@
+# Training event RANGE 61B: Mavericks and the gun against moving targets. Source of truth;
+# `python -m dcsmb build` renders hangar/train_nv_movers/.
+#
+# Training, not combat: the targets are briefed exactly, nothing shoots back (hold fire), and nothing
+# is random. New here: the targets move. Three groups drive off-road up and down the floor of Tikaboo
+# Valley, which is NTTR Range 61B in OSM ("Contact Blackjack before proceeding"); Blackjack is Nellis
+# range control. The valley floor is flat to within 40 m across 5 km (Open-Meteo), with no buildings
+# or settlements within 3 km (Overpass). Groom Lake (R-4808N) is 30 km west: briefed no-fly. The
+# Extraterrestrial Highway (NV-375, public) is 15 km north: no releases north of HOLD.
+
+meta:
+  id: train_nv_movers
+  title: "RANGE 61B"
+  subtitle: "Moving Targets"
+  category: training
+  theater: nevada
+  role: "Air-to-ground range"
+  date: 2037-12-07
+  start_time: "08:40"
+  weather:
+    temperature_c: 4
+    wind_from_deg: 200
+    wind_kts: 10
+    clouds: "Clear"
+    visibility: "50+ km"
+    qnh_inhg: 30.12
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Nellis pre-deployment, event AG-4"
+  rules:
+    - "Cleared hot only on the group Blackjack calls. Hitting any other group is a range foul, and the range goes cold."
+    - "Run in along the valley, north or south. No east-west run-ins: the targets drive north-south and you'll lose them."
+    - "Minimum altitude 500 ft AGL on the range. The sim calls an abort below 150 ft AGL."
+    - "No releases north of HOLD's latitude. The Extraterrestrial Highway, 15 km north, is a public road."
+    - "No-fly: Groom Lake restricted area (R-4808N), 30 km west. No entry at any altitude."
+    - "Laser code 1688 for the Maverick E. Check it matches in the pod and on the missile."
+    - "Bingo 4,000 lb to Nellis."
+  knock_it_off: |
+    Blackjack or the pilot can call "Knock it off" for anything unsafe: a hung missile, an altitude bust,
+    losing sight of the range boundaries or a misidentified group. Climb to HOLD altitude (15,000 ft),
+    master arm SAFE, and wait for Blackjack. "Range is cold" means master arm SAFE until cleared hot again.
+  special_subjects:
+    - "Maverick F (IR) lock on a moving truck: the seeker tracks heat, so lock the engine, not the cargo bed."
+    - "Maverick E (laser): the pod must track the mover. Use the ATFLIR's area track, then point track, before you fire."
+    - "Strafing a mover: lead it. At 450 kt and 30 mph the jeep moves 15 m during the bullets' flight."
+    - "Dust: the convoys raise dust on the lake bed. It hides them from the pod and shows them to your eyes."
+  grade_sheet:
+    - { item: "Range check-in", standard: "Checks in at 61B IP with the correct call and the laser code confirmed." }
+    - { item: "Event 1: Maverick F on M-1", standard: "Destroys M-1 (3 trucks) with no more than 3 AGM-65F." }
+    - { item: "Event 2: Maverick E on M-2", standard: "Destroys M-2 (2 BMPs) with 2 AGM-65E or fewer, self-lased on 1688." }
+    - { item: "Event 3: Strafe M-3", standard: "Destroys M-3 (2 jeeps) with the gun, recovering above 500 ft AGL on every pass." }
+    - { item: "Range discipline", standard: "No range fouls. No releases while the range is cold or north of HOLD." }
+    - { item: "Safety", standard: "No minimum-altitude abort and no entry into R-4808N." }
+  debrief_focus:
+    - "Pod tape for each Maverick: when the track went from area to point, and how long the lock took."
+    - "Strafe film: where the first rounds hit compared with the jeep."
+    - "How long from cleared hot to the first shot on each group."
+
+narrative:
+  operation: "RANGE 61B"
+  backstory: |
+    December 2037. Before the detachment goes to Georgia, it spends three weeks at Nellis, flying on
+    ranges the size of small countries. WREN has built the schedule around the things the Black Sea
+    won't give them time to practise, and the first is moving targets.
+
+    Everything the detachment has dropped on so far has stood still. Real targets don't. On Range 61B,
+    in Tikaboo Valley, the range crew has three groups of target vehicles driven by remote control up
+    and down the dry valley floor. Two Mavericks of each type, a full gun, and one rule: hit the group
+    Blackjack calls, and nothing else.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, grading from Blackjack's console"
+    - name: "BLACKJACK"
+      role: "Nellis range control"
+    - name: "Nellis Tower"
+      role: "Departure and recovery"
+    - name: "Chevy 1"
+      role: "You, single-ship F/A-18C"
+  hook: |
+    "Everything you've bombed so far was parked. Today it drives away. Lead it, track it, and don't
+    shoot the wrong one." WREN, 0700 brief
+  outcomes:
+    success: |
+      Complete. All three groups destroyed in order, with no fouls and no aborts. WREN signs off
+      moving-target qualification, and the detachment's Maverick shots go into the Georgia plan.
+    partial: |
+      Partial: re-fly items. At least one group got away, or the pass had a foul or an abort. The missed
+      events go on Thursday's schedule.
+    failure: |
+      Incomplete: re-fly the event. A range foul ended the period or R-4808N was entered. The re-fly
+      comes after a talk with the Nellis range officer.
+
+situation: |
+  Single-ship moving-target qualification on Range 61B, Tikaboo Valley, 110 km north of Nellis. Check
+  in with Blackjack at 61B IP at the south end of the valley. Three groups of remote-driven target
+  vehicles drive north-south on the valley floor: M-1 (three trucks), M-2 (two BMPs) and M-3 (two
+  jeeps, faster than the others). Blackjack clears them hot in that order: Maverick F on M-1, Maverick E
+  on M-2, then the gun on M-3. HOLD, east of the valley, is the high key. Nothing on the range shoots.
+
+objectives:
+  primary: "Destroy M-1, M-2 and M-3 in order, each with its briefed weapon, with no range fouls."
+  secondary: "Every Maverick shot inside its launch zone, and every strafe recovery above 500 ft AGL."
+  tertiary: "No minimum-altitude abort and no entry into R-4808N; recover to Nellis."
+
+roe: |
+  Live weapons on Range 61B only, on the group Blackjack has cleared hot. Master arm SAFE outside the
+  range and whenever the range is cold. No releases north of HOLD's latitude.
+
+threats:
+  # Training: the targets and hazards, exactly as they are
+  - name: "M-1: three trucks (Event 1, Maverick F)"
+    kind: armor
+    lat: 37.2000
+    lon: -115.4300
+    range_km: 0
+    notes: "Three Ural trucks in a column, driving north up the valley at about 30 km/h, then back."
+  - name: "M-2: two BMPs (Event 2, Maverick E)"
+    kind: armor
+    lat: 37.2700
+    lon: -115.4450
+    range_km: 0
+    notes: "Two BMP-2s driving south down the west side of the valley at about 25 km/h. Laser code 1688."
+  - name: "M-3: two jeeps (Event 3, strafe)"
+    kind: armor
+    lat: 37.2200
+    lon: -115.4150
+    range_km: 0
+    notes: "Two UAZ jeeps on the east side, driving north at about 45 km/h. The fastest group."
+  - name: "Groom Lake restricted area (R-4808N): no-fly"
+    kind: hazard
+    lat: 37.2332
+    lon: -115.7923
+    range_km: 15
+    notes: "No entry at any altitude. It's 30 km west of the range: don't drift west in the pattern."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Chevy (det common)", freq: "254.000 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "BLACKJACK (range control)", freq: "251.500 AM", radio: 1, channel: 2, notes: "Clears each group hot or cold" }
+  - { name: "Nellis Tower", freq: "327.000 AM", radio: 2, channel: 1, notes: "TACAN 12X (LSV). Departure and recovery" }
+  - { name: "BLACKJACK, WREN", freq: "251.500 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Chevy 1"
+    aircraft: FA_18C_hornet
+    count: 1
+    player: true
+    base: Nellis
+    start: cold
+    radio1_mhz: 254.0
+    laser_codes: [1688]
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: LAU_117_AGM_65F
+      3: LAU_117_with_AGM_65E___Maverick_E__Laser_ASM___Lg_Whd_
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      7: LAU_117_with_AGM_65E___Maverick_E__Laser_ASM___Lg_Whd_
+      8: LAU_117_AGM_65F
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "2× AGM-65F (IR), 2× AGM-65E (laser), 578 rounds 20 mm, ATFLIR, 2× AIM-9X (inert), 1× 330 gal tank"
+    bingo_lbs: 4000
+    joker_lbs: 5500
+    waypoints:
+      - { name: "DESERT",  lat: 36.6500, lon: -115.2000, alt_ft: 18000, kts: 420, eta: "09:05", zone_km: 5 }
+      - { name: "61B IP",  lat: 37.1500, lon: -115.4300, alt_ft: 15000, kts: 400, eta: "09:12", zone_km: 4 }
+      - { name: "RANGE",   lat: 37.2400, lon: -115.4300, alt_ft: 12000, kts: 420, eta: "09:14", action: cas, zone_km: 6 }
+      - { name: "HOLD",    lat: 37.2800, lon: -115.3500, alt_ft: 15000, kts: 350, eta: "09:16", zone_km: 4 }
+      - { name: "EXIT",    lat: 37.1000, lon: -115.2800, alt_ft: 16000, kts: 400, eta: "09:45", zone_km: 4 }
+    land: Nellis
+
+target:
+  name: "M-1: three trucks"
+  lat: 37.2000
+  lon: -115.4300
+  groups: ["M-1 Trucks"]
+  description: "Three trucks driving north up the valley floor, the first event. M-2 and M-3 are moving on either side of it."
+  dmpi: "The lead truck's engine block for the IR lock, then the next. One Maverick per truck."
+
+units:
+  - name: "M-1 Trucks"
+    coalition: red
+    type: [Ural_375, Ural_375, Ural_375]
+    lat: 37.2000
+    lon: -115.4300
+    heading: 0
+    hold_fire: true
+    on_road: false
+    speed_kmh: 30
+    route:
+      - { lat: 37.2800, lon: -115.4300 }
+      - { lat: 37.1900, lon: -115.4300 }
+      - { lat: 37.2800, lon: -115.4300 }
+      - { lat: 37.1900, lon: -115.4300 }
+  - name: "M-2 Armor"
+    coalition: red
+    type: [BMP_2, BMP_2]
+    lat: 37.2700
+    lon: -115.4450
+    heading: 180
+    hold_fire: true
+    on_road: false
+    speed_kmh: 25
+    route:
+      - { lat: 37.1900, lon: -115.4450 }
+      - { lat: 37.2700, lon: -115.4450 }
+      - { lat: 37.1900, lon: -115.4450 }
+  - name: "M-3 Jeeps"
+    coalition: red
+    type: [UAZ_469, UAZ_469]
+    lat: 37.2200
+    lon: -115.4150
+    heading: 0
+    hold_fire: true
+    on_road: false
+    speed_kmh: 45
+    route:
+      - { lat: 37.2800, lon: -115.4150 }
+      - { lat: 37.1900, lon: -115.4150 }
+      - { lat: 37.2800, lon: -115.4150 }
+      - { lat: 37.1900, lon: -115.4150 }
+      - { lat: 37.2800, lon: -115.4150 }
+
+storyboard:
+  - phase: "Start and Transit"
+    time: "08:40"
+    waypoints: ["DESERT"]
+    brief: |
+      Cold start at Nellis. Before taxi, set laser code 1688 on the pod and both Maverick Es. Depart
+      north, climbing to 18,000 ft, and route via DESERT to 61B IP.
+    script: "WREN checks in from Blackjack's console."
+    trigger:
+      when: { time_after: 10 }
+      message: "WREN: Chevy, Wren, at Blackjack. The movers are running. Check in at six-one-bravo IP."
+      seconds: 15
+
+  - phase: "Event 1: Maverick F"
+    time: "09:12"
+    waypoints: ["61B IP", "RANGE"]
+    notes: "Ask the student how they told M-1 from M-2 on the IR picture before they locked."
+    brief: |
+      Check in with Blackjack at 61B IP. Blackjack clears M-1 hot. Find the trucks on the pod, run in
+      along the valley, lock each engine block with the Maverick F and shoot. Climb back to HOLD between shots.
+    script: "Blackjack clears M-1 at the IP (flag 50). M-1 destroyed sets flag 11 and clears M-2."
+    triggers:
+      - when: { player_in_zone: "61B IP" }
+        set_flag: 50
+        message: "BLACKJACK: Chevy one, Blackjack, range six-one-bravo is hot. Cleared hot M-1, three trucks northbound, Maverick Fox."
+        seconds: 20
+      - when: { group_dead: "M-1 Trucks", flag: 50 }
+        set_flag: 11
+        message: "BLACKJACK: M-1 destroyed. Chevy one, cleared hot M-2, two tracks southbound on the west side, Maverick Echo, code one-six-eight-eight."
+        seconds: 20
+
+  - phase: "Event 2: Maverick E"
+    time: "09:20"
+    waypoints: ["HOLD"]
+    brief: |
+      From HOLD, find M-2 on the west side of the valley. Area-track it on the ATFLIR, go to point track,
+      fire the Maverick E and keep lasing until impact.
+    script: "M-2 destroyed after M-1 sets flag 12 and clears M-3. Destroying M-2 early is a foul (flag 22)."
+    triggers:
+      - when: { group_dead: "M-2 Armor", flag: 11 }
+        set_flag: 12
+        message: "BLACKJACK: Good hits, M-2 destroyed. Chevy one, cleared hot M-3, two jeeps on the east side, guns only. They're quick."
+        seconds: 20
+      - when: { group_dead: "M-2 Armor", flag_false: 11 }
+        set_flag: 22
+        message: "BLACKJACK: Chevy one, you were not cleared on M-2. Range foul. Range is cold, master arm safe, hold at HOLD."
+        seconds: 20
+
+  - phase: "Event 3: Strafe"
+    time: "09:30"
+    waypoints: []
+    brief: |
+      Strafe M-3 in a shallow dive along the valley, leading the jeeps. Recover above 500 ft AGL on
+      every pass. As many passes as it takes.
+    script: |
+      M-3 destroyed after M-2 completes the event (flag 10). Destroying M-3 early is a foul.
+      Below 150 ft AGL after check-in: abort call (flag 23).
+    triggers:
+      - when: { group_dead: "M-3 Jeeps", flag: 12 }
+        set_flag: 10
+        message: "BLACKJACK: M-3 destroyed. That's all three. Range is cold. Chevy one, cleared off six-one-bravo, contact Nellis."
+        seconds: 20
+      - when: { group_dead: "M-3 Jeeps", flag_false: 12 }
+        set_flag: 22
+        message: "BLACKJACK: Chevy one, you were not cleared on M-3. Range foul. Range is cold, master arm safe."
+        seconds: 20
+      - when: { player_below_agl_ft: 150, flag: 50, flag_false: 10 }
+        set_flag: 23
+        message: "BLACKJACK: Abort, abort! Chevy one, below range minimum. Climb to HOLD altitude."
+        seconds: 20
+
+  - phase: "Recovery"
+    time: "09:45"
+    waypoints: ["EXIT"]
+    brief: |
+      Off the range southeast via EXIT, master arm SAFE, and recover to Nellis (TACAN 12X). Check for
+      hung Mavericks before you join the pattern.
+    script: "WREN's closing call depends on whether the event finished clean."
+    triggers:
+      - when: { player_in_zone: "EXIT", flag: 10, flag_false: [22, 23] }
+        message: "WREN: Chevy, Wren. Three movers, no fouls. Bring the pod tape."
+        seconds: 15
+      - when: { player_in_zone: "EXIT", flag_false: 10 }
+        message: "WREN: Chevy, Wren. Not finished. We'll put the missed events on Thursday."
+        seconds: 15

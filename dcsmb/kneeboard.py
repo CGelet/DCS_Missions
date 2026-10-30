@@ -5,7 +5,7 @@ from pathlib import Path
 
 from .build_html import env, view_model
 
-PAGES = ["mission", "nav", "threats"]
+PAGES = ["mission", "lineup", "nav", "comms", "threats"]
 SIZE = {"width": 768, "height": 1024}
 # Long pages (wordy situations, many waypoints) used to run off the bottom of the kneeboard.
 # Zoom the whole page out in small steps until it fits, keeping the 768x1024 output size.
@@ -24,9 +24,11 @@ def build(data: dict, out_dir: Path) -> list[Path]:
     from playwright.sync_api import sync_playwright
 
     vm = view_model(data)
-    pages = ["mission", "nav", "rules"] if vm["is_training"] else PAGES
+    pages = ["mission", "lineup", "nav", "comms", "rules"] if vm["is_training"] else PAGES
     tpl = env().get_template("kneeboard.html.j2")
     out_dir.mkdir(parents=True, exist_ok=True)
+    for old in out_dir.glob("*.png"):  # page names and numbers change when pages are added
+        old.unlink()
     paths = []
     with sync_playwright() as p:
         browser = p.chromium.launch()

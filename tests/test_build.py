@@ -251,3 +251,26 @@ def test_launcher_opens_the_hangar():
     src = (root / "Mission Hangar.html").read_text()
     targets = set(re.findall(r'url=([^"]+)"', src)) | set(re.findall(r'href="([^"]+)"', src))
     assert targets == {"hangar/index.html"} and (root / "hangar" / "index.html").exists()
+
+
+def test_positions_must_be_on_the_theater_map(bridge):
+    bad = copy.deepcopy(bridge)
+    bad["meta"]["theater"] = "nevada"  # a Caucasus mission's coordinates are nowhere near Nevada
+    with pytest.raises(schema.MissionError, match="off the nevada map"):
+        schema.validate(bad)
+    bad["meta"]["theater"] = "syria"
+    with pytest.raises(schema.MissionError, match="maps the owner has"):
+        schema.validate(bad)
+
+
+def test_coordinates_carry_their_hemisphere():
+    assert build_html.coord({"lat": 37.2, "lon": -115.43}) == "37.2000N 115.4300W"
+    assert build_html.ddm({"lat": 36.2359, "lon": -115.0341}) == "N36°14.15' W115°02.05'"
+    assert build_html.ddm({"lat": 42.5, "lon": 41.99999}) == "N42°30.00' E042°00.00'"  # 59.9994 min rounds up to the next degree
+
+
+def test_kneeboard_has_lineup_and_comms_cards():
+    root = Path(__file__).resolve().parent.parent / "hangar"
+    for m in MISSIONS:
+        names = sorted(p.name for p in (root / m.name / "kneeboard").glob("*.png"))
+        assert [n[3:-4] for n in names][:4] == ["mission", "lineup", "nav", "comms"], m.name

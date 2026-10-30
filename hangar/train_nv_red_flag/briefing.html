@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' file: data: https://server.arcgisonline.com https://cdnjs.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RED FLAG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+.back { display: inline-block; margin-bottom: 18px; font-size: 14px; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--accent); }
+@media print { .back { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="../index.html">← Mission Hangar</a>
+    
+    <div class="eyebrow">Training event RED FLAG · Nellis pre-deployment, event LFE-1 (Red Flag 38-1)</div>
+    <h1>Large Force Exercise</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2037-12-14</b></span>
+      <span>Step <b class="mono">13:00L</b></span>
+      <span>Theater <b>Nevada</b></span>
+      <span>Flight <b>Dodge 1 · 2× F/A-18C Hornet</b></span>
+      <span>Base <b>Nellis</b></span>
+    </div>
+    <blockquote class="hook">&#34;Forty jets, one push time and a thirty-second window. Nobody remembers who shot down whom. They
+remember who was late.&#34; WREN, mass brief</blockquote>
+    
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#story">Overview</a><a href="#plan">Event flow &amp; map</a><a href="#brief">Briefing</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+    <button type="button" onclick="window.print()">Print</button>
+  </div>
+</nav>
+
+<main>
+<section id="story">
+  <div class="wrap">
+    <h2>Why we&#39;re flying this</h2>
+    <div class="story">
+      <div><p>The last week at Nellis is Red Flag: a large-force exercise with fighters, Wild Weasels, an AWACS
+and a full squadron of aggressors whose only job is to make everyone else&#39;s day difficult. For the
+detachment it&#39;s the dress rehearsal for Georgia: a package, a push time and a target that has to be
+hit inside a 30-second window, while somebody else fights the war overhead.</p><p>Dodge flight are the strikers. Uzi&#39;s F-15s will clear the air ahead of them; Weasel&#39;s F-16s will
+keep the range&#39;s SA-6 busy. All Dodge has to do is be on time, put four JDAMs each on the target
+complex in Gold Flat, and get home. The aggressors will be waiting north of the target.</p></div>
+      <div>
+        <h3>Instructors and players</h3>
+        <ul class="cast">
+          <li><b>LCDR Ana &#34;WREN&#34; Castellano</b><span>Detachment training officer, flying white air (observer) with WIZARD</span></li><li><b>WIZARD</b><span>E-3 AWACS: picture calls and bandit declarations</span></li><li><b>Uzi 1</b><span>F-15C sweep, two-ship</span></li><li><b>Weasel 1</b><span>F-16C SEAD, two-ship</span></li><li><b>Dodge 1-1 / 1-2</b><span>You and your wingman, the strikers, F/A-18C Hornets</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="wrap">
+    <h2>Event flow &amp; flight plan</h2>
+    <div class="plan">
+      <div class="map-wrap">
+        <div id="map" role="img" aria-label="Mission map with route, threats and target"></div>
+        <div class="legend" id="legend">
+          <label><input type="checkbox" data-layer="route" checked> <i style="background:var(--blue)"></i>Route</label>
+          <label><input type="checkbox" data-layer="threats" checked> <i style="background:var(--red)"></i>Range players</label>
+          <label><input type="checkbox" data-layer="support" checked> <i style="background:var(--ok)"></i>Friendly support</label>
+          <label><input type="checkbox" data-layer="target" checked> <i style="background:var(--accent)"></i>Target</label>
+        </div>
+      </div>
+      <ol class="timeline">
+        
+        <li class="phase" data-idx="0">
+          <span class="dot">1</span>
+          <button type="button" class="phase-card" aria-label="Show Step and Marshal on the map">
+            <div class="phase-head"><h3>Step and Marshal</h3><span class="time">13:00</span></div>
+            <p class="beat">Cold start at Nellis, two-ship. Load the JDAM targets before taxi: three per jet, one per vehicle,
+plus a spare on the biggest. Depart northwest to MARSHAL at 20,000 ft and hold until 13:38.</p>
+            <div class="chips"><span class="chip">MARSHAL</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="1">
+          <span class="dot">2</span>
+          <button type="button" class="phase-card" aria-label="Show Push on the map">
+            <div class="phase-head"><h3>Push</h3><span class="time">13:40</span></div>
+            <p class="beat">Cross PUSH at 13:40:00, 20,000 ft and 420 kt, accelerating to 450 kt. The TOT clock starts at
+PUSH. The aggressors launch when the package pushes; WIZARD will declare them.</p>
+            <div class="chips"><span class="chip">PUSH</span><span class="chip">IP</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="2">
+          <span class="dot">3</span>
+          <button type="button" class="phase-card" aria-label="Show Time on Target on the map">
+            <div class="phase-head"><h3>Time on Target</h3><span class="time">13:43</span></div>
+            <p class="beat">JDAMs from 20,000 ft inside the launch zone. The sim calls your TOT at TGT. Weasel will be busy with
+the SA-6; it&#39;ll be spiking you all the way in, but it won&#39;t shoot.</p>
+            <div class="chips"><span class="chip">TGT</span></div>
+          </button>
+        </li>
+        
+        <li class="phase" data-idx="3">
+          <span class="dot">4</span>
+          <button type="button" class="phase-card" aria-label="Show Egress and Recovery on the map">
+            <div class="phase-head"><h3>Egress and Recovery</h3><span class="time">13:47</span></div>
+            <p class="beat">Off target to the south, climbing to 24,000 ft at 480 kt. Fence out at EGRESS and recover to Nellis
+(TACAN 12X), well west of R-4808N.</p>
+            <div class="chips"><span class="chip">EGRESS</span></div>
+          </button>
+        </li>
+        
+      </ol>
+    </div>
+    <div class="profile-wrap"><h3>Altitude profile</h3><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 399 km</text><line class="pleg" x1="56.0" y1="196.0" x2="271.6" y2="92.0"/><line class="pleg" x1="271.6" y1="92.0" x2="360.5" y2="92.0"/><line class="pleg" x1="360.5" y1="92.0" x2="417.9" y2="92.0"/><line class="pleg" x1="417.9" y1="92.0" x2="455.8" y2="92.0"/><line class="pleg" x1="455.8" y1="92.0" x2="525.2" y2="71.2"/><line class="pleg" x1="525.2" y1="71.2" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="77.6" y="186.0" text-anchor="middle">Nellis</text><circle class="pwp" cx="271.6" cy="92.0" r="4"/><text class="plbl" x="271.6" y="82.0" text-anchor="middle">1 MARSHAL</text><text class="psub" x="271.6" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="360.5" cy="92.0" r="4"/><text class="plbl" x="360.5" y="82.0" text-anchor="middle">2 PUSH</text><text class="psub" x="360.5" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="417.9" cy="92.0" r="4"/><text class="plbl" x="417.9" y="82.0" text-anchor="middle">3 IP</text><text class="psub" x="417.9" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="455.8" cy="92.0" r="4"/><text class="plbl" x="455.8" y="68.0" text-anchor="middle">4 TGT</text><text class="psub" x="455.8" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="525.2" cy="71.2" r="4"/><text class="plbl" x="525.2" y="61.2" text-anchor="middle">5 EGRESS</text><text class="psub" x="525.2" y="220" text-anchor="middle">24k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="862.4" y="186.0" text-anchor="middle">Nellis</text></svg><p>Planned altitudes along the route. Dashed legs are terrain-following, flown above ground level (AGL), not sea level.</p></div>
+  </div>
+</section>
+
+<section id="brief">
+  <div class="wrap">
+    <h2>Briefing</h2>
+    <div class="cards">
+      <div class="card"><h3>Event overview</h3><p>Large-force exercise in the north ranges. Dodge flight, the two-ship strike element, launches from
+Nellis, routes via MARSHAL to stay clear of R-4808N, and crosses PUSH at 13:40:00. TOT on the target
+complex in southern Gold Flat is 13:43:20 ±15 s: six vehicles in two lines. Uzi (two F-15Cs) sweeps
+ahead; Weasel (two F-16Cs) suppresses the range SA-6 near the target. WIZARD runs the picture. Two
+aggressor MiG-29s launch from the north when the package pushes and are live in the sim.</p></div>
+      <div class="card"><h3>Learning objectives</h3>
+        <ul class="obj-list"><li><span>primary</span><div>Destroy the target complex with the bombs arriving inside the TOT window.</div></li><li><span>secondary</span><div>Both strikers survive the aggressors.</div></li><li><span>tertiary</span><div>Cross PUSH on time, stay clear of R-4808N, and recover to Nellis.</div></li></ul>
+      </div>
+      <div class="card"><h3>Range and weapons clearance</h3><p>Weapons free on the target complex and on aggressors declared hostile by WIZARD. No weapons on the
+range SA-6 (Weasel&#39;s target). Master arm SAFE until PUSH.</p></div>
+      
+      <div class="card"><h3>Training rules</h3><ol class="rules"><li>The aggressors are live in the sim and will shoot. Treat every red contact as hostile once WIZARD declares it.</li><li>TOT is 200 seconds after you cross PUSH (13:43:20 on a 13:40:00 push), ±15 s. The sim times you over TGT, not the bomb impacts.</li><li>Strikers don&#39;t commit on bandits unless they&#39;re inside 10 nm and hot. Uzi owns the air.</li><li>The range SA-6 radiates but holds fire. It&#39;s Weasel&#39;s target; strikers don&#39;t attack it.</li><li>No-fly: Groom Lake restricted area (R-4808N). The route via MARSHAL keeps you clear; don&#39;t cut the corner to PUSH.</li><li>Bingo 4,500 lb to Nellis. Below joker, strikers jettison and go home.</li></ol></div>
+      <div class="card kio"><h3>Knock-it-off and terminate</h3><p>Anyone in the package can call &#34;Knock it off&#34; for a midair risk, a lost wingman in the fight or a
+no-fly infringement. Strikers climb to 24,000 ft heading south, master arm SAFE, and wait for WIZARD.
+The aggressors don&#39;t know the knock-it-off call: if they&#39;re still coming, defend.</p></div>
+      <div class="card"><h3>Special subjects</h3><ul class="rules"><li>Losing a fighter: if Uzi is shot down, the strikers press on unless WIZARD calls the bandits within 10 nm.</li><li>Timing: you&#39;re 30 seconds late at IP. How much faster to make the window?</li><li>Deconfliction: Weasel is at 22,000 ft, you&#39;re at 20,000 ft, Uzi is above both.</li><li>The JDAM launch zone at 20,000 ft and 450 kt, and what a bandit merge does to it.</li></ul></div>
+      <div class="card wide"><h3>Grade sheet</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Item</th><th>Standard to pass</th></tr></thead>
+          <tbody><tr><td class="num">1</td><td><b>Push</b></td><td>Crosses PUSH within 30 seconds of 13:40:00, at 20,000 ft and 420 kt.</td></tr><tr><td class="num">2</td><td><b>TOT</b></td><td>Over TGT within ±15 s of 200 seconds after PUSH.</td></tr><tr><td class="num">3</td><td><b>Target</b></td><td>Destroys the target complex with the flight&#39;s GBU-38s.</td></tr><tr><td class="num">4</td><td><b>Survival</b></td><td>Both strikers survive the aggressors.</td></tr><tr><td class="num">5</td><td><b>Safety</b></td><td>No entry into R-4808N and no midair-risk knock-it-off.</td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="card"><h3>Debrief focus</h3><ul class="rules"><li>The big room: everyone&#39;s timeline on one screen. Where was the package when the bandits committed?</li><li>TOT accuracy, and the speed changes it took.</li><li>Each JDAM&#39;s release point against the launch zone.</li></ul></div>
+      
+
+      <div class="card wide"><h3>Range players and hazards</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Type</th><th>Player</th><th>Range</th><th>Notes</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag armor">armor</span></td><td>Target complex: six vehicles in two lines</td>
+            
+            <td class="num">n/a</td><td>Fuel trucks and transporters in southern Gold Flat. Three per line, 200 m apart.</td>
+          </tr><tr>
+            <td><span class="tag sam">sam</span></td><td>Range SA-6 (Weasel&#39;s target)</td>
+            
+            <td class="num">24 km</td><td>Radiating, holding fire. Your RWR will show it the whole way in.</td>
+          </tr><tr>
+            <td><span class="tag air">air</span></td><td>Aggressors: two MiG-29s</td>
+            
+            <td class="num">n/a</td><td>Launch from the north when the package pushes. Live in the sim: they will shoot.</td>
+          </tr><tr>
+            <td><span class="tag hazard">hazard</span></td><td>Groom Lake restricted area (R-4808N): no-fly</td>
+            
+            <td class="num">15 km</td><td>No entry at any altitude. Route via MARSHAL; never direct from Nellis to PUSH.</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card"><h3>Range target</h3>
+        <dl class="kv">
+          <dt>Name</dt><dd>Target complex: six vehicles in two lines</dd>
+          <dt>Coords</dt><dd class="mono">37.4400N 116.5000W</dd>
+          <dt>Description</dt><dd>Fuel trucks and missile transporters in two lines of three, 200 m apart, on the flat of southern Gold Flat.</dd>
+          <dt>DMPI</dt><dd>One GBU-38 per vehicle. Lead takes the northern line, wingman the southern. The fourth bomb each goes on the biggest survivor.</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Flight &amp; loadout</h3>
+        <dl class="kv">
+          <dt>Callsign</dt><dd>Dodge 1-1 / Dodge 1-2</dd>
+          <dt>Start</dt><dd>Cold start, Nellis</dd>
+          <dt>Loadout</dt><dd>4× GBU-38, 1× AIM-120C, 2× AIM-9X, ATFLIR, 3× 330 gal tanks</dd>
+          
+          <dt>Joker / Bingo</dt><dd class="mono">6500 / 4500 lb</dd>
+        </dl>
+      </div>
+      <div class="card"><h3>Weather</h3>
+        <dl class="kv">
+          <dt>Wind</dt><dd class="mono">250° / 12 kt</dd>
+          <dt>Temp</dt><dd class="mono">9 °C</dd>
+          <dt>QNH</dt><dd class="mono">30.08 inHg</dd>
+          <dt>Clouds</dt><dd>Few 18,000 ft</dd>
+          <dt>Visibility</dt><dd>50+ km</dd>
+        </dl>
+      </div>
+
+      <div class="card wide"><h3>Navigation</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Alt</th><th>Speed</th><th>ETA</th><th>Action</th></tr></thead>
+          <tbody><tr>
+            <td class="num">1</td><td><b>MARSHAL</b></td>
+            <td class="num">36.9000N 115.8500W</td>
+            <td class="num">20,000 ft</td><td class="num">400 kt</td>
+            <td class="num">13:30</td><td></td>
+          </tr><tr>
+            <td class="num">2</td><td><b>PUSH</b></td>
+            <td class="num">37.2500N 116.0500W</td>
+            <td class="num">20,000 ft</td><td class="num">420 kt</td>
+            <td class="num">13:40</td><td></td>
+          </tr><tr>
+            <td class="num">3</td><td><b>IP</b></td>
+            <td class="num">37.4000N 116.3000W</td>
+            <td class="num">20,000 ft</td><td class="num">450 kt</td>
+            <td class="num">13:42</td><td></td>
+          </tr><tr>
+            <td class="num">4</td><td><b>TGT</b></td>
+            <td class="num">37.4400N 116.5000W</td>
+            <td class="num">20,000 ft</td><td class="num">450 kt</td>
+            <td class="num">13:43</td><td>BOMB</td>
+          </tr><tr>
+            <td class="num">5</td><td><b>EGRESS</b></td>
+            <td class="num">37.1500N 116.6000W</td>
+            <td class="num">24,000 ft</td><td class="num">480 kt</td>
+            <td class="num">13:47</td><td></td>
+          </tr></tbody>
+        </table></div>
+      </div>
+
+      
+      <div class="card wide"><h3>Comms</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Station</th><th>Frequency</th><th>Preset</th><th>Notes</th></tr></thead>
+          <tbody><tr><td>Dodge (inter-flight)</td><td class="num">254.000 AM</td><td class="num">COMM1 · CH 1</td><td></td></tr><tr><td>WIZARD (AWACS)</td><td class="num">251.000 AM</td><td class="num">COMM1 · CH 2</td><td>Answers the F5 AWACS menu</td></tr><tr><td>Package common</td><td class="num">262.000 AM</td><td class="num">COMM1 · CH 3</td><td>Uzi and Weasel check in here</td></tr><tr><td>Nellis Tower</td><td class="num">327.000 AM</td><td class="num">COMM2 · CH 1</td><td>TACAN 12X (LSV). Departure and recovery</td></tr><tr><td>WREN, WIZARD, Uzi, Weasel</td><td class="num">262.000 AM</td><td class="num">Manual / listen</td><td>Scripted calls (on-screen text)</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/train_nv_red_flag/mission.yaml</code>. Intel is what the squadron knows at brief time; it may be incomplete.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const D = {"route": [{"name": "Nellis", "lat": 36.23522411088335, "lon": -115.03300055101853, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "MARSHAL", "lat": 36.9, "lon": -115.85, "alt_ft": 20000, "kts": 400, "eta": "13:30", "zone_km": 5, "kind": "wp", "num": 1}, {"name": "PUSH", "lat": 37.25, "lon": -116.05, "alt_ft": 20000, "kts": 420, "eta": "13:40", "zone_km": 4, "kind": "wp", "num": 2}, {"name": "IP", "lat": 37.4, "lon": -116.3, "alt_ft": 20000, "kts": 450, "eta": "13:42", "zone_km": 3, "kind": "wp", "num": 3}, {"name": "TGT", "lat": 37.44, "lon": -116.5, "alt_ft": 20000, "kts": 450, "eta": "13:43", "action": "bomb", "zone_km": 3, "timing": {"from": "PUSH", "seconds": 200, "window_s": 15, "flag": 61}, "kind": "wp", "num": 4}, {"name": "EGRESS", "lat": 37.15, "lon": -116.6, "alt_ft": 24000, "kts": 480, "eta": "13:47", "zone_km": 5, "kind": "wp", "num": 5}, {"name": "Nellis", "lat": 36.23522411088335, "lon": -115.03300055101853, "kind": "base", "alt_ft": 0}], "target": {"name": "Target complex: six vehicles in two lines", "lat": 37.44, "lon": -116.5, "description": "Fuel trucks and missile transporters in two lines of three, 200 m apart, on the flat of southern Gold Flat.", "dmpi": "One GBU-38 per vehicle. Lead takes the northern line, wingman the southern. The fourth bomb each goes on the biggest survivor."}, "threats": [{"name": "Target complex: six vehicles in two lines", "kind": "armor", "lat": 37.44, "lon": -116.5, "range_km": 0, "notes": "Fuel trucks and transporters in southern Gold Flat. Three per line, 200 m apart."}, {"name": "Range SA-6 (Weasel's target)", "kind": "sam", "lat": 37.47, "lon": -116.47, "range_km": 24, "notes": "Radiating, holding fire. Your RWR will show it the whole way in."}, {"name": "Aggressors: two MiG-29s", "kind": "air", "lat": 37.95, "lon": -116.6, "range_km": 0, "notes": "Launch from the north when the package pushes. Live in the sim: they will shoot."}, {"name": "Groom Lake restricted area (R-4808N): no-fly", "kind": "hazard", "lat": 37.2332, "lon": -115.7923, "range_km": 15, "notes": "No entry at any altitude. Route via MARSHAL; never direct from Nellis to PUSH."}], "support": [{"kind": "awacs", "callsign": "WIZARD", "aircraft": "E_3A", "coalition": "blue", "lat": 36.9, "lon": -115.5, "alt_ft": 30000, "heading": 330, "leg_nm": 25, "freq_mhz": 251.0, "track_to": {"lat": 37.26123401977675, "lon": -115.76080099992555}}, {"kind": "flight", "callsign": "Uzi 1", "aircraft": "F_15C", "coalition": "blue", "count": 2, "task": "sweep", "spawn": {"lat": 37.2, "lon": -116.0, "alt_ft": 28000, "kts": 450}, "route": [{"lat": 37.6, "lon": -116.45, "alt_ft": 28000}, {"lat": 37.75, "lon": -116.6, "alt_ft": 28000}, {"lat": 37.4, "lon": -116.3, "alt_ft": 28000}]}, {"kind": "flight", "callsign": "Weasel 1", "aircraft": "F_16C_50", "coalition": "blue", "count": 2, "task": "sead", "spawn": {"lat": 37.22, "lon": -116.02, "alt_ft": 22000, "kts": 450}, "route": [{"lat": 37.4, "lon": -116.35, "alt_ft": 22000}, {"lat": 37.25, "lon": -116.2, "alt_ft": 22000}]}, {"kind": "flight", "callsign": "Bandit 71", "aircraft": "MiG_29S", "coalition": "red", "count": 2, "task": "sweep", "late_activation": true, "spawn": {"lat": 37.95, "lon": -116.6, "alt_ft": 24000, "kts": 450}, "route": [{"lat": 37.55, "lon": -116.5}, {"lat": 37.3, "lon": -116.3}]}], "ships": [], "airfields": [{"name": "Nellis", "lat": 36.23522411088335, "lon": -115.03300055101853}], "phases": [{"phase": "Step and Marshal", "waypoints": ["MARSHAL"]}, {"phase": "Push", "waypoints": ["PUSH", "IP"]}, {"phase": "Time on Target", "waypoints": ["TGT"]}, {"phase": "Egress and Recovery", "waypoints": ["EGRESS"]}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);  // YAML text into Leaflet's HTML labels
+
+// Theme toggle (remembered per viewer when storage is available)
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    drawMap();
+  });
+})();
+
+let map, layers = {}, routeLine, wpLatLng = {};
+function drawMap() {
+  if (typeof L === "undefined") { document.getElementById("map").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  const center = map ? map.getCenter() : null, zoom = map ? map.getZoom() : null;
+  if (map) map.remove();
+  map = L.map("map", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+
+  const blue = css("--blue"), red = css("--red"), amber = css("--amber"), ok = css("--ok"), accent = css("--accent");
+  layers = { route: L.layerGroup(), threats: L.layerGroup(), support: L.layerGroup(), target: L.layerGroup() };
+
+  const pts = D.route.map(p => [p.lat, p.lon]);
+  routeLine = L.polyline(pts, { color: blue, weight: 3, opacity: .9 }).addTo(layers.route);
+  D.route.forEach(p => {
+    const ll = [p.lat, p.lon];
+    if (p.kind === "wp") wpLatLng[p.name] = ll;
+    const m = L.circleMarker(ll, { radius: p.kind === "base" ? 7 : 5, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+      .addTo(layers.route);
+    if (!(p.ship && p === D.route[0])) m.bindTooltip(esc(p.kind === "wp" ? `${p.num} ${p.name}` : p.name), { permanent: true, direction: "right", offset: [8, 0], className: "wp-label" });  // the ship marker labels the start
+    if (p.kind === "wp") m.bindPopup(`<b>WP${esc(p.num)} ${esc(p.name)}</b><br>${esc(p.alt_ft.toLocaleString())} ft · ${esc(p.kts)} kt<br>ETA ${esc(p.eta)}${p.action ? "<br>Action: " + esc(p.action.toUpperCase()) : ""}`);
+  });
+
+  // Rings show intel, not truth: solid = confirmed, dashed = suspected, dotted = possible.
+  const dash = { confirmed: null, suspected: "8 5", possible: "2 6" };
+  D.threats.forEach(t => {
+    const intel = t.intel || "confirmed";
+    const c = t.kind === "aaa" ? amber : t.kind === "air" ? blue : t.kind === "armor" ? css("--muted") : red;
+    const faint = intel === "possible" ? .5 : 1;
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: c, weight: 1, opacity: .7 * faint, fill: false, dashArray: "1 5" })
+      .addTo(layers.threats).bindTooltip(`${esc(t.name)}: last known area`, { sticky: true });
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: c, weight: 1.5, opacity: faint, fillColor: c, fillOpacity: .06 * faint, dashArray: dash[intel] }).addTo(layers.threats);
+    L.circleMarker([t.lat, t.lon], { radius: 5, color: c, fillColor: intel === "confirmed" ? c : css("--surface"), fillOpacity: 1, opacity: faint }).addTo(layers.threats)
+      .bindPopup(`<b>${esc(t.name)}</b><br><i>Intel: ${esc(intel)}</i>${t.range_km ? "<br>Range " + esc(t.range_km) + " km" : ""}${t.area_km ? "<br>Position ±" + esc(t.area_km) + " km" : ""}<br>${esc(t.notes)}`);
+  });
+
+  D.support.forEach(s => {
+    const c = s.coalition === "red" ? red : ok;
+    if (s.from && s.to) {
+      L.polyline([[s.from.lat, s.from.lon], [s.to.lat, s.to.lon]], { color: c, weight: 3, dashArray: "2 6" }).addTo(layers.support)
+        .bindTooltip(`${esc(s.callsign)} CAP`, { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.spawn) {
+      L.polyline([[s.spawn.lat, s.spawn.lon], ...s.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "10 6" }).addTo(layers.support)
+        .bindTooltip(`${esc(s.callsign)} planned route`, { sticky: true });
+      L.circleMarker([s.spawn.lat, s.spawn.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(esc(s.callsign), { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.lat) {
+      L.circleMarker([s.lat, s.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(esc(s.callsign), { permanent: true, direction: "left", className: "wp-label" });
+    } else if (s.base_ll) {
+      L.circleMarker([s.base_ll.lat, s.base_ll.lon], { radius: 6, color: c, fillColor: c, fillOpacity: .9 }).addTo(layers.support)
+        .bindTooltip(`${esc(s.callsign)} (${esc(s.base_ll.name)})`, { permanent: true, direction: "left", className: "wp-label" });
+    }
+  });
+
+  // Friendly ships with their planned track; AWACS / tanker orbits
+  D.ships.forEach(sh => {
+    const pts = [[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])];
+    L.polyline(pts, { color: ok, weight: 3, dashArray: "1 7", lineCap: "round" }).addTo(layers.support);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: ok, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(layers.support)
+      .bindTooltip(esc(sh.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.support.filter(s => s.track_to).forEach(s => {
+    L.polyline([[s.lat, s.lon], [s.track_to.lat, s.track_to.lon]], { color: ok, weight: 5, opacity: .5, lineCap: "round" }).addTo(layers.support);
+  });
+
+  const tg = D.target;
+  if (tg.area_km) L.circle([tg.lat, tg.lon], { radius: tg.area_km * 1000, color: accent, weight: 2, fill: false, dashArray: "4 6" })
+    .addTo(layers.target).bindTooltip("Target search area", { sticky: true });
+  L.marker([tg.lat, tg.lon], { icon: L.divIcon({ className: "", html: `<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="${accent}" stroke-width="2.5"/><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="${accent}" stroke-width="2.5"/></svg>`, iconSize: [26, 26], iconAnchor: [13, 13] }) })
+    .addTo(layers.target).bindPopup(`<b>${esc(tg.name)}</b>${tg.area_km ? "<br><i>Estimated position ±" + esc(tg.area_km) + " km</i>" : ""}<br>${esc(tg.description)}`);
+
+  document.querySelectorAll("#legend input").forEach(cb => { if (cb.checked) layers[cb.dataset.layer].addTo(map); });
+  // Frame the route plus every briefed threat position and uncertainty area (not full ranges, which can be huge)
+  const frame = routeLine.getBounds();
+  D.threats.concat([D.target]).forEach(t => frame.extend(L.latLng(t.lat, t.lon).toBounds(2 * (t.area_km || 1) * 1000)));
+  if (center) map.setView(center, zoom); else map.fitBounds(frame, { padding: [24, 24] });
+}
+
+document.querySelectorAll("#legend input").forEach(cb => cb.addEventListener("change", () => {
+  cb.checked ? layers[cb.dataset.layer].addTo(map) : map.removeLayer(layers[cb.dataset.layer]);
+}));
+
+let hl;
+document.querySelectorAll(".phase").forEach(li => li.querySelector(".phase-card").addEventListener("click", () => {
+  document.querySelectorAll(".phase").forEach(x => x.classList.toggle("active", x === li));
+  if (!map) return;
+  if (hl) map.removeLayer(hl);
+  const wps = D.phases[+li.dataset.idx].waypoints.map(n => wpLatLng[n]).filter(Boolean);
+  if (!wps.length) { map.fitBounds(routeLine.getBounds(), { padding: [24, 24] }); return; }
+  // Highlight the leg into the first waypoint through the last one in this phase
+  const all = D.route.map(p => [p.lat, p.lon]);
+  const names = D.route.map(p => p.name);
+  const i0 = Math.max(0, names.indexOf(D.phases[+li.dataset.idx].waypoints[0]) - 1);
+  const i1 = names.indexOf(D.phases[+li.dataset.idx].waypoints.at(-1));
+  hl = L.polyline(all.slice(i0, i1 + 1), { color: css("--accent"), weight: 6, opacity: .85 }).addTo(map);
+  map.fitBounds(L.latLngBounds(all.slice(i0, i1 + 1)).pad(0.35), { maxZoom: 10 });
+  if (matchMedia("(max-width: 900px)").matches) document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+}));
+
+drawMap();
+</script>
+</body>
+</html>

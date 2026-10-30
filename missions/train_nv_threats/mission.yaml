@@ -1,0 +1,288 @@
+# Training event KAWICH VALLEY: terrain masking through a threat range, then a pop-up attack. Source of
+# truth; `python -m dcsmb build` renders hangar/train_nv_threats/.
+#
+# Training, not combat: the emitters radiate but hold fire, and nothing is random. What's graded is
+# staying under the radar horizon. Kawich Valley (5,300-5,900 ft) runs north-south between the Belted
+# Range to the west and the Kawich Range to the east (Open-Meteo grid). An SA-6 sits in Gold Flat behind
+# the western ridge and an SA-8 behind the eastern one; the sim calls a valid shot if you climb above
+# 7,000 ft MSL in their coverage before POP. The target is on the valley floor with no buildings or
+# settlements within 3 km (Overpass); the only roads nearby are range tracks.
+
+meta:
+  id: train_nv_threats
+  title: "KAWICH VALLEY"
+  subtitle: "Threat Reaction and Terrain Masking"
+  category: training
+  theater: nevada
+  role: "Low-level strike"
+  date: 2037-12-09
+  start_time: "10:20"
+  weather:
+    temperature_c: 2
+    wind_from_deg: 340
+    wind_kts: 15
+    clouds: "Clear"
+    visibility: "50+ km"
+    qnh_inhg: 30.20
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Nellis pre-deployment, event LL-3"
+  rules:
+    - "Threat emitters are live and radiating. They never fire. Blackjack calls a valid shot if they see you."
+    - "Masking: below 6,500 ft MSL (about 1,000 ft AGL) in the valley, the ridges hide you. Above 7,000 ft MSL before POP is a valid shot."
+    - "Minimum altitude 500 ft AGL in the valley. The sim calls an abort below 200 ft AGL."
+    - "After POP, the emitters are masked out of the exercise: climb for the attack as briefed."
+    - "No-fly: Groom Lake restricted area (R-4808N), 27 km east of DROP."
+    - "Bingo 4,500 lb to Nellis. Wingman stays in a loose trail on the low-level, 1 nm behind."
+  knock_it_off: |
+    Blackjack or either pilot can call "Knock it off" for anything unsafe: a minimum-altitude bust, losing
+    sight of the leader in the valley, or a bird strike. Climb to 15,000 ft, master arm SAFE, and wait
+    for Blackjack. A valid shot is not a knock-it-off: you keep flying and it goes on the grade sheet.
+  special_subjects:
+    - "RWR picture: the SA-6's search radar (Straight Flush) and the SA-8 (Land Roll). Which spike means you're seen?"
+    - "Ridge crossing: roll inverted and pull over a ridge, don't float over it."
+    - "Pop-up geometry: from POP, pull to 30° nose up, roll in at 4,000 ft AGL, 20° dive on the target."
+    - "Wingman in the valley: trail, not formation. If you lose sight, climb only on the leader's call."
+  grade_sheet:
+    - { item: "Valley entry", standard: "Enters the valley at DROP below 1,000 ft AGL." }
+    - { item: "Masking", standard: "No valid shot from the SA-6 or the SA-8 before POP." }
+    - { item: "Pop-up attack", standard: "Destroys the target group with Mk-82s from the briefed pop-up." }
+    - { item: "Egress", standard: "Back below 1,000 ft AGL within 1 minute of release, east through the gap." }
+    - { item: "Safety", standard: "No minimum-altitude abort and no entry into R-4808N." }
+  debrief_focus:
+    - "The altitude trace against the ridgelines: where you were exposed, and for how long."
+    - "RWR tape: when each emitter first saw you."
+    - "Pop-up: the apex altitude and the dive angle at release."
+
+narrative:
+  operation: "KAWICH VALLEY"
+  backstory: |
+    The detachment's second week at Nellis. In Georgia, the SA-6s and SA-8s will be real, and the only
+    defence a Hornet has at low level is the ground itself. WREN has asked for the Kawich range: a
+    long, narrow valley with an SA-6 emitter in Gold Flat behind the western ridge and an SA-8 behind
+    the eastern one. Both radiate. Neither shoots. Both are watching.
+
+    Fly the length of the valley under their horizon, pop up at the north end and bomb the target, and
+    get back down before anything sees you. Blackjack's computers will know exactly how high you went.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, watching the radar trace at Blackjack"
+    - name: "BLACKJACK"
+      role: "Nellis range control: calls valid shots"
+    - name: "Nellis Tower"
+      role: "Departure and recovery"
+    - name: "Ford 1-1 / 1-2"
+      role: "You and your wingman, F/A-18C Hornets"
+  hook: |
+    "The valley's eight miles long and the ridges are a thousand feet high. Stay in it and they can't see
+    you. Climb out of it and you're dead." WREN, 0900 brief
+  outcomes:
+    success: |
+      Complete. The target's destroyed and neither emitter got a valid shot. WREN signs off the threat
+      range, and Ford flight leads the low-level legs in Georgia.
+    partial: |
+      Partial: re-fly items. The target's destroyed, but an emitter got a valid shot on the way in. Re-fly
+      the low-level leg on Friday.
+    failure: |
+      Incomplete: re-fly the event. The target's untouched, or the period ended on a knock-it-off. The
+      re-fly starts with an hour on the altitude trace.
+
+situation: |
+  Two-ship low-level through Kawich Valley, 160 km northwest of Nellis. Transit high to WEST, then drop
+  to the valley floor at DROP and fly north up the valley at 500 ft AGL and 480 kt. An SA-6 emitter in
+  Gold Flat sits behind the western ridge; an SA-8 emitter sits behind the eastern ridge. Both radiate
+  and hold fire. Above 7,000 ft MSL in the valley before POP, Blackjack calls a valid shot. At POP, pull
+  up and attack the target group at the north end with Mk-82s: three trucks and a Shilka hulk. Egress
+  low to the east through the gap, then climb home.
+
+objectives:
+  primary: "Destroy the target group at the north end of the valley."
+  secondary: "No valid shot from either emitter before POP."
+  tertiary: "No minimum-altitude abort; both aircraft recover to Nellis."
+
+roe: |
+  Live Mk-82s on the target group only, after POP. The emitters are range equipment: no weapons on them.
+  Master arm SAFE until POP.
+
+threats:
+  - name: "SA-6 emitter (Gold Flat, behind the western ridge)"
+    kind: sam
+    lat: 37.5500
+    lon: -116.4500
+    range_km: 24
+    notes: "Search and track radars live, holding fire. Sees anything in the valley above about 7,000 ft MSL."
+  - name: "SA-8 emitter (behind the eastern ridge)"
+    kind: sam
+    lat: 37.6000
+    lon: -116.0000
+    range_km: 12
+    notes: "Live and holding fire. Covers the north-east of the valley above about 7,000 ft MSL."
+  - name: "Target group: three trucks and a Shilka hulk"
+    kind: armor
+    lat: 37.7000
+    lon: -116.2000
+    range_km: 0
+    notes: "On the valley floor at the north end. The Shilka's radar is switched off."
+  - name: "Groom Lake restricted area (R-4808N): no-fly"
+    kind: hazard
+    lat: 37.2332
+    lon: -115.7923
+    range_km: 15
+    notes: "No entry at any altitude. Your transit to WEST passes 25 km south of it."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Ford (inter-flight)", freq: "254.000 AM", radio: 1, channel: 1, notes: "WREN monitors here" }
+  - { name: "BLACKJACK (range control)", freq: "251.500 AM", radio: 1, channel: 2, notes: "Valid-shot calls" }
+  - { name: "Nellis Tower", freq: "327.000 AM", radio: 2, channel: 1, notes: "TACAN 12X (LSV). Departure and recovery" }
+  - { name: "BLACKJACK, WREN", freq: "251.500 AM", notes: "Scripted calls (on-screen text); they don't answer the radio menu" }
+
+flights:
+  - callsign: "Ford 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Nellis
+    start: cold
+    radio1_mhz: 254.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD
+      3: BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD
+      5: FPU_8A_Fuel_Tank_330_gallons
+      7: BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD
+      8: BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "8× Mk-82, 578 rounds 20 mm, 2× AIM-9X (inert), 1× 330 gal tank"
+    bingo_lbs: 4500
+    joker_lbs: 6000
+    waypoints:
+      - { name: "WEST",     lat: 36.7500, lon: -115.7500, alt_ft: 18000, kts: 420, eta: "10:43", zone_km: 5 }
+      - { name: "DROP",     lat: 37.2000, lon: -116.1000, alt_ft: 1000,  kts: 450, eta: "10:49", agl: true, zone_km: 4 }
+      - { name: "VALLEY S", lat: 37.3800, lon: -116.2100, alt_ft: 500,   kts: 480, eta: "10:51", agl: true, zone_km: 3 }
+      - { name: "VALLEY N", lat: 37.5500, lon: -116.2100, alt_ft: 500,   kts: 480, eta: "10:53", agl: true, zone_km: 3 }
+      - { name: "POP",      lat: 37.6200, lon: -116.2000, alt_ft: 500,   kts: 480, eta: "10:54", agl: true, zone_km: 3 }
+      - { name: "TGT",      lat: 37.7000, lon: -116.2000, alt_ft: 10000, kts: 450, eta: "10:55", action: bomb, zone_km: 3 }
+      - { name: "GAP",      lat: 37.8000, lon: -116.0000, alt_ft: 500,   kts: 480, eta: "10:57", agl: true, zone_km: 4 }
+      - { name: "CLIMB",    lat: 37.6500, lon: -115.6000, alt_ft: 20000, kts: 420, eta: "11:00", zone_km: 5 }
+    land: Nellis
+
+target:
+  name: "Target group: three trucks and a Shilka hulk"
+  lat: 37.7000
+  lon: -116.2000
+  groups: ["Valley Target"]
+  description: "Three trucks and a Shilka hulk parked in a line on the valley floor at the north end of Kawich Valley."
+  dmpi: "The middle of the line. Lead's four Mk-82s across the trucks, wingman's four 30 seconds later on what's left."
+
+zones:
+  - { name: "VALLEY", lat: 37.5600, lon: -116.2100, radius_km: 16 }
+  - { name: "SA-8 COVER", lat: 37.6000, lon: -116.0000, radius_km: 12 }
+
+units:
+  - name: "Valley Target"
+    coalition: red
+    type: [Ural_375, Ural_375, Ural_375, ZSU_23_4_Shilka]
+    lat: 37.7000
+    lon: -116.2000
+    heading: 0
+    hold_fire: true
+  - name: "Gold Flat SA-6"
+    coalition: red
+    type: [Kub_1S91_str, Kub_2P25_ln, Kub_2P25_ln]
+    lat: 37.5500
+    lon: -116.4500
+    heading: 90
+    hold_fire: true
+  - name: "East Ridge SA-8"
+    coalition: red
+    type: [Osa_9A33_ln]
+    lat: 37.6000
+    lon: -116.0000
+    heading: 270
+    hold_fire: true
+
+storyboard:
+  - phase: "Start and Transit"
+    time: "10:20"
+    waypoints: ["WEST"]
+    brief: |
+      Cold start at Nellis, two-ship. Depart northwest and climb to 18,000 ft for WEST, staying south of
+      R-4808N. Set the radar altimeter to 400 ft before the descent.
+    script: "WREN checks in; the emitters are on from the start."
+    trigger:
+      when: { time_after: 10 }
+      message: "WREN: Ford, Wren, at Blackjack. Both emitters are up and radiating. Show me the valley floor."
+      seconds: 15
+
+  - phase: "Into the Valley"
+    time: "10:49"
+    waypoints: ["DROP", "VALLEY S", "VALLEY N"]
+    notes: "Ask the wingman how far behind lead they were at VALLEY N, and how they knew."
+    brief: |
+      Descend at DROP to 1,000 ft AGL, then 500 ft AGL at VALLEY S. North up the valley at 480 kt, lead
+      on the west side, wingman a mile in trail. Stay under 6,500 ft MSL. Watch the RWR.
+    script: |
+      Entering VALLEY sets flag 50. Above 7,000 ft MSL in VALLEY before POP (flag 40): SA-6 valid shot (flag 31).
+      Above 7,000 ft MSL in SA-8 COVER before POP: SA-8 valid shot (flag 32). Below 200 ft AGL: abort call (flag 23).
+    triggers:
+      - when: { player_in_zone: "VALLEY" }
+        set_flag: 50
+        message: "BLACKJACK: Ford, Blackjack. Kawich is hot, emitters active. Valid shots will be called."
+        seconds: 15
+      - when: { player_in_zone: "VALLEY", player_above_ft: 7000, flag_false: 40 }
+        set_flag: 31
+        message: "BLACKJACK: Ford one, Blackjack. SA-6, valid shot, valid shot. Get back down."
+        seconds: 15
+      - when: { player_in_zone: "SA-8 COVER", player_above_ft: 7000, flag_false: 40 }
+        set_flag: 32
+        message: "BLACKJACK: Ford one, Blackjack. SA-8, valid shot, east side. Get back down."
+        seconds: 15
+      - when: { player_below_agl_ft: 200, flag: 50, flag_false: 10 }
+        set_flag: 23
+        message: "BLACKJACK: Ford one, altitude! Below range minimum. Climb to five hundred."
+        seconds: 15
+
+  - phase: "Pop-up Attack"
+    time: "10:54"
+    waypoints: ["POP", "TGT"]
+    brief: |
+      At POP, pull to 30° nose up, roll in at 4,000 ft AGL and put four Mk-82s across the target line in
+      a 20° dive. Wingman follows 30 seconds behind on whatever's left.
+    script: |
+      POP sets flag 40 (emitters no longer called). Target destroyed with no valid shot: complete (flag 10).
+      Target destroyed after a valid shot: partial (flag 20).
+    triggers:
+      - when: { player_in_zone: "POP" }
+        set_flag: 40
+        message: "BLACKJACK: Ford one, pop called. Emitters are out of the exercise. Cleared hot on the target line."
+        seconds: 15
+      - when: { target_destroyed: true, flag_false: [31, 32] }
+        set_flag: 10
+        message: "BLACKJACK: Target destroyed. No shots on the way in. Ford, clean run. Egress east."
+        seconds: 20
+      - when: { target_destroyed: true, flag: 31 }
+        set_flag: 20
+        message: "BLACKJACK: Target destroyed. Ford one, you took the SA-6 shot on the way in. Egress east."
+        seconds: 20
+      - when: { target_destroyed: true, flag: 32 }
+        set_flag: 20
+        message: "BLACKJACK: Target destroyed. Ford one, you took the SA-8 shot on the way in. Egress east."
+        seconds: 20
+
+  - phase: "Egress and Recovery"
+    time: "10:57"
+    waypoints: ["GAP", "CLIMB"]
+    brief: |
+      Back down below 1,000 ft AGL, east through the gap at GAP, then climb to 20,000 ft at CLIMB and
+      recover to Nellis (TACAN 12X), staying north and east of R-4808N.
+    script: "WREN's closing call at CLIMB."
+    triggers:
+      - when: { player_in_zone: "CLIMB", flag: 10 }
+        message: "WREN: Ford, Wren. Not a spike all the way up. That's how we'll do it in Georgia."
+        seconds: 15
+      - when: { player_in_zone: "CLIMB", flag_false: 10 }
+        message: "WREN: Ford, Wren. I've got your altitude trace. We'll go through it at the debrief."
+        seconds: 15

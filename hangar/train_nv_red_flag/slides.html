@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' file: data: https://server.arcgisonline.com https://cdnjs.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Flag Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Presenter deck. Dark only: it's built for a projector or a shared screen in a dim room. */
+:root {
+  --bg: #0d1012; --slide: #13171a; --ink: #ece8df; --muted: #9aa1a6; --line: #2a3136; --accent: #e07a3c;
+  --blue: #7fb0f0; --red: #ef6b62; --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #08100b; --radio-ink: #a6efbc;
+  --sea: #10202b; --coast: #8aa3b3;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; overflow: hidden; }
+.mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+#stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; background: var(--slide); padding: 80px 96px; display: none; flex-direction: column; overflow: hidden; }
+.slide.on { display: flex; }
+.slide::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--accent); }
+.eyebrow { font: 600 22px/1 "IBM Plex Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+h1 { font-size: 92px; line-height: 1.02; margin: 0; letter-spacing: -.025em; max-width: 1300px; }
+h2 { font-size: 60px; line-height: 1.06; margin: 0 0 32px; letter-spacing: -.02em; }
+p { margin: 0 0 22px; }
+.big { font-size: 42px; line-height: 1.38; max-width: 1280px; }
+.body { font-size: 28px; line-height: 1.45; color: var(--ink); }
+.muted { color: var(--muted); }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 36px; display: flex; justify-content: space-between; font: 18px "IBM Plex Mono", monospace; color: var(--muted); }
+
+.title { justify-content: center; }
+.title .sub { margin-top: 30px; font: 26px "IBM Plex Mono", monospace; color: var(--muted); }
+.title blockquote { margin: 56px 0 0; padding: 0 0 0 28px; border-left: 4px solid var(--accent); font-size: 34px; line-height: 1.4; max-width: 1150px; font-style: italic; }
+.story { justify-content: center; }
+.divider { justify-content: center; }
+.divider h1 { font-size: 120px; }
+
+.split { display: grid; grid-template-columns: 560px 1fr; gap: 56px; flex: 1; min-height: 0; align-items: center; }
+.split.nomap { grid-template-columns: 1fr; max-width: 1200px; }
+.split .text { align-self: center; }
+.radio { margin-top: 26px; background: var(--radio-bg); color: var(--radio-ink); font: 23px/1.5 "IBM Plex Mono", monospace; padding: 20px 24px; border-radius: 10px; border: 1px solid #1d3326; }
+.radio .lbl { display: block; font-size: 15px; letter-spacing: .16em; opacity: .7; margin-bottom: 6px; }
+
+svg.map { width: 100%; height: 100%; max-height: 680px; border-radius: 14px; border: 1px solid var(--line); }
+svg.map .sea { fill: var(--sea); }
+svg.map .grid { stroke: #ffffff10; stroke-width: 1; }
+svg.map .gridlbl { fill: #ffffff40; font: 12px "IBM Plex Mono", monospace; }
+svg.map .coast { fill: none; stroke: var(--coast); stroke-width: 2; stroke-linejoin: round; }
+svg.map .ring { fill-opacity: .1; stroke-width: 2; }
+svg.map .ring.suspected { stroke-dasharray: 10 6; }
+svg.map .ring.possible { stroke-dasharray: 3 7; fill-opacity: .04; opacity: .6; }
+svg.map .area { fill: none; stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+svg.map .area.sam { stroke: var(--red); } svg.map .area.aaa { stroke: var(--amber); } svg.map .area.air { stroke: var(--blue); } svg.map .area.armor { stroke: var(--muted); }
+svg.map .threat.armor, svg.map .ring.armor { fill: var(--muted); stroke: var(--muted); }
+svg.map .threat.suspected, svg.map .threat.possible { fill: var(--slide) !important; stroke-width: 3; }
+svg.map .threat.suspected.sam, svg.map .threat.possible.sam { stroke: var(--red); }
+svg.map .threat.suspected.aaa, svg.map .threat.possible.aaa { stroke: var(--amber); }
+svg.map .threat.suspected.air, svg.map .threat.possible.air { stroke: var(--blue); }
+svg.map .threat.suspected.armor, svg.map .threat.possible.armor { stroke: var(--muted); }
+svg.map .ship { fill: var(--slide); stroke: var(--ok); stroke-width: 4; }
+svg.map .shiptrack { fill: none; stroke: var(--ok); stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+svg.map .flighttrack { fill: none; stroke: var(--ok); stroke-width: 2.5; stroke-dasharray: 10 6; }
+svg.map .orbit { stroke: var(--ok); stroke-width: 7; stroke-linecap: round; opacity: .45; }
+svg.profile { width: 100%; height: auto; }
+.rulelist { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; font-size: 25px; line-height: 1.35; }
+.kio { margin-top: 22px; font-size: 22px; border-left: 5px solid var(--red, #d9534f); padding-left: 16px; }
+svg.profile .pgrid { stroke: #ffffff18; } svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 15px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 4; stroke-linecap: round; } svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 8 6; }
+svg.profile .pwp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; } svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 14px "IBM Plex Mono", monospace; }
+svg.map .search { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 8; }
+svg.map .ring.sam, svg.map .threat.sam { fill: var(--red); stroke: var(--red); }
+svg.map .ring.aaa, svg.map .threat.aaa { fill: var(--amber); stroke: var(--amber); }
+svg.map .threat.air { fill: var(--blue); }
+svg.map .route { fill: none; stroke: var(--blue); stroke-width: 4; stroke-linejoin: round; }
+svg.map .route.dim { opacity: .35; }
+svg.map .route.hl { stroke: var(--accent); stroke-width: 7; }
+svg.map .cap { stroke: var(--ok); stroke-width: 4; stroke-dasharray: 3 9; stroke-linecap: round; }
+svg.map .friendly-dot { fill: var(--ok); }
+svg.map .wp { fill: var(--slide); stroke: var(--blue); stroke-width: 3; }
+svg.map .wp.on { stroke: var(--accent); fill: var(--accent); }
+svg.map .lbl { fill: var(--ink); font: 600 17px "IBM Plex Mono", monospace; paint-order: stroke; stroke: var(--sea); stroke-width: 5px; }
+svg.map .lbl.friendly { fill: var(--ok); }
+svg.map .lbl.sam { fill: var(--red); }
+svg.map .lbl.aaa { fill: var(--amber); }
+svg.map .lbl.air { fill: var(--blue); }
+svg.map .lbl.armor { fill: var(--ink); }
+svg.map .lbl.hazard, svg.map .lbl.hostile { fill: var(--red); }
+svg.map .threat.hazard { fill: none; stroke: var(--red); stroke-width: 3; }
+svg.map .ring.hazard { fill: #ef6b6218; stroke: var(--red); stroke-width: 2; stroke-dasharray: 3 5; }
+svg.map .flighttrack.hostile { stroke: var(--red); }
+svg.map .hostile-dot { fill: var(--red); }
+svg.map .target circle, svg.map .target path { fill: none; stroke: var(--accent); stroke-width: 3.5; }
+
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.card { background: #ffffff08; border: 1px solid var(--line); border-radius: 14px; padding: 26px 30px; }
+.card b { display: block; font-size: 30px; margin-bottom: 6px; }
+.card span { font-size: 23px; color: var(--muted); }
+
+.rows { display: grid; gap: 0; max-width: 1350px; }
+.row { display: grid; grid-template-columns: 260px 1fr; gap: 28px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 28px; line-height: 1.4; }
+.row:last-child { border-bottom: 0; }
+.row .k { font: 600 18px/1.9 "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.tag { display: inline-block; font: 600 16px/1 "IBM Plex Mono", monospace; padding: 7px 10px; border-radius: 6px; text-transform: uppercase; }
+.tag.sam { background: #ef6b6222; color: var(--red); }
+.tag.aaa { background: #e3a93b22; color: var(--amber); }
+.tag.air { background: #7fb0f022; color: var(--blue); }
+.tag.armor { background: #ffffff14; color: var(--ink); }
+.tag.hazard { color: var(--red); border: 1.5px dashed var(--red); }
+.intel { display: inline-block; font: 600 15px/1 "IBM Plex Mono", monospace; padding: 6px 9px; border-radius: 6px; text-transform: uppercase; border: 1.5px solid currentColor; margin-left: 10px; vertical-align: 3px; }
+.intel.confirmed { color: var(--ok); } .intel.suspected { color: var(--amber); } .intel.possible { color: var(--muted); border-style: dashed; }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.chip { font: 20px "IBM Plex Mono", monospace; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ok); }
+
+.outcome .band { height: 10px; width: 220px; border-radius: 5px; margin-bottom: 36px; }
+.outcome.success .band { background: var(--ok); }
+.outcome.partial .band { background: var(--amber); }
+.outcome.failure .band { background: var(--red); }
+
+#progress { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); transition: width .2s; z-index: 5; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; background: #000000e6; color: #ddd; font: 18px/1.5 "IBM Plex Sans", sans-serif; padding: 16px 24px 20px; display: none; z-index: 4; border-top: 1px solid var(--line); }
+#notes.on { display: block; }
+#notes .k { font: 600 13px "IBM Plex Mono", monospace; letter-spacing: .14em; color: var(--accent); margin-right: 12px; }
+#help { position: fixed; right: 16px; top: 12px; font: 13px "IBM Plex Mono", monospace; color: #ffffff55; z-index: 5; }
+
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; background: var(--slide); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #stage { position: static; transform: none !important; width: 1600px; height: auto; }
+  .slide { position: relative; display: flex !important; width: 1600px; height: 900px; page-break-after: always; break-after: page; }
+  #progress, #notes, #help { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<section class="slide title" data-notes="Set the tone. Read the quote out loud, then go straight into the story." aria-label="Slide 1">
+  
+    <div class="eyebrow">Training event RED FLAG · Nellis pre-deployment, event LFE-1 (Red Flag 38-1)</div>
+    <h1>Large Force Exercise</h1>
+    <div class="sub">2037-12-14 · Step 13:00L · Dodge 1 · 2× F/A-18C Hornet</div>
+    <blockquote>&#34;Forty jets, one push time and a thirty-second window. Nobody remembers who shot down whom. They
+remember who was late.&#34; WREN, mass brief</blockquote>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>1 / 22</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 2">
+  
+    <div class="eyebrow">Why we&#39;re flying this</div>
+    <p class="big">The last week at Nellis is Red Flag: a large-force exercise with fighters, Wild Weasels, an AWACS
+and a full squadron of aggressors whose only job is to make everyone else&#39;s day difficult. For the
+detachment it&#39;s the dress rehearsal for Georgia: a package, a push time and a target that has to be
+hit inside a 30-second window, while somebody else fights the war overhead.</p>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>2 / 22</span></div>
+</section>
+
+<section class="slide story" data-notes="Tell it, don&#39;t read it. One idea per slide." aria-label="Slide 3">
+  
+    <div class="eyebrow">Where it fits</div>
+    <p class="big">Dodge flight are the strikers. Uzi&#39;s F-15s will clear the air ahead of them; Weasel&#39;s F-16s will
+keep the range&#39;s SA-6 busy. All Dodge has to do is be on time, put four JDAMs each on the target
+complex in Gold Flat, and get home. The aggressors will be waiting north of the target.</p>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>3 / 22</span></div>
+</section>
+
+<section class="slide cast" data-notes="These are the voices pilots will hear on the radio during the mission." aria-label="Slide 4">
+  
+    <div class="eyebrow">Instructors and players</div>
+    <h2>The voices you'll hear</h2>
+    <div class="cards"><div class="card"><b>LCDR Ana &#34;WREN&#34; Castellano</b><span>Detachment training officer, flying white air (observer) with WIZARD</span></div><div class="card"><b>WIZARD</b><span>E-3 AWACS: picture calls and bandit declarations</span></div><div class="card"><b>Uzi 1</b><span>F-15C sweep, two-ship</span></div><div class="card"><b>Weasel 1</b><span>F-16C SEAD, two-ship</span></div><div class="card"><b>Dodge 1-1 / 1-2</b><span>You and your wingman, the strikers, F/A-18C Hornets</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>4 / 22</span></div>
+</section>
+
+<section class="slide map" data-notes="Walk the route from base to target and back. Point out the threat rings." aria-label="Slide 5">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Event overview</div>
+        <h2>The training area</h2>
+        <div class="body"><p>Large-force exercise in the north ranges. Dodge flight, the two-ship strike element, launches from
+Nellis, routes via MARSHAL to stay clear of R-4808N, and crosses PUSH at 13:40:00. TOT on the target
+complex in southern Gold Flat is 13:43:20 ±15 s: six vehicles in two lines. Uzi (two F-15Cs) sweeps
+ahead; Weasel (two F-16Cs) suppresses the range SA-6 near the target. WIZARD runs the picture. Two
+aggressor MiG-29s launch from the north when the package pushes and are live in the sim.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="659.8" y2="659.8"/><text class="gridlbl" x="6" y="655.8">36.0N</text><line class="grid" x1="0" x2="900" y1="504.3" y2="504.3"/><text class="gridlbl" x="6" y="500.3">36.5N</text><line class="grid" x1="0" x2="900" y1="348.8" y2="348.8"/><text class="gridlbl" x="6" y="344.8">37.0N</text><line class="grid" x1="0" x2="900" y1="193.3" y2="193.3"/><text class="gridlbl" x="6" y="189.3">37.5N</text><line class="grid" x1="0" x2="900" y1="37.8" y2="37.8"/><text class="gridlbl" x="6" y="33.8">38.0N</text><line class="grid" y1="0" y2="640" x1="-72.3" x2="-72.3"/><text class="gridlbl" x="-68.3" y="632">118.0W</text><line class="grid" y1="0" y2="640" x1="51.4" x2="51.4"/><text class="gridlbl" x="55.4" y="632">117.5W</text><line class="grid" y1="0" y2="640" x1="175.0" x2="175.0"/><text class="gridlbl" x="179.0" y="632">117.0W</text><line class="grid" y1="0" y2="640" x1="298.6" x2="298.6"/><text class="gridlbl" x="302.6" y="632">116.5W</text><line class="grid" y1="0" y2="640" x1="422.2" x2="422.2"/><text class="gridlbl" x="426.2" y="632">116.0W</text><line class="grid" y1="0" y2="640" x1="545.9" x2="545.9"/><text class="gridlbl" x="549.9" y="632">115.5W</text><line class="grid" y1="0" y2="640" x1="669.5" x2="669.5"/><text class="gridlbl" x="673.5" y="632">115.0W</text><line class="grid" y1="0" y2="640" x1="793.1" x2="793.1"/><text class="gridlbl" x="797.1" y="632">114.5W</text><circle class="threat armor confirmed" cx="298.6" cy="212.0" r="6"/><circle class="ring sam confirmed" cx="306.0" cy="202.6" r="67.2"/><circle class="threat sam confirmed" cx="306.0" cy="202.6" r="6"/><circle class="threat air confirmed" cx="273.9" cy="53.3" r="6"/><circle class="ring hazard confirmed" cx="473.6" cy="276.3" r="42.0"/><circle class="threat hazard confirmed" cx="473.6" cy="276.3" r="6"/><line class="orbit" x1="545.9" y1="379.9" x2="481.4" y2="267.6"/><circle class="friendly-dot" cx="545.9" cy="379.9" r="6"/><polyline class="flighttrack friendly" points="422.2,286.6 311.0,162.2 273.9,115.5 348.1,224.4"/><circle class="friendly-dot" cx="422.2" cy="286.6" r="6"/><polyline class="flighttrack friendly" points="417.3,280.4 335.7,224.4 372.8,271.0"/><circle class="friendly-dot" cx="417.3" cy="280.4" r="6"/><polyline class="flighttrack hostile" points="273.9,53.3 298.6,177.7 348.1,255.5"/><circle class="hostile-dot" cx="273.9" cy="53.3" r="6"/><polyline class="route" points="661.3,586.7 459.3,379.9 409.9,271.0 348.1,224.4 298.6,212.0 273.9,302.2 661.3,586.7"/><g class="target" transform="translate(298.6,212.0)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="661.3" cy="586.7" r="8"/><circle class="wp" cx="459.3" cy="379.9" r="6"/><circle class="wp" cx="409.9" cy="271.0" r="6"/><circle class="wp" cx="348.1" cy="224.4" r="6"/><circle class="wp" cx="298.6" cy="212.0" r="6"/><circle class="wp" cx="273.9" cy="302.2" r="6"/><text class="lbl" x="673.3" y="591.7">Nellis</text><text class="lbl" x="471.3" y="384.9">1 MARSHAL</text><text class="lbl" x="421.9" y="276.0">2 PUSH</text><text class="lbl" x="360.1" y="229.4">3 IP</text><text class="lbl" x="286.6" y="217.0" text-anchor="end">4 TGT</text><text class="lbl" x="285.9" y="307.2">5 EGRESS</text><text class="lbl armor" x="85.4" y="198.0">Target complex: six vehicles in two lines</text><text class="lbl sam" x="318.0" y="207.6">Range SA-6</text><text class="lbl air" x="285.9" y="58.3">Aggressors: two MiG-29s</text><text class="lbl hazard" x="485.6" y="281.3">Groom Lake restricted area</text><text class="lbl friendly" x="514.7" y="365.9">WIZARD</text><text class="lbl friendly" x="396.2" y="312.6">Uzi 1</text><text class="lbl friendly" x="405.3" y="285.4" text-anchor="end">Weasel 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>5 / 22</span></div>
+</section>
+
+<section class="slide profile" data-notes="Dashed legs are terrain-following (AGL). Climbs and descents are where fuel goes." aria-label="Slide 6">
+  
+    <div class="eyebrow">Flight profile</div>
+    <h2>How high, where</h2>
+    <div style="flex:1;display:flex;align-items:center"><svg viewBox="0 0 900 240" class="profile" role="img" aria-label="Planned altitude profile"><line class="pgrid" x1="56" x2="884" y1="196.0" y2="196.0"/><text class="paxis" x="48" y="200.0" text-anchor="end">0k</text><line class="pgrid" x1="56" x2="884" y1="144.0" y2="144.0"/><text class="paxis" x="48" y="148.0" text-anchor="end">10k</text><line class="pgrid" x1="56" x2="884" y1="92.0" y2="92.0"/><text class="paxis" x="48" y="96.0" text-anchor="end">20k</text><line class="pgrid" x1="56" x2="884" y1="40.0" y2="40.0"/><text class="paxis" x="48" y="44.0" text-anchor="end">30k</text><text class="paxis" x="56" y="16">Route length 399 km</text><line class="pleg" x1="56.0" y1="196.0" x2="271.6" y2="92.0"/><line class="pleg" x1="271.6" y1="92.0" x2="360.5" y2="92.0"/><line class="pleg" x1="360.5" y1="92.0" x2="417.9" y2="92.0"/><line class="pleg" x1="417.9" y1="92.0" x2="455.8" y2="92.0"/><line class="pleg" x1="455.8" y1="92.0" x2="525.2" y2="71.2"/><line class="pleg" x1="525.2" y1="71.2" x2="884.0" y2="196.0"/><circle class="pwp" cx="56.0" cy="196.0" r="4"/><text class="plbl" x="85.5" y="186.0" text-anchor="middle">Nellis</text><circle class="pwp" cx="271.6" cy="92.0" r="4"/><text class="plbl" x="271.6" y="82.0" text-anchor="middle">1 MARSHAL</text><text class="psub" x="271.6" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="360.5" cy="92.0" r="4"/><text class="plbl" x="360.5" y="82.0" text-anchor="middle">2 PUSH</text><text class="psub" x="360.5" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="417.9" cy="92.0" r="4"/><text class="plbl" x="417.9" y="82.0" text-anchor="middle">3 IP</text><text class="psub" x="417.9" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="455.8" cy="92.0" r="4"/><text class="plbl" x="455.8" y="62.9" text-anchor="middle">4 TGT</text><text class="psub" x="455.8" y="220" text-anchor="middle">20k</text><circle class="pwp" cx="525.2" cy="71.2" r="4"/><text class="plbl" x="525.2" y="61.2" text-anchor="middle">5 EGRESS</text><text class="psub" x="525.2" y="220" text-anchor="middle">24k</text><circle class="pwp" cx="884.0" cy="196.0" r="4"/><text class="plbl" x="854.5" y="186.0" text-anchor="middle">Nellis</text></svg></div>
+    <p class="muted" style="font-size:22px;margin:0">Dashed legs are flown above ground level, following the terrain.</p>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>6 / 22</span></div>
+</section>
+
+<section class="slide objectives" data-notes="Primary is what wins the mission. Everything else is a bonus or a way home." aria-label="Slide 7">
+  
+    <div class="eyebrow">Tasking</div>
+    <h2>Learning objectives</h2>
+    <div class="rows"><div class="row"><span class="k">primary</span><span>Destroy the target complex with the bombs arriving inside the TOT window.</span></div><div class="row"><span class="k">secondary</span><span>Both strikers survive the aggressors.</span></div><div class="row"><span class="k">tertiary</span><span>Cross PUSH on time, stay clear of R-4808N, and recover to Nellis.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>7 / 22</span></div>
+</section>
+
+<section class="slide map" data-notes="37.4400N 116.5000W. Laser code n/a." aria-label="Slide 8">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Range target</div>
+        <h2>Target complex: six vehicles in two lines</h2>
+        <div class="body"><p>Fuel trucks and missile transporters in two lines of three, 200 m apart, on the flat of southern Gold Flat.</p><p>37.4400N 116.5000W</p><p>DMPI: One GBU-38 per vehicle. Lead takes the northern line, wingman the southern. The fourth bomb each goes on the biggest survivor.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1022.0" y2="1022.0"/><text class="gridlbl" x="6" y="1018.0">37.0N</text><line class="grid" x1="0" x2="900" y1="186.3" y2="186.3"/><text class="gridlbl" x="6" y="182.3">37.5N</text><line class="grid" y1="0" y2="640" x1="-346.5" x2="-346.5"/><text class="gridlbl" x="-342.5" y="632">117.0W</text><line class="grid" y1="0" y2="640" x1="317.2" x2="317.2"/><text class="gridlbl" x="321.2" y="632">116.5W</text><circle class="threat armor confirmed" cx="317.2" cy="286.6" r="6"/><circle class="ring sam confirmed" cx="357.1" cy="236.4" r="361.4"/><circle class="threat sam confirmed" cx="357.1" cy="236.4" r="6"/><circle class="threat air confirmed" cx="184.5" cy="-565.9" r="6"/><circle class="ring hazard confirmed" cx="1256.7" cy="632.2" r="225.9"/><circle class="threat hazard confirmed" cx="1256.7" cy="632.2" r="6"/><line class="orbit" x1="1644.8" y1="1189.2" x2="1298.6" y2="585.4"/><circle class="friendly-dot" cx="1644.8" cy="1189.2" r="6"/><polyline class="flighttrack friendly" points="981.0,687.7 383.6,19.1 184.5,-231.6 582.8,353.4"/><circle class="friendly-dot" cx="981.0" cy="687.7" r="6"/><polyline class="flighttrack friendly" points="954.5,654.3 516.4,353.4 715.5,604.2"/><circle class="friendly-dot" cx="954.5" cy="654.3" r="6"/><polyline class="flighttrack hostile" points="184.5,-565.9 317.2,102.7 582.8,520.6"/><circle class="hostile-dot" cx="184.5" cy="-565.9" r="6"/><polyline class="route dim" points="2264.7,2300.4 1180.1,1189.2 914.6,604.2 582.8,353.4 317.2,286.6 184.5,771.3 2264.7,2300.4"/><polyline class="route hl" points="582.8,353.4 317.2,286.6"/><g class="target" transform="translate(317.2,286.6)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="914.6" cy="604.2" r="6"/><circle class="wp" cx="582.8" cy="353.4" r="6"/><circle class="wp on" cx="317.2" cy="286.6" r="6"/><text class="lbl" x="594.8" y="358.4">3 IP</text><text class="lbl" x="329.2" y="291.6">4 TGT</text><text class="lbl armor" x="104.0" y="272.6">Target complex: six vehicles in two lines</text><text class="lbl sam" x="369.1" y="241.4">Range SA-6</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>8 / 22</span></div>
+</section>
+
+<section class="slide threats" data-notes="Training: everything here is briefed as it is. Walk each player&#39;s start point and what it will do." aria-label="Slide 9">
+  
+    <div class="eyebrow">Range players and hazards</div>
+    <h2>Who and what is out there</h2>
+    <div class="rows"><div class="row"><span><span class="tag armor">armor</span></span>
+      <span><b>Target complex: six vehicles in two lines</b><br><span class="muted">Fuel trucks and transporters in southern Gold Flat. Three per line, 200 m apart.</span></span></div><div class="row"><span><span class="tag sam">sam</span></span>
+      <span><b>Range SA-6 (Weasel&#39;s target)</b> <span class="muted mono">· 24 km</span><br><span class="muted">Radiating, holding fire. Your RWR will show it the whole way in.</span></span></div><div class="row"><span><span class="tag air">air</span></span>
+      <span><b>Aggressors: two MiG-29s</b><br><span class="muted">Launch from the north when the package pushes. Live in the sim: they will shoot.</span></span></div><div class="row"><span><span class="tag hazard">hazard</span></span>
+      <span><b>Groom Lake restricted area (R-4808N): no-fly</b> <span class="muted mono">· 15 km</span><br><span class="muted">No entry at any altitude. Route via MARSHAL; never direct from Nellis to PUSH.</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>9 / 22</span></div>
+</section>
+
+<section class="slide rules" data-notes="Read every rule out loud and get an acknowledgement. Then brief knock-it-off and terminate." aria-label="Slide 10">
+  
+    <div class="eyebrow">Training rules</div>
+    <h2>How we fight safe</h2>
+    <ol class="rulelist"><li>The aggressors are live in the sim and will shoot. Treat every red contact as hostile once WIZARD declares it.</li><li>TOT is 200 seconds after you cross PUSH (13:43:20 on a 13:40:00 push), ±15 s. The sim times you over TGT, not the bomb impacts.</li><li>Strikers don&#39;t commit on bandits unless they&#39;re inside 10 nm and hot. Uzi owns the air.</li><li>The range SA-6 radiates but holds fire. It&#39;s Weasel&#39;s target; strikers don&#39;t attack it.</li><li>No-fly: Groom Lake restricted area (R-4808N). The route via MARSHAL keeps you clear; don&#39;t cut the corner to PUSH.</li><li>Bingo 4,500 lb to Nellis. Below joker, strikers jettison and go home.</li></ol>
+    <p class="kio"><b>Knock-it-off / terminate:</b> Anyone in the package can call &#34;Knock it off&#34; for a midair risk, a lost wingman in the fight or a
+no-fly infringement. Strikers climb to 24,000 ft heading south, master arm SAFE, and wait for WIZARD.
+The aggressors don&#39;t know the knock-it-off call: if they&#39;re still coming, defend.</p>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>10 / 22</span></div>
+</section>
+
+<section class="slide rules" data-notes="Ask questions; don&#39;t lecture. Have the student brief one of these back." aria-label="Slide 11">
+  
+    <div class="eyebrow">Special subjects</div>
+    <h2>Talk it through</h2>
+    <ol class="rulelist"><li>Losing a fighter: if Uzi is shot down, the strikers press on unless WIZARD calls the bandits within 10 nm.</li><li>Timing: you&#39;re 30 seconds late at IP. How much faster to make the window?</li><li>Deconfliction: Weasel is at 22,000 ft, you&#39;re at 20,000 ft, Uzi is above both.</li><li>The JDAM launch zone at 20,000 ft and 450 kt, and what a bandit merge does to it.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>11 / 22</span></div>
+</section>
+
+<section class="slide package" data-notes="Confirm everyone has the loadout before step." aria-label="Slide 12">
+  
+    <div class="eyebrow">Package</div>
+    <h2>Dodge 1 flight</h2>
+    <div class="rows"><div class="row"><span class="k">Aircraft</span><span>2× F/A-18C Hornet</span></div><div class="row"><span class="k">Start</span><span>Cold start, Nellis</span></div><div class="row"><span class="k">Loadout</span><span>4× GBU-38, 1× AIM-120C, 2× AIM-9X, ATFLIR, 3× 330 gal tanks</span></div><div class="row"><span class="k">Joker / Bingo</span><span>6500 / 4500 lb</span></div></div>
+    <div class="chips"><span class="chip">WIZARD: 1× E-3A (AWACS)</span><span class="chip">Uzi 1: 2× F_15C (FLIGHT)</span><span class="chip">Weasel 1: 2× F-16C Viper (FLIGHT)</span><span class="chip">Bandit 71: 2× MiG-29S (FLIGHT)</span></div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>12 / 22</span></div>
+</section>
+
+<section class="slide divider" data-notes="Training: this is exactly how the event runs." aria-label="Slide 13">
+  
+    <div class="eyebrow">The plan</div>
+    <h1>Event flow</h1>
+    
+    
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>13 / 22</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 14">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 1 · 13:00</div>
+        <h2>Step and Marshal</h2>
+        <div class="body"><p>Cold start at Nellis, two-ship. Load the JDAM targets before taxi: three per jet, one per vehicle,
+plus a spare on the biggest. Depart northwest to MARSHAL at 20,000 ft and hold until 13:38.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="641.4" y2="641.4"/><text class="gridlbl" x="6" y="637.4">36.0N</text><line class="grid" x1="0" x2="900" y1="358.3" y2="358.3"/><text class="gridlbl" x="6" y="354.3">36.5N</text><line class="grid" x1="0" x2="900" y1="75.1" y2="75.1"/><text class="gridlbl" x="6" y="71.1">37.0N</text><line class="grid" y1="0" y2="640" x1="-31.4" x2="-31.4"/><text class="gridlbl" x="-27.4" y="632">116.5W</text><line class="grid" y1="0" y2="640" x1="196.0" x2="196.0"/><text class="gridlbl" x="200.0" y="632">116.0W</text><line class="grid" y1="0" y2="640" x1="423.4" x2="423.4"/><text class="gridlbl" x="427.4" y="632">115.5W</text><line class="grid" y1="0" y2="640" x1="650.8" x2="650.8"/><text class="gridlbl" x="654.8" y="632">115.0W</text><line class="grid" y1="0" y2="640" x1="878.2" x2="878.2"/><text class="gridlbl" x="882.2" y="632">114.5W</text><circle class="threat armor confirmed" cx="-31.4" cy="-174.0" r="6"/><circle class="ring sam confirmed" cx="-17.8" cy="-191.0" r="122.4"/><circle class="threat sam confirmed" cx="-17.8" cy="-191.0" r="6"/><circle class="threat air confirmed" cx="-76.9" cy="-462.9" r="6"/><circle class="ring hazard confirmed" cx="290.4" cy="-56.9" r="76.5"/><circle class="threat hazard confirmed" cx="290.4" cy="-56.9" r="6"/><line class="orbit" x1="423.4" y1="131.8" x2="304.8" y2="-72.8"/><circle class="friendly-dot" cx="423.4" cy="131.8" r="6"/><polyline class="flighttrack friendly" points="196.0,-38.1 -8.7,-264.7 -76.9,-349.6 59.5,-151.4"/><circle class="friendly-dot" cx="196.0" cy="-38.1" r="6"/><polyline class="flighttrack friendly" points="186.9,-49.5 36.8,-151.4 105.0,-66.4"/><circle class="friendly-dot" cx="186.9" cy="-49.5" r="6"/><polyline class="flighttrack hostile" points="-76.9,-462.9 -31.4,-236.3 59.5,-94.8"/><circle class="hostile-dot" cx="-76.9" cy="-462.9" r="6"/><polyline class="route dim" points="635.8,508.2 264.2,131.8 173.2,-66.4 59.5,-151.4 -31.4,-174.0 -76.9,-9.8 635.8,508.2"/><polyline class="route hl" points="635.8,508.2 264.2,131.8"/><g class="target" transform="translate(-31.4,-174.0)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="635.8" cy="508.2" r="8"/><circle class="wp on" cx="264.2" cy="131.8" r="6"/><text class="lbl" x="647.8" y="513.2">Nellis</text><text class="lbl" x="276.2" y="136.8">1 MARSHAL</text><text class="lbl friendly" x="435.4" y="136.8">WIZARD</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>14 / 22</span></div>
+</section>
+
+<section class="slide phase" data-notes="Ask the room: Uzi is engaged and the bandits are at 15 miles. Do the strikers press?" aria-label="Slide 15">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 2 · 13:40</div>
+        <h2>Push</h2>
+        <div class="body"><p>Cross PUSH at 13:40:00, 20,000 ft and 420 kt, accelerating to 450 kt. The TOT clock starts at
+PUSH. The aggressors launch when the package pushes; WIZARD will declare them.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="809.4" y2="809.4"/><text class="gridlbl" x="6" y="805.4">36.5N</text><line class="grid" x1="0" x2="900" y1="432.9" y2="432.9"/><text class="gridlbl" x="6" y="428.9">37.0N</text><line class="grid" x1="0" x2="900" y1="56.5" y2="56.5"/><text class="gridlbl" x="6" y="52.5">37.5N</text><line class="grid" y1="0" y2="640" x1="-104.9" x2="-104.9"/><text class="gridlbl" x="-100.9" y="632">117.0W</text><line class="grid" y1="0" y2="640" x1="195.1" x2="195.1"/><text class="gridlbl" x="199.1" y="632">116.5W</text><line class="grid" y1="0" y2="640" x1="495.0" x2="495.0"/><text class="gridlbl" x="499.0" y="632">116.0W</text><line class="grid" y1="0" y2="640" x1="794.9" x2="794.9"/><text class="gridlbl" x="798.9" y="632">115.5W</text><circle class="threat armor confirmed" cx="195.1" cy="101.6" r="6"/><circle class="ring sam confirmed" cx="213.1" cy="79.1" r="162.8"/><circle class="threat sam confirmed" cx="213.1" cy="79.1" r="6"/><circle class="threat air confirmed" cx="135.1" cy="-282.4" r="6"/><circle class="ring hazard confirmed" cx="619.6" cy="257.4" r="101.7"/><circle class="threat hazard confirmed" cx="619.6" cy="257.4" r="6"/><line class="orbit" x1="794.9" y1="508.2" x2="638.5" y2="236.2"/><circle class="friendly-dot" cx="794.9" cy="508.2" r="6"/><polyline class="flighttrack friendly" points="495.0,282.4 225.0,-18.8 135.1,-131.8 315.0,131.8"/><circle class="friendly-dot" cx="495.0" cy="282.4" r="6"/><polyline class="flighttrack friendly" points="483.0,267.3 285.0,131.8 375.0,244.7"/><circle class="friendly-dot" cx="483.0" cy="267.3" r="6"/><polyline class="flighttrack hostile" points="135.1,-282.4 195.1,18.8 315.0,207.1"/><circle class="hostile-dot" cx="135.1" cy="-282.4" r="6"/><polyline class="route dim" points="1075.1,1008.8 585.0,508.2 465.0,244.7 315.0,131.8 195.1,101.6 135.1,320.0 1075.1,1008.8"/><polyline class="route hl" points="585.0,508.2 465.0,244.7 315.0,131.8"/><g class="target" transform="translate(195.1,101.6)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="585.0" cy="508.2" r="6"/><circle class="wp on" cx="465.0" cy="244.7" r="6"/><circle class="wp on" cx="315.0" cy="131.8" r="6"/><circle class="wp" cx="195.1" cy="101.6" r="6"/><circle class="wp" cx="135.1" cy="320.0" r="6"/><text class="lbl" x="597.0" y="513.2">1 MARSHAL</text><text class="lbl" x="477.0" y="249.7">2 PUSH</text><text class="lbl" x="327.0" y="136.8">3 IP</text><text class="lbl" x="207.1" y="106.6">4 TGT</text><text class="lbl" x="147.1" y="325.0">5 EGRESS</text><text class="lbl armor" x="207.1" y="87.6">Target complex: six vehicles in two lines</text><text class="lbl sam" x="201.1" y="84.1" text-anchor="end">Range SA-6</text><text class="lbl hazard" x="484.4" y="283.4">Groom Lake restricted area</text><text class="lbl friendly" x="806.9" y="513.2">WIZARD</text><text class="lbl friendly" x="483.0" y="287.4" text-anchor="end">Uzi 1</text><text class="lbl friendly" x="471.0" y="253.3" text-anchor="end">Weasel 1</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>15 / 22</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 16">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 3 · 13:43</div>
+        <h2>Time on Target</h2>
+        <div class="body"><p>JDAMs from 20,000 ft inside the launch zone. The sim calls your TOT at TGT. Weasel will be busy with
+the SA-6; it&#39;ll be spiking you all the way in, but it won&#39;t shoot.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="1022.0" y2="1022.0"/><text class="gridlbl" x="6" y="1018.0">37.0N</text><line class="grid" x1="0" x2="900" y1="186.3" y2="186.3"/><text class="gridlbl" x="6" y="182.3">37.5N</text><line class="grid" y1="0" y2="640" x1="-346.5" x2="-346.5"/><text class="gridlbl" x="-342.5" y="632">117.0W</text><line class="grid" y1="0" y2="640" x1="317.2" x2="317.2"/><text class="gridlbl" x="321.2" y="632">116.5W</text><circle class="threat armor confirmed" cx="317.2" cy="286.6" r="6"/><circle class="ring sam confirmed" cx="357.1" cy="236.4" r="361.4"/><circle class="threat sam confirmed" cx="357.1" cy="236.4" r="6"/><circle class="threat air confirmed" cx="184.5" cy="-565.9" r="6"/><circle class="ring hazard confirmed" cx="1256.7" cy="632.2" r="225.9"/><circle class="threat hazard confirmed" cx="1256.7" cy="632.2" r="6"/><line class="orbit" x1="1644.8" y1="1189.2" x2="1298.6" y2="585.4"/><circle class="friendly-dot" cx="1644.8" cy="1189.2" r="6"/><polyline class="flighttrack friendly" points="981.0,687.7 383.6,19.1 184.5,-231.6 582.8,353.4"/><circle class="friendly-dot" cx="981.0" cy="687.7" r="6"/><polyline class="flighttrack friendly" points="954.5,654.3 516.4,353.4 715.5,604.2"/><circle class="friendly-dot" cx="954.5" cy="654.3" r="6"/><polyline class="flighttrack hostile" points="184.5,-565.9 317.2,102.7 582.8,520.6"/><circle class="hostile-dot" cx="184.5" cy="-565.9" r="6"/><polyline class="route dim" points="2264.7,2300.4 1180.1,1189.2 914.6,604.2 582.8,353.4 317.2,286.6 184.5,771.3 2264.7,2300.4"/><polyline class="route hl" points="582.8,353.4 317.2,286.6"/><g class="target" transform="translate(317.2,286.6)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="914.6" cy="604.2" r="6"/><circle class="wp" cx="582.8" cy="353.4" r="6"/><circle class="wp on" cx="317.2" cy="286.6" r="6"/><text class="lbl" x="594.8" y="358.4">3 IP</text><text class="lbl" x="329.2" y="291.6">4 TGT</text><text class="lbl armor" x="104.0" y="272.6">Target complex: six vehicles in two lines</text><text class="lbl sam" x="369.1" y="241.4">Range SA-6</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>16 / 22</span></div>
+</section>
+
+<section class="slide phase" data-notes="" aria-label="Slide 17">
+  
+    <div class="split">
+      <div class="text">
+        <div class="eyebrow">Phase 4 · 13:47</div>
+        <h2>Egress and Recovery</h2>
+        <div class="body"><p>Off target to the south, climbing to 24,000 ft at 480 kt. Fence out at EGRESS and recover to Nellis
+(TACAN 12X), well west of R-4808N.</p></div>
+        
+      </div>
+      <div class="mapcell"><svg viewBox="0 0 900 640" class="map" role="img" aria-label="Mission map"><rect class="sea" width="100%" height="100%"/><line class="grid" x1="0" x2="900" y1="703.0" y2="703.0"/><text class="gridlbl" x="6" y="699.0">37.0N</text><line class="grid" x1="0" x2="900" y1="53.9" y2="53.9"/><text class="gridlbl" x="6" y="49.9">37.5N</text><line class="grid" y1="0" y2="640" x1="-14.7" x2="-14.7"/><text class="gridlbl" x="-10.7" y="632">117.0W</text><line class="grid" y1="0" y2="640" x1="501.6" x2="501.6"/><text class="gridlbl" x="505.6" y="632">116.5W</text><circle class="threat armor confirmed" cx="501.6" cy="131.8" r="6"/><circle class="ring sam confirmed" cx="532.6" cy="92.8" r="280.7"/><circle class="threat sam confirmed" cx="532.6" cy="92.8" r="6"/><circle class="threat air confirmed" cx="398.4" cy="-530.3" r="6"/><circle class="ring hazard confirmed" cx="1232.5" cy="400.2" r="175.4"/><circle class="threat hazard confirmed" cx="1232.5" cy="400.2" r="6"/><line class="orbit" x1="1534.4" y1="832.8" x2="1265.0" y2="363.8"/><circle class="friendly-dot" cx="1534.4" cy="832.8" r="6"/><polyline class="flighttrack friendly" points="1018.0,443.3 553.3,-75.9 398.4,-270.7 708.2,183.7"/><circle class="friendly-dot" cx="1018.0" cy="443.3" r="6"/><polyline class="flighttrack friendly" points="997.3,417.4 656.5,183.7 811.5,378.4"/><circle class="friendly-dot" cx="997.3" cy="417.4" r="6"/><polyline class="flighttrack hostile" points="398.4,-530.3 501.6,-11.0 708.2,313.5"/><circle class="hostile-dot" cx="398.4" cy="-530.3" r="6"/><polyline class="route dim" points="2016.7,1695.8 1172.9,832.8 966.4,378.4 708.2,183.7 501.6,131.8 398.4,508.2 2016.7,1695.8"/><polyline class="route hl" points="501.6,131.8 398.4,508.2"/><g class="target" transform="translate(501.6,131.8)"><circle r="13"/><path d="M0 -20v12M0 8v12M-20 0h12M8 0h12"/></g><circle class="wp" cx="708.2" cy="183.7" r="6"/><circle class="wp" cx="501.6" cy="131.8" r="6"/><circle class="wp on" cx="398.4" cy="508.2" r="6"/><text class="lbl" x="720.2" y="188.7">3 IP</text><text class="lbl" x="513.6" y="136.8">4 TGT</text><text class="lbl" x="410.4" y="513.2">5 EGRESS</text><text class="lbl armor" x="489.6" y="136.8" text-anchor="end">Target complex: six vehicles in two lines</text><text class="lbl sam" x="544.6" y="97.8">Range SA-6</text></svg></div>
+    </div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>17 / 22</span></div>
+</section>
+
+<section class="slide comms" data-notes="Kneeboard page 2 carries this card in the cockpit." aria-label="Slide 18">
+  
+    <div class="eyebrow">Comms</div>
+    <h2>Frequencies</h2>
+    <div class="rows"><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">254.000 AM</span><span>Dodge (inter-flight) <span class="muted mono">· COMM1 · CH 1</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">251.000 AM</span><span>WIZARD (AWACS) <span class="muted mono">· COMM1 · CH 2</span><br><span class="muted" style="font-size:22px">Answers the F5 AWACS menu</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">262.000 AM</span><span>Package common <span class="muted mono">· COMM1 · CH 3</span><br><span class="muted" style="font-size:22px">Uzi and Weasel check in here</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">327.000 AM</span><span>Nellis Tower <span class="muted mono">· COMM2 · CH 1</span><br><span class="muted" style="font-size:22px">TACAN 12X (LSV). Departure and recovery</span></span></div><div class="row"><span class="k mono" style="text-transform:none;letter-spacing:0;font-size:24px;color:var(--ink)">262.000 AM</span><span>WREN, WIZARD, Uzi, Weasel <span class="muted mono">· Manual / listen</span><br><span class="muted" style="font-size:22px">Scripted calls (on-screen text)</span></span></div></div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>18 / 22</span></div>
+</section>
+
+<section class="slide package" data-notes="" aria-label="Slide 19">
+  
+    <div class="eyebrow">Conditions</div>
+    <h2>Weather &amp; ROE</h2>
+    <div class="rows"><div class="row"><span class="k">Wind</span><span>250° / 12 kt</span></div><div class="row"><span class="k">Clouds</span><span>Few 18,000 ft</span></div><div class="row"><span class="k">Visibility</span><span>50+ km</span></div><div class="row"><span class="k">Temp / QNH</span><span>9 °C / 30.08 inHg</span></div><div class="row"><span class="k">Range and weapons clearance</span><span>Weapons free on the target complex and on aggressors declared hostile by WIZARD. No weapons on the
+range SA-6 (Weasel&#39;s target). Master arm SAFE until PUSH.</span></div></div>
+    
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>19 / 22</span></div>
+</section>
+
+<section class="slide grade" data-notes="Students should know the standards before they step. The same sheet drives the debrief." aria-label="Slide 20">
+  
+    <div class="eyebrow">Grade sheet</div>
+    <h2>What a pass looks like</h2>
+    <div class="rows"><div class="row"><span class="k">Push</span><span>Crosses PUSH within 30 seconds of 13:40:00, at 20,000 ft and 420 kt.</span></div><div class="row"><span class="k">TOT</span><span>Over TGT within ±15 s of 200 seconds after PUSH.</span></div><div class="row"><span class="k">Target</span><span>Destroys the target complex with the flight&#39;s GBU-38s.</span></div><div class="row"><span class="k">Survival</span><span>Both strikers survive the aggressors.</span></div><div class="row"><span class="k">Safety</span><span>No entry into R-4808N and no midair-risk knock-it-off.</span></div></div>
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>20 / 22</span></div>
+</section>
+
+<section class="slide rules" data-notes="Tell them now what the debrief will focus on, so they fly it with that in mind." aria-label="Slide 21">
+  
+    <div class="eyebrow">Debrief</div>
+    <h2>What we&#39;ll look at afterwards</h2>
+    <ol class="rulelist"><li>The big room: everyone&#39;s timeline on one screen. Where was the package when the bandits committed?</li><li>TOT accuracy, and the speed changes it took.</li><li>Each JDAM&#39;s release point against the launch zone.</li></ol>
+    
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>21 / 22</span></div>
+</section>
+
+<section class="slide title" data-notes="End of the pilot brief. Debrief outcomes live in director.html, so they don&#39;t spoil the mission." aria-label="Slide 22">
+  
+    <div class="eyebrow">Training event RED FLAG</div>
+    <h1>Questions?</h1>
+    <div class="sub">Step 13:00L</div>
+    
+
+  
+  <div class="foot"><span>TRAINING RED FLAG</span><span>22 / 22</span></div>
+</section>
+
+</div>
+<div id="progress"></div>
+<div id="notes"><span class="k">NOTES</span><span id="notes-text"></span></div>
+<div id="help">← → navigate · N notes · F fullscreen</div>
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+const stage = document.getElementById("stage");
+let cur = 0;
+
+function fit() {
+  const s = Math.min(innerWidth / 1600, innerHeight / 900);
+  stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+}
+function show(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((el, j) => el.classList.toggle("on", j === cur));
+  document.getElementById("progress").style.width = `${(cur + 1) / slides.length * 100}%`;
+  document.getElementById("notes-text").textContent = slides[cur].dataset.notes || "(no notes)";
+  history.replaceState(null, "", `#${cur + 1}`);
+}
+addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(slides.length - 1);
+  else if (e.key.toLowerCase() === "n") document.getElementById("notes").classList.toggle("on");
+  else if (e.key.toLowerCase() === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+});
+addEventListener("click", e => { if (!e.target.closest("a")) show(cur + (e.clientX > innerWidth / 3 ? 1 : -1)); });
+let tx = null;
+addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+addEventListener("touchend", e => { if (tx !== null) { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); tx = null; } });
+addEventListener("resize", fit);
+fit();
+show((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

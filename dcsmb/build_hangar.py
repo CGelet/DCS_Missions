@@ -75,12 +75,13 @@ def build(missions: list[dict], hangar: Path, campaigns: list[dict] = ()) -> lis
         sections.append({"key": f"c-{c['id']}", "category": sm["category"], "heading": f"{c['title']} campaign",
                          "blurb": f"{sm['subtitle']}. {sm['count']} chapters, flown in order.",
                          "link": f"campaigns/{c['id']}/index.html", "missions": [by_id[ch["mission"]] for ch in c["chapters"]]})
-    for cat, heading, blurb in (
-            ("operational", "Black Sea operations", "March 2038 on the Black Sea coast, in five different aircraft. Briefings carry only what the squadron knows, and the sim decides the rest."),
-            ("training", "Training events", "The February 2038 partner exercise: tanking and low level, a weapons range, and aggressors. Everything is briefed as it is.")):
-        group = [m for m in cards if m["category"] == cat and not m["campaign_id"]]
+    for key, cat, theater, heading, blurb in (
+            ("operational", "operational", "Caucasus", "Black Sea operations", "March 2038 on the Black Sea coast, in five different aircraft. Briefings carry only what the squadron knows, and the sim decides the rest."),
+            ("training", "training", "Caucasus", "Training events", "The February 2038 partner exercise: tanking and low level, a weapons range, and aggressors. Everything is briefed as it is."),
+            ("nellis", "training", "Nevada", "Nellis work-ups", "December 2037 at Nellis, before the detachment deploys: moving targets, terrain masking through a threat range, and a Red Flag package. Nevada map.")):
+        group = [m for m in cards if m["category"] == cat and m["theater"] == theater and not m["campaign_id"]]
         if group:
-            sections.append({"key": cat, "category": cat, "heading": heading, "blurb": blurb, "link": "", "missions": group})
+            sections.append({"key": key, "category": cat, "heading": heading, "blurb": blurb, "link": "", "missions": group})
     summaries = [summary(c, missions) for c in campaigns]
     standalone = [dict(sec, eyebrow="Training" if sec["category"] == "training" else "Operations")
                   for sec in sections if not sec["key"].startswith("c-")]

@@ -69,7 +69,7 @@
           <tbody>{% for t in threats %}<tr>
             <td><span class="tag {{ t.kind }}">{{ t.kind }}</span> {{ t.name }}</td>
             <td><span class="intel {{ t.intel or 'confirmed' }}">{{ t.intel or "confirmed" }}</span></td>
-            <td class="num">{{ "%.3f"|format(t.lat) }}N {{ "%.3f"|format(t.lon) }}E{% if t.area_km %} ±{{ t.area_km }} km{% endif %}</td>
+            <td class="num">{{ t | coord(3) }}{% if t.area_km %} ±{{ t.area_km }} km{% endif %}</td>
           </tr>{% endfor %}</tbody>
         </table></div>
       </div>
@@ -77,7 +77,7 @@
         <div class="table-scroll"><table>
           <thead><tr><th>Group</th><th>How it appears</th></tr></thead>
           <tbody>{% for u in units_truth %}<tr>
-            <td><b>{{ u.name }}</b> <span class="muted">({{ u.coalition | default("red") }})</span><br><span style="font-size:13px;color:var(--muted)">{{ u.types }} · {{ "%.3f"|format(u.lat) }}N {{ "%.3f"|format(u.lon) }}E{% if u.route %} · moves{% endif %}</span></td>
+            <td><b>{{ u.name }}</b> <span class="muted">({{ u.coalition | default("red") }})</span><br><span style="font-size:13px;color:var(--muted)">{{ u.types }} · {{ u | coord(3) }}{% if u.route %} · moves{% endif %}</span></td>
             <td>{% for a in u.activation %}<div style="font-size:14px">{{ a }}</div>{% endfor %}</td>
           </tr>{% endfor %}
           {% for s in support %}<tr>

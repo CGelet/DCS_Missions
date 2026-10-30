@@ -1,6 +1,6 @@
 # DCS Missions
 
-Ready-to-fly DCS World missions and campaigns on the Caucasus map. Each one comes with a full story, an interactive briefing, a slide deck and kneeboard pages.
+Ready-to-fly DCS World missions and campaigns on the Caucasus map, plus three training events on Nevada. Each one comes with a full story, an interactive briefing, a slide deck and kneeboard pages.
 
 ## Fly the missions
 
@@ -9,7 +9,9 @@ Ready-to-fly DCS World missions and campaigns on the Caucasus map. Each one come
 3. Install in DCS:
    - **A single mission:** copy its `.miz` from `hangar/<mission>/` into `Saved Games/DCS/Missions/` and open it from the **Mission** menu.
    - **A campaign:** copy its whole folder from `hangar/campaigns/` into `Saved Games/DCS/Missions/Campaigns/` and pick it from the **Campaign** menu. Passing a chapter unlocks the next.
-4. The kneeboard pages are already inside each `.miz`.
+4. The kneeboard pages are already inside each `.miz`: the mission, a lineup card (flight, fuel, loadout, package, navaids), the route with coordinates in Hornet format, a comms card by radio and preset, and threats (or training rules).
+
+You need the **Caucasus** map for everything except the three Nellis work-ups, which need **Nevada**.
 
 Pilots: briefings, decks and kneeboards only hold what your squadron knows at brief time. The **director** pages are spoilers, for whoever runs or debriefs the flight.
 
@@ -36,6 +38,16 @@ Training missions are syllabus events, briefed like a real training sortie: trai
 | LONG VALLEY | 2× F/A-18C, Kutaisi | Air refuelling, then a timed low-level route (the sim calls each checkpoint EARLY / ON TIME / LATE) |
 | GAREJA RANGE | F/A-18C, Vaziani | Weapons qualification: GBU-12, Mk-82 CCIP and strafe, cleared in order by range control (fouls are called) |
 | RED AIR | F/A-18C, Kobuleti | A BVR intercept on a MiG-29, then 1v1 and 1v2 BFM with F-5Es, with a hard deck the sim calls |
+
+### Nellis work-ups (Nevada map)
+
+Three F/A-18C training events at Nellis in December 2037, before the detachment deploys to Georgia.
+
+| Event | Aircraft | What's trained |
+| --- | --- | --- |
+| RANGE 61B | F/A-18C, Nellis | Moving targets: Maverick F and E on convoys driving the floor of Tikaboo Valley, then the gun, cleared in order by Blackjack |
+| KAWICH VALLEY | 2× F/A-18C, Nellis | Terrain masking: low level up a valley between an SA-6 and an SA-8 emitter (the sim calls valid shots if you climb), then a pop-up attack |
+| RED FLAG | 2× F/A-18C, Nellis | A large-force exercise: strikers in a package with an F-15C sweep, F-16C Weasels and AWACS, a ±15 s TOT window, and live aggressors |
 
 ### Campaigns
 
@@ -122,8 +134,8 @@ The **Seen by** column says which audience gets each section.
 
 | Section | Seen by | What it controls |
 | --- | --- | --- |
-| `meta` | everyone | Title, map, date, start time, weather, `category` (`operational` or `training`), `role` (mission type, e.g. Strike, SEAD, CAS, RESCAP, Anti-ship: the hangar filters on it) |
-| `training` | pilots (training events only) | `syllabus`, `rules`, `knock_it_off`, `special_subjects`, `grade_sheet` (list of `{item, standard}`), `debrief_focus`. The briefing, slides and kneeboard page 3 render them. |
+| `meta` | everyone | Title, map (`theater`: `caucasus` or `nevada`; every position must be on that map), date, start time, weather, `category` (`operational` or `training`), `role` (mission type, e.g. Strike, SEAD, CAS, RESCAP, Anti-ship: the hangar filters on it) |
+| `training` | pilots (training events only) | `syllabus`, `rules`, `knock_it_off`, `special_subjects`, `grade_sheet` (list of `{item, standard}`), `debrief_focus`. The briefing, slides and the last kneeboard page render them. |
 | `narrative` | pilots, except `outcomes` (director) | Backstory, cast, opening quote. The backstory also becomes the in-game briefing text. |
 | `situation`, `objectives`, `roe`, `comms` | pilots | Briefing cards, kneeboard pages, in-game task text |
 | `threats` | pilots | **Intel, not truth.** `intel: confirmed / suspected / possible`, optional `area_km` for position uncertainty. Can be wrong on purpose. |

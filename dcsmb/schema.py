@@ -12,6 +12,8 @@ from pathlib import Path
 
 import yaml
 
+from .geo import BOX
+
 
 class MissionError(ValueError):
     """Raised when mission.yaml is malformed. Message lists every problem found."""
@@ -49,6 +51,19 @@ def _latlon(obj: dict, where: str, errs: list[str]) -> None:
         v = obj.get(k)
         if not isinstance(v, (int, float)) or not lo <= v <= hi:
             errs.append(f"{where}: '{k}' must be a number in [{lo}, {hi}], got {v!r}")
+
+
+def _on_map(obj, box: tuple, theater: str, where: str, errs: list[str]) -> None:
+    """Every lat/lon anywhere in the mission must be on the theater's map."""
+    if isinstance(obj, dict):
+        lat, lon = obj.get("lat"), obj.get("lon")
+        if isinstance(lat, (int, float)) and isinstance(lon, (int, float)) and not (box[0] <= lat <= box[1] and box[2] <= lon <= box[3]):
+            errs.append(f"{where or 'mission'}: {lat}, {lon} is off the {theater} map")
+        for k, v in obj.items():
+            _on_map(v, box, theater, f"{where}.{k}" if where else str(k), errs)
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            _on_map(v, box, theater, f"{where}[{i}]", errs)
 
 
 def _check_when(when, where: str, wp_names: set, group_names: set, variants: dict, errs: list[str]) -> None:
@@ -130,8 +145,10 @@ def validate(data) -> None:
         elif not isinstance(w.get("cloud_base_ft"), int) or not cp.value.min_base <= w["cloud_base_ft"] * 0.3048 <= cp.value.max_base:
             errs.append(f"meta.weather.cloud_base_ft: {w['cloud_preset']} needs a base between "
                         f"{cp.value.min_base / 0.3048:.0f} and {cp.value.max_base / 0.3048:.0f} ft")
-    if meta.get("theater") != "caucasus":
-        errs.append(f"meta.theater: only 'caucasus' is supported so far, got {meta.get('theater')!r}")
+    if meta.get("theater") not in BOX:
+        errs.append(f"meta.theater: must be one of {sorted(BOX)} (maps the owner has), got {meta.get('theater')!r}")
+    else:
+        _on_map(data, BOX[meta["theater"]], meta["theater"], "", errs)
 
     players = [f for f in data["flights"] if f.get("player")]
     if len(players) != 1:

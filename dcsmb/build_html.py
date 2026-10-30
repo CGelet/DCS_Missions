@@ -5,11 +5,11 @@ import json
 import math
 from pathlib import Path
 
-from dcs.terrain import Caucasus
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup, escape
 
 from .build_miz import _airport
+from .geo import terrain_for
 
 TEMPLATES = Path(__file__).resolve().parent.parent / "templates"
 # What each cockpit calls its radios, for the comms card ("COMM2 · CH 2")
@@ -38,7 +38,22 @@ def env() -> Environment:
     e = Environment(loader=FileSystemLoader(TEMPLATES), autoescape=select_autoescape(["html", "j2"]))
     e.filters["paras"] = lambda s: [p.strip() for p in str(s or "").split("\n\n") if p.strip()]
     e.filters["script_json"] = script_json
+    e.filters["coord"] = coord
+    e.filters["ddm"] = ddm
     return e
+
+
+def coord(p: dict, digits: int = 4) -> str:
+    """Decimal degrees with hemispheres: '36.2360N 115.0340W' (Nevada is west of Greenwich)."""
+    return f"{abs(p['lat']):.{digits}f}{'N' if p['lat'] >= 0 else 'S'} {abs(p['lon']):.{digits}f}{'E' if p['lon'] >= 0 else 'W'}"
+
+
+def ddm(p: dict) -> str:
+    """Degrees and decimal minutes, the way the Hornet's UFC takes them: N36°14.16' W115°02.04'."""
+    def one(v: float, pos: str, neg: str, w: int) -> str:
+        d, m = divmod(round(abs(v) * 60, 2), 60)
+        return f"{pos if v >= 0 else neg}{int(d):0{w}d}°{m:05.2f}'"
+    return f"{one(p['lat'], 'N', 'S', 2)} {one(p['lon'], 'E', 'W', 3)}"
 
 
 def script_json(s: str) -> Markup:
@@ -75,8 +90,13 @@ def _place(name: str, terrain, ships: dict, at_end: bool = False) -> dict:
     return _ll(_airport(terrain, name))
 
 
-def profile_svg(route: list[dict], dark: bool = False) -> Markup:
-    """Planned altitude along the route. Terrain-following (AGL) legs are drawn dashed."""
+def profile_svg(route: list[dict], dark: bool = False, font: float = 11) -> Markup:
+    """Planned altitude along the route. Terrain-following (AGL) legs are drawn dashed.
+
+    `font` is the label size the page's CSS uses (briefing 11, slides 15). Label widths and row
+    spacing scale with it, so close waypoints stack instead of overprinting.
+    """
+    k = font / 11
     W, H, L, R, T, B = 900, 240, 56, 16, 40, 44
     dist, total = [0.0], 0.0
     for a, b in zip(route, route[1:]):
@@ -108,15 +128,16 @@ def profile_svg(route: list[dict], dark: bool = False) -> Markup:
         alt, px = p.get("alt_ft", 0), x(d)
         label = p["name"] if p["kind"] == "base" else f'{p["num"]} {p["name"]}'
         sub = "" if p["kind"] == "base" else f'{alt / 1000:g}k{" AGL" if p.get("agl") else ""}'
-        half = 3.6 * len(label)
+        half = 3.6 * k * len(label)
         lx = min(max(px, L + half), W - R - half)  # keep labels inside the chart
         r = row(name_rows, lx - half, lx + half)
         out.append(f'<circle class="pwp{" agl" if p.get("agl") else ""}" cx="{px:.1f}" cy="{y(alt):.1f}" r="4"/>')
-        out.append(f'<text class="plbl" x="{lx:.1f}" y="{y(alt) - 10 - 14 * r:.1f}" text-anchor="middle">{escape(label)}</text>')
+        out.append(f'<text class="plbl" x="{lx:.1f}" y="{y(alt) - 10 - 14 * k * r:.1f}" text-anchor="middle">{escape(label)}</text>')
         if sub:
-            half = 3.4 * len(sub)
+            half = 3.4 * k * len(sub)
             r = row(sub_rows, px - half, px + half)
-            out.append(f'<text class="psub" x="{px:.1f}" y="{H - 20 + 12 * r}" text-anchor="middle">{sub}</text>')
+            if r < 2:  # a third row would fall off the chart; the dashed leg already shows AGL
+                out.append(f'<text class="psub" x="{px:.1f}" y="{H - 20 + 12 * k * r:.0f}" text-anchor="middle">{sub}</text>')
     out.append("</svg>")
     return Markup("".join(out))
 
@@ -127,7 +148,7 @@ def view_model(data: dict, audience: str = "pilot") -> dict:
     audience="pilot" leaves out anything the squadron wouldn't know at brief time
     (red flights and red ships); the director view keeps everything.
     """
-    terrain = Caucasus()
+    terrain = terrain_for(data["meta"])
     training = data["meta"].get("category") == "training"
     ships = {sh["name"]: sh for sh in data.get("ships", [])}
     player = next(f for f in data["flights"] if f.get("player"))

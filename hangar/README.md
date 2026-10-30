@@ -1,6 +1,6 @@
 # Mission Hangar
 
-4 campaigns and 30 ready-to-fly DCS missions on the Caucasus, set in 2038.
+4 campaigns and 33 ready-to-fly DCS missions on the Caucasus, set in 2038.
 
 - **Single mission:** download its `.miz` into `Saved Games/DCS/Missions/` and open it from the Mission menu.
 - **Campaign:** copy its folder from `campaigns/` into `Saved Games/DCS/Missions/Campaigns/` and pick it from the Campaign menu.
@@ -96,4 +96,15 @@ The February 2038 partner exercise: tanking and low level, a weapons range, and 
 | **Air Refuelling and Low-Level Navigation** | AAR & low level | 2× F/A-18C Hornet | 2038-02-09 | [.miz](train_tanker_lowlevel/train_tanker_lowlevel.miz) · [briefing](train_tanker_lowlevel/briefing.html) · [slides](train_tanker_lowlevel/slides.html) · [kneeboard](train_tanker_lowlevel/kneeboard/01_mission.png) · [instructor](train_tanker_lowlevel/director.html) |
 | **Air-to-Ground Weapons Qualification** | Air-to-ground range | 1× F/A-18C Hornet | 2038-02-11 | [.miz](train_range_day/train_range_day.miz) · [briefing](train_range_day/briefing.html) · [slides](train_range_day/slides.html) · [kneeboard](train_range_day/kneeboard/01_mission.png) · [instructor](train_range_day/director.html) |
 | **Intercepts and BFM against Aggressors** | Air-to-air (BFM) | 1× F/A-18C Hornet | 2038-02-13 | [.miz](train_red_air/train_red_air.miz) · [briefing](train_red_air/briefing.html) · [slides](train_red_air/slides.html) · [kneeboard](train_red_air/kneeboard/01_mission.png) · [instructor](train_red_air/director.html) |
+
+
+## Nellis work-ups
+
+December 2037 at Nellis, before the detachment deploys: moving targets, terrain masking through a threat range, and a Red Flag package. Nevada map.
+
+| Mission | Type | Aircraft | Date | Files |
+| --- | --- | --- | --- | --- |
+| **Moving Targets** | Air-to-ground range | 1× F/A-18C Hornet | 2037-12-07 | [.miz](train_nv_movers/train_nv_movers.miz) · [briefing](train_nv_movers/briefing.html) · [slides](train_nv_movers/slides.html) · [kneeboard](train_nv_movers/kneeboard/01_mission.png) · [instructor](train_nv_movers/director.html) |
+| **Threat Reaction and Terrain Masking** | Low-level strike | 2× F/A-18C Hornet | 2037-12-09 | [.miz](train_nv_threats/train_nv_threats.miz) · [briefing](train_nv_threats/briefing.html) · [slides](train_nv_threats/slides.html) · [kneeboard](train_nv_threats/kneeboard/01_mission.png) · [instructor](train_nv_threats/director.html) |
+| **Large Force Exercise** | Package strike | 2× F/A-18C Hornet | 2037-12-14 | [.miz](train_nv_red_flag/train_nv_red_flag.miz) · [briefing](train_nv_red_flag/briefing.html) · [slides](train_nv_red_flag/slides.html) · [kneeboard](train_nv_red_flag/kneeboard/01_mission.png) · [instructor](train_nv_red_flag/director.html) |
 

@@ -16,6 +16,12 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
 .radio { font: 17px/1.4 "DejaVu Sans Mono", monospace; background: #1f2a24; color: #c6f6d3; padding: 10px 12px; }
 .foot { margin-top: auto; font: 14px "DejaVu Sans Mono", monospace; color: #555; display: flex; justify-content: space-between; }
 .sam { color: #a51d16; font-weight: bold; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.big { font: bold 28px/1.15 "DejaVu Sans Mono", monospace; margin: 0 0 4px; }
+.mono { font: 17px "DejaVu Sans Mono", monospace; margin: 0 0 4px; }
+.ll { font: 15px "DejaVu Sans Mono", monospace; color: #333; }
+.note { font: 14px/1.25 "DejaVu Sans", Arial, sans-serif; color: #444; }
+.tag { font: bold 13px "DejaVu Sans Mono", monospace; border: 1.5px solid #8a3a0c; color: #8a3a0c; padding: 0 4px; }
 </style></head>
 <body><div class="page">
   <div class="top"><span>{{ "TRAINING" if is_training else "OP" }} {{ narrative.operation }}{% if campaign %} · CH {{ campaign.chapter }}/{{ campaign.of }}{% endif %}</span><span>{{ player.callsign | upper }}</span><span>{{ page_no }}/{{ page_count }}</span></div>
@@ -27,31 +33,56 @@ td { border-bottom: 1px solid #999; padding: 7px 6px; }
     {% for k, v in objectives.items() %}<p><b>{{ k | upper }}:</b> {{ v }}</p>{% endfor %}</div>
   <div class="box"><h2>{{ T.target | upper }}</h2>
     <p><b>{{ target.name }}</b></p>
-    <p style="font-family:'DejaVu Sans Mono',monospace">{{ "%.4f"|format(target.lat) }}N {{ "%.4f"|format(target.lon) }}E{% if target.area_km %} &plusmn;{{ target.area_km }} km (estimate){% endif %}</p>
+    <p style="font-family:'DejaVu Sans Mono',monospace">{{ target | ddm }}{% if target.area_km %} &plusmn;{{ target.area_km }} km (estimate){% endif %}</p>
     <p>{{ target.description }}</p><p><b>DMPI:</b> {{ target.dmpi }}</p></div>
   {% if narrative.hook %}<div class="radio">{{ narrative.hook | trim }}</div>{% endif %}
 
+{% elif page == "lineup" %}
+  <h1>Lineup Card</h1>
+  <table><thead><tr><th>POS</th><th>CALLSIGN</th><th>AIRCRAFT</th>{% if player.laser_codes %}<th>LASER</th>{% endif %}</tr></thead><tbody>
+    {% for i in range(player.count | default(1)) %}<tr><td>{{ "LEAD" if i == 0 else "#" ~ (i + 1) }}</td><td><b>{{ player.callsign }}-{{ i + 1 }}</b>{% if i == 0 %} <span style="font-size:14px">(YOU)</span>{% endif %}</td><td>{{ aircraft_name }}</td>{% if player.laser_codes %}<td>{{ player.laser_codes[i] if i < player.laser_codes | length else player.laser_codes[-1] }}</td>{% endif %}</tr>{% endfor %}
+  </tbody></table>
+  <div class="grid2">
+    <div class="box"><h2>START</h2><p class="big">{{ player.start | default("cold") | upper }}</p><p>{{ route[0].name }} · STEP {{ meta.start_time }}L</p></div>
+    <div class="box"><h2>RECOVER</h2><p class="big">{{ route[-1].name | replace(" (recovery)", "") }}</p><p>{{ meta.date }}</p></div>
+    <div class="box"><h2>JOKER</h2><p class="big">{{ "{:,}".format(player.joker_lbs) }} LB</p></div>
+    <div class="box"><h2>BINGO</h2><p class="big">{{ "{:,}".format(player.bingo_lbs) }} LB</p></div>
+  </div>
+  <div class="box"><h2>LOADOUT</h2><p>{{ player.loadout_summary }}</p></div>
+  {% set package = support | rejectattr("coalition", "equalto", "red") | list %}
+  {% if package %}<table><thead><tr><th>PACKAGE</th><th>ROLE</th><th>FREQ</th></tr></thead><tbody>
+    {% for s in package %}<tr><td>{{ s.callsign }}</td><td>{{ (s.task if s.kind == "flight" and s.task else s.kind) | upper }}</td><td>{{ "%.3f"|format(s.freq_mhz) if s.freq_mhz else "-" }}</td></tr>{% endfor %}
+  </tbody></table>{% endif %}
+  {% if navaids %}<div class="box"><h2>NAVAIDS</h2>{% for n in navaids %}<p class="mono">{{ n }}</p>{% endfor %}</div>{% endif %}
+
 {% elif page == "nav" %}
-  <h1>Navigation &amp; Comms</h1>
-  <table><thead><tr><th>#</th><th>WP</th><th>ALT</th><th>KTS</th><th>ETA</th><th></th></tr></thead><tbody>
-    <tr><td>0</td><td>{{ route[0].name }}</td><td>-</td><td>-</td><td>{{ meta.start_time }}</td><td>STEP</td></tr>
-    {% for wp in player.waypoints %}<tr><td>{{ loop.index }}</td><td>{{ wp.name }}</td><td>{{ (wp.alt_ft / 1000) | round(1) }}k{% if wp.agl %}<span style="font-size:13px"> AGL</span>{% endif %}</td><td>{{ wp.kts }}</td><td>{{ wp.eta }}</td><td>{{ wp.action | default("") | upper }}</td></tr>{% endfor %}
+  <h1>Route</h1>
+  <table><thead><tr><th>#</th><th>WAYPOINT</th><th>ALT</th><th>KTS</th><th>ETA</th></tr></thead><tbody>
+    <tr><td>0</td><td>{{ route[0].name }}<div class="ll">{{ route[0] | ddm }}</div></td><td>-</td><td>-</td><td>{{ meta.start_time }}</td></tr>
+    {% for wp in player.waypoints %}<tr><td>{{ loop.index }}</td><td><b>{{ wp.name }}</b>{% if wp.action %} <span class="tag">{{ wp.action | upper }}</span>{% endif %}<div class="ll">{{ wp | ddm }}</div></td><td>{{ (wp.alt_ft / 1000) | round(1) }}k{% if wp.agl %}<span style="font-size:13px"> AGL</span>{% endif %}</td><td>{{ wp.kts }}</td><td>{{ wp.eta }}</td></tr>{% endfor %}
+    <tr><td>-</td><td>{{ route[-1].name }}<div class="ll">{{ route[-1] | ddm }}</div></td><td>-</td><td>-</td><td>LAND</td></tr>
   </tbody></table>
-  <table><thead><tr><th>STATION</th><th>FREQ</th><th>PRESET</th></tr></thead><tbody>
-    {% for c in comms %}<tr><td>{{ c.name }}</td><td>{{ c.freq }}</td><td>{{ c.preset if "radio" in c else "-" }}</td></tr>{% endfor %}
-  </tbody></table>
-  {% if navaids %}<div class="box"><h2>NAVAIDS</h2>{% for n in navaids %}<p style="font:17px 'DejaVu Sans Mono',monospace;margin:0 0 4px">{{ n }}</p>{% endfor %}</div>{% endif %}
-  <div class="box"><h2>FUEL</h2><p>JOKER {{ player.joker_lbs }} lb · BINGO {{ player.bingo_lbs }} lb</p>
-    {% if player.laser_codes %}<h2>LASER</h2><p>{{ player.laser_codes | join(" / ") }}</p>{% endif %}</div>
+  <div class="box"><h2>WEATHER</h2><p>Wind {{ "%03d"|format(meta.weather.wind_from_deg) }}/{{ meta.weather.wind_kts }} · {{ meta.weather.temperature_c }}°C · QNH {{ "%.2f"|format(meta.weather.qnh_inhg) }}<br>{{ meta.weather.clouds }} · {{ meta.weather.visibility }}</p></div>
+
+{% elif page == "comms" %}
+  <h1>Comms Card</h1>
+  {% for r in comms | selectattr("radio", "defined") | map(attribute="radio") | unique | sort %}
+  <div><h2>{{ (comms | selectattr("radio", "defined") | selectattr("radio", "equalto", r) | first).preset.split(" · ")[0] }}</h2>
+  <table><thead><tr><th>CH</th><th>FREQ</th><th>STATION</th></tr></thead><tbody>
+    {% for c in comms | selectattr("radio", "defined") | selectattr("radio", "equalto", r) | sort(attribute="channel") %}<tr><td><b>{{ c.channel }}</b></td><td>{{ c.freq }}</td><td>{{ c.name }}{% if c.notes %}<div class="note">{{ c.notes }}</div>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% endfor %}
+  {% set manual = comms | rejectattr("radio", "defined") | list %}
+  {% if manual %}<div><h2>NOT ON A PRESET</h2><table><tbody>
+    {% for c in manual %}<tr><td>{{ c.freq }}</td><td>{{ c.name }}{% if c.notes %}<div class="note">{{ c.notes }}</div>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>{% endif %}
 
 {% elif page == "threats" %}
-  <h1>Threats, ROE &amp; Loadout</h1>
+  <h1>Threats &amp; ROE</h1>
   <table><thead><tr><th>SYSTEM</th><th>RNG</th></tr></thead><tbody>
     {% for t in threats %}<tr><td class="{{ t.kind }}">{{ t.name }} <span style="font-size:14px;font-weight:bold;border:1.5px {{ 'dashed' if t.intel == 'possible' else 'solid' }} #555;padding:1px 5px;color:#333">{{ (t.intel or "confirmed") | upper }}</span><br><span style="font-size:15px;font-weight:normal;color:#333">{{ t.notes }}</span></td><td>{% if t.range_km %}{{ t.range_km }}km{% else %}-{% endif %}</td></tr>{% endfor %}
   </tbody></table>
   <div class="box"><h2>ROE</h2><p>{{ roe | trim }}</p></div>
-  <div class="box"><h2>LOADOUT</h2><p>{{ player.loadout_summary }}</p></div>
-  <div class="box"><h2>WEATHER</h2><p>Wind {{ "%03d"|format(meta.weather.wind_from_deg) }}/{{ meta.weather.wind_kts }} · {{ meta.weather.temperature_c }}°C · QNH {{ meta.weather.qnh_inhg }}<br>{{ meta.weather.clouds }}</p></div>
 {% elif page == "rules" %}
   <h1>Training Rules &amp; Grade Sheet</h1>
   <div class="box" style="font-size:16px;line-height:1.3"><h2>TRAINING RULES</h2>{% for r in training.rules %}<p style="margin:0 0 3px">{{ loop.index }}. {{ r }}</p>{% endfor %}</div>

@@ -36,9 +36,11 @@ A hangar of DCS World missions. Each mission is one `missions/<id>/mission.yaml`
 
 ## Operational vs training (owner request 2026-10-28)
 
-- The owner asked for the hangar to be split into **operational and training missions**, with training briefs "more like training briefs than 'unknown' operational missions". `meta.category: training` switches the headings (`LABELS` in `build_html.py`) and adds the `training` section: rules, knock-it-off, special subjects, grade sheet, debrief focus. Kneeboard page 3 becomes "Training Rules & Grade Sheet". The director page is labelled "Instructor view" in the hangar.
+- The owner asked for the hangar to be split into **operational and training missions**, with training briefs "more like training briefs than 'unknown' operational missions". `meta.category: training` switches the headings (`LABELS` in `build_html.py`) and adds the `training` section: rules, knock-it-off, special subjects, grade sheet, debrief focus. The last kneeboard page becomes "Training Rules & Grade Sheet". The director page is labelled "Instructor view" in the hangar.
 - **Training has no fog of war.** No `variants` or `chance`, every threat is a fact (no intel badge), and red support flights *are* shown to pilots (the aggressors' start points and routes). The spoiler test skips red callsigns and late units for training; scripts, trigger messages and outcomes stay instructor-only.
-- The owner first asked for training "in the United States". pydcs has Nevada, but **the owner doesn't own the Nevada map** ("don't do Nevada, I don't own that map"). Everything stays on the Caucasus: the training is a US Navy Hornet detachment on a partner exercise in Georgia, in February 2038 (in-game) before the campaign. Ask which DCS maps the owner owns before using any other theater.
+- **Maps the owner owns: Caucasus and Nevada.** Nevada was off-limits at first ("don't do Nevada, I don't own that map"); on 2026-10-30 the owner confirmed they have it and asked for three F/A-18C training events there (the Nellis work-ups, December 2037, the same detachment before it deploys to Georgia). Ask before using any other theater.
+- Theaters live in `geo.THEATERS` and `geo.BOX` (the map's lat/lon box). Validation rejects any position off the map, which catches the classic Nevada typo of a positive longitude. Nevada has no coastline file; slide maps just draw no coast. Coordinates are printed with hemispheres via the `coord` and `ddm` filters (`build_html.py`); never hard-code "N"/"E" in a template.
+- Nevada geography: NTTR Range 61B is Tikaboo Valley (OSM locality, "Contact Blackjack"). Blackjack is real Nellis range control. Groom Lake (R-4808N, 37.233,-115.792) is a briefed no-fly: check every Nellis route clears it by 15+ km (the straight line from Nellis to Pahute Mesa doesn't). Overpass place hits like "Mellan" and "Silverbow" are ghost towns or mines, but still keep targets away from them.
 - DCS triggers have no "time less than". Timed checkpoints use window-open/window-closed flags set by `TimeSinceFlag`, plus a "judged" flag so each checkpoint gets one verdict.
 - The aggressors in RED AIR fly with live weapons. DCS triggers have no simulated-kill mode, so a training "kill" is a real shoot-down and they shoot back. Say so in the brief.
 
@@ -174,6 +176,13 @@ YAML text is data, never markup. The pages are static and public, and mission te
 - Presenter `notes` on phases: prompts for the briefer (pause points, questions for the room).
 - All people and units are fictional. Use real geography and real aircraft and systems.
 
+## Kneeboard (owner request 2026-10-30: "make the kneeboards better")
+
+- Five pages: mission, **lineup card** (flight with laser codes, start and recovery, joker and bingo, loadout, the blue package, navaids), **route** (each waypoint with Hornet-format coordinates `N36°14.15' W115°02.05'`, plus weather), **comms card** (grouped by radio and preset channel, with a "not on a preset" list for scripted voices), and threats & ROE (or training rules). The owner picked the lineup and comms cards; map and printable pages were offered and not chosen.
+- `kneeboard.build` deletes the old PNGs first, because page names and numbers change when pages are added.
+- The slide deck's altitude profile is drawn with `profile_svg(route, font=15)`: label spacing scales with the font. Its third row of altitude labels is dropped rather than clipped.
+- The site is local-only, never hosted (owner, 2026-10-28). GitHub Pages is not an option.
+
 ## Mission content conventions
 
 - The player flight has `player: true` (exactly one). Waypoints that triggers reference need `zone_km` (default 10 km).
@@ -187,8 +196,7 @@ Owner-facing feature proposals live in `FUTURE_FEATURES.md` (e.g. building missi
 - `scripts/check_pages.py`: the Playwright checks I run by hand (screenshots, console errors, 390 px width, PDF page count), so others can repeat them.
 - Merge labels of co-located threats on slide maps (HOLD FAST's column, Shilka and MANPADS share one estimate).
 
-- GitHub Pages serving `hangar/` so briefings and slides are clickable links (one setting in the repo, no build).
 - Campaign chaining: one mission's outcomes feed the next mission's backstory.
 - Optional base `.miz` overlay for owners who want to hand-edit in the Mission Editor.
 - A committed PDF of each deck (Chromium PDFs embed a creation date; strip it to keep builds reproducible).
-- More theaters (needs coastline data plus a `Caucasus()`-style terrain switch in `build_miz`/`build_html`, which are currently Caucasus-only).
+- More theaters: add to `geo.THEATERS`/`BOX` and fetch a coastline. Only maps the owner owns (Caucasus, Nevada); ask first.

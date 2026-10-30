@@ -1,0 +1,298 @@
+# Training event RED FLAG: a large-force exercise strike with a TOT window. Source of truth;
+# `python -m dcsmb build` renders hangar/train_nv_red_flag/.
+#
+# Training, not combat: everything is briefed as it is and nothing is random, but the aggressors are
+# live in the sim and fight back; DCS has no simulated kills. The package: WIZARD (AWACS), Uzi (F-15C
+# sweep), Weasel (F-16C SEAD) and you, the strikers. The target complex sits in southern Gold Flat
+# (5,144 ft, no buildings or settlements within 3-8 km per Overpass). The route doglegs via MARSHAL so
+# the push stays 17+ km outside the Groom Lake restricted area (R-4808N). TOT: PUSH to TGT is 25 nm,
+# 200 s at 450 kt.
+
+meta:
+  id: train_nv_red_flag
+  title: "RED FLAG"
+  subtitle: "Large Force Exercise"
+  category: training
+  theater: nevada
+  role: "Package strike"
+  date: 2037-12-14
+  start_time: "13:00"
+  weather:
+    temperature_c: 9
+    wind_from_deg: 250
+    wind_kts: 12
+    clouds: "Few 18,000 ft"
+    visibility: "50+ km"
+    qnh_inhg: 30.08
+  blue_country: USA
+  red_country: Russia
+
+training:
+  syllabus: "Nellis pre-deployment, event LFE-1 (Red Flag 38-1)"
+  rules:
+    - "The aggressors are live in the sim and will shoot. Treat every red contact as hostile once WIZARD declares it."
+    - "TOT is 200 seconds after you cross PUSH (13:43:20 on a 13:40:00 push), ±15 s. The sim times you over TGT, not the bomb impacts."
+    - "Strikers don't commit on bandits unless they're inside 10 nm and hot. Uzi owns the air."
+    - "The range SA-6 radiates but holds fire. It's Weasel's target; strikers don't attack it."
+    - "No-fly: Groom Lake restricted area (R-4808N). The route via MARSHAL keeps you clear; don't cut the corner to PUSH."
+    - "Bingo 4,500 lb to Nellis. Below joker, strikers jettison and go home."
+  knock_it_off: |
+    Anyone in the package can call "Knock it off" for a midair risk, a lost wingman in the fight or a
+    no-fly infringement. Strikers climb to 24,000 ft heading south, master arm SAFE, and wait for WIZARD.
+    The aggressors don't know the knock-it-off call: if they're still coming, defend.
+  special_subjects:
+    - "Losing a fighter: if Uzi is shot down, the strikers press on unless WIZARD calls the bandits within 10 nm."
+    - "Timing: you're 30 seconds late at IP. How much faster to make the window?"
+    - "Deconfliction: Weasel is at 22,000 ft, you're at 20,000 ft, Uzi is above both."
+    - "The JDAM launch zone at 20,000 ft and 450 kt, and what a bandit merge does to it."
+  grade_sheet:
+    - { item: "Push", standard: "Crosses PUSH within 30 seconds of 13:40:00, at 20,000 ft and 420 kt." }
+    - { item: "TOT", standard: "Over TGT within ±15 s of 200 seconds after PUSH." }
+    - { item: "Target", standard: "Destroys the target complex with the flight's GBU-38s." }
+    - { item: "Survival", standard: "Both strikers survive the aggressors." }
+    - { item: "Safety", standard: "No entry into R-4808N and no midair-risk knock-it-off." }
+  debrief_focus:
+    - "The big room: everyone's timeline on one screen. Where was the package when the bandits committed?"
+    - "TOT accuracy, and the speed changes it took."
+    - "Each JDAM's release point against the launch zone."
+
+narrative:
+  operation: "RED FLAG"
+  backstory: |
+    The last week at Nellis is Red Flag: a large-force exercise with fighters, Wild Weasels, an AWACS
+    and a full squadron of aggressors whose only job is to make everyone else's day difficult. For the
+    detachment it's the dress rehearsal for Georgia: a package, a push time and a target that has to be
+    hit inside a 30-second window, while somebody else fights the war overhead.
+
+    Dodge flight are the strikers. Uzi's F-15s will clear the air ahead of them; Weasel's F-16s will
+    keep the range's SA-6 busy. All Dodge has to do is be on time, put four JDAMs each on the target
+    complex in Gold Flat, and get home. The aggressors will be waiting north of the target.
+  characters:
+    - name: "LCDR Ana \"WREN\" Castellano"
+      role: "Detachment training officer, flying white air (observer) with WIZARD"
+    - name: "WIZARD"
+      role: "E-3 AWACS: picture calls and bandit declarations"
+    - name: "Uzi 1"
+      role: "F-15C sweep, two-ship"
+    - name: "Weasel 1"
+      role: "F-16C SEAD, two-ship"
+    - name: "Dodge 1-1 / 1-2"
+      role: "You and your wingman, the strikers, F/A-18C Hornets"
+  hook: |
+    "Forty jets, one push time and a thirty-second window. Nobody remembers who shot down whom. They
+    remember who was late." WREN, mass brief
+  outcomes:
+    success: |
+      Complete. The target complex is destroyed inside the window, and both strikers come home. In the
+      big room the timeline shows Dodge flight right where the plan said it would be.
+    partial: |
+      Partial: re-fly items. The target's destroyed, but outside the window, or one striker didn't make
+      it back. Dodge re-flies the timing on a smaller package next week.
+    failure: |
+      Incomplete: re-fly the event. The target's untouched. The mass debrief is long, and WREN does most
+      of the talking.
+
+situation: |
+  Large-force exercise in the north ranges. Dodge flight, the two-ship strike element, launches from
+  Nellis, routes via MARSHAL to stay clear of R-4808N, and crosses PUSH at 13:40:00. TOT on the target
+  complex in southern Gold Flat is 13:43:20 ±15 s: six vehicles in two lines. Uzi (two F-15Cs) sweeps
+  ahead; Weasel (two F-16Cs) suppresses the range SA-6 near the target. WIZARD runs the picture. Two
+  aggressor MiG-29s launch from the north when the package pushes and are live in the sim.
+
+objectives:
+  primary: "Destroy the target complex with the bombs arriving inside the TOT window."
+  secondary: "Both strikers survive the aggressors."
+  tertiary: "Cross PUSH on time, stay clear of R-4808N, and recover to Nellis."
+
+roe: |
+  Weapons free on the target complex and on aggressors declared hostile by WIZARD. No weapons on the
+  range SA-6 (Weasel's target). Master arm SAFE until PUSH.
+
+threats:
+  # Training: the players and hazards, exactly as they are
+  - name: "Target complex: six vehicles in two lines"
+    kind: armor
+    lat: 37.4400
+    lon: -116.5000
+    range_km: 0
+    notes: "Fuel trucks and transporters in southern Gold Flat. Three per line, 200 m apart."
+  - name: "Range SA-6 (Weasel's target)"
+    kind: sam
+    lat: 37.4700
+    lon: -116.4700
+    range_km: 24
+    notes: "Radiating, holding fire. Your RWR will show it the whole way in."
+  - name: "Aggressors: two MiG-29s"
+    kind: air
+    lat: 37.9500
+    lon: -116.6000
+    range_km: 0
+    notes: "Launch from the north when the package pushes. Live in the sim: they will shoot."
+  - name: "Groom Lake restricted area (R-4808N): no-fly"
+    kind: hazard
+    lat: 37.2332
+    lon: -115.7923
+    range_km: 15
+    notes: "No entry at any altitude. Route via MARSHAL; never direct from Nellis to PUSH."
+
+comms:
+  # F/A-18C: radio 1 = COMM1, radio 2 = COMM2. Radio 1 channel 1 is always the flight frequency.
+  - { name: "Dodge (inter-flight)", freq: "254.000 AM", radio: 1, channel: 1 }
+  - { name: "WIZARD (AWACS)", freq: "251.000 AM", radio: 1, channel: 2, notes: "Answers the F5 AWACS menu" }
+  - { name: "Package common", freq: "262.000 AM", radio: 1, channel: 3, notes: "Uzi and Weasel check in here" }
+  - { name: "Nellis Tower", freq: "327.000 AM", radio: 2, channel: 1, notes: "TACAN 12X (LSV). Departure and recovery" }
+  - { name: "WREN, WIZARD, Uzi, Weasel", freq: "262.000 AM", notes: "Scripted calls (on-screen text)" }
+
+flights:
+  - callsign: "Dodge 1"
+    aircraft: FA_18C_hornet
+    count: 2
+    player: true
+    base: Nellis
+    start: cold
+    radio1_mhz: 254.0
+    loadout:
+      1: AIM_9X_Sidewinder_IR_AAM
+      2: BRU_55_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb
+      3: FPU_8A_Fuel_Tank_330_gallons
+      4: AN_ASQ_228_ATFLIR___Targeting_Pod
+      5: FPU_8A_Fuel_Tank_330_gallons
+      6: AIM_120C_5_AMRAAM___Active_Rdr_AAM
+      7: FPU_8A_Fuel_Tank_330_gallons
+      8: BRU_55_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb
+      9: AIM_9X_Sidewinder_IR_AAM
+    loadout_summary: "4× GBU-38, 1× AIM-120C, 2× AIM-9X, ATFLIR, 3× 330 gal tanks"
+    bingo_lbs: 4500
+    joker_lbs: 6500
+    waypoints:
+      - { name: "MARSHAL", lat: 36.9000, lon: -115.8500, alt_ft: 20000, kts: 400, eta: "13:30", zone_km: 5 }
+      - { name: "PUSH",    lat: 37.2500, lon: -116.0500, alt_ft: 20000, kts: 420, eta: "13:40", zone_km: 4 }
+      - { name: "IP",      lat: 37.4000, lon: -116.3000, alt_ft: 20000, kts: 450, eta: "13:42", zone_km: 3 }
+      - { name: "TGT",     lat: 37.4400, lon: -116.5000, alt_ft: 20000, kts: 450, eta: "13:43", action: bomb, zone_km: 3, timing: { from: "PUSH", seconds: 200, window_s: 15, flag: 61 } }
+      - { name: "EGRESS",  lat: 37.1500, lon: -116.6000, alt_ft: 24000, kts: 480, eta: "13:47", zone_km: 5 }
+    land: Nellis
+
+target:
+  name: "Target complex: six vehicles in two lines"
+  lat: 37.4400
+  lon: -116.5000
+  groups: ["Target Complex"]
+  description: "Fuel trucks and missile transporters in two lines of three, 200 m apart, on the flat of southern Gold Flat."
+  dmpi: "One GBU-38 per vehicle. Lead takes the northern line, wingman the southern. The fourth bomb each goes on the biggest survivor."
+
+units:
+  - name: "Target Complex"
+    coalition: red
+    type: [ATZ_10, ATZ_10, MAZ_6303, Ural_375, Ural_375, MAZ_6303]
+    lat: 37.4400
+    lon: -116.5000
+    heading: 90
+    hold_fire: true
+  - name: "Range SA-6"
+    coalition: red
+    type: [Kub_1S91_str, Kub_2P25_ln, Kub_2P25_ln]
+    lat: 37.4700
+    lon: -116.4700
+    heading: 120
+    hold_fire: true
+
+support:
+  - kind: awacs
+    callsign: "WIZARD"
+    aircraft: E_3A
+    coalition: blue
+    lat: 36.9000
+    lon: -115.5000
+    alt_ft: 30000
+    heading: 330
+    leg_nm: 25
+    freq_mhz: 251.0
+  - kind: flight
+    callsign: "Uzi 1"
+    aircraft: F_15C
+    coalition: blue
+    count: 2
+    task: sweep
+    spawn: { lat: 37.2000, lon: -116.0000, alt_ft: 28000, kts: 450 }
+    route:
+      - { lat: 37.6000, lon: -116.4500, alt_ft: 28000 }
+      - { lat: 37.7500, lon: -116.6000, alt_ft: 28000 }
+      - { lat: 37.4000, lon: -116.3000, alt_ft: 28000 }
+  - kind: flight
+    callsign: "Weasel 1"
+    aircraft: F_16C_50
+    coalition: blue
+    count: 2
+    task: sead
+    spawn: { lat: 37.2200, lon: -116.0200, alt_ft: 22000, kts: 450 }
+    route:
+      - { lat: 37.4000, lon: -116.3500, alt_ft: 22000 }
+      - { lat: 37.2500, lon: -116.2000, alt_ft: 22000 }
+  - kind: flight
+    callsign: "Bandit 71"
+    aircraft: MiG_29S
+    coalition: red
+    count: 2
+    task: sweep
+    late_activation: true
+    spawn: { lat: 37.9500, lon: -116.6000, alt_ft: 24000, kts: 450 }
+    route:
+      - { lat: 37.5500, lon: -116.5000 }
+      - { lat: 37.3000, lon: -116.3000 }
+
+storyboard:
+  - phase: "Step and Marshal"
+    time: "13:00"
+    waypoints: ["MARSHAL"]
+    brief: |
+      Cold start at Nellis, two-ship. Load the JDAM targets before taxi: three per jet, one per vehicle,
+      plus a spare on the biggest. Depart northwest to MARSHAL at 20,000 ft and hold until 13:38.
+    script: "WREN opens the exercise; Uzi and Weasel are airborne from the start (spawned in the air near PUSH)."
+    trigger:
+      when: { time_after: 10 }
+      message: "WREN: Dodge, Wren, white air with Wizard. Uzi and Weasel are on station. Push is one-three-four-zero."
+      seconds: 15
+
+  - phase: "Push"
+    time: "13:40"
+    waypoints: ["PUSH", "IP"]
+    notes: "Ask the room: Uzi is engaged and the bandits are at 15 miles. Do the strikers press?"
+    brief: |
+      Cross PUSH at 13:40:00, 20,000 ft and 420 kt, accelerating to 450 kt. The TOT clock starts at
+      PUSH. The aggressors launch when the package pushes; WIZARD will declare them.
+    script: "Crossing PUSH sets flag 30 and launches Bandit 71 from the north."
+    trigger:
+      when: { player_in_zone: "PUSH" }
+      set_flag: 30
+      activate: ["Bandit 71"]
+      message: "WIZARD: Package, Wizard. Group north, three-five miles, angels two-four, hot. Two contacts. Hostile. Uzi, commit."
+      seconds: 20
+
+  - phase: "Time on Target"
+    time: "13:43"
+    waypoints: ["TGT"]
+    brief: |
+      JDAMs from 20,000 ft inside the launch zone. The sim calls your TOT at TGT. Weasel will be busy with
+      the SA-6; it'll be spiking you all the way in, but it won't shoot.
+    script: "Target destroyed with an on-time TOT (flag 61) completes the event (flag 10). Late or early TOT with the target destroyed: partial (flag 20)."
+    triggers:
+      - when: { target_destroyed: true, flag: 61 }
+        set_flag: 10
+        message: "WREN: Dodge, Wren. Target complex destroyed, on time. Off target south."
+        seconds: 15
+      - when: { target_destroyed: true, flag_false: 61, time_since_flag: [30, 330] }
+        set_flag: 20
+        message: "WREN: Dodge, Wren. Target's down, but you weren't in the window. Off target south."
+        seconds: 15
+
+  - phase: "Egress and Recovery"
+    time: "13:47"
+    waypoints: ["EGRESS"]
+    brief: |
+      Off target to the south, climbing to 24,000 ft at 480 kt. Fence out at EGRESS and recover to Nellis
+      (TACAN 12X), well west of R-4808N.
+    script: "WREN closes the exercise at EGRESS."
+    trigger:
+      when: { player_in_zone: "EGRESS", flag: 30 }
+      message: "WREN: Dodge, Wren. Fence out. Mass debrief at sixteen-thirty. Bring your tapes."
+      seconds: 15

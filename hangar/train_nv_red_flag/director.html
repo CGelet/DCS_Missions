@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' file: data: https://server.arcgisonline.com https://cdnjs.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Flag Director's Cut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<style>
+:root {
+  --bg: #f4f2ec; --surface: #fffdf8; --surface-2: #ece8de; --ink: #1d2124; --muted: #5e646a;
+  --line: #d6d1c4; --accent: #b4561e; --accent-ink: #fff; --blue: #2c5d9e; --red: #b3261e;
+  --amber: #a46b00; --ok: #2e7d4f; --radio-bg: #1f2a24; --radio-ink: #b9f3c9;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+    --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+    --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111416; --surface: #181c1f; --surface-2: #20262a; --ink: #e6e3dc; --muted: #9aa1a6;
+  --line: #2d3439; --accent: #e07a3c; --accent-ink: #111; --blue: #78a6e8; --red: #ef6b62;
+  --amber: #e3a93b; --ok: #6cc28f; --radio-bg: #0b120e; --radio-ink: #9be8b1;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+.mono, code, td.num, .time { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+header.hero { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -.02em; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+.meta-row b { color: var(--ink); font-weight: 600; }
+blockquote.hook { margin: 28px 0 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); font-size: 18px; max-width: 760px; box-shadow: var(--shadow); }
+
+nav.sections { position: sticky; top: 0; z-index: 1000; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sections .wrap { display: flex; gap: 4px; align-items: center; overflow-x: auto; }
+nav.sections a { padding: 14px 12px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--line); }
+nav.sections .spacer { flex: 1; }
+nav.sections button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+
+.story { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+.story p { margin: 0 0 14px; font-size: 17px; max-width: 68ch; }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.cast b { display: block; }
+.cast span { color: var(--muted); font-size: 14px; }
+
+.plan { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.map-wrap { position: sticky; top: 64px; }
+#map { height: min(72vh, 680px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.legend label { cursor: pointer; }
+
+ol.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+ol.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.phase { position: relative; padding: 0 0 18px 44px; }
+.phase .dot { position: absolute; left: 6px; top: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font: 600 11px/16px "IBM Plex Mono", monospace; text-align: center; color: var(--muted); }
+.phase-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow); width: 100%; text-align: left; font: inherit; color: inherit; }
+.phase-card:hover { border-color: var(--muted); }
+.phase.active .phase-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.phase.active .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase-head .time { color: var(--accent); font-size: 14px; font-weight: 600; }
+.phase p.beat { margin: 6px 0 10px; color: var(--ink); }
+.radio { background: var(--radio-bg); color: var(--radio-ink); font: 13.5px/1.5 "IBM Plex Mono", monospace; padding: 10px 12px; border-radius: 6px; }
+.radio .lbl { opacity: .7; font-size: 11px; letter-spacing: .12em; display: block; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font: 12px/1 "IBM Plex Mono", monospace; padding: 5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.chip.act { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+@media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; margin-bottom: 12px; }
+.card p { margin: 0 0 10px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 14px; }
+dl.kv dd { margin: 0; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; }
+td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+.tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag.sam { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+.tag.aaa { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+.tag.air { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.obj-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.obj-list li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+.obj-list span { font: 600 12px/1.8 "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; }
+
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outcome { border-top: 4px solid var(--line); }
+.outcome.success { border-top-color: var(--ok); }
+.outcome.partial { border-top-color: var(--amber); }
+.outcome.failure { border-top-color: var(--red); }
+footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; }
+
+.leaflet-container { font-family: "IBM Plex Sans", sans-serif; }
+.wp-label { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 5px; box-shadow: none; }
+.wp-label::before { display: none; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .story, .plan { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap { position: static; }
+  #map { height: 60vh; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  nav.sections, .legend { display: none; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  section { padding: 16px 0; page-break-inside: avoid; }
+  .plan { grid-template-columns: 1fr; }
+  .map-wrap { position: static; }
+  #map { height: 420px; }
+  .card, .phase-card { box-shadow: none; }
+}
+.tag.armor { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--ink); }
+.tag.hazard { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.intel { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; border: 1px solid currentColor; }
+.intel.confirmed { color: var(--ok); }
+.intel.suspected { color: var(--amber); }
+.intel.possible { color: var(--muted); border-style: dashed; }
+.profile-wrap { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 10px; box-shadow: var(--shadow); }
+.profile-wrap h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+.profile-wrap p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+svg.profile { width: 100%; height: auto; display: block; }
+svg.profile .pgrid { stroke: var(--line); stroke-width: 1; }
+svg.profile .paxis, svg.profile .psub { fill: var(--muted); font: 11px "IBM Plex Mono", monospace; }
+svg.profile .pleg { stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+svg.profile .pleg.agl { stroke: var(--accent); stroke-dasharray: 6 5; }
+svg.profile .pwp { fill: var(--surface); stroke: var(--blue); stroke-width: 2; }
+svg.profile .pwp.agl { stroke: var(--accent); }
+svg.profile .plbl { fill: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card.kio { border-left: 4px solid var(--red); }
+.previously { margin-top: 20px; max-width: 760px; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 10px; }
+.previously h3 { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.previously p { margin: 0 0 8px; color: var(--muted); }
+.back { display: inline-block; margin-bottom: 18px; font-size: 14px; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--accent); }
+@media print { .back { display: none; } }
+.spoiler { background: color-mix(in srgb, var(--red) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line)); border-radius: 10px; padding: 14px 18px; margin-top: 24px; max-width: 760px; }
+.spoiler b { color: var(--red); }
+.vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.lbl-col { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.truth { border-left: 3px solid var(--red); }
+.phase-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.phase-row:last-child { border-bottom: 0; }
+.phase-row .when { font: 600 14px "IBM Plex Mono", monospace; color: var(--accent); }
+.phase-row h3 { margin-bottom: 4px; }
+.trig { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+.trig .cond { font: 13px "IBM Plex Mono", monospace; color: var(--muted); margin-bottom: 8px; }
+.trig .cond b { color: var(--ink); }
+.odds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.bar { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; display: flex; margin-top: 8px; }
+.bar span { display: block; height: 100%; }
+.bar span:nth-child(1) { background: var(--accent); } .bar span:nth-child(2) { background: var(--blue); } .bar span:nth-child(3) { background: var(--ok); }
+.hidden-tag { font: 600 11px/1 "IBM Plex Mono", monospace; padding: 3px 6px; border-radius: 4px; background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+#dmap { height: min(70vh, 620px); border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
+@media (max-width: 900px) {
+  .vs { grid-template-columns: minmax(0, 1fr); }
+  .phase-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="../index.html">← Mission Hangar</a>
+    <div class="eyebrow">Operation RED FLAG · Director's cut</div>
+    <h1>Large Force Exercise</h1>
+    <div class="meta-row">
+      <span>Date <b class="mono">2037-12-14</b></span>
+      <span>Step <b class="mono">13:00L</b></span>
+      <span>Flight <b>Dodge 1</b></span>
+      <span>Random rolls <b class="mono">0</b></span>
+    </div>
+    <div class="spoiler"><b>Spoilers.</b> This page shows what's really in the mission: hidden units, random rolls, every trigger and radio call, and the debrief outcomes. It's for whoever builds, runs or debriefs the mission. Pilots should use <code>briefing.html</code> and <code>slides.html</code>.</div>
+  </div>
+</header>
+
+<nav class="sections" aria-label="Sections">
+  <div class="wrap">
+    <a href="#truth">Intel vs truth</a><a href="#rolls">Random rolls</a><a href="#script">Script</a><a href="#map-sec">Map</a><a href="#debrief">Debrief</a>
+    <span class="spacer"></span>
+    <button type="button" id="theme" aria-label="Toggle light or dark theme">Theme</button>
+  </div>
+</nav>
+
+<main>
+<section id="truth">
+  <div class="wrap">
+    <h2>What the pilots were told vs what's there</h2>
+    <div class="vs">
+      <div class="card"><p class="lbl-col">Briefed intel</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>System</th><th>Intel</th><th>Position</th></tr></thead>
+          <tbody><tr>
+            <td><span class="tag armor">armor</span> Target complex: six vehicles in two lines</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">37.440N 116.500W</td>
+          </tr><tr>
+            <td><span class="tag sam">sam</span> Range SA-6 (Weasel&#39;s target)</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">37.470N 116.470W</td>
+          </tr><tr>
+            <td><span class="tag air">air</span> Aggressors: two MiG-29s</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">37.950N 116.600W</td>
+          </tr><tr>
+            <td><span class="tag hazard">hazard</span> Groom Lake restricted area (R-4808N): no-fly</td>
+            <td><span class="intel confirmed">confirmed</span></td>
+            <td class="num">37.233N 115.792W</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+      <div class="card truth"><p class="lbl-col">Ground truth</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Group</th><th>How it appears</th></tr></thead>
+          <tbody><tr>
+            <td><b>Target Complex</b> <span class="muted">(red)</span><br><span style="font-size:13px;color:var(--muted)">2× ATZ 10, 2× MAZ 6303, 2× Ural 375 · 37.440N 116.500W</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>Range SA-6</b> <span class="muted">(red)</span><br><span style="font-size:13px;color:var(--muted)">1× Kub 1S91 str, 2× Kub 2P25 ln · 37.470N 116.470W</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr>
+          <tr>
+            <td><b>WIZARD</b> <span class="muted">(blue awacs)</span><br><span style="font-size:13px;color:var(--muted)">1× E 3A</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>Uzi 1</b> <span class="muted">(blue flight)</span><br><span style="font-size:13px;color:var(--muted)">2× F 15C</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>Weasel 1</b> <span class="muted">(blue flight)</span><br><span style="font-size:13px;color:var(--muted)">2× F 16C 50</span></td>
+            <td><div style="font-size:14px">Active from mission start</div></td>
+          </tr><tr>
+            <td><b>Bandit 71</b> <span class="muted">(red flight)</span><br><span style="font-size:13px;color:var(--muted)">2× MiG 29S</span></td>
+            <td><div style="font-size:14px">Always: when player flight enters the PUSH zone (Push)</div></td>
+          </tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rolls">
+  <div class="wrap">
+    <h2>Random rolls (decided at mission start)</h2>
+    <p>Nothing random: this mission plays the same every time.</p>
+  </div>
+</section>
+
+<section id="script">
+  <div class="wrap">
+    <h2>The script</h2>
+    
+    <div class="phase-row">
+      <div><div class="when">13:00</div><h3>Step and Marshal</h3><div class="chips"><span class="chip">MARSHAL</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Cold start at Nellis, two-ship. Load the JDAM targets before taxi: three per jet, one per vehicle,
+plus a spare on the biggest. Depart northwest to MARSHAL at 20,000 ft and hold until 13:38.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">WREN opens the exercise; Uzi and Weasel are airborne from the start (spawned in the air near PUSH).</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>10 s after mission start</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Dodge, Wren, white air with Wizard. Uzi and Weasel are on station. Push is one-three-four-zero.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">13:40</div><h3>Push</h3><div class="chips"><span class="chip">PUSH</span><span class="chip">IP</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Cross PUSH at 13:40:00, 20,000 ft and 420 kt, accelerating to 450 kt. The TOT clock starts at
+PUSH. The aggressors launch when the package pushes; WIZARD will declare them.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">Crossing PUSH sets flag 30 and launches Bandit 71 from the north.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the PUSH zone</b></div>
+          <div class="chips" style="margin:0 0 8px"><span class="chip act">Activates Bandit 71</span></div>
+          <div class="radio"><span class="lbl">RADIO</span>WIZARD: Package, Wizard. Group north, three-five miles, angels two-four, hot. Two contacts. Hostile. Uzi, commit.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 30</div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">13:43</div><h3>Time on Target</h3><div class="chips"><span class="chip">TGT</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">JDAMs from 20,000 ft inside the launch zone. The sim calls your TOT at TGT. Weasel will be busy with
+the SA-6; it&#39;ll be spiking you all the way in, but it won&#39;t shoot.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">Target destroyed with an on-time TOT (flag 61) completes the event (flag 10). Late or early TOT with the target destroyed: partial (flag 20).</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>the target is destroyed and flag 61 is set</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Dodge, Wren. Target complex destroyed, on time. Off target south.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 10</div>
+        </div>
+        
+        <div class="trig">
+          <div class="cond">When <b>the target is destroyed and flag 61 is not set and 330 s have passed since flag 30 was set</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Dodge, Wren. Target&#39;s down, but you weren&#39;t in the window. Off target south.</div>
+          <div class="cond" style="margin:8px 0 0">Sets flag 20</div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="phase-row">
+      <div><div class="when">13:47</div><h3>Egress and Recovery</h3><div class="chips"><span class="chip">EGRESS</span></div></div>
+      <div><p class="lbl-col">Pilots are told</p><p style="margin:0">Off target to the south, climbing to 24,000 ft at 480 kt. Fence out at EGRESS and recover to Nellis
+(TACAN 12X), well west of R-4808N.</p></div>
+      <div><p class="lbl-col">What actually happens</p>
+        <p style="margin:0">WREN closes the exercise at EGRESS.</p>
+        
+        <div class="trig">
+          <div class="cond">When <b>player flight enters the EGRESS zone and flag 30 is set</b></div>
+          
+          <div class="radio"><span class="lbl">RADIO</span>WREN: Dodge, Wren. Fence out. Mass debrief at sixteen-thirty. Bring your tapes.</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    
+  </div>
+</section>
+
+<section id="map-sec">
+  <div class="wrap">
+    <h2>Truth map</h2>
+    <div id="dmap" role="img" aria-label="Map of real unit positions compared with briefed intel"></div>
+    <div class="legend"><span><i style="background:var(--red)"></i>Real red units (hollow = late activation)</span><span><i style="background:var(--ok)"></i>Real blue units</span><span><i style="background:var(--muted)"></i>Briefed intel (faded)</span><span><i style="background:var(--blue)"></i>Player route</span></div>
+  </div>
+</section>
+
+<section id="debrief">
+  <div class="wrap">
+    <h2>Debrief outcomes</h2>
+    <div class="outcomes">
+      
+      <div class="card outcome success"><h3>Complete</h3><p>Complete. The target complex is destroyed inside the window, and both strikers come home. In the
+big room the timeline shows Dodge flight right where the plan said it would be.</p></div>
+      
+      <div class="card outcome partial"><h3>Partial: re-fly items</h3><p>Partial: re-fly items. The target&#39;s destroyed, but outside the window, or one striker didn&#39;t make
+it back. Dodge re-flies the timing on a smaller package next week.</p></div>
+      
+      <div class="card outcome failure"><h3>Incomplete: re-fly</h3><p>Incomplete: re-fly the event. The target&#39;s untouched. The mass debrief is long, and WREN does most
+of the talking.</p></div>
+      
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Generated from <code>missions/train_nv_red_flag/mission.yaml</code>, the same file that builds the .miz, so this script is exactly what the mission does.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const D = {"route": [{"name": "Nellis", "lat": 36.23522411088335, "lon": -115.03300055101853, "kind": "base", "alt_ft": 0, "ship": false}, {"name": "MARSHAL", "lat": 36.9, "lon": -115.85, "alt_ft": 20000, "kts": 400, "eta": "13:30", "zone_km": 5, "kind": "wp", "num": 1}, {"name": "PUSH", "lat": 37.25, "lon": -116.05, "alt_ft": 20000, "kts": 420, "eta": "13:40", "zone_km": 4, "kind": "wp", "num": 2}, {"name": "IP", "lat": 37.4, "lon": -116.3, "alt_ft": 20000, "kts": 450, "eta": "13:42", "zone_km": 3, "kind": "wp", "num": 3}, {"name": "TGT", "lat": 37.44, "lon": -116.5, "alt_ft": 20000, "kts": 450, "eta": "13:43", "action": "bomb", "zone_km": 3, "timing": {"from": "PUSH", "seconds": 200, "window_s": 15, "flag": 61}, "kind": "wp", "num": 4}, {"name": "EGRESS", "lat": 37.15, "lon": -116.6, "alt_ft": 24000, "kts": 480, "eta": "13:47", "zone_km": 5, "kind": "wp", "num": 5}, {"name": "Nellis", "lat": 36.23522411088335, "lon": -115.03300055101853, "kind": "base", "alt_ft": 0}], "target": {"name": "Target complex: six vehicles in two lines", "lat": 37.44, "lon": -116.5, "groups": ["Target Complex"], "description": "Fuel trucks and missile transporters in two lines of three, 200 m apart, on the flat of southern Gold Flat.", "dmpi": "One GBU-38 per vehicle. Lead takes the northern line, wingman the southern. The fourth bomb each goes on the biggest survivor."}, "threats": [{"name": "Target complex: six vehicles in two lines", "kind": "armor", "lat": 37.44, "lon": -116.5, "range_km": 0, "notes": "Fuel trucks and transporters in southern Gold Flat. Three per line, 200 m apart."}, {"name": "Range SA-6 (Weasel's target)", "kind": "sam", "lat": 37.47, "lon": -116.47, "range_km": 24, "notes": "Radiating, holding fire. Your RWR will show it the whole way in."}, {"name": "Aggressors: two MiG-29s", "kind": "air", "lat": 37.95, "lon": -116.6, "range_km": 0, "notes": "Launch from the north when the package pushes. Live in the sim: they will shoot."}, {"name": "Groom Lake restricted area (R-4808N): no-fly", "kind": "hazard", "lat": 37.2332, "lon": -115.7923, "range_km": 15, "notes": "No entry at any altitude. Route via MARSHAL; never direct from Nellis to PUSH."}], "support": [{"kind": "awacs", "callsign": "WIZARD", "aircraft": "E_3A", "coalition": "blue", "lat": 36.9, "lon": -115.5, "alt_ft": 30000, "heading": 330, "leg_nm": 25, "freq_mhz": 251.0, "track_to": {"lat": 37.26123401977675, "lon": -115.76080099992555}}, {"kind": "flight", "callsign": "Uzi 1", "aircraft": "F_15C", "coalition": "blue", "count": 2, "task": "sweep", "spawn": {"lat": 37.2, "lon": -116.0, "alt_ft": 28000, "kts": 450}, "route": [{"lat": 37.6, "lon": -116.45, "alt_ft": 28000}, {"lat": 37.75, "lon": -116.6, "alt_ft": 28000}, {"lat": 37.4, "lon": -116.3, "alt_ft": 28000}]}, {"kind": "flight", "callsign": "Weasel 1", "aircraft": "F_16C_50", "coalition": "blue", "count": 2, "task": "sead", "spawn": {"lat": 37.22, "lon": -116.02, "alt_ft": 22000, "kts": 450}, "route": [{"lat": 37.4, "lon": -116.35, "alt_ft": 22000}, {"lat": 37.25, "lon": -116.2, "alt_ft": 22000}]}, {"kind": "flight", "callsign": "Bandit 71", "aircraft": "MiG_29S", "coalition": "red", "count": 2, "task": "sweep", "late_activation": true, "spawn": {"lat": 37.95, "lon": -116.6, "alt_ft": 24000, "kts": 450}, "route": [{"lat": 37.55, "lon": -116.5}, {"lat": 37.3, "lon": -116.3}]}], "ships": [], "airfields": [{"name": "Nellis", "lat": 36.23522411088335, "lon": -115.03300055101853}], "phases": [{"phase": "Step and Marshal", "waypoints": ["MARSHAL"]}, {"phase": "Push", "waypoints": ["PUSH", "IP"]}, {"phase": "Time on Target", "waypoints": ["TGT"]}, {"phase": "Egress and Recovery", "waypoints": ["EGRESS"]}], "zones": [], "flights": [{"name": "Uzi 1", "spawn": {"lat": 37.2, "lon": -116.0, "alt_ft": 28000, "kts": 450}, "route": [{"lat": 37.6, "lon": -116.45, "alt_ft": 28000}, {"lat": 37.75, "lon": -116.6, "alt_ft": 28000}, {"lat": 37.4, "lon": -116.3, "alt_ft": 28000}], "coalition": "blue"}, {"name": "Weasel 1", "spawn": {"lat": 37.22, "lon": -116.02, "alt_ft": 22000, "kts": 450}, "route": [{"lat": 37.4, "lon": -116.35, "alt_ft": 22000}, {"lat": 37.25, "lon": -116.2, "alt_ft": 22000}], "coalition": "blue"}, {"name": "Bandit 71", "spawn": {"lat": 37.95, "lon": -116.6, "alt_ft": 24000, "kts": 450}, "route": [{"lat": 37.55, "lon": -116.5}, {"lat": 37.3, "lon": -116.3}], "coalition": "red"}], "units": [{"name": "Target Complex", "lat": 37.44, "lon": -116.5, "coalition": "red", "route": [], "late": false}, {"name": "Range SA-6", "lat": 37.47, "lon": -116.47, "coalition": "red", "route": [], "late": false}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);  // YAML text into Leaflet's HTML labels
+(function () {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("dcsmb-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("dcsmb-theme", root.dataset.theme); } catch (e) {}
+    draw();
+  });
+})();
+
+let map;
+function draw() {
+  if (typeof L === "undefined") { document.getElementById("dmap").textContent = "Map needs an internet connection (Leaflet CDN)."; return; }
+  if (map) map.remove();
+  map = L.map("dmap", { zoomSnap: 0.5, scrollWheelZoom: false });
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${dark ? "Canvas/World_Dark_Gray_Base" : "World_Topo_Map"}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: dark ? 16 : 18, attribution: "Tiles &copy; Esri"
+  }).addTo(map);
+  const red = css("--red"), ok = css("--ok"), blue = css("--blue"), muted = css("--muted"), accent = css("--accent");
+
+  const route = L.polyline(D.route.map(p => [p.lat, p.lon]), { color: blue, weight: 2.5, opacity: .7 }).addTo(map);
+  D.route.filter(p => p.kind === "wp").forEach(p => L.circleMarker([p.lat, p.lon], { radius: 4, color: blue, weight: 2, fillColor: css("--surface"), fillOpacity: 1 })
+    .addTo(map).bindTooltip(esc(`${p.num} ${p.name}`), { permanent: true, direction: "right", offset: [6, 0], className: "wp-label" }));
+
+  // Briefed intel, faded, for comparison with the truth
+  D.threats.forEach(t => {
+    if (t.area_km) L.circle([t.lat, t.lon], { radius: t.area_km * 1000, color: muted, weight: 1, fill: false, dashArray: "1 5" }).addTo(map);
+    if (t.range_km) L.circle([t.lat, t.lon], { radius: t.range_km * 1000, color: muted, weight: 1, opacity: .6, fill: false, dashArray: "6 6" }).addTo(map);
+    L.circleMarker([t.lat, t.lon], { radius: 4, color: muted, weight: 1.5, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed:</b> ${esc(t.name)}<br><i>${esc(t.intel || "confirmed")}</i>`);
+  });
+
+  const all = [route.getBounds()];
+  D.units.forEach(u => {
+    const c = u.coalition === "blue" ? ok : red;
+    if (u.route.length) L.polyline([[u.lat, u.lon], ...u.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "8 6" }).addTo(map);
+    const m = L.circleMarker([u.lat, u.lon], { radius: 7, color: c, weight: 3, fillColor: u.late ? css("--surface") : c, fillOpacity: 1 }).addTo(map)
+      .bindTooltip(esc(u.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+    all.push(m.getLatLng());
+  });
+  D.zones.forEach(z => L.circle([z.lat, z.lon], { radius: z.radius_km * 1000, color: accent, weight: 1.5, fill: false, dashArray: "3 6" })
+    .addTo(map).bindTooltip(`Zone: ${esc(z.name)}`, { permanent: true, direction: "center", className: "wp-label" }));
+  D.ships.forEach(sh => {
+    const c = sh.coalition === "red" ? red : ok;
+    L.polyline([[sh.lat, sh.lon], ...sh.route.map(p => [p.lat, p.lon])], { color: c, weight: 3, dashArray: "1 7" }).addTo(map);
+    L.circleMarker([sh.lat, sh.lon], { radius: 8, color: c, weight: 3, fillColor: css("--surface"), fillOpacity: 1 }).addTo(map)
+      .bindTooltip(esc(sh.name), { permanent: true, direction: "left", offset: [-8, 0], className: "wp-label" });
+  });
+  D.flights.forEach(f => {
+    const c = f.coalition === "blue" ? ok : red;
+    L.polyline([[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])], { color: c, weight: 2.5, dashArray: "10 6" }).addTo(map);
+    L.marker([f.spawn.lat, f.spawn.lon], { icon: L.divIcon({ className: "", html: `<div class="wp-label" style="border-color:${c};color:${c};white-space:nowrap;display:inline-block">✈ ${esc(f.name)}</div>`, iconSize: null }) }).addTo(map);
+  });
+
+  const tg = D.target;
+  L.circleMarker([tg.lat, tg.lon], { radius: 5, color: accent, weight: 2, fillOpacity: 0 }).addTo(map).bindPopup(`<b>Briefed target:</b> ${esc(tg.name)}`);
+  const b = L.latLngBounds(D.units.map(u => [u.lat, u.lon]).concat(D.units.flatMap(u => u.route.map(p => [p.lat, p.lon])))
+    .concat(D.flights.flatMap(f => [[f.spawn.lat, f.spawn.lon], ...f.route.map(p => [p.lat, p.lon])]))
+    .concat(D.ships.map(sh => [sh.lat, sh.lon])));
+  map.fitBounds(b.isValid() ? b.pad(0.6) : route.getBounds(), { padding: [24, 24] });
+}
+draw();
+</script>
+</body>
+</html>
