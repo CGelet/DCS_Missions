@@ -95,7 +95,7 @@ narrative:
 situation: |
   Large-force exercise in the north ranges. Dodge flight, the two-ship strike element, launches from
   Nellis, routes via MARSHAL to stay clear of R-4808N, and crosses PUSH at 13:40:00. TOT on the target
-  complex in southern Gold Flat is 13:43:20 ±15 s: six vehicles in two lines. Uzi (two F-15Cs) sweeps
+  complex in southern Gold Flat is 13:43:20 ±15 s: six vehicles in one line. Uzi (two F-15Cs) sweeps
   ahead; Weasel (two F-16Cs) suppresses the range SA-6 near the target. WIZARD runs the picture. Two
   aggressor MiG-29s launch from the north when the package pushes and are live in the sim.
 
@@ -110,12 +110,12 @@ roe: |
 
 threats:
   # Training: the players and hazards, exactly as they are
-  - name: "Target complex: six vehicles in two lines"
+  - name: "Target complex: six vehicles in a line"
     kind: armor
     lat: 37.4400
     lon: -116.5000
     range_km: 0
-    notes: "Fuel trucks and transporters in southern Gold Flat. Three per line, 200 m apart."
+    notes: "Fuel trucks and transporters in southern Gold Flat, in a north-south line 20 m apart."
   - name: "Range SA-6 (Weasel's target)"
     kind: sam
     lat: 37.4700
@@ -173,12 +173,12 @@ flights:
     land: Nellis
 
 target:
-  name: "Target complex: six vehicles in two lines"
+  name: "Target complex: six vehicles in a line"
   lat: 37.4400
   lon: -116.5000
   groups: ["Target Complex"]
-  description: "Fuel trucks and missile transporters in two lines of three, 200 m apart, on the flat of southern Gold Flat."
-  dmpi: "One GBU-38 per vehicle. Lead takes the northern line, wingman the southern. The fourth bomb each goes on the biggest survivor."
+  description: "Fuel trucks and missile transporters in one north-south line, 20 m apart, on the flat of southern Gold Flat."
+  dmpi: "One GBU-38 per vehicle. Lead takes the northern three, wingman the southern three. The fourth bomb each goes on the biggest survivor."
 
 units:
   - name: "Target Complex"

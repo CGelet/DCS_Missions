@@ -189,6 +189,14 @@ YAML text is data, never markup. The pages are static and public, and mission te
 - Threat-based story beats use `late_activation` groups activated by `player_in_zone` triggers.
 - `target_destroyed` = scenery object in the `TARGET BRIDGE` zone dead **OR** fallback group `Bridge target` dead (two helper rules setting flag 99).
 
+### Weapons, targets and text must agree (audit 2026-10-31, after the owner found RANGE 61B's M-1 unkillable)
+- **Count the shots.** The player alone must be able to finish every required kill with what the player's own jet carries: AI wingmen are a bonus. RANGE 61B briefed "one Maverick per truck" on three trucks with two Maverick Fs. IRON GATE 2 gave each jet one GBU-31 for two bridges. Grade-sheet weapon limits must be possible with the loadout.
+- **Geometry is pydcs's, not the brief's.** `vehicle_group_platoon` places a group as one line, 20 m apart, at right angles to `heading` (heading 90 → a north-south line running south from the first unit). A brief that says "two lines 200 m apart" or "western three / eastern three" has to match that, or be split into groups. Several target groups OR together in `target_destroyed`, so splitting a target that must all die needs its own triggers.
+- **A known target's point is its vehicles.** The briefing, the kneeboard coordinates and the AI wingman's `Bombing` task all aim at `target.lat/lon`. Validation now fails if a target with no `area_km` is more than 1 km from every target group (WU-5's was 5.7 km off).
+- **Fail zones vs timeline.** A moving group's fail trigger (`group_in_zone`) must not be reachable before the player can be there: a waypoint zone is often 8 km wide. IRON GATE 1's Gupta vanguard reached the Tskhinvali zone 3 minutes after a cold start. Use a small dedicated zone and start the drive from a `player_in_zone` variant `when`.
+- **Gate variant groups.** A `group_dead` or `group_life_below` on a variant group needs `variant: [name, n]`, and every variant's objective needs its own kill trigger rather than a free `set_flag` (DARK HORSE 5's parked launcher counted as killed at mission start).
+- **Unit lists and descriptions.** Describe only units that exist: DARK HORSE 3 briefed a "command cab" that wasn't placed, and DEEP CUT said "four to six" trucks for groups of three and four.
+
 ## Open ideas (not started)
 
 Owner-facing feature proposals live in `FUTURE_FEATURES.md` (e.g. building missions from GitHub issues). Keep both in sync.

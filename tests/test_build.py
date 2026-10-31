@@ -263,6 +263,15 @@ def test_positions_must_be_on_the_theater_map(bridge):
         schema.validate(bad)
 
 
+def test_known_target_point_must_sit_on_its_group(bridge):
+    bad = copy.deepcopy(bridge)
+    bad["target"]["lat"] += 0.05  # 5.5 km north of the bridge trucks, like WU-5's old target card
+    with pytest.raises(schema.MissionError, match="km from the nearest target group"):
+        schema.validate(bad)
+    bad["target"]["area_km"] = 8  # an uncertain target may be anywhere in its area
+    schema.validate(bad)
+
+
 def test_coordinates_carry_their_hemisphere():
     assert build_html.coord({"lat": 37.2, "lon": -115.43}) == "37.2000N 115.4300W"
     assert build_html.ddm({"lat": 36.2359, "lon": -115.0341}) == "N36°14.15' W115°02.05'"

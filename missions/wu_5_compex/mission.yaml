@@ -162,11 +162,11 @@ flights:
 
 target:
   name: "Simulated fuel and ammunition point"
-  lat: 41.9950
-  lon: 43.5200
+  lat: 41.9600
+  lon: 43.4700
   groups: ["Target Set"]
-  description: "Six vehicles in a line in open fields: fuel bowsers and ammunition trucks."
-  dmpi: "One GBU-38 per vehicle. Lead takes the western three, wingman the eastern three."
+  description: "Six vehicles in a north-south line in open fields: fuel bowsers and ammunition trucks."
+  dmpi: "One GBU-38 per vehicle. Lead takes the northern three, wingman the southern three."
 
 zones:
   - { name: "TARGET AREA", lat: 41.9600, lon: 43.4700, radius_km: 5 }

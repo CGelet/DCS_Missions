@@ -142,8 +142,8 @@ target:
   lon: 41.8650
   area_km: 6
   groups: ["EWR West Peak", "EWR East Peak"]
-  description: "A 55G6 radar on its trailer, with a generator and a command cab, on a bare peak. One of two peaks, 6 km apart."
-  dmpi: "The antenna trailer. JSOW-C on the antenna from POP if you've found it on the pod; GBU-12s on the cab and generator."
+  description: "A 55G6 radar on its trailer, with a generator truck and a ZU-23 gun, on a bare peak. One of two peaks, 6 km apart."
+  dmpi: "The antenna trailer. JSOW-C on the antenna from POP if you've found it on the pod; GBU-12s on the generator and the gun."
 
 units:
   # Ground truth. Pilots never see this section. One peak is occupied.

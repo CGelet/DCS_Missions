@@ -48,7 +48,7 @@ training:
     - "Dust: the convoys raise dust on the lake bed. It hides them from the pod and shows them to your eyes."
   grade_sheet:
     - { item: "Range check-in", standard: "Checks in at 61B IP with the correct call and the laser code confirmed." }
-    - { item: "Event 1: Maverick F on M-1", standard: "Destroys M-1 (3 trucks) with no more than 3 AGM-65F." }
+    - { item: "Event 1: Maverick F on M-1", standard: "Destroys M-1 (2 trucks) with 2 AGM-65F or fewer." }
     - { item: "Event 2: Maverick E on M-2", standard: "Destroys M-2 (2 BMPs) with 2 AGM-65E or fewer, self-lased on 1688." }
     - { item: "Event 3: Strafe M-3", standard: "Destroys M-3 (2 jeeps) with the gun, recovering above 500 ft AGL on every pass." }
     - { item: "Range discipline", standard: "No range fouls. No releases while the range is cold or north of HOLD." }
@@ -95,7 +95,7 @@ narrative:
 situation: |
   Single-ship moving-target qualification on Range 61B, Tikaboo Valley, 110 km north of Nellis. Check
   in with Blackjack at 61B IP at the south end of the valley. Three groups of remote-driven target
-  vehicles drive north-south on the valley floor: M-1 (three trucks), M-2 (two BMPs) and M-3 (two
+  vehicles drive north-south on the valley floor: M-1 (two trucks), M-2 (two BMPs) and M-3 (two
   jeeps, faster than the others). Blackjack clears them hot in that order: Maverick F on M-1, Maverick E
   on M-2, then the gun on M-3. HOLD, east of the valley, is the high key. Nothing on the range shoots.
 
@@ -110,12 +110,12 @@ roe: |
 
 threats:
   # Training: the targets and hazards, exactly as they are
-  - name: "M-1: three trucks (Event 1, Maverick F)"
+  - name: "M-1: two trucks (Event 1, Maverick F)"
     kind: armor
     lat: 37.2000
     lon: -115.4300
     range_km: 0
-    notes: "Three Ural trucks in a column, driving north up the valley at about 30 km/h, then back."
+    notes: "Two Ural trucks in a column, driving north up the valley at about 30 km/h, then back."
   - name: "M-2: two BMPs (Event 2, Maverick E)"
     kind: armor
     lat: 37.2700
@@ -172,17 +172,17 @@ flights:
     land: Nellis
 
 target:
-  name: "M-1: three trucks"
+  name: "M-1: two trucks"
   lat: 37.2000
   lon: -115.4300
   groups: ["M-1 Trucks"]
-  description: "Three trucks driving north up the valley floor, the first event. M-2 and M-3 are moving on either side of it."
+  description: "Two trucks driving north up the valley floor, the first event. M-2 and M-3 are moving on either side of it."
   dmpi: "The lead truck's engine block for the IR lock, then the next. One Maverick per truck."
 
 units:
   - name: "M-1 Trucks"
     coalition: red
-    type: [Ural_375, Ural_375, Ural_375]
+    type: [Ural_375, Ural_375]
     lat: 37.2000
     lon: -115.4300
     heading: 0
@@ -247,7 +247,7 @@ storyboard:
     triggers:
       - when: { player_in_zone: "61B IP" }
         set_flag: 50
-        message: "BLACKJACK: Chevy one, Blackjack, range six-one-bravo is hot. Cleared hot M-1, three trucks northbound, Maverick Fox."
+        message: "BLACKJACK: Chevy one, Blackjack, range six-one-bravo is hot. Cleared hot M-1, two trucks northbound, Maverick Fox."
         seconds: 20
       - when: { group_dead: "M-1 Trucks", flag: 50 }
         set_flag: 11

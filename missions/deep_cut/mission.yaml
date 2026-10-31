@@ -157,7 +157,7 @@ target:
   area_km: 8
   groups: ["Fuel Apron", "Fuel Convoy"]   # only the variant that spawned counts
   kill_pct: 60
-  description: "Four to six ATZ-10 fuel trucks: on the apron if they're late, or on the coast road west if they've already unloaded."
+  description: "Three or four ATZ-10 fuel trucks: on the apron if they're late, or on the coast road west if they've already unloaded."
   dmpi: "Lead truck first if they're moving: it blocks the road."
 
 units:

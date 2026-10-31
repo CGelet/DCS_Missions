@@ -197,6 +197,10 @@ units:
     heading: 180
     late_activation: true
 
+zones:
+  # The end of the Gupta vanguard's drive: tracks here are "at the edge of town"
+  - { name: "TOWN EDGE", lat: 42.2550, lon: 43.9600, radius_km: 1 }
+
 support:
   - kind: awacs
     callsign: "WIZARD"
@@ -216,6 +220,8 @@ variants:
         activate: ["Vanguard Gorge"]
       - label: "At Gupta, halfway to Tskhinvali"
         activate: ["Vanguard Gupta"]
+        # Starts driving when the flight reaches Gori: 25 minutes to the town edge
+        when: { player_in_zone: "GORI" }
       - label: "Already at Tskhinvali's northern edge"
         activate: ["Vanguard Tskhinvali"]
 
@@ -254,13 +260,13 @@ storyboard:
     brief: |
       Work north from Tskhinvali toward Java until you find the lead vehicles. Stop the first one to
       block the road, then work back. Film whatever's behind them.
-    script: "Vanguard destroyed: success (flag 10). Vanguard reaching TSKHINVALI unharmed is the partial ending (flag 20)."
+    script: "Vanguard destroyed: success (flag 10). The Gupta vanguard reaching TOWN EDGE first is the partial ending (flag 20)."
     triggers:
       - when: { target_destroyed: true }
         set_flag: 10
         message: "COL. GELASHVILI: Enfield, Gori. We see the smoke from here. That's the front of it stopped. Thank you."
         seconds: 20
-      - when: { group_in_zone: ["Vanguard Gupta", "TSKHINVALI"], flag_false: 10 }
+      - when: { group_in_zone: ["Vanguard Gupta", "TOWN EDGE"], flag_false: 10 }
         set_flag: 20
         message: "COL. GELASHVILI: Enfield, my checkpoint has tracks in sight. They're at the edge of town."
         seconds: 20

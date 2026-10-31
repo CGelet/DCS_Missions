@@ -7,6 +7,7 @@ Two audiences live in one file:
 """
 from __future__ import annotations
 
+import math
 import re
 from pathlib import Path
 
@@ -51,6 +52,11 @@ def _latlon(obj: dict, where: str, errs: list[str]) -> None:
         v = obj.get(k)
         if not isinstance(v, (int, float)) or not lo <= v <= hi:
             errs.append(f"{where}: '{k}' must be a number in [{lo}, {hi}], got {v!r}")
+
+
+def _km(a: dict, b: dict) -> float:
+    """Flat-earth distance in km: plenty for the few-km checks here."""
+    return math.hypot((a["lat"] - b["lat"]) * 111.0, (a["lon"] - b["lon"]) * 111.0 * math.cos(math.radians(a["lat"])))
 
 
 def _on_map(obj, box: tuple, theater: str, where: str, errs: list[str]) -> None:
@@ -242,6 +248,13 @@ def validate(data) -> None:
             errs.append(f"target.groups: unknown group '{g}'")
     if not tgt.get("groups") and not tgt.get("zone_m"):
         errs.append("target: needs 'groups' and/or 'zone_m' so target_destroyed can fire")
+    # A known target (no area_km) must sit on its vehicles: the briefing, kneeboard and the AI
+    # wingman's bombing task all aim at the target point
+    placed = {g["name"]: g for g in data.get("units", []) + data.get("ships", []) if "lat" in g and "lon" in g}
+    near = [_km(tgt, placed[g]) for g in tgt.get("groups", []) if g in placed]
+    if "area_km" not in tgt and "lat" in tgt and near and min(near) > 1:
+        errs.append(f"target: point is {min(near):.1f} km from the nearest target group; "
+                    "move it onto the group or give the target an area_km")
     if not 0 < tgt.get("kill_pct", 100) <= 100:
         errs.append("target.kill_pct: must be in (0, 100]")
 

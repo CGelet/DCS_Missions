@@ -142,7 +142,7 @@ target:
   groups: ["Command Post"]
   kill_pct: 70
   description: "Command vehicles and radio trucks in and around the old mine buildings on the road east of Tkvarcheli."
-  dmpi: "GBU-31 on the main building's courtyard where the command vehicles are, GBU-12s on the radio trucks. Maverick for the SA-8."
+  dmpi: "GBU-31 on the main building's courtyard where the command vehicles are, GBU-12s on the radio trucks, and on the launcher if it's parked there. Maverick for the SA-8."
 
 zones:
   - { name: "LAUNCH POINT", lat: 42.7800, lon: 41.8000, radius_km: 3 }
@@ -227,7 +227,6 @@ variants:
       - label: "Parked at the command post"
         activate: ["Last TEL at Home"]
         when: { time_after: 5 }
-        set_flag: 12
       - label: "On the road to a launch point"
         activate: ["Last TEL on the Road"]
         when: { player_in_zone: "IP" }
@@ -266,9 +265,10 @@ storyboard:
     waypoints: ["CP", "ROAD"]
     notes: "Ask the room: you're two minutes from the CP and Lomidze says the launcher's moving. CP or launcher?"
     brief: |
-      SA-8 first with the Maverick, then the GBU-31 on the courtyard and GBU-12s on the radio trucks.
+      SA-8 first with the Maverick, then the GBU-31 on the courtyard and GBU-12s on the radio trucks. A launcher parked at the CP
+      needs its own GBU-12.
       If the launcher is on the road, it's the priority: find it on ROAD before it reaches open ground.
-    script: "Command post 70% destroyed: flag 11. The launcher is handled (flag 12) if it was parked at the CP, or once it dies on the road; reaching LAUNCH POINT first means it fires (flag 20). Flags 11 and 12 with no launch: success (flag 10)."
+    script: "Command post 70% destroyed: flag 11. The launcher is handled (flag 12) once it dies, parked at the CP or on the road; reaching LAUNCH POINT first means it fires (flag 20). Flags 11 and 12 with no launch: success (flag 10)."
     triggers:
       - when: { target_destroyed: true }
         set_flag: 11
@@ -278,7 +278,11 @@ storyboard:
         set_flag: 20
         message: "OVERLORD: Pontiac, Overlord. Launch, launch! Ballistic missile, from the hills, heading east."
         seconds: 20
-      - when: { group_dead: "Last TEL on the Road" }
+      - when: { group_dead: "Last TEL at Home", variant: ["Where the last launcher is", 1] }
+        set_flag: 12
+        message: "CAPT. LOMIDZE: Pontiac, Lomidze. The launcher at the mine is burning. That's the last one."
+        seconds: 15
+      - when: { group_dead: "Last TEL on the Road", variant: ["Where the last launcher is", 2] }
         set_flag: 12
         message: "OVERLORD: Pontiac, Overlord. The launcher on the road is burning. It didn't fire."
         seconds: 15
